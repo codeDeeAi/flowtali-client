@@ -1,11 +1,16 @@
-import { object, string } from 'yup';
+import { array, object, string } from 'yup'
+import type { ClientType } from '@/types/client.types'
+
+const CLIENT_TYPES: ClientType[] = ['organization', 'individual', 'freelancer', 'agency', 'other']
 
 export const clientSchema = object({
-  name: string().required('Name is required').max(100, 'Name cannot exceed 100 characters'),
-  company: string().max(100, 'Company name cannot exceed 100 characters'),
-  email: string().email('Invalid email address').required('Email is required'),
-  phone: string().max(30, 'Phone number cannot exceed 30 characters'),
-  type: string().oneOf(['B2B', 'B2C'], 'Client type must be B2B or B2C').required('Client type is required'),
-  address: string().max(200, 'Address cannot exceed 200 characters'),
-  notes: string().max(500, 'Notes cannot exceed 500 characters'),
-});
+  full_name: string().required('Full name is required').max(150, 'Full name cannot exceed 150 characters'),
+  company: string().nullable().max(150, 'Company name cannot exceed 150 characters'),
+  client_type: string()
+    .oneOf(CLIENT_TYPES, 'Invalid client type')
+    .required('Client type is required'),
+  email: string().nullable().email('Invalid email address').max(255),
+  phone: string().nullable().max(30, 'Phone number cannot exceed 30 characters'),
+  address: string().nullable().max(300, 'Address cannot exceed 300 characters'),
+  notes: string().nullable().max(5000, 'Notes cannot exceed 5000 characters'),
+})

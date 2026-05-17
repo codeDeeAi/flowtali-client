@@ -1,60 +1,95 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { Icon } from '@iconify/vue';
 import Pagination from '@/components/ui/Pagination.vue';
+import { useAuthStore } from '@/stores/auth';
+import { ClientService } from '@/services/client.service';
+import { useNotification } from '@/composables/notification';
+import type { IClient } from '@/types/client.types';
 
-interface Client {
-  id: number;
-  name: string;
-  company: string;
-  email: string;
-  phone: string;
-  initials: string;
-  color: string;
-  type: 'B2B' | 'B2C';
-  invoices: number;
-  totalBilled: string;
-  lastInvoice: string;
+const router    = useRouter();
+const authStore = useAuthStore();
+const { notify } = useNotification();
+
+const orgId     = computed(() => authStore.getCurrentOrganization?.id ?? '');
+
+const clients      = ref<IClient[]>([]);
+const searchQuery  = ref('');
+const searchInput  = ref('');
+const viewMode     = ref<'grid' | 'list'>('grid');
+const currentPage  = ref(1);
+const lastPage     = ref(1);
+const total        = ref(0);
+const perPage      = ref(15);
+const isLoading    = ref(true);
+
+const initials = (name: string) =>
+  name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+
+const avatarColor = (id: string) => {
+  const colors = ['#60a5fa', '#a78bfa', '#f87171', '#4ade80', '#e8a83e', '#38bdf8', '#fb923c', '#c084fc'];
+  const idx = id.charCodeAt(id.length - 1) % colors.length;
+  return colors[idx];
+};
+
+const clientTypeLabel = (type: string) => {
+  const map: Record<string, string> = {
+    organization: 'Org',
+    individual: 'Individual',
+    freelancer: 'Freelancer',
+    agency: 'Agency',
+    other: 'Other',
+  };
+  return map[type] ?? type;
+};
+
+const clientTypeBadge = (type: string) => {
+  const map: Record<string, string> = {
+    organization: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    individual: 'bg-green-500/10 text-green-400 border-green-500/20',
+    freelancer: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+    agency: 'bg-amber/10 text-amber border-amber/20',
+    other: 'bg-charcoal-600 text-cream-muted border-charcoal-500',
+  };
+  return 'text-[10px] font-semibold px-1.5 py-0.5 rounded-full border ' + (map[type] ?? map.other);
+};
+
+const primaryPhone = (client: IClient) => client.phone_numbers?.[0] ?? '—';
+const addressText  = (client: IClient) => client.address?.full ?? '—';
+
+async function fetchClients() {
+  if (!orgId.value) return;
+  isLoading.value = true;
+  try {
+    const res = await ClientService.list(orgId.value, {
+      search: searchQuery.value || undefined,
+      page: currentPage.value,
+      per_page: perPage.value,
+    });
+    const paginated = res.data.data;
+    clients.value  = paginated.data;
+    lastPage.value = paginated.last_page;
+    total.value    = paginated.total;
+  } catch {
+    notify('Failed to load clients.', 'error');
+  } finally {
+    isLoading.value = false;
+  }
 }
 
-const router = useRouter();
-const searchQuery = ref('');
-const viewMode    = ref<'grid' | 'list'>('grid');
-const currentPage = ref(1);
-const perPage     = 3;
+function onSearch() {
+  searchQuery.value = searchInput.value;
+  currentPage.value = 1;
+}
 
-const clients: Client[] = [
-  { id: 1, name: 'James Johnson',   company: 'Globex Corporation', email: 'james@globex.com',    phone: '+1 212 555 0100',  initials: 'JJ', color: '#60a5fa', type: 'B2B', invoices: 8, totalBilled: '$42,200', lastInvoice: 'Mar 15' },
-  { id: 2, name: 'Sofia Martinez',  company: 'Pixel Works Ltd',    email: 'sofia@pixelworks.io', phone: '+44 20 7946 0958', initials: 'SM', color: '#a78bfa', type: 'B2B', invoices: 5, totalBilled: '$18,400', lastInvoice: 'Mar 10' },
-  { id: 3, name: 'Kofi Acheampong', company: 'Nova Agency',        email: 'kofi@nova.co',        phone: '+233 30 295 0100', initials: 'KA', color: '#f87171', type: 'B2B', invoices: 3, totalBilled: '$9,800',  lastInvoice: 'Feb 28' },
-  { id: 4, name: 'Priya Nair',      company: 'Freelance',          email: 'priya@mail.com',      phone: '+91 98765 43210',  initials: 'PN', color: '#4ade80', type: 'B2C', invoices: 2, totalBilled: '$4,400',  lastInvoice: 'Feb 20' },
-  { id: 5, name: 'Marcus Bell',     company: 'Studio X',           email: 'marcus@studiox.co',   phone: '+1 415 555 0199',  initials: 'MB', color: '#e8a83e', type: 'B2B', invoices: 4, totalBilled: '$21,000', lastInvoice: 'Mar 18' },
-  { id: 6, name: 'Chen Wei',        company: 'Frontier Tech',      email: 'chen@frontier.tech',  phone: '+86 10 6552 9988', initials: 'CW', color: '#38bdf8', type: 'B2B', invoices: 6, totalBilled: '$28,600', lastInvoice: 'Feb 12' },
-];
+watch(currentPage, fetchClients);
+watch(searchQuery, fetchClients);
+onMounted(fetchClients);
 
-const filtered = computed(() => {
-  const q = searchQuery.value.trim().toLowerCase();
-  return q
-    ? clients.filter(c =>
-        c.name.toLowerCase().includes(q) ||
-        c.company.toLowerCase().includes(q) ||
-        c.email.toLowerCase().includes(q)
-      )
-    : clients;
-});
-
-// Reset to page 1 whenever search changes
-const onSearch = () => { currentPage.value = 1; };
-
-const paginated = computed(() => {
-  const start = (currentPage.value - 1) * perPage;
-  return filtered.value.slice(start, start + perPage);
-});
-
-const goToView   = (id: number) => router.push({ name: 'clients.view',   params: { id } });
+const goToView   = (id: string) => router.push({ name: 'clients.view',   params: { id } });
 const goToCreate = ()           => router.push({ name: 'clients.create' });
-const goToEdit   = (id: number) => router.push({ name: 'clients.edit',   params: { id } });
+const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params: { id } });
 </script>
 
 <template>
@@ -64,13 +99,19 @@ const goToEdit   = (id: number) => router.push({ name: 'clients.edit',   params:
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div>
         <h1 class="page-title">Clients</h1>
-        <p class="page-subtitle">{{ clients.length }} clients in your address book</p>
+        <p class="page-subtitle">{{ total }} client{{ total === 1 ? '' : 's' }} in your address book</p>
       </div>
       <div class="flex items-center gap-2">
         <!-- Search -->
         <div class="relative">
           <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint" />
-          <input v-model="searchQuery" @input="onSearch" placeholder="Search clients…" class="app-inp pl-8 text-xs py-2 w-48" />
+          <input
+            v-model="searchInput"
+            @keyup.enter="onSearch"
+            @input="!searchInput && onSearch()"
+            placeholder="Search clients…"
+            class="app-inp pl-8 text-xs py-2 w-48"
+          />
         </div>
 
         <!-- View toggle -->
@@ -100,33 +141,41 @@ const goToEdit   = (id: number) => router.push({ name: 'clients.edit',   params:
       </div>
     </div>
 
+    <!-- Loading -->
+    <div v-if="isLoading" class="flex items-center justify-center py-20">
+      <Icon icon="lucide:loader-2" class="w-6 h-6 text-cream-faint animate-spin" />
+    </div>
+
     <!-- Empty state -->
-    <div v-if="filtered.length === 0" class="flex flex-col items-center justify-center py-20 text-center">
+    <div v-else-if="clients.length === 0" class="flex flex-col items-center justify-center py-20 text-center">
       <div class="w-12 h-12 rounded-full bg-charcoal-700 flex items-center justify-center mb-4">
         <Icon icon="lucide:users" class="w-6 h-6 text-cream-faint" />
       </div>
       <p class="text-cream-faint text-sm">No clients found</p>
-      <p class="text-cream-faint/60 text-xs mt-1">Try adjusting your search query</p>
+      <p class="text-cream-faint/60 text-xs mt-1">{{ searchQuery ? 'Try adjusting your search query' : 'Add your first client to get started' }}</p>
     </div>
 
     <!-- Grid view -->
     <div v-else-if="viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
       <div
-        v-for="client in paginated" :key="client.id"
+        v-for="client in clients" :key="client.id"
         @click="goToView(client.id)"
         class="bg-charcoal-800 border border-charcoal-700 hover:border-charcoal-500 rounded-xl p-5 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 cursor-pointer group"
       >
         <!-- Header -->
         <div class="flex items-center gap-3 mb-4">
-          <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-charcoal-900 shrink-0" :style="{ backgroundColor: client.color }">
-            {{ client.initials }}
+          <div
+            class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-charcoal-900 shrink-0"
+            :style="{ backgroundColor: avatarColor(client.id) }"
+          >
+            {{ initials(client.full_name) }}
           </div>
           <div class="flex-1 min-w-0">
-            <div class="text-sm font-semibold text-cream truncate">{{ client.name }}</div>
-            <div class="text-xs text-cream-faint truncate">{{ client.company }}</div>
+            <div class="text-sm font-semibold text-cream truncate">{{ client.full_name }}</div>
+            <div class="text-xs text-cream-faint truncate">{{ client.company ?? '—' }}</div>
           </div>
           <div class="flex items-center gap-1.5">
-            <span :class="['status-badge', client.type === 'B2B' ? 'tag-b2b' : 'tag-b2c']">{{ client.type }}</span>
+            <span :class="clientTypeBadge(client.client_type)">{{ clientTypeLabel(client.client_type) }}</span>
             <button
               @click.stop="goToEdit(client.id)"
               class="opacity-0 group-hover:opacity-100 p-1 rounded-md hover:bg-charcoal-600 text-cream-faint hover:text-cream transition-all"
@@ -138,32 +187,14 @@ const goToEdit   = (id: number) => router.push({ name: 'clients.edit',   params:
         </div>
 
         <!-- Contact info -->
-        <div class="space-y-1.5 mb-4">
+        <div class="space-y-1.5">
           <div class="flex items-center gap-2 text-xs text-cream-faint">
             <Icon icon="lucide:mail" class="w-3.5 h-3.5 shrink-0" />
-            <span class="truncate">{{ client.email }}</span>
+            <span class="truncate">{{ client.email ?? '—' }}</span>
           </div>
           <div class="flex items-center gap-2 text-xs text-cream-faint">
             <Icon icon="lucide:phone" class="w-3.5 h-3.5 shrink-0" />
-            <span>{{ client.phone }}</span>
-          </div>
-        </div>
-
-        <div class="h-px bg-charcoal-700 mb-4"></div>
-
-        <!-- Stats row -->
-        <div class="grid grid-cols-3 gap-2 text-center">
-          <div>
-            <div class="font-mono text-base font-bold text-cream">{{ client.invoices }}</div>
-            <div class="text-[10px] text-cream-faint">Invoices</div>
-          </div>
-          <div>
-            <div class="font-mono text-base font-bold text-green-400">{{ client.totalBilled }}</div>
-            <div class="text-[10px] text-cream-faint">Total Billed</div>
-          </div>
-          <div>
-            <div class="text-xs text-cream-faint mb-0.5">Last invoice</div>
-            <div class="text-xs text-cream-muted">{{ client.lastInvoice }}</div>
+            <span>{{ primaryPhone(client) }}</span>
           </div>
         </div>
       </div>
@@ -172,29 +203,30 @@ const goToEdit   = (id: number) => router.push({ name: 'clients.edit',   params:
     <!-- List view -->
     <div v-else class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden">
       <!-- Table header -->
-      <div class="grid grid-cols-[2fr_2fr_1fr_1fr_1fr_auto] gap-4 px-4 py-3 border-b border-charcoal-700 text-[11px] font-medium text-cream-faint uppercase tracking-wide">
+      <div class="grid grid-cols-[2fr_2fr_1fr_auto] gap-4 px-4 py-3 border-b border-charcoal-700 text-[11px] font-medium text-cream-faint uppercase tracking-wide">
         <span>Client</span>
         <span>Contact</span>
         <span>Type</span>
-        <span>Invoices</span>
-        <span>Total Billed</span>
         <span></span>
       </div>
 
       <!-- Table rows -->
       <div
-        v-for="(client, i) in paginated" :key="client.id"
+        v-for="(client, i) in clients" :key="client.id"
         @click="goToView(client.id)"
-        :class="['grid grid-cols-[2fr_2fr_1fr_1fr_1fr_auto] gap-4 px-4 py-3.5 items-center hover:bg-charcoal-700/40 transition-colors cursor-pointer group', i !== paginated.length - 1 ? 'border-b border-charcoal-700/60' : '']"
+        :class="['grid grid-cols-[2fr_2fr_1fr_auto] gap-4 px-4 py-3.5 items-center hover:bg-charcoal-700/40 transition-colors cursor-pointer group', i !== clients.length - 1 ? 'border-b border-charcoal-700/60' : '']"
       >
         <!-- Client name + company -->
         <div class="flex items-center gap-3 min-w-0">
-          <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-charcoal-900 shrink-0" :style="{ backgroundColor: client.color }">
-            {{ client.initials }}
+          <div
+            class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-charcoal-900 shrink-0"
+            :style="{ backgroundColor: avatarColor(client.id) }"
+          >
+            {{ initials(client.full_name) }}
           </div>
           <div class="min-w-0">
-            <div class="text-sm font-medium text-cream truncate">{{ client.name }}</div>
-            <div class="text-xs text-cream-faint truncate">{{ client.company }}</div>
+            <div class="text-sm font-medium text-cream truncate">{{ client.full_name }}</div>
+            <div class="text-xs text-cream-faint truncate">{{ client.company ?? '—' }}</div>
           </div>
         </div>
 
@@ -202,24 +234,18 @@ const goToEdit   = (id: number) => router.push({ name: 'clients.edit',   params:
         <div class="min-w-0 space-y-0.5">
           <div class="flex items-center gap-1.5 text-xs text-cream-faint">
             <Icon icon="lucide:mail" class="w-3 h-3 shrink-0" />
-            <span class="truncate">{{ client.email }}</span>
+            <span class="truncate">{{ client.email ?? '—' }}</span>
           </div>
           <div class="flex items-center gap-1.5 text-xs text-cream-faint">
             <Icon icon="lucide:phone" class="w-3 h-3 shrink-0" />
-            <span>{{ client.phone }}</span>
+            <span>{{ primaryPhone(client) }}</span>
           </div>
         </div>
 
         <!-- Type -->
         <div>
-          <span :class="['status-badge', client.type === 'B2B' ? 'tag-b2b' : 'tag-b2c']">{{ client.type }}</span>
+          <span :class="clientTypeBadge(client.client_type)">{{ clientTypeLabel(client.client_type) }}</span>
         </div>
-
-        <!-- Invoices -->
-        <div class="font-mono text-sm font-semibold text-cream">{{ client.invoices }}</div>
-
-        <!-- Total billed -->
-        <div class="font-mono text-sm font-semibold text-green-400">{{ client.totalBilled }}</div>
 
         <!-- Actions -->
         <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -236,9 +262,9 @@ const goToEdit   = (id: number) => router.push({ name: 'clients.edit',   params:
 
     <!-- Pagination -->
     <Pagination
-      v-if="filtered.length > 0"
+      v-if="!isLoading && total > 0"
       v-model="currentPage"
-      :total="filtered.length"
+      :total="total"
       :per-page="perPage"
     />
 

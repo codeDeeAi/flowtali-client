@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { Icon } from '@iconify/vue';
 import { useLoaders } from '@/composables/loaders.ts';
@@ -9,28 +9,54 @@ import { useNotification } from '@/composables/notification.ts';
 import { clientSchema } from './validation/schema.ts';
 import InputField from '@/components/form/InputField.vue';
 import TextArea from '@/components/form/TextArea.vue';
+import { useAuthStore } from '@/stores/auth';
+import { ClientService } from '@/services/client.service';
+import type { ClientType } from '@/types/client.types';
 
-const router = useRouter();
+const router    = useRouter();
+const authStore = useAuthStore();
 const { notify } = useNotification();
 const { validate } = useYupForm();
 const { setErrors, clearAllErrors, getError } = useFormErrors();
 const { initLoaders, setLoader, getLoader } = useLoaders();
 
-initLoaders({ isSaving: false });
+initLoaders({ isSaving: false, isLoadingForm: true });
+
+const orgId = computed(() => authStore.getCurrentOrganization?.id ?? '');
+
+const clientTypes = ref<{ value: ClientType; label: string }[]>([]);
 
 const form = ref({
-  name: '',
+  full_name: '',
   company: '',
+  client_type: '' as ClientType | '',
   email: '',
   phone: '',
-  type: '' as 'B2B' | 'B2C' | '',
   address: '',
   notes: '',
 });
 
 const canSubmit = computed(() =>
-  !!form.value.name && !!form.value.email && !!form.value.type
+  !!form.value.full_name && !!form.value.client_type
 );
+
+onMounted(async () => {
+  try {
+    const res = await ClientService.formData(orgId.value);
+    clientTypes.value = res.data.data.client_types;
+  } catch {
+    // fallback to hardcoded types
+    clientTypes.value = [
+      { value: 'organization', label: 'Organization' },
+      { value: 'individual', label: 'Individual' },
+      { value: 'freelancer', label: 'Freelancer' },
+      { value: 'agency', label: 'Agency' },
+      { value: 'other', label: 'Other' },
+    ];
+  } finally {
+    setLoader('isLoadingForm', false);
+  }
+});
 
 const handleSubmit = async () => {
   try {
@@ -45,13 +71,21 @@ const handleSubmit = async () => {
 
     setLoader('isSaving', true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1200));
+    await ClientService.create(orgId.value, {
+      full_name: form.value.full_name,
+      company: form.value.company || null,
+      client_type: form.value.client_type as ClientType,
+      email: form.value.email || null,
+      phone_numbers: form.value.phone ? [form.value.phone] : null,
+      address: form.value.address ? { full: form.value.address } : null,
+      notes: form.value.notes || null,
+    });
 
     notify('Client created successfully!', 'success');
     router.push({ name: 'clients' });
-  } catch (error) {
-    console.log('Create client error:', error);
+  } catch (error: any) {
+    const msg = error?.response?.data?.message ?? 'Failed to create client.';
+    notify(msg, 'error');
   } finally {
     setLoader('isSaving', false);
   }
@@ -75,8 +109,13 @@ const handleSubmit = async () => {
       </div>
     </div>
 
+    <!-- Loading form data -->
+    <div v-if="getLoader('isLoadingForm')" class="flex items-center justify-center py-20">
+      <Icon icon="lucide:loader-2" class="w-6 h-6 text-cream-faint animate-spin" />
+    </div>
+
     <!-- Form card -->
-    <div class="max-w-2xl bg-charcoal-800 border border-charcoal-700 rounded-xl p-6 space-y-6">
+    <div v-else class="max-w-2xl bg-charcoal-800 border border-charcoal-700 rounded-xl p-6 space-y-6">
 
       <!-- Basic info -->
       <div>
@@ -84,11 +123,11 @@ const handleSubmit = async () => {
         <div class="space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <InputField
-              v-model="form.name"
+              v-model="form.full_name"
               label-text="Full Name"
               type="text"
               :is-required="true"
-              :error="getError('name').value || ''"
+              :error="getError('full_name').value || ''"
               input-classes="px-2 py-2 text-sm transition-colors"
               placeholder="John Doe"
             />
@@ -108,21 +147,21 @@ const handleSubmit = async () => {
               <span>Client Type</span>
               <span class="text-red-400 ml-0.5">*</span>
             </label>
-            <div class="flex gap-3">
+            <div class="flex flex-wrap gap-2">
               <button
-                v-for="t in ['B2B', 'B2C']" :key="t"
-                @click="form.type = t as 'B2B' | 'B2C'"
+                v-for="t in clientTypes" :key="t.value"
+                @click="form.client_type = t.value"
                 :class="[
-                  'flex-1 py-2 rounded-lg border text-sm font-medium transition-colors',
-                  form.type === t
+                  'px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors',
+                  form.client_type === t.value
                     ? 'border-amber bg-amber/10 text-amber'
                     : 'border-charcoal-600 bg-charcoal-700/50 text-cream-faint hover:border-charcoal-500 hover:text-cream'
                 ]"
               >
-                {{ t }}
+                {{ t.label }}
               </button>
             </div>
-            <small v-if="getError('type').value" class="text-red-400 text-xs">{{ getError('type').value }}</small>
+            <small v-if="getError('client_type').value" class="text-red-400 text-xs">{{ getError('client_type').value }}</small>
           </div>
         </div>
       </div>
@@ -137,7 +176,6 @@ const handleSubmit = async () => {
             v-model="form.email"
             label-text="Email Address"
             type="email"
-            :is-required="true"
             :error="getError('email').value || ''"
             input-classes="px-2 py-2 text-sm transition-colors"
             autocomplete="email"

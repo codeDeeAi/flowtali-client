@@ -9,9 +9,13 @@ import { useNotification } from '@/composables/notification.ts';
 import { clientSchema } from './validation/schema.ts';
 import InputField from '@/components/form/InputField.vue';
 import TextArea from '@/components/form/TextArea.vue';
+import { useAuthStore } from '@/stores/auth';
+import { ClientService } from '@/services/client.service';
+import type { ClientType } from '@/types/client.types';
 
-const router = useRouter();
-const route = useRoute();
+const router    = useRouter();
+const route     = useRoute();
+const authStore = useAuthStore();
 const { notify } = useNotification();
 const { validate } = useYupForm();
 const { setErrors, clearAllErrors, getError } = useFormErrors();
@@ -19,57 +23,63 @@ const { initLoaders, setLoader, getLoader } = useLoaders();
 
 initLoaders({ isSaving: false, isLoading: true });
 
-// Mock data — in a real app this would be fetched by ID
-const mockClients = [
-  { id: 1, name: 'James Johnson',   company: 'Globex Corporation', email: 'james@globex.com',    phone: '+1 212 555 0100',  type: 'B2B' as const, address: '123 Broadway, New York, NY', notes: 'Key enterprise account.' },
-  { id: 2, name: 'Sofia Martinez',  company: 'Pixel Works Ltd',    email: 'sofia@pixelworks.io', phone: '+44 20 7946 0958', type: 'B2B' as const, address: '10 Downing St, London',        notes: '' },
-  { id: 3, name: 'Kofi Acheampong', company: 'Nova Agency',        email: 'kofi@nova.co',        phone: '+233 30 295 0100', type: 'B2B' as const, address: 'Accra, Ghana',                notes: '' },
-  { id: 4, name: 'Priya Nair',      company: 'Freelance',          email: 'priya@mail.com',      phone: '+91 98765 43210',  type: 'B2C' as const, address: 'Mumbai, India',               notes: 'Prefers invoices in USD.' },
-  { id: 5, name: 'Marcus Bell',     company: 'Studio X',           email: 'marcus@studiox.co',   phone: '+1 415 555 0199',  type: 'B2B' as const, address: 'San Francisco, CA',           notes: '' },
-  { id: 6, name: 'Chen Wei',        company: 'Frontier Tech',      email: 'chen@frontier.tech',  phone: '+86 10 6552 9988', type: 'B2B' as const, address: 'Beijing, China',              notes: '' },
-];
+const orgId    = computed(() => authStore.getCurrentOrganization?.id ?? '');
+const clientId = route.params.id as string;
+
+const clientTypes = ref<{ value: ClientType; label: string }[]>([]);
+const notFound    = ref(false);
 
 const form = ref({
-  name: '',
+  full_name: '',
   company: '',
+  client_type: '' as ClientType | '',
   email: '',
   phone: '',
-  type: '' as 'B2B' | 'B2C' | '',
   address: '',
   notes: '',
 });
 
-const notFound = ref(false);
+const canSubmit = computed(() =>
+  !!form.value.full_name && !!form.value.client_type
+);
 
 onMounted(async () => {
-  // Simulate fetch
-  await new Promise(resolve => setTimeout(resolve, 400));
+  try {
+    const [clientRes, formRes] = await Promise.all([
+      ClientService.get(orgId.value, clientId),
+      ClientService.formData(orgId.value),
+    ]);
 
-  const id = Number(route.params.id);
-  const client = mockClients.find(c => c.id === id);
+    const client = clientRes.data.data;
+    clientTypes.value = formRes.data.data.client_types;
 
-  if (!client) {
-    notFound.value = true;
+    form.value = {
+      full_name: client.full_name,
+      company: client.company ?? '',
+      client_type: client.client_type,
+      email: client.email ?? '',
+      phone: client.phone_numbers?.[0] ?? '',
+      address: client.address?.full ?? '',
+      notes: client.notes ?? '',
+    };
+  } catch (error: any) {
+    if (error?.response?.status === 404) {
+      notFound.value = true;
+    } else {
+      notify('Failed to load client.', 'error');
+      router.push({ name: 'clients' });
+    }
+    clientTypes.value = [
+      { value: 'organization', label: 'Organization' },
+      { value: 'individual', label: 'Individual' },
+      { value: 'freelancer', label: 'Freelancer' },
+      { value: 'agency', label: 'Agency' },
+      { value: 'other', label: 'Other' },
+    ];
+  } finally {
     setLoader('isLoading', false);
-    return;
   }
-
-  form.value = {
-    name: client.name,
-    company: client.company,
-    email: client.email,
-    phone: client.phone,
-    type: client.type,
-    address: client.address,
-    notes: client.notes,
-  };
-
-  setLoader('isLoading', false);
 });
-
-const canSubmit = computed(() =>
-  !!form.value.name && !!form.value.email && !!form.value.type
-);
 
 const handleSubmit = async () => {
   try {
@@ -84,13 +94,21 @@ const handleSubmit = async () => {
 
     setLoader('isSaving', true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1200));
+    await ClientService.update(orgId.value, clientId, {
+      full_name: form.value.full_name,
+      company: form.value.company || null,
+      client_type: form.value.client_type as ClientType,
+      email: form.value.email || null,
+      phone_numbers: form.value.phone ? [form.value.phone] : null,
+      address: form.value.address ? { full: form.value.address } : null,
+      notes: form.value.notes || null,
+    });
 
     notify('Client updated successfully!', 'success');
-    router.push({ name: 'clients' });
-  } catch (error) {
-    console.log('Edit client error:', error);
+    router.push({ name: 'clients.view', params: { id: clientId } });
+  } catch (error: any) {
+    const msg = error?.response?.data?.message ?? 'Failed to update client.';
+    notify(msg, 'error');
   } finally {
     setLoader('isSaving', false);
   }
@@ -139,11 +157,11 @@ const handleSubmit = async () => {
         <div class="space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <InputField
-              v-model="form.name"
+              v-model="form.full_name"
               label-text="Full Name"
               type="text"
               :is-required="true"
-              :error="getError('name').value || ''"
+              :error="getError('full_name').value || ''"
               input-classes="px-2 py-2 text-sm transition-colors"
               placeholder="John Doe"
             />
@@ -163,21 +181,21 @@ const handleSubmit = async () => {
               <span>Client Type</span>
               <span class="text-red-400 ml-0.5">*</span>
             </label>
-            <div class="flex gap-3">
+            <div class="flex flex-wrap gap-2">
               <button
-                v-for="t in ['B2B', 'B2C']" :key="t"
-                @click="form.type = t as 'B2B' | 'B2C'"
+                v-for="t in clientTypes" :key="t.value"
+                @click="form.client_type = t.value"
                 :class="[
-                  'flex-1 py-2 rounded-lg border text-sm font-medium transition-colors',
-                  form.type === t
+                  'px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors',
+                  form.client_type === t.value
                     ? 'border-amber bg-amber/10 text-amber'
                     : 'border-charcoal-600 bg-charcoal-700/50 text-cream-faint hover:border-charcoal-500 hover:text-cream'
                 ]"
               >
-                {{ t }}
+                {{ t.label }}
               </button>
             </div>
-            <small v-if="getError('type').value" class="text-red-400 text-xs">{{ getError('type').value }}</small>
+            <small v-if="getError('client_type').value" class="text-red-400 text-xs">{{ getError('client_type').value }}</small>
           </div>
         </div>
       </div>
@@ -192,7 +210,6 @@ const handleSubmit = async () => {
             v-model="form.email"
             label-text="Email Address"
             type="email"
-            :is-required="true"
             :error="getError('email').value || ''"
             input-classes="px-2 py-2 text-sm transition-colors"
             autocomplete="email"
