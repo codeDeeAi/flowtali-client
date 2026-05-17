@@ -1,133 +1,188 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { Icon } from '@iconify/vue';
-import { useNotification } from '@/composables/notification.ts';
-import Pagination from '@/components/ui/Pagination.vue';
+import { ref, computed, onMounted } from 'vue'
+import { Icon } from '@iconify/vue'
+import { useNotification } from '@/composables/notification.ts'
+import { useAuthStore } from '@/stores/auth.ts'
+import Pagination from '@/components/ui/Pagination.vue'
+import { RoleService } from '@/services/role.service.ts'
+import type { IRole, IPermissionGroup } from '@/types/role.types'
 
-const { notify } = useNotification();
+const { notify } = useNotification()
+const authStore = useAuthStore()
+const orgId = computed(() => authStore.getCurrentOrganization?.id ?? '')
 
-interface Permission {
-  resource: string;
-  view: boolean | null;
-  create: boolean | null;
-  edit: boolean | null;
-  delete: boolean | null;
-  manage: boolean | null;
+const ALL_TAGS = ['read', 'create', 'update', 'delete', 'manage'] as const
+type Tag = (typeof ALL_TAGS)[number]
+
+// ─── State ────────────────────────────────────────────────────────────────────
+const roles = ref<IRole[]>([])
+const permissionGroups = ref<IPermissionGroup[]>([])
+const selectedRole = ref<IRole | null>(null)
+const currentPage = ref(1)
+const lastPage = ref(1)
+const total = ref(0)
+const perPage = 10
+const isLoading = ref(false)
+
+// ─── Data loading ─────────────────────────────────────────────────────────────
+const loadRoles = async (page = 1) => {
+  if (!orgId.value) return
+  isLoading.value = true
+  try {
+    const res = await RoleService.list(orgId.value, { page, per_page: perPage })
+    const d = res.data.data
+    roles.value = d.data
+    currentPage.value = d.current_page
+    lastPage.value = d.last_page
+    total.value = d.total
+    if (!selectedRole.value && d.data.length) selectedRole.value = d.data[0]!
+    else if (selectedRole.value) {
+      const refreshed = d.data.find((r) => r.id === selectedRole.value!.id)
+      if (refreshed) selectedRole.value = refreshed
+    }
+  } catch {
+    notify('Failed to load roles.', 'error')
+  } finally {
+    isLoading.value = false
+  }
 }
 
-interface Role {
-  id: number;
-  name: string;
-  system: boolean;
-  members: number;
-  desc: string;
-  permissions: Permission[];
+const loadFormData = async () => {
+  if (!orgId.value) return
+  try {
+    const res = await RoleService.formData(orgId.value)
+    permissionGroups.value = res.data.data.permission_groups
+  } catch {
+    // silently fail — modal will just be empty
+  }
 }
 
-const resources = ['Invoices', 'Letterheads', 'Clients', 'Members', 'Settings', 'Billing', 'Audit Logs'];
-const actions = ['view', 'create', 'edit', 'delete', 'manage'] as const;
+onMounted(() => {
+  loadRoles()
+  loadFormData()
+})
 
-const p = (resource: string, v: boolean | null, c: boolean | null, e: boolean | null, d: boolean | null, m: boolean | null): Permission =>
-  ({ resource, view: v, create: c, edit: e, delete: d, manage: m });
+// ─── Permission helpers ───────────────────────────────────────────────────────
+const getIdentifier = (group: IPermissionGroup, tag: Tag): string | null => {
+  return group.permissions.find((p) => p.tag === tag)?.identifier ?? null
+}
 
-const roles = ref<Role[]>([
-  { id: 1, name: 'Owner',  system: true,  members: 1, desc: 'Full access to everything',
-    permissions: [p('Invoices',true,true,true,true,true),p('Letterheads',true,true,true,true,true),p('Clients',true,true,true,true,true),p('Members',true,true,true,true,true),p('Settings',true,true,true,true,true),p('Billing',true,true,true,true,true),p('Audit Logs',true,false,false,false,true)] },
-  { id: 2, name: 'Admin',  system: true,  members: 1, desc: 'Full access except billing',
-    permissions: [p('Invoices',true,true,true,true,true),p('Letterheads',true,true,true,true,true),p('Clients',true,true,true,true,true),p('Members',true,true,true,false,true),p('Settings',true,true,true,false,false),p('Billing',true,false,false,false,false),p('Audit Logs',true,false,false,false,false)] },
-  { id: 3, name: 'Editor', system: true,  members: 2, desc: 'Can edit all documents',
-    permissions: [p('Invoices',true,true,true,false,false),p('Letterheads',true,true,true,false,false),p('Clients',true,true,true,false,false),p('Members',true,false,false,false,false),p('Settings',false,false,false,false,false),p('Billing',false,false,false,false,false),p('Audit Logs',false,false,false,false,false)] },
-  { id: 4, name: 'Member', system: true,  members: 2, desc: 'Can manage own documents only',
-    permissions: [p('Invoices',true,true,null,false,false),p('Letterheads',true,true,null,false,false),p('Clients',true,true,null,false,false),p('Members',true,false,false,false,false),p('Settings',false,false,false,false,false),p('Billing',false,false,false,false,false),p('Audit Logs',false,false,false,false,false)] },
-  { id: 5, name: 'Viewer', system: false, members: 0, desc: 'Read-only access',
-    permissions: [p('Invoices',true,false,false,false,false),p('Letterheads',true,false,false,false,false),p('Clients',true,false,false,false,false),p('Members',true,false,false,false,false),p('Settings',false,false,false,false,false),p('Billing',false,false,false,false,false),p('Audit Logs',false,false,false,false,false)] },
-  { id: 6, name: 'Billing Manager', system: false, members: 0, desc: 'Can view and manage billing only',
-    permissions: [p('Invoices',true,false,false,false,false),p('Letterheads',false,false,false,false,false),p('Clients',true,false,false,false,false),p('Members',false,false,false,false,false),p('Settings',false,false,false,false,false),p('Billing',true,true,true,false,true),p('Audit Logs',true,false,false,false,false)] },
-]);
+const roleHasTag = (role: IRole | null, group: IPermissionGroup, tag: Tag): boolean => {
+  if (!role) return false
+  const id = getIdentifier(group, tag)
+  return id ? role.permissions.includes(id) : false
+}
 
-const selectedRole = ref<Role>(roles.value[0]);
-const currentPage  = ref(1);
-const perPage      = 3;
+const groupHasTag = (group: IPermissionGroup, tag: Tag): boolean =>
+  group.permissions.some((p) => p.tag === tag)
 
-const paginated = computed(() => {
-  const start = (currentPage.value - 1) * perPage;
-  return roles.value.slice(start, start + perPage);
-});
+// ─── Create / Edit modals ─────────────────────────────────────────────────────
+const showCreateModal = ref(false)
+const showEditModal = ref(false)
+const showDeleteConfirm = ref(false)
+const isSaving = ref(false)
 
-// ─── Create / Edit ────────────────────────────────────────────────────────────
-const showCreateModal  = ref(false);
-const showEditModal    = ref(false);
-const showDeleteConfirm = ref(false);
-const targetRole       = ref<Role | null>(null);
-
-const blankPerms = () => resources.map(r => p(r, false, false, false, false, false));
-
-const createForm = ref({ name: '', desc: '', permissions: blankPerms() });
-const editForm   = ref({ name: '', desc: '', permissions: blankPerms() });
+const createForm = ref({ name: '', description: '', permissions: new Set<string>() })
+const editForm = ref({ name: '', description: '', permissions: new Set<string>() })
+const targetRole = ref<IRole | null>(null)
 
 const openCreate = () => {
-  createForm.value = { name: '', desc: '', permissions: blankPerms() };
-  showCreateModal.value = true;
-};
+  createForm.value = { name: '', description: '', permissions: new Set() }
+  showCreateModal.value = true
+}
 
-const openEdit = (role: Role) => {
-  targetRole.value = role;
+const openEdit = (role: IRole) => {
+  targetRole.value = role
   editForm.value = {
     name: role.name,
-    desc: role.desc,
-    permissions: role.permissions.map(p => ({ ...p })),
-  };
-  showEditModal.value = true;
-};
-
-const openDelete = (role: Role) => {
-  targetRole.value = role;
-  showDeleteConfirm.value = true;
-};
-
-const handleCreate = () => {
-  if (!createForm.value.name.trim()) return;
-  const newRole: Role = {
-    id: Date.now(),
-    name: createForm.value.name.trim(),
-    desc: createForm.value.desc.trim(),
-    system: false,
-    members: 0,
-    permissions: createForm.value.permissions,
-  };
-  roles.value.push(newRole);
-  selectedRole.value = newRole;
-  notify(`Role "${newRole.name}" created`, 'success');
-  showCreateModal.value = false;
-};
-
-const handleEdit = () => {
-  if (!targetRole.value || !editForm.value.name.trim()) return;
-  const role = roles.value.find(r => r.id === targetRole.value!.id);
-  if (role) {
-    role.name = editForm.value.name;
-    role.desc = editForm.value.desc;
-    role.permissions = editForm.value.permissions;
-    if (selectedRole.value.id === role.id) selectedRole.value = { ...role };
+    description: role.description ?? '',
+    permissions: new Set(role.permissions),
   }
-  notify(`Role "${editForm.value.name}" updated`, 'success');
-  showEditModal.value = false;
-};
+  showEditModal.value = true
+}
 
-const handleDelete = () => {
-  if (!targetRole.value) return;
-  roles.value = roles.value.filter(r => r.id !== targetRole.value!.id);
-  if (selectedRole.value.id === targetRole.value.id) selectedRole.value = roles.value[0];
-  if ((currentPage.value - 1) * perPage >= roles.value.length && currentPage.value > 1) currentPage.value--;
-  notify(`Role "${targetRole.value.name}" deleted`, 'success');
-  showDeleteConfirm.value = false;
-};
+const openDelete = (role: IRole) => {
+  targetRole.value = role
+  showDeleteConfirm.value = true
+}
 
-// Toggle helper for permission matrices
-const togglePerm = (perms: Permission[], idx: number, key: keyof Permission) => {
-  const cur = (perms[idx] as any)[key];
-  (perms[idx] as any)[key] = cur === true ? false : true;
-};
+const toggleCreatePerm = (group: IPermissionGroup, tag: Tag) => {
+  const id = getIdentifier(group, tag)
+  if (!id) return
+  if (createForm.value.permissions.has(id)) createForm.value.permissions.delete(id)
+  else createForm.value.permissions.add(id)
+}
+
+const toggleEditPerm = (group: IPermissionGroup, tag: Tag) => {
+  const id = getIdentifier(group, tag)
+  if (!id) return
+  if (editForm.value.permissions.has(id)) editForm.value.permissions.delete(id)
+  else editForm.value.permissions.add(id)
+}
+
+const handleCreate = async () => {
+  if (!createForm.value.name.trim()) return
+  isSaving.value = true
+  try {
+    await RoleService.create(orgId.value, {
+      name: createForm.value.name.trim(),
+      description: createForm.value.description.trim() || null,
+      permissions: [...createForm.value.permissions],
+    })
+    notify(`Role "${createForm.value.name}" created`, 'success')
+    showCreateModal.value = false
+    await loadRoles(currentPage.value)
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } } }
+    const msg = err?.response?.data?.message ?? 'Failed to create role.'
+    notify(msg, 'error')
+  } finally {
+    isSaving.value = false
+  }
+}
+
+const handleEdit = async () => {
+  if (!targetRole.value || !editForm.value.name.trim()) return
+  isSaving.value = true
+  try {
+    const updated = await RoleService.update(orgId.value, targetRole.value.id, {
+      name: editForm.value.name.trim(),
+      description: editForm.value.description.trim() || null,
+      permissions: [...editForm.value.permissions],
+    })
+    notify(`Role "${editForm.value.name}" updated`, 'success')
+    showEditModal.value = false
+    const updatedRole = updated.data.data
+    const idx = roles.value.findIndex((r) => r.id === updatedRole.id)
+    if (idx !== -1) roles.value[idx] = updatedRole
+    if (selectedRole.value?.id === updatedRole.id) selectedRole.value = updatedRole
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } } }
+    const msg = err?.response?.data?.message ?? 'Failed to update role.'
+    notify(msg, 'error')
+  } finally {
+    isSaving.value = false
+  }
+}
+
+const handleDelete = async () => {
+  if (!targetRole.value) return
+  isSaving.value = true
+  try {
+    await RoleService.delete(orgId.value, targetRole.value.id)
+    notify(`Role "${targetRole.value.name}" deleted`, 'success')
+    showDeleteConfirm.value = false
+    if (selectedRole.value?.id === targetRole.value.id) selectedRole.value = null
+    await loadRoles(currentPage.value > 1 && roles.value.length === 1 ? currentPage.value - 1 : currentPage.value)
+    if (!selectedRole.value && roles.value.length > 0) selectedRole.value = roles.value[0] ?? null
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } } }
+    const msg = err?.response?.data?.message ?? 'Failed to delete role.'
+    notify(msg, 'error')
+  } finally {
+    isSaving.value = false
+  }
+}
 </script>
 
 <template>
@@ -137,7 +192,7 @@ const togglePerm = (perms: Permission[], idx: number, key: keyof Permission) => 
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div>
         <h1 class="page-title">Roles & Permissions</h1>
-        <p class="page-subtitle">{{ roles.length }} roles · manage access control for Acme Design Studio</p>
+        <p class="page-subtitle">{{ total }} role{{ total !== 1 ? 's' : '' }} · manage access control</p>
       </div>
       <button @click="openCreate" class="flex items-center gap-2 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs px-3 py-2 rounded-lg transition-colors self-start sm:self-auto">
         <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Create Role
@@ -146,22 +201,30 @@ const togglePerm = (perms: Permission[], idx: number, key: keyof Permission) => 
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-      <!-- Role list + pagination -->
+      <!-- Role list -->
       <div class="flex flex-col gap-3">
         <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden">
           <div class="px-4 py-3 border-b border-charcoal-700">
-            <span class="text-xs font-semibold text-cream">Roles ({{ roles.length }})</span>
+            <span class="text-xs font-semibold text-cream">Roles ({{ total }})</span>
           </div>
+
+          <div v-if="isLoading" class="px-4 py-8 text-center text-cream-faint text-sm">Loading…</div>
+
+          <div v-else-if="!roles.length" class="px-4 py-8 text-center text-cream-faint text-sm">No roles found.</div>
+
           <div
-            v-for="role in paginated" :key="role.id"
-            :class="['px-4 py-3.5 border-b border-charcoal-700/60 last:border-0 cursor-pointer transition-colors group', selectedRole.id === role.id ? 'bg-amber/5' : 'hover:bg-charcoal-700/40']"
+            v-for="role in roles" :key="role.id"
+            :class="['px-4 py-3.5 border-b border-charcoal-700/60 last:border-0 cursor-pointer transition-colors group', selectedRole?.id === role.id ? 'bg-amber/5' : 'hover:bg-charcoal-700/40']"
             @click="selectedRole = role"
           >
             <div class="flex items-center justify-between mb-1">
               <span class="text-sm font-medium text-cream">{{ role.name }}</span>
               <div class="flex items-center gap-1.5">
-                <span :class="['status-badge text-[9px]', role.system ? 'role-system' : 'role-custom']">{{ role.system ? 'System' : 'Custom' }}</span>
-                <div v-if="!role.system" class="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity" @click.stop>
+                <span :class="['status-badge text-[9px]', role.immutable ? 'role-system' : 'role-custom']">
+                  {{ role.immutable ? 'System' : 'Custom' }}
+                </span>
+                <span v-if="role.is_disabled" class="status-badge text-[9px] status-inactive">Disabled</span>
+                <div v-if="!role.immutable" class="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity" @click.stop>
                   <button @click="openEdit(role)" class="p-1 rounded hover:bg-charcoal-600 text-cream-faint hover:text-cream transition-colors">
                     <Icon icon="lucide:pencil" class="w-3 h-3" />
                   </button>
@@ -171,67 +234,72 @@ const togglePerm = (perms: Permission[], idx: number, key: keyof Permission) => 
                 </div>
               </div>
             </div>
-            <div class="text-xs text-cream-faint">{{ role.members }} member{{ role.members !== 1 ? 's' : '' }}</div>
-            <div class="text-xs text-cream-faint/70 mt-0.5 truncate">{{ role.desc }}</div>
+            <div class="text-xs text-cream-faint">{{ role.member_roles_count }} member{{ role.member_roles_count !== 1 ? 's' : '' }}</div>
+            <div v-if="role.description" class="text-xs text-cream-faint/70 mt-0.5 truncate">{{ role.description }}</div>
           </div>
         </div>
 
-        <Pagination v-model="currentPage" :total="roles.length" :per-page="perPage" />
+        <Pagination v-model="currentPage" :total="total" :per-page="perPage" @update:model-value="loadRoles($event)" />
       </div>
 
       <!-- Permissions matrix -->
       <div class="md:col-span-2 bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden">
-        <div class="flex items-center justify-between px-4 py-3.5 border-b border-charcoal-700">
-          <div>
-            <div class="text-sm font-semibold text-cream">{{ selectedRole.name }} Permissions</div>
-            <div class="text-xs text-cream-faint mt-0.5">{{ selectedRole.desc }}</div>
-          </div>
-          <button v-if="!selectedRole.system" @click="openEdit(selectedRole)" class="flex items-center gap-1.5 text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-3 py-1.5 rounded-md transition-colors">
-            <Icon icon="lucide:pencil" class="w-3 h-3" /> Edit Role
-          </button>
+        <div v-if="!selectedRole" class="flex items-center justify-center h-48 text-cream-faint text-sm">
+          Select a role to view its permissions
         </div>
+        <template v-else>
+          <div class="flex items-center justify-between px-4 py-3.5 border-b border-charcoal-700">
+            <div>
+              <div class="text-sm font-semibold text-cream">{{ selectedRole.name }} Permissions</div>
+              <div v-if="selectedRole.description" class="text-xs text-cream-faint mt-0.5">{{ selectedRole.description }}</div>
+            </div>
+            <button v-if="!selectedRole.immutable" @click="openEdit(selectedRole)" class="flex items-center gap-1.5 text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-3 py-1.5 rounded-md transition-colors">
+              <Icon icon="lucide:pencil" class="w-3 h-3" /> Edit Role
+            </button>
+          </div>
 
-        <div class="overflow-x-auto">
-          <table class="app-table">
-            <thead>
-              <tr>
-                <th class="min-w-32">Resource</th>
-                <th v-for="a in actions" :key="a" class="text-center capitalize">{{ a }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="perm in selectedRole.permissions" :key="perm.resource">
-                <td class="font-medium text-cream text-sm">{{ perm.resource }}</td>
-                <td v-for="a in actions" :key="a" class="text-center">
-                  <div v-if="(perm as any)[a] === true" class="w-5 h-5 rounded-md bg-green-500/10 border border-green-500/25 flex items-center justify-center mx-auto">
-                    <Icon icon="lucide:check" class="w-3 h-3 text-green-400" />
-                  </div>
-                  <div v-else-if="(perm as any)[a] === null" class="w-5 h-5 rounded-md bg-amber/8 border border-amber/20 flex items-center justify-center mx-auto">
-                    <Icon icon="lucide:minus" class="w-2.5 h-2.5 text-amber" />
-                  </div>
-                  <div v-else class="w-5 h-5 rounded-md bg-charcoal-700/50 border border-charcoal-600 flex items-center justify-center mx-auto">
-                    <Icon icon="lucide:x" class="w-2.5 h-2.5 text-cream-faint" />
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+          <div class="overflow-x-auto">
+            <table class="app-table">
+              <thead>
+                <tr>
+                  <th class="min-w-32">Resource</th>
+                  <th v-for="tag in ALL_TAGS" :key="tag" class="text-center capitalize">{{ tag }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="group in permissionGroups" :key="group.group_name">
+                  <td class="font-medium text-cream text-sm">{{ group.name }}</td>
+                  <td v-for="tag in ALL_TAGS" :key="tag" class="text-center">
+                    <div v-if="!groupHasTag(group, tag)" class="w-5 h-5 rounded-md bg-charcoal-700/20 flex items-center justify-center mx-auto">
+                      <Icon icon="lucide:minus" class="w-2.5 h-2.5 text-charcoal-600" />
+                    </div>
+                    <div v-else-if="roleHasTag(selectedRole, group, tag)" class="w-5 h-5 rounded-md bg-green-500/10 border border-green-500/25 flex items-center justify-center mx-auto">
+                      <Icon icon="lucide:check" class="w-3 h-3 text-green-400" />
+                    </div>
+                    <div v-else class="w-5 h-5 rounded-md bg-charcoal-700/50 border border-charcoal-600 flex items-center justify-center mx-auto">
+                      <Icon icon="lucide:x" class="w-2.5 h-2.5 text-cream-faint" />
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-        <div class="flex items-center gap-4 px-4 py-3 border-t border-charcoal-700">
-          <div class="flex items-center gap-1.5 text-xs text-cream-faint">
-            <div class="w-4 h-4 rounded bg-green-500/10 border border-green-500/25 flex items-center justify-center"><Icon icon="lucide:check" class="w-2.5 h-2.5 text-green-400" /></div>
-            Allowed
+          <div class="flex items-center gap-4 px-4 py-3 border-t border-charcoal-700">
+            <div class="flex items-center gap-1.5 text-xs text-cream-faint">
+              <div class="w-4 h-4 rounded bg-green-500/10 border border-green-500/25 flex items-center justify-center"><Icon icon="lucide:check" class="w-2.5 h-2.5 text-green-400" /></div>
+              Allowed
+            </div>
+            <div class="flex items-center gap-1.5 text-xs text-cream-faint">
+              <div class="w-4 h-4 rounded bg-charcoal-700/50 border border-charcoal-600 flex items-center justify-center"><Icon icon="lucide:x" class="w-2.5 h-2.5 text-cream-faint" /></div>
+              Denied
+            </div>
+            <div class="flex items-center gap-1.5 text-xs text-cream-faint">
+              <div class="w-4 h-4 rounded bg-charcoal-700/20 flex items-center justify-center"><Icon icon="lucide:minus" class="w-2.5 h-2.5 text-charcoal-600" /></div>
+              N/A
+            </div>
           </div>
-          <div class="flex items-center gap-1.5 text-xs text-cream-faint">
-            <div class="w-4 h-4 rounded bg-charcoal-700/50 border border-charcoal-600 flex items-center justify-center"><Icon icon="lucide:x" class="w-2.5 h-2.5 text-cream-faint" /></div>
-            Denied
-          </div>
-          <div class="flex items-center gap-1.5 text-xs text-cream-faint">
-            <div class="w-4 h-4 rounded bg-amber/8 border border-amber/20 flex items-center justify-center"><Icon icon="lucide:minus" class="w-2.5 h-2.5 text-amber" /></div>
-            Own only
-          </div>
-        </div>
+        </template>
       </div>
     </div>
   </div>
@@ -256,40 +324,48 @@ const togglePerm = (perms: Permission[], idx: number, key: keyof Permission) => 
               </div>
               <div class="space-y-1">
                 <label class="text-xs text-cream-faint">Description</label>
-                <input v-model="createForm.desc" class="app-inp text-sm py-2 px-2" placeholder="What can this role do?" />
+                <input v-model="createForm.description" class="app-inp text-sm py-2 px-2" placeholder="What can this role do?" />
               </div>
             </div>
 
-            <!-- Permissions -->
             <div>
               <div class="text-xs font-medium text-cream-faint uppercase tracking-wider mb-3">Permissions</div>
               <div class="border border-charcoal-600 rounded-xl overflow-hidden">
                 <div class="grid grid-cols-[1fr_repeat(5,40px)] gap-0 text-[10px] font-semibold uppercase tracking-wider text-cream-faint bg-charcoal-700/50 px-4 py-2">
                   <span>Resource</span>
-                  <span class="text-center" v-for="a in actions" :key="a">{{ a[0].toUpperCase() }}</span>
+                  <span class="text-center" v-for="tag in ALL_TAGS" :key="tag">{{ tag[0]?.toUpperCase() }}</span>
                 </div>
                 <div
-                  v-for="(perm, i) in createForm.permissions" :key="perm.resource"
-                  :class="['grid grid-cols-[1fr_repeat(5,40px)] gap-0 items-center px-4 py-2.5 border-t border-charcoal-700/40', i % 2 === 0 ? '' : 'bg-charcoal-700/20']"
+                  v-for="(group, i) in permissionGroups" :key="group.group_name"
+                  :class="['grid grid-cols-[1fr_repeat(5,40px)] gap-0 items-center px-4 py-2.5 border-t border-charcoal-700/40', i % 2 !== 0 ? 'bg-charcoal-700/20' : '']"
                 >
-                  <span class="text-sm text-cream">{{ perm.resource }}</span>
-                  <div v-for="a in actions" :key="a" class="flex justify-center">
+                  <span class="text-sm text-cream">{{ group.name }}</span>
+                  <div v-for="tag in ALL_TAGS" :key="tag" class="flex justify-center">
                     <button
-                      @click="togglePerm(createForm.permissions, i, a as keyof Permission)"
-                      :class="['w-5 h-5 rounded border transition-colors', (perm as any)[a] ? 'bg-amber border-amber' : 'border-charcoal-500 hover:border-charcoal-400']"
+                      v-if="groupHasTag(group, tag)"
+                      @click="toggleCreatePerm(group, tag)"
+                      :class="['w-5 h-5 rounded border transition-colors', createForm.permissions.has(getIdentifier(group, tag)!) ? 'bg-amber border-amber' : 'border-charcoal-500 hover:border-charcoal-400']"
                     >
-                      <Icon v-if="(perm as any)[a]" icon="lucide:check" class="w-3 h-3 text-charcoal-900 mx-auto" />
+                      <Icon v-if="createForm.permissions.has(getIdentifier(group, tag)!)" icon="lucide:check" class="w-3 h-3 text-charcoal-900 mx-auto" />
                     </button>
+                    <div v-else class="w-5 h-5"></div>
                   </div>
                 </div>
               </div>
-              <p class="text-[10px] text-cream-faint mt-1.5">V=View · C=Create · E=Edit · D=Delete · M=Manage</p>
+              <p class="text-[10px] text-cream-faint mt-1.5">R=Read · C=Create · U=Update · D=Delete · M=Manage</p>
             </div>
           </div>
 
           <div class="flex gap-2">
             <button @click="showCreateModal = false" class="flex-1 py-2.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-sm transition-colors">Cancel</button>
-            <button @click="handleCreate" :disabled="!createForm.name.trim()" :class="['flex-1 py-2.5 rounded-lg font-semibold text-sm transition-colors', createForm.name.trim() ? 'bg-amber hover:bg-amber-light text-charcoal-900' : 'bg-amber/40 text-charcoal-900/50 cursor-not-allowed']">Create Role</button>
+            <button
+              @click="handleCreate"
+              :disabled="!createForm.name.trim() || isSaving"
+              :class="['flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg font-semibold text-sm transition-colors', createForm.name.trim() && !isSaving ? 'bg-amber hover:bg-amber-light text-charcoal-900' : 'bg-amber/40 text-charcoal-900/50 cursor-not-allowed']"
+            >
+              <Icon v-if="isSaving" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
+              {{ isSaving ? 'Creating…' : 'Create Role' }}
+            </button>
           </div>
         </div>
       </div>
@@ -316,7 +392,7 @@ const togglePerm = (perms: Permission[], idx: number, key: keyof Permission) => 
               </div>
               <div class="space-y-1">
                 <label class="text-xs text-cream-faint">Description</label>
-                <input v-model="editForm.desc" class="app-inp text-sm py-2 px-2" />
+                <input v-model="editForm.description" class="app-inp text-sm py-2 px-2" />
               </div>
             </div>
 
@@ -325,30 +401,39 @@ const togglePerm = (perms: Permission[], idx: number, key: keyof Permission) => 
               <div class="border border-charcoal-600 rounded-xl overflow-hidden">
                 <div class="grid grid-cols-[1fr_repeat(5,40px)] gap-0 text-[10px] font-semibold uppercase tracking-wider text-cream-faint bg-charcoal-700/50 px-4 py-2">
                   <span>Resource</span>
-                  <span class="text-center" v-for="a in actions" :key="a">{{ a[0].toUpperCase() }}</span>
+                  <span class="text-center" v-for="tag in ALL_TAGS" :key="tag">{{ tag[0]?.toUpperCase() }}</span>
                 </div>
                 <div
-                  v-for="(perm, i) in editForm.permissions" :key="perm.resource"
-                  :class="['grid grid-cols-[1fr_repeat(5,40px)] gap-0 items-center px-4 py-2.5 border-t border-charcoal-700/40', i % 2 === 0 ? '' : 'bg-charcoal-700/20']"
+                  v-for="(group, i) in permissionGroups" :key="group.group_name"
+                  :class="['grid grid-cols-[1fr_repeat(5,40px)] gap-0 items-center px-4 py-2.5 border-t border-charcoal-700/40', i % 2 !== 0 ? 'bg-charcoal-700/20' : '']"
                 >
-                  <span class="text-sm text-cream">{{ perm.resource }}</span>
-                  <div v-for="a in actions" :key="a" class="flex justify-center">
+                  <span class="text-sm text-cream">{{ group.name }}</span>
+                  <div v-for="tag in ALL_TAGS" :key="tag" class="flex justify-center">
                     <button
-                      @click="togglePerm(editForm.permissions, i, a as keyof Permission)"
-                      :class="['w-5 h-5 rounded border transition-colors', (perm as any)[a] ? 'bg-amber border-amber' : 'border-charcoal-500 hover:border-charcoal-400']"
+                      v-if="groupHasTag(group, tag)"
+                      @click="toggleEditPerm(group, tag)"
+                      :class="['w-5 h-5 rounded border transition-colors', editForm.permissions.has(getIdentifier(group, tag)!) ? 'bg-amber border-amber' : 'border-charcoal-500 hover:border-charcoal-400']"
                     >
-                      <Icon v-if="(perm as any)[a]" icon="lucide:check" class="w-3 h-3 text-charcoal-900 mx-auto" />
+                      <Icon v-if="editForm.permissions.has(getIdentifier(group, tag)!)" icon="lucide:check" class="w-3 h-3 text-charcoal-900 mx-auto" />
                     </button>
+                    <div v-else class="w-5 h-5"></div>
                   </div>
                 </div>
               </div>
-              <p class="text-[10px] text-cream-faint mt-1.5">V=View · C=Create · E=Edit · D=Delete · M=Manage</p>
+              <p class="text-[10px] text-cream-faint mt-1.5">R=Read · C=Create · U=Update · D=Delete · M=Manage</p>
             </div>
           </div>
 
           <div class="flex gap-2">
             <button @click="showEditModal = false" class="flex-1 py-2.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-sm transition-colors">Cancel</button>
-            <button @click="handleEdit" :disabled="!editForm.name.trim()" :class="['flex-1 py-2.5 rounded-lg font-semibold text-sm transition-colors', editForm.name.trim() ? 'bg-amber hover:bg-amber-light text-charcoal-900' : 'bg-amber/40 text-charcoal-900/50 cursor-not-allowed']">Save Changes</button>
+            <button
+              @click="handleEdit"
+              :disabled="!editForm.name.trim() || isSaving"
+              :class="['flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg font-semibold text-sm transition-colors', editForm.name.trim() && !isSaving ? 'bg-amber hover:bg-amber-light text-charcoal-900' : 'bg-amber/40 text-charcoal-900/50 cursor-not-allowed']"
+            >
+              <Icon v-if="isSaving" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
+              {{ isSaving ? 'Saving…' : 'Save Changes' }}
+            </button>
           </div>
         </div>
       </div>
@@ -366,12 +451,15 @@ const togglePerm = (perms: Permission[], idx: number, key: keyof Permission) => 
             </div>
             <div>
               <h3 class="text-sm font-semibold text-cream">Delete "{{ targetRole.name }}"?</h3>
-              <p class="text-xs text-cream-faint mt-1 leading-relaxed">This custom role will be permanently removed. Members assigned to it will need to be reassigned.</p>
+              <p class="text-xs text-cream-faint mt-1 leading-relaxed">This role will be permanently removed. Members assigned to it will lose these permissions.</p>
             </div>
           </div>
           <div class="flex justify-end gap-2">
             <button @click="showDeleteConfirm = false" class="px-4 py-2 text-xs font-medium text-cream-faint hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 rounded-lg transition-colors">Cancel</button>
-            <button @click="handleDelete" class="px-4 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors">Delete Role</button>
+            <button @click="handleDelete" :disabled="isSaving" class="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors disabled:opacity-60">
+              <Icon v-if="isSaving" icon="lucide:loader-2" class="w-3 h-3 animate-spin" />
+              Delete Role
+            </button>
           </div>
         </div>
       </div>
