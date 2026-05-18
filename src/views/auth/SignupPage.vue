@@ -66,8 +66,12 @@ const handleSignup = async () => {
     const errors = err?.response?.data?.errors
     if (errors) {
       setErrors(errors)
+
+      notify('Please fix the errors in the form and try again.', 'error')
     } else {
       setError('general', message)
+
+      notify(message, 'error')
     }
   } finally {
     setLoader('isRegistering', false)
