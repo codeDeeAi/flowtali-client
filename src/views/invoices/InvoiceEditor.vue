@@ -134,6 +134,7 @@ const fmtMoney = (n: number) =>
 const formatDate = (d: string) => {
   if (!d) return ''
   const [y, m, day] = d.split('-')
+  if (!y || !m || !day) return d
   return new Date(+y, +m - 1, +day).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 }
 

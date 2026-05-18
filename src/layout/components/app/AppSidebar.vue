@@ -30,7 +30,7 @@ const organizations: Org[] = [
   { id: 3, name: 'Solo Freelance',     initials: 'SF', plan: 'Pro',     color: '#4ade80', role: 'Owner' },
 ];
 
-const currentOrg = ref<Org>(organizations[0]);
+const currentOrg = ref<Org>(organizations[0]!);
 const orgDropOpen = ref(false);
 const showCreateModal = ref(false);
 const newOrgName = ref('');
@@ -50,7 +50,7 @@ function createOrg() {
     name: newOrgName.value.trim(),
     initials,
     plan: 'Starter',
-    color: colors[organizations.length % colors.length],
+    color: colors[organizations.length % colors.length] ?? '#a78bfa',
     role: 'Owner',
   };
   organizations.push(newOrg);

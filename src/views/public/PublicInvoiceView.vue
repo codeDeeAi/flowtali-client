@@ -107,8 +107,11 @@ const fmtMoney    = (n: number) => sym.value + n.toLocaleString('en', { minimumF
 const formatDate = (d: string) => {
   if (!d) return ''
   const [y, m, day] = d.split('-')
+  if (!y || !m || !day) return d
   return new Date(+y, +m - 1, +day).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 }
+
+const printPage = () => window.print()
 </script>
 
 <template>
@@ -122,7 +125,7 @@ const formatDate = (d: string) => {
         </div>
         <span class="text-sm font-bold text-gray-800" style="font-family: 'DM Sans', sans-serif">Flowtali</span>
       </div>
-      <button v-if="invoice" @click="window.print()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 border border-gray-200 text-gray-600 rounded-lg transition-colors">
+      <button v-if="invoice" @click="printPage()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 border border-gray-200 text-gray-600 rounded-lg transition-colors">
         <Icon icon="lucide:printer" class="w-3.5 h-3.5" /> Print / PDF
       </button>
     </header>
