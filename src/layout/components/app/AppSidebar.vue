@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { Icon } from '@iconify/vue';
 import { useAuthStore } from '@/stores/auth';
 import { OrgService } from '@/services/org.service';
+import { AuthService } from '@/services/auth.service';
 import type { IOrganization } from '@/types/auth.types';
 
 defineProps<{
@@ -16,7 +17,24 @@ defineEmits<{
 
 const collapsed = ref(false);
 const route = useRoute();
+const router = useRouter();
 const authStore = useAuthStore();
+
+// ── User menu ────────────────────────────────────────────────
+const userMenuOpen = ref(false);
+const isLoggingOut = ref(false);
+
+async function handleLogout() {
+  isLoggingOut.value = true;
+  try {
+    await AuthService.logout();
+  } catch {
+    // Token may already be invalid; proceed with local logout
+  } finally {
+    authStore.logout();
+    router.push({ name: 'signin' });
+  }
+}
 
 // ── Org switcher ──────────────────────────────────────────────
 const organizations = computed(() => authStore.getOrganizations);
@@ -403,14 +421,49 @@ function isActive(to: string) {
     </nav>
 
     <!-- User profile (bottom) -->
-    <div class="px-2 py-3 border-t border-charcoal-700 shrink-0">
-      <RouterLink
-        :to="{ name: 'profile' }"
+    <div
+      class="px-2 py-3 border-t border-charcoal-700 shrink-0 relative"
+      v-click-outside="() => (userMenuOpen = false)"
+    >
+      <!-- User menu dropdown (opens upward) -->
+      <Transition name="drop-up">
+        <div
+          v-if="userMenuOpen && !collapsed"
+          class="absolute bottom-full left-2 right-2 mb-1.5 bg-charcoal-800 border border-charcoal-600 rounded-xl shadow-2xl overflow-hidden z-50"
+          style="box-shadow: 0 -8px 32px rgba(0,0,0,0.5);"
+        >
+          <div class="px-1.5 py-1.5 space-y-0.5">
+            <RouterLink
+              :to="{ name: 'profile' }"
+              class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-charcoal-700 transition-colors text-cream-muted hover:text-cream"
+              @click="userMenuOpen = false"
+            >
+              <Icon icon="lucide:user" class="w-3.5 h-3.5 shrink-0" />
+              <span class="text-xs font-medium">My Profile</span>
+            </RouterLink>
+            <button
+              class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-red-900/30 transition-colors text-cream-muted hover:text-red-400 disabled:opacity-50"
+              :disabled="isLoggingOut"
+              @click="handleLogout"
+            >
+              <Icon v-if="!isLoggingOut" icon="lucide:log-out" class="w-3.5 h-3.5 shrink-0" />
+              <svg v-else class="animate-spin w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" />
+              </svg>
+              <span class="text-xs font-medium">{{ isLoggingOut ? 'Signing out…' : 'Sign out' }}</span>
+            </button>
+          </div>
+        </div>
+      </Transition>
+
+      <button
         :class="[
           'w-full flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-charcoal-700 transition-colors group',
+          userMenuOpen ? 'bg-charcoal-700' : '',
           collapsed ? 'justify-center' : '',
         ]"
         :title="collapsed ? `${authStore.getUser?.first_name} ${authStore.getUser?.last_name}` : undefined"
+        @click="userMenuOpen = !userMenuOpen"
       >
         <div class="w-7 h-7 rounded-full bg-amber flex items-center justify-center text-xs font-bold text-charcoal-900 shrink-0">
           {{ (authStore.getUser?.first_name?.[0] ?? '').toUpperCase() }}{{ (authStore.getUser?.last_name?.[0] ?? '').toUpperCase() }}
@@ -427,16 +480,21 @@ function isActive(to: string) {
           icon="lucide:more-horizontal"
           class="w-4 h-4 text-cream-faint group-hover:text-cream-muted shrink-0 transition-colors"
         />
-      </RouterLink>
+      </button>
     </div>
   </aside>
 </template>
 
 <style scoped>
-/* Org dropdown */
+/* Org dropdown (opens downward) */
 .drop-enter-active { transition: opacity 0.15s ease, transform 0.15s ease; }
 .drop-leave-active { transition: opacity 0.1s ease, transform 0.1s ease; }
 .drop-enter-from, .drop-leave-to { opacity: 0; transform: translateY(-6px); }
+
+/* User menu (opens upward) */
+.drop-up-enter-active { transition: opacity 0.15s ease, transform 0.15s ease; }
+.drop-up-leave-active { transition: opacity 0.1s ease, transform 0.1s ease; }
+.drop-up-enter-from, .drop-up-leave-to { opacity: 0; transform: translateY(6px); }
 
 /* Create org modal */
 .modal-enter-active { transition: opacity 0.2s ease; }
