@@ -92,7 +92,7 @@ const router = useRouter()
             <li>Object to or restrict certain processing</li>
             <li>Data portability (receive your data in a machine-readable format)</li>
           </ul>
-          <p class="mt-3">To exercise these rights, contact us at <strong class="text-amber">privacy@flowtali.io</strong>.</p>
+          <p class="mt-3">To exercise these rights, contact us at <strong class="text-amber">flowtaliltd@gmail.com</strong>.</p>
         </section>
 
         <section>
@@ -110,7 +110,7 @@ const router = useRouter()
           <p>If you have questions about this Privacy Policy, please contact us:</p>
           <div class="mt-3 p-4 bg-charcoal-800 border border-charcoal-700 rounded-xl text-sm">
             <p><strong class="text-cream">Flowtali</strong></p>
-            <p class="mt-1">Email: <a href="mailto:privacy@flowtali.io" class="text-amber hover:underline">privacy@flowtali.io</a></p>
+            <p class="mt-1">Email: <a href="mailto:flowtaliltd@gmail.com" class="text-amber hover:underline">flowtaliltd@gmail.com</a></p>
           </div>
         </section>
 

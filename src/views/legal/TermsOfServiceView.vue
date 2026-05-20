@@ -131,7 +131,7 @@ const router = useRouter()
           <p>For questions about these Terms, please contact:</p>
           <div class="mt-3 p-4 bg-charcoal-800 border border-charcoal-700 rounded-xl text-sm">
             <p><strong class="text-cream">Flowtali</strong></p>
-            <p class="mt-1">Email: <a href="mailto:legal@flowtali.io" class="text-amber hover:underline">legal@flowtali.io</a></p>
+            <p class="mt-1">Email: <a href="mailto:flowtaliltd@gmail.com" class="text-amber hover:underline">flowtaliltd@gmail.com</a></p>
           </div>
         </section>
 
