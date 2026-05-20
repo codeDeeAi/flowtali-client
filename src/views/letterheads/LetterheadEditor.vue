@@ -130,8 +130,11 @@ async function handleLogoUpload(e: Event) {
     fd.append('files[0][type]', 'org_logo')
     fd.append('files[0][file]', file)
     const res = await MediaService.upload(fd)
-    form.value.logoUrl = res.data.data[0]?.url ?? ''
-    if (draftData.value) draftData.value.logos.unshift({ id: res.data.data[0].id, url: form.value.logoUrl })
+    const uploaded = res.data.data[0]
+    if (uploaded) {
+      form.value.logoUrl = uploaded.url
+      if (draftData.value) draftData.value.logos.unshift({ id: uploaded.id, url: uploaded.url })
+    }
   } catch {
     notify('Logo upload failed', 'error')
   } finally {
@@ -148,8 +151,11 @@ async function handleSignatureUpload(e: Event) {
     fd.append('files[0][type]', 'org_signature')
     fd.append('files[0][file]', file)
     const res = await MediaService.upload(fd)
-    form.value.signatureUrl = res.data.data[0]?.url ?? ''
-    if (draftData.value) draftData.value.signatures.unshift({ id: res.data.data[0].id, url: form.value.signatureUrl })
+    const uploaded = res.data.data[0]
+    if (uploaded) {
+      form.value.signatureUrl = uploaded.url
+      if (draftData.value) draftData.value.signatures.unshift({ id: uploaded.id, url: uploaded.url })
+    }
   } catch {
     notify('Signature upload failed', 'error')
   } finally {

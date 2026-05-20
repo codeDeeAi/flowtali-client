@@ -1,112 +1,168 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { Icon } from '@iconify/vue';
-import { useNotification } from '@/composables/notification.ts';
-import Pagination from '@/components/ui/Pagination.vue';
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { Icon } from '@iconify/vue'
+import { useNotification } from '@/composables/notification.ts'
+import Pagination from '@/components/ui/Pagination.vue'
+import { useAuthStore } from '@/stores/auth'
+import { InvoiceService, type IInvoice, type IInvoiceStats } from '@/services/invoice.service'
 
-const router  = useRouter();
-const { notify } = useNotification();
+const router    = useRouter()
+const { notify } = useNotification()
+const authStore  = useAuthStore()
+const orgId      = computed(() => authStore.getCurrentOrganization?.id ?? '')
 
-type Status = 'All' | 'Paid' | 'Due' | 'Overdue' | 'Draft';
+type StatusFilter = 'all' | 'paid' | 'sent' | 'overdue' | 'draft'
 
-interface Invoice {
-  id: number; number: string; client: string; email: string;
-  amount: string; amountRaw: number; status: 'Paid' | 'Due' | 'Overdue' | 'Draft';
-  issueDate: string; dueDate: string; color: string;
-}
+const filterTab   = ref<StatusFilter>('all')
+const searchQuery = ref('')
+const currentPage = ref(1)
+const perPage     = 15
+const filters: { key: StatusFilter; label: string }[] = [
+  { key: 'all',     label: 'All' },
+  { key: 'paid',    label: 'Paid' },
+  { key: 'sent',    label: 'Due' },
+  { key: 'overdue', label: 'Overdue' },
+  { key: 'draft',   label: 'Draft' },
+]
+const selectedIds = ref<Set<string>>(new Set())
 
-const filterTab   = ref<Status>('All');
-const searchQuery = ref('');
-const currentPage = ref(1);
-const perPage     = 5;
-const filters: Status[] = ['All', 'Paid', 'Due', 'Overdue', 'Draft'];
-const selectedIds = ref<Set<number>>(new Set());
+const showDeleteConfirm = ref(false)
+const deleteTarget      = ref<IInvoice | null>(null)
+const isDeleting        = ref(false)
 
-const showDeleteConfirm = ref(false);
-const deleteTarget      = ref<Invoice | null>(null);
+const invoices       = ref<IInvoice[]>([])
+const totalInvoices  = ref(0)
+const isLoading      = ref(false)
+const stats          = ref<IInvoiceStats | null>(null)
 
 const statusClass: Record<string, string> = {
-  Paid: 'status-paid', Due: 'status-due', Overdue: 'status-overdue', Draft: 'status-draft',
-};
-
-const invoices = ref<Invoice[]>([
-  { id: 1, number: 'INV-0042', client: 'Globex Corp',   email: 'billing@globex.com',  amount: '$8,550',  amountRaw: 8550,  status: 'Paid',    issueDate: 'Mar 15', dueDate: 'Apr 14', color: '#60a5fa' },
-  { id: 2, number: 'INV-0041', client: 'Pixel Works',   email: 'accounts@pxl.io',     amount: '$3,200',  amountRaw: 3200,  status: 'Due',     issueDate: 'Mar 10', dueDate: 'Apr 10', color: '#a78bfa' },
-  { id: 3, number: 'INV-0040', client: 'Nova Agency',   email: 'finance@nova.co',     amount: '$5,800',  amountRaw: 5800,  status: 'Overdue', issueDate: 'Feb 28', dueDate: 'Mar 28', color: '#f87171' },
-  { id: 4, number: 'INV-0039', client: 'Bright Minds',  email: 'pay@brightminds.io',  amount: '$1,200',  amountRaw: 1200,  status: 'Paid',    issueDate: 'Feb 20', dueDate: 'Mar 20', color: '#4ade80' },
-  { id: 5, number: 'INV-0038', client: 'Studio X',      email: 'hello@studiox.co',    amount: '$7,000',  amountRaw: 7000,  status: 'Draft',   issueDate: 'Mar 18', dueDate: 'Apr 17', color: '#e8a83e' },
-  { id: 6, number: 'INV-0037', client: 'Frontier Tech', email: 'ar@frontier.tech',    amount: '$4,400',  amountRaw: 4400,  status: 'Paid',    issueDate: 'Feb 12', dueDate: 'Mar 12', color: '#38bdf8' },
-  { id: 7, number: 'INV-0036', client: 'Globex Corp',   email: 'billing@globex.com',  amount: '$6,100',  amountRaw: 6100,  status: 'Paid',    issueDate: 'Jan 30', dueDate: 'Mar 01', color: '#60a5fa' },
-  { id: 8, number: 'INV-0035', client: 'Pixel Works',   email: 'accounts@pxl.io',     amount: '$2,900',  amountRaw: 2900,  status: 'Overdue', issueDate: 'Jan 20', dueDate: 'Feb 19', color: '#a78bfa' },
-  { id: 9, number: 'INV-0034', client: 'Nova Agency',   email: 'finance@nova.co',     amount: '$3,600',  amountRaw: 3600,  status: 'Paid',    issueDate: 'Jan 10', dueDate: 'Feb 09', color: '#f87171' },
-  { id:10, number: 'INV-0033', client: 'Studio X',      email: 'hello@studiox.co',    amount: '$5,250',  amountRaw: 5250,  status: 'Due',     issueDate: 'Jan 05', dueDate: 'Feb 04', color: '#e8a83e' },
-]);
-
-const filtered = computed(() => {
-  let list = filterTab.value === 'All' ? invoices.value : invoices.value.filter(i => i.status === filterTab.value);
-  if (searchQuery.value.trim()) {
-    const q = searchQuery.value.toLowerCase();
-    list = list.filter(i => i.client.toLowerCase().includes(q) || i.number.toLowerCase().includes(q) || i.email.toLowerCase().includes(q));
-  }
-  return list;
-});
-
-const paginated = computed(() => {
-  const start = (currentPage.value - 1) * perPage;
-  return filtered.value.slice(start, start + perPage);
-});
-
-const onFilter = () => { currentPage.value = 1; selectedIds.value.clear(); };
-
-// Stats
-const stats = computed(() => ({
-  total:    invoices.value.reduce((s, i) => s + i.amountRaw, 0),
-  paid:     invoices.value.filter(i => i.status === 'Paid').reduce((s, i) => s + i.amountRaw, 0),
-  due:      invoices.value.filter(i => i.status === 'Due' || i.status === 'Overdue').reduce((s, i) => s + i.amountRaw, 0),
-  draft:    invoices.value.filter(i => i.status === 'Draft').length,
-}));
-
-const fmt = (n: number) => `$${n.toLocaleString()}`;
-
-function initials(name: string) {
-  return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  paid: 'status-paid', sent: 'status-due', overdue: 'status-overdue', draft: 'status-draft', void: 'status-draft',
+}
+const statusLabel: Record<string, string> = {
+  paid: 'Paid', sent: 'Due', overdue: 'Overdue', draft: 'Draft', void: 'Void',
 }
 
-// Selection
-const allSelected = computed(() =>
-  paginated.value.length > 0 && paginated.value.every(i => selectedIds.value.has(i.id))
-);
-const toggleAll = () => {
-  if (allSelected.value) paginated.value.forEach(i => selectedIds.value.delete(i.id));
-  else paginated.value.forEach(i => selectedIds.value.add(i.id));
-};
-const toggleOne = (id: number) => {
-  if (selectedIds.value.has(id)) selectedIds.value.delete(id);
-  else selectedIds.value.add(id);
-};
+const colorPalette = ['#60a5fa', '#a78bfa', '#f87171', '#4ade80', '#e8a83e', '#38bdf8', '#fb923c', '#34d399']
+const clientColor = (id: string) => colorPalette[id.charCodeAt(id.length - 1) % colorPalette.length]
 
-// Actions
-const markPaid = (inv: Invoice) => {
-  inv.status = 'Paid';
-  notify(`${inv.number} marked as paid`, 'success');
-};
-const openDelete = (inv: Invoice) => {
-  deleteTarget.value = inv;
-  showDeleteConfirm.value = true;
-};
-const handleDelete = () => {
-  if (!deleteTarget.value) return;
-  invoices.value = invoices.value.filter(i => i.id !== deleteTarget.value!.id);
-  notify(`${deleteTarget.value.number} deleted`, 'success');
-  showDeleteConfirm.value = false;
-};
-const deleteSelected = () => {
-  const count = selectedIds.value.size;
-  invoices.value = invoices.value.filter(i => !selectedIds.value.has(i.id));
-  selectedIds.value.clear();
-  notify(`${count} invoice${count > 1 ? 's' : ''} deleted`, 'success');
-};
+function initials(name: string | null) {
+  return (name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+}
+
+const symMap: Record<string, string> = { USD: '$', EUR: '€', GBP: '£', NGN: '₦', CAD: 'CA$', AUD: 'A$', JPY: '¥', INR: '₹', ZAR: 'R', CHF: 'Fr', AED: 'د.إ' }
+const fmtAmount = (inv: IInvoice) => {
+  const s = symMap[inv.currency] ?? '$'
+  return s + inv.totals.total.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+const fmtDate = (d: string | null) => {
+  if (!d) return '—'
+  const [y = '0', m = '1', day = '1'] = d.split('-')
+  return new Date(+y, +m - 1, +day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+async function loadStats() {
+  if (!orgId.value) return
+  try {
+    const res = await InvoiceService.stats(orgId.value)
+    stats.value = res.data.data
+  } catch {}
+}
+
+async function loadInvoices() {
+  if (!orgId.value) return
+  isLoading.value = true
+  try {
+    const res = await InvoiceService.list(orgId.value, {
+      search: searchQuery.value || undefined,
+      status: filterTab.value !== 'all' ? filterTab.value : undefined,
+      page: currentPage.value,
+      per_page: perPage,
+    })
+    invoices.value = res.data.data.data
+    totalInvoices.value = res.data.data.total
+  } catch {
+    notify('Failed to load invoices', 'error')
+  } finally {
+    isLoading.value = false
+  }
+}
+
+let searchTimer: ReturnType<typeof setTimeout>
+watch(searchQuery, () => {
+  clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => { currentPage.value = 1; loadInvoices() }, 400)
+})
+watch([filterTab, currentPage], () => loadInvoices())
+
+onMounted(() => { loadInvoices(); loadStats() })
+
+const onFilter = (key: StatusFilter) => {
+  filterTab.value = key
+  currentPage.value = 1
+  selectedIds.value.clear()
+}
+
+const allSelected = computed(() =>
+  invoices.value.length > 0 && invoices.value.every(i => selectedIds.value.has(i.id))
+)
+const toggleAll = () => {
+  if (allSelected.value) invoices.value.forEach(i => selectedIds.value.delete(i.id))
+  else invoices.value.forEach(i => selectedIds.value.add(i.id))
+}
+const toggleOne = (id: string) => {
+  if (selectedIds.value.has(id)) selectedIds.value.delete(id)
+  else selectedIds.value.add(id)
+}
+
+async function markPaid(inv: IInvoice) {
+  try {
+    await InvoiceService.update(orgId.value, inv.id, { status: 'paid' })
+    notify(`${inv.number} marked as paid`, 'success')
+    loadInvoices()
+    loadStats()
+  } catch {
+    notify('Failed to update invoice', 'error')
+  }
+}
+
+const openDelete = (inv: IInvoice) => {
+  deleteTarget.value = inv
+  showDeleteConfirm.value = true
+}
+
+async function handleDelete() {
+  if (!deleteTarget.value) return
+  isDeleting.value = true
+  try {
+    await InvoiceService.delete(orgId.value, deleteTarget.value.id)
+    notify(`${deleteTarget.value.number} deleted`, 'success')
+    showDeleteConfirm.value = false
+    deleteTarget.value = null
+    selectedIds.value.clear()
+    loadInvoices()
+    loadStats()
+  } catch {
+    notify('Failed to delete invoice', 'error')
+  } finally {
+    isDeleting.value = false
+  }
+}
+
+async function deleteSelected() {
+  const ids = [...selectedIds.value]
+  const count = ids.length
+  try {
+    await Promise.all(ids.map(id => InvoiceService.delete(orgId.value, id)))
+    selectedIds.value.clear()
+    notify(`${count} invoice${count > 1 ? 's' : ''} deleted`, 'success')
+    loadInvoices()
+    loadStats()
+  } catch {
+    notify('Failed to delete some invoices', 'error')
+  }
+}
 </script>
 
 <template>
@@ -131,30 +187,30 @@ const deleteSelected = () => {
     <!-- Summary cards -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
       <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4">
-        <div class="text-xs text-cream-faint mb-1">Total Invoiced</div>
-        <div class="text-xl font-bold text-cream font-mono">{{ fmt(stats.total) }}</div>
+        <div class="text-xs text-cream-faint mb-1">Total Invoices</div>
+        <div class="text-xl font-bold text-cream font-mono">{{ stats?.total ?? '—' }}</div>
       </div>
       <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4">
-        <div class="text-xs text-cream-faint mb-1">Total Paid</div>
-        <div class="text-xl font-bold text-green-400 font-mono">{{ fmt(stats.paid) }}</div>
+        <div class="text-xs text-cream-faint mb-1">Paid</div>
+        <div class="text-xl font-bold text-green-400 font-mono">{{ stats?.paid ?? '—' }}</div>
       </div>
       <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4">
-        <div class="text-xs text-cream-faint mb-1">Outstanding</div>
-        <div class="text-xl font-bold text-amber font-mono">{{ fmt(stats.due) }}</div>
+        <div class="text-xs text-cream-faint mb-1">Overdue</div>
+        <div class="text-xl font-bold text-red-400 font-mono">{{ stats?.overdue ?? '—' }}</div>
       </div>
       <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4">
         <div class="text-xs text-cream-faint mb-1">Draft</div>
-        <div class="text-xl font-bold text-cream-muted">{{ stats.draft }}</div>
+        <div class="text-xl font-bold text-cream-muted">{{ stats?.draft ?? '—' }}</div>
       </div>
     </div>
 
     <!-- Filter tabs -->
     <div class="flex items-center gap-1 bg-charcoal-800 border border-charcoal-700 rounded-lg p-1 w-fit">
       <button
-        v-for="f in filters" :key="f"
-        :class="['text-xs font-medium px-3 py-1.5 rounded-md transition-colors', filterTab === f ? 'bg-amber/10 text-amber' : 'text-cream-faint hover:text-cream-muted']"
-        @click="filterTab = f; onFilter()"
-      >{{ f }}</button>
+        v-for="f in filters" :key="f.key"
+        :class="['text-xs font-medium px-3 py-1.5 rounded-md transition-colors', filterTab === f.key ? 'bg-amber/10 text-amber' : 'text-cream-faint hover:text-cream-muted']"
+        @click="onFilter(f.key)"
+      >{{ f.label }}</button>
     </div>
 
     <!-- Table card -->
@@ -164,7 +220,7 @@ const deleteSelected = () => {
         <div class="flex items-center gap-3">
           <div class="relative">
             <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint" />
-            <input v-model="searchQuery" @input="onFilter" placeholder="Search invoices…" class="app-inp pl-8 w-48 text-xs py-2" />
+            <input v-model="searchQuery" placeholder="Search invoices…" class="app-inp pl-8 w-48 text-xs py-2" />
           </div>
           <Transition name="fade">
             <button
@@ -177,11 +233,16 @@ const deleteSelected = () => {
             </button>
           </Transition>
         </div>
-        <span class="text-xs text-cream-faint shrink-0">{{ filtered.length }} invoice{{ filtered.length !== 1 ? 's' : '' }}</span>
+        <span class="text-xs text-cream-faint shrink-0">{{ totalInvoices }} invoice{{ totalInvoices !== 1 ? 's' : '' }}</span>
+      </div>
+
+      <!-- Loading -->
+      <div v-if="isLoading" class="flex items-center justify-center py-16">
+        <Icon icon="lucide:loader-2" class="w-6 h-6 text-amber animate-spin" />
       </div>
 
       <!-- Desktop table -->
-      <div class="hidden sm:block overflow-x-auto">
+      <div v-else class="hidden sm:block overflow-x-auto">
         <table class="app-table">
           <thead>
             <tr>
@@ -197,7 +258,7 @@ const deleteSelected = () => {
           </thead>
           <tbody>
             <tr
-              v-for="inv in paginated" :key="inv.id"
+              v-for="inv in invoices" :key="inv.id"
               :class="['cursor-pointer', selectedIds.has(inv.id) ? 'bg-amber/5' : '']"
               @click="router.push({ name: 'invoices.view', params: { id: inv.id } })"
             >
@@ -205,19 +266,19 @@ const deleteSelected = () => {
               <td class="font-mono text-xs text-cream-muted">{{ inv.number }}</td>
               <td>
                 <div class="flex items-center gap-2.5">
-                  <div class="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-charcoal-900 shrink-0" :style="{ backgroundColor: inv.color }">
-                    {{ initials(inv.client) }}
+                  <div class="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-charcoal-900 shrink-0" :style="{ backgroundColor: clientColor(inv.id) }">
+                    {{ initials(inv.to_name) }}
                   </div>
                   <div>
-                    <div class="text-sm font-medium text-cream leading-tight">{{ inv.client }}</div>
-                    <div class="text-xs text-cream-faint">{{ inv.email }}</div>
+                    <div class="text-sm font-medium text-cream leading-tight">{{ inv.to_name || '—' }}</div>
+                    <div class="text-xs text-cream-faint">{{ inv.to_email || inv.to_company || '' }}</div>
                   </div>
                 </div>
               </td>
-              <td class="font-mono font-semibold text-cream">{{ inv.amount }}</td>
-              <td><span :class="['status-badge', statusClass[inv.status]]">{{ inv.status }}</span></td>
-              <td class="text-cream-faint text-xs">{{ inv.issueDate }}</td>
-              <td class="text-cream-faint text-xs">{{ inv.dueDate }}</td>
+              <td class="font-mono font-semibold text-cream">{{ fmtAmount(inv) }}</td>
+              <td><span :class="['status-badge', statusClass[inv.status] ?? 'status-draft']">{{ statusLabel[inv.status] ?? inv.status }}</span></td>
+              <td class="text-cream-faint text-xs">{{ fmtDate(inv.issue_date) }}</td>
+              <td class="text-cream-faint text-xs">{{ fmtDate(inv.due_date) }}</td>
               <td @click.stop>
                 <div class="flex items-center gap-0.5">
                   <button
@@ -231,7 +292,7 @@ const deleteSelected = () => {
                     title="Edit"
                   ><Icon icon="lucide:pencil" class="w-3.5 h-3.5" /></button>
                   <button
-                    v-if="inv.status !== 'Paid'"
+                    v-if="inv.status !== 'paid'"
                     @click="markPaid(inv)"
                     class="w-7 h-7 flex items-center justify-center rounded-md text-cream-faint hover:text-green-400 hover:bg-charcoal-700 transition-colors"
                     title="Mark as paid"
@@ -244,7 +305,7 @@ const deleteSelected = () => {
                 </div>
               </td>
             </tr>
-            <tr v-if="paginated.length === 0">
+            <tr v-if="invoices.length === 0">
               <td colspan="8" class="text-center py-12 text-cream-faint text-sm">No invoices match your filters</td>
             </tr>
           </tbody>
@@ -252,32 +313,32 @@ const deleteSelected = () => {
       </div>
 
       <!-- Mobile list -->
-      <div class="sm:hidden divide-y divide-charcoal-700">
+      <div v-if="!isLoading" class="sm:hidden divide-y divide-charcoal-700">
         <div
-          v-for="inv in paginated" :key="inv.id"
+          v-for="inv in invoices" :key="inv.id"
           class="flex items-center justify-between px-4 py-3.5 cursor-pointer hover:bg-charcoal-700/30 transition-colors"
           @click="router.push({ name: 'invoices.view', params: { id: inv.id } })"
         >
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-charcoal-900 shrink-0" :style="{ backgroundColor: inv.color }">
-              {{ initials(inv.client) }}
+            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-charcoal-900 shrink-0" :style="{ backgroundColor: clientColor(inv.id) }">
+              {{ initials(inv.to_name) }}
             </div>
             <div>
-              <div class="text-sm font-medium text-cream">{{ inv.client }}</div>
-              <div class="text-xs text-cream-faint">{{ inv.number }} · {{ inv.issueDate }}</div>
+              <div class="text-sm font-medium text-cream">{{ inv.to_name || '—' }}</div>
+              <div class="text-xs text-cream-faint">{{ inv.number }} · {{ fmtDate(inv.issue_date) }}</div>
             </div>
           </div>
           <div class="flex flex-col items-end gap-1.5">
-            <span class="text-sm font-semibold font-mono text-cream">{{ inv.amount }}</span>
-            <span :class="['status-badge', statusClass[inv.status]]">{{ inv.status }}</span>
+            <span class="text-sm font-semibold font-mono text-cream">{{ fmtAmount(inv) }}</span>
+            <span :class="['status-badge', statusClass[inv.status] ?? 'status-draft']">{{ statusLabel[inv.status] ?? inv.status }}</span>
           </div>
         </div>
-        <div v-if="paginated.length === 0" class="text-center py-12 text-cream-faint text-sm">No invoices match your filters</div>
+        <div v-if="invoices.length === 0" class="text-center py-12 text-cream-faint text-sm">No invoices match your filters</div>
       </div>
 
       <!-- Pagination row -->
       <div class="px-4 py-3 border-t border-charcoal-700">
-        <Pagination v-model="currentPage" :total="filtered.length" :per-page="perPage" />
+        <Pagination v-model="currentPage" :total="totalInvoices" :per-page="perPage" />
       </div>
     </div>
 
@@ -298,8 +359,11 @@ const deleteSelected = () => {
             </div>
           </div>
           <div class="flex justify-end gap-2">
-            <button @click="showDeleteConfirm = false" class="px-4 py-2 text-xs font-medium text-cream-faint hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 rounded-lg transition-colors">Cancel</button>
-            <button @click="handleDelete" class="px-4 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors">Delete</button>
+            <button @click="showDeleteConfirm = false" :disabled="isDeleting" class="px-4 py-2 text-xs font-medium text-cream-faint hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 rounded-lg transition-colors disabled:opacity-50">Cancel</button>
+            <button @click="handleDelete" :disabled="isDeleting" class="px-4 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-1.5">
+              <Icon v-if="isDeleting" icon="lucide:loader-2" class="w-3 h-3 animate-spin" />
+              Delete
+            </button>
           </div>
         </div>
       </div>

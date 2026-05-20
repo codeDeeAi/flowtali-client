@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useNotification } from '@/composables/notification'
 import { SharedLinksService, type ISharedLink } from '@/services/shared-links.service'
+import { InvoiceSharedLinksService, type IInvoiceSharedLink } from '@/services/invoice.service'
 
 const props = defineProps<{
   resourceType: 'invoice' | 'letterhead'
@@ -15,7 +16,7 @@ const emit = defineEmits<{ close: [] }>()
 
 const { notify } = useNotification()
 
-const links       = ref<ISharedLink[]>([])
+const links       = ref<ISharedLink[] | IInvoiceSharedLink[]>([])
 const loadingLinks = ref(false)
 const showCreate  = ref(false)
 const isCreating  = ref(false)
@@ -37,11 +38,13 @@ const validityOptions: { label: string; value: number | null }[] = [
 ]
 
 async function loadLinks() {
-  if (!props.orgId || props.resourceType !== 'letterhead') return
+  if (!props.orgId) return
   loadingLinks.value = true
   try {
-    const res = await SharedLinksService.list(props.orgId, props.resourceId)
-    links.value = res.data.data
+    const res = props.resourceType === 'invoice'
+      ? await InvoiceSharedLinksService.list(props.orgId, props.resourceId)
+      : await SharedLinksService.list(props.orgId, props.resourceId)
+    links.value = res.data.data as any
     showCreate.value = links.value.length === 0
   } catch {
     notify('Failed to load shared links', 'error')
@@ -56,14 +59,17 @@ async function handleCreate() {
   if (!props.orgId) return
   isCreating.value = true
   try {
-    const res = await SharedLinksService.create(props.orgId, props.resourceId, {
+    const payload = {
       label:        form.value.label || undefined,
       visibility:   form.value.visibility,
       access_code:  form.value.accessCode || undefined,
       validity_days: form.value.validityDays ?? undefined,
-    })
+    }
+    const res = props.resourceType === 'invoice'
+      ? await InvoiceSharedLinksService.create(props.orgId, props.resourceId, payload)
+      : await SharedLinksService.create(props.orgId, props.resourceId, payload)
     const newLink = res.data.data
-    links.value.unshift(newLink)
+    ;(links.value as any[]).unshift(newLink)
     copyToClipboard(newLink)
     notify('Link created and copied to clipboard', 'success')
     form.value = { label: '', visibility: 'public', accessCode: '', validityDays: 7 }
@@ -95,7 +101,9 @@ function copyCode(code: string) {
 async function revokeLink(id: string) {
   if (!props.orgId) return
   try {
-    await SharedLinksService.revoke(props.orgId, props.resourceId, id)
+    props.resourceType === 'invoice'
+      ? await InvoiceSharedLinksService.revoke(props.orgId, props.resourceId, id)
+      : await SharedLinksService.revoke(props.orgId, props.resourceId, id)
     const link = links.value.find(l => l.id === id)
     if (link) link.is_active = false
     notify('Link revoked', 'success')
@@ -107,8 +115,10 @@ async function revokeLink(id: string) {
 async function deleteLink(id: string) {
   if (!props.orgId) return
   try {
-    await SharedLinksService.delete(props.orgId, props.resourceId, id)
-    links.value = links.value.filter(l => l.id !== id)
+    props.resourceType === 'invoice'
+      ? await InvoiceSharedLinksService.delete(props.orgId, props.resourceId, id)
+      : await SharedLinksService.delete(props.orgId, props.resourceId, id)
+    links.value = (links.value as any[]).filter((l: any) => l.id !== id)
     notify('Link deleted', 'success')
   } catch {
     notify('Failed to delete link', 'error')

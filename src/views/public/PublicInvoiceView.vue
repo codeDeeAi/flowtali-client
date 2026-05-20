@@ -2,113 +2,71 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
-import { useSharedLinksStore } from '@/stores/sharedLinks'
+import { InvoiceSharedLinksService, type IInvoice, type IInvoiceSharedLink } from '@/services/invoice.service'
 
 const route = useRoute()
-const store = useSharedLinksStore()
+const token = route.params.token as string
 
-const token   = route.params.token as string
-const link    = computed(() => store.byToken(token))
-const loading = ref(true)
-const locked  = ref(false)
-const invalid = ref(false)
-const codeInput = ref('')
-const codeError = ref('')
-const unlocked  = ref(false)
+const loading     = ref(true)
+const invalid     = ref(false)
+const locked      = ref(false)
+const unlocked    = ref(false)
+const codeInput   = ref('')
+const codeError   = ref('')
+const codeLoading = ref(false)
 
-// ── Mock invoice data (same as InvoiceViewPage) ───────────────────────────────
-interface LineItem { id: number; description: string; qty: number; rate: number }
-interface Invoice {
-  id: number; number: string; status: string; stamp: string
-  fromName: string; fromEmail: string; fromPhone: string; fromAddress: string
-  toName: string;  toEmail: string;  toPhone: string;  toAddress: string
-  issueDate: string; dueDate: string; currency: string; discount: number; tax: number
-  notes: string; accentColor: string; items: LineItem[]
-}
-const mockInvoices: Invoice[] = [
-  { id: 1, number: 'INV-0042', status: 'Paid', stamp: 'PAID',
-    fromName: 'Acme Design Studio', fromEmail: 'hello@acme.studio', fromPhone: '+1 415 555 0199', fromAddress: '123 Design Street\nSan Francisco, CA 94105',
-    toName: 'Globex Corp', toEmail: 'billing@globex.com', toPhone: '+1 212 555 0100', toAddress: '742 Evergreen Terrace\nSpringfield, IL 62701',
-    issueDate: '2025-03-15', dueDate: '2025-04-14', currency: 'USD', discount: 0, tax: 0, accentColor: '#E8A83E',
-    notes: 'Payment due within 30 days. Thank you for your business.',
-    items: [{ id: 1, description: 'Brand Identity Design', qty: 1, rate: 3500 }, { id: 2, description: 'Web Development (40h)', qty: 40, rate: 100 }, { id: 3, description: 'Hosting Setup', qty: 1, rate: 1050 }] },
-  { id: 2, number: 'INV-0041', status: 'Due', stamp: '',
-    fromName: 'Acme Design Studio', fromEmail: 'hello@acme.studio', fromPhone: '+1 415 555 0199', fromAddress: '123 Design Street\nSan Francisco, CA 94105',
-    toName: 'Pixel Works', toEmail: 'accounts@pxl.io', toPhone: '+44 20 7946 0958', toAddress: '10 Downing St\nLondon SW1A 2AA',
-    issueDate: '2025-03-10', dueDate: '2025-04-10', currency: 'GBP', discount: 5, tax: 20, accentColor: '#a78bfa',
-    notes: 'Includes 20% VAT. Payment via bank transfer preferred.',
-    items: [{ id: 1, description: 'UI Component Library', qty: 1, rate: 2800 }, { id: 2, description: 'Design Review Session', qty: 2, rate: 200 }] },
-  { id: 3, number: 'INV-0040', status: 'Overdue', stamp: '',
-    fromName: 'Acme Design Studio', fromEmail: 'hello@acme.studio', fromPhone: '+1 415 555 0199', fromAddress: '123 Design Street\nSan Francisco, CA 94105',
-    toName: 'Nova Agency', toEmail: 'finance@nova.co', toPhone: '+233 30 295 0100', toAddress: 'Ring Road Central\nAccra, Ghana',
-    issueDate: '2025-02-28', dueDate: '2025-03-28', currency: 'USD', discount: 0, tax: 0, accentColor: '#f87171',
-    notes: 'This invoice is overdue. Please arrange payment immediately.',
-    items: [{ id: 1, description: 'Campaign Visuals', qty: 1, rate: 5800 }] },
-  { id: 4, number: 'INV-0039', status: 'Paid', stamp: 'PAID',
-    fromName: 'Acme Design Studio', fromEmail: 'hello@acme.studio', fromPhone: '+1 415 555 0199', fromAddress: '123 Design Street\nSan Francisco, CA 94105',
-    toName: 'Bright Minds', toEmail: 'pay@brightminds.io', toPhone: '+1 512 555 0100', toAddress: '1600 Pennsylvania Ave\nAustin, TX 78701',
-    issueDate: '2025-02-20', dueDate: '2025-03-20', currency: 'USD', discount: 0, tax: 0, accentColor: '#4ade80',
-    notes: 'Thank you for your prompt payment!',
-    items: [{ id: 1, description: 'Logo Design', qty: 1, rate: 1200 }] },
-  { id: 5, number: 'INV-0038', status: 'Draft', stamp: 'DRAFT',
-    fromName: 'Acme Design Studio', fromEmail: 'hello@acme.studio', fromPhone: '+1 415 555 0199', fromAddress: '123 Design Street\nSan Francisco, CA 94105',
-    toName: 'Studio X', toEmail: 'hello@studiox.co', toPhone: '+1 415 555 0199', toAddress: '555 Mission St\nSan Francisco, CA 94105',
-    issueDate: '2025-03-18', dueDate: '2025-04-17', currency: 'USD', discount: 0, tax: 0, accentColor: '#e8a83e',
-    notes: 'Production design and creative direction for Q2 campaign.',
-    items: [{ id: 1, description: 'Production Design', qty: 1, rate: 4200 }, { id: 2, description: 'Creative Direction', qty: 20, rate: 140 }] },
-]
-
-const invoice = ref<Invoice | null>(null)
+const link    = ref<IInvoiceSharedLink | null>(null)
+const invoice = ref<IInvoice | null>(null)
 
 onMounted(async () => {
-  await new Promise(r => setTimeout(r, 400))
-  loading.value = false
-
-  if (!link.value) { invalid.value = true; return }
-
-  const l = link.value
-  if (!l.isActive || store.isExpired(l)) { invalid.value = true; return }
-
-  if (l.visibility === 'private') {
-    locked.value = true
-    return
+  try {
+    const res = await InvoiceSharedLinksService.getByToken(token)
+    link.value    = res.data.data.link
+    invoice.value = res.data.data.invoice
+    InvoiceSharedLinksService.recordView(token)
+  } catch (err: any) {
+    const status = err?.response?.status
+    if (status === 403) {
+      locked.value = true
+    } else {
+      invalid.value = true
+    }
+  } finally {
+    loading.value = false
   }
-
-  // Public — load immediately
-  invoice.value = mockInvoices.find(i => i.id === l.resourceId) ?? null
-  if (!invoice.value) { invalid.value = true; return }
-  store.recordView(token)
 })
 
-function submitCode() {
+async function submitCode() {
   codeError.value = ''
-  if (!link.value) return
-  if (codeInput.value.trim().toUpperCase() !== link.value.accessCode.toUpperCase()) {
-    codeError.value = 'Incorrect access code. Please try again.'
-    return
+  if (!codeInput.value.trim()) return
+  codeLoading.value = true
+  try {
+    const res = await InvoiceSharedLinksService.getByToken(token, codeInput.value.trim())
+    link.value    = res.data.data.link
+    invoice.value = res.data.data.invoice
+    locked.value  = false
+    unlocked.value = true
+    InvoiceSharedLinksService.recordView(token)
+  } catch (err: any) {
+    const msg = err?.response?.data?.message
+    codeError.value = msg ?? 'Incorrect access code. Please try again.'
+  } finally {
+    codeLoading.value = false
   }
-  locked.value  = false
-  unlocked.value = true
-  invoice.value = mockInvoices.find(i => i.id === link.value!.resourceId) ?? null
-  if (!invoice.value) { invalid.value = true; return }
-  store.recordView(token)
 }
 
-const currencySymbol: Record<string, string> = {
-  USD: '$', EUR: '€', GBP: '£', NGN: '₦', CAD: 'CA$', AUD: 'A$', JPY: '¥', INR: '₹', ZAR: 'R',
-}
-const sym         = computed(() => invoice.value ? (currencySymbol[invoice.value.currency] ?? '$') : '$')
-const subtotal    = computed(() => invoice.value?.items.reduce((s, i) => s + i.qty * i.rate, 0) ?? 0)
-const discountAmt = computed(() => subtotal.value * ((invoice.value?.discount ?? 0) / 100))
-const taxAmt      = computed(() => (subtotal.value - discountAmt.value) * ((invoice.value?.tax ?? 0) / 100))
-const total       = computed(() => subtotal.value - discountAmt.value + taxAmt.value)
-const fmtMoney    = (n: number) => sym.value + n.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const symMap: Record<string, string> = { USD: '$', EUR: '€', GBP: '£', NGN: '₦', CAD: 'CA$', AUD: 'A$', JPY: '¥', INR: '₹', ZAR: 'R', CHF: 'Fr', AED: 'د.إ' }
+const sym      = computed(() => invoice.value ? (symMap[invoice.value.currency] ?? '$') : '$')
+const fmtMoney = (n: number) => sym.value + n.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
-const formatDate = (d: string) => {
-  if (!d) return ''
-  const [y, m, day] = d.split('-')
-  if (!y || !m || !day) return d
+const formatDate = (d: string | null) => {
+  if (!d) return '—'
+  const [y = '0', m = '1', day = '1'] = d.split('-')
   return new Date(+y, +m - 1, +day).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+}
+
+function stampColorFor(inv: IInvoice | null) {
+  return inv?.stamp_color ?? '#9ca3af'
 }
 
 const printPage = () => window.print()
@@ -167,7 +125,12 @@ const printPage = () => window.print()
           />
           <p v-if="codeError" class="text-xs text-red-500">{{ codeError }}</p>
         </div>
-        <button @click="submitCode" class="w-full py-2.5 text-sm font-semibold bg-amber-400 hover:bg-amber-500 text-white rounded-lg transition-colors">
+        <button
+          @click="submitCode"
+          :disabled="codeLoading"
+          class="w-full py-2.5 text-sm font-semibold bg-amber-400 hover:bg-amber-500 text-white rounded-lg transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+        >
+          <Icon v-if="codeLoading" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
           View Invoice
         </button>
       </div>
@@ -181,71 +144,478 @@ const printPage = () => window.print()
         <Icon icon="lucide:unlock" class="w-3.5 h-3.5" /> Access granted
       </div>
 
-      <!-- Document -->
-      <div class="print-document w-full max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden text-gray-800" style="font-family: 'DM Sans', sans-serif; font-size: 13px;">
-        <div class="h-1.5 w-full" :style="{ backgroundColor: invoice.accentColor }"></div>
-        <div class="p-10">
+      <!-- ── THEME: CLASSIC ── -->
+      <div
+        v-if="invoice.theme === 'classic'"
+        class="print-document w-full max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden text-gray-800 relative"
+        :style="{ fontFamily: invoice.font_family || '\'DM Sans\', sans-serif', fontSize: '13px', minHeight: '1080px' }"
+      >
+        <div v-if="invoice.show_top_bar" class="h-1.5 w-full" :style="{ backgroundColor: invoice.accent_color }"></div>
+        <div v-if="invoice.show_watermark && invoice.watermark_text" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
+          <span class="text-7xl font-black tracking-widest opacity-[0.04] text-gray-800 whitespace-nowrap">{{ invoice.watermark_text }}</span>
+        </div>
+        <div v-if="invoice.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-25deg);z-index:2">
+          <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(invoice), borderColor: stampColorFor(invoice) }">{{ invoice.stamp }}</div>
+        </div>
+        <div class="p-10" style="position:relative;z-index:3">
           <div class="flex justify-between items-start mb-8">
-            <div>
-              <div class="text-xl font-bold mb-0.5" :style="{ color: invoice.accentColor }">{{ invoice.fromName }}</div>
-              <div class="text-xs text-gray-400 whitespace-pre-line leading-relaxed">{{ invoice.fromAddress }}</div>
-              <div v-if="invoice.fromEmail" class="text-xs text-gray-400 mt-1">{{ invoice.fromEmail }}</div>
-              <div v-if="invoice.fromPhone" class="text-xs text-gray-400">{{ invoice.fromPhone }}</div>
+            <div class="flex items-start gap-4">
+              <img v-if="invoice.logo_url && invoice.show_logo" :src="invoice.logo_url" alt="Logo" class="h-14 w-auto object-contain" />
+              <div>
+                <div class="text-xl font-bold mb-0.5" :style="{ color: invoice.accent_color }">{{ invoice.from_name }}</div>
+                <div v-if="invoice.from_tagline" class="text-xs text-gray-400 mb-1">{{ invoice.from_tagline }}</div>
+                <div class="text-xs text-gray-400 whitespace-pre-line leading-relaxed">{{ invoice.from_address }}</div>
+                <div v-if="invoice.from_email" class="text-xs text-gray-400 mt-1">{{ invoice.from_email }}</div>
+                <div v-if="invoice.from_phone" class="text-xs text-gray-400">{{ invoice.from_phone }}</div>
+                <div v-if="invoice.from_website" class="text-xs text-gray-400">{{ invoice.from_website }}</div>
+              </div>
             </div>
             <div class="text-right">
-              <div class="text-3xl font-bold text-gray-700 tracking-wide" style="font-family: 'Cormorant Garamond', serif">INVOICE</div>
+              <div class="text-4xl font-bold text-gray-200 tracking-widest" style="font-family:'Cormorant Garamond',Georgia,serif;letter-spacing:0.15em">INVOICE</div>
               <div class="font-mono text-sm text-gray-400 mt-1">{{ invoice.number }}</div>
             </div>
           </div>
-          <div class="flex gap-8 mb-8 text-xs">
-            <div><div class="text-gray-400 uppercase tracking-wider mb-1">Issue Date</div><div class="font-medium text-gray-700">{{ formatDate(invoice.issueDate) }}</div></div>
-            <div><div class="text-gray-400 uppercase tracking-wider mb-1">Due Date</div><div class="font-medium text-gray-700">{{ formatDate(invoice.dueDate) }}</div></div>
-            <div v-if="invoice.currency !== 'USD'"><div class="text-gray-400 uppercase tracking-wider mb-1">Currency</div><div class="font-medium text-gray-700">{{ invoice.currency }}</div></div>
+          <div class="h-px mb-6" :style="{ backgroundColor: invoice.accent_color + '30' }"></div>
+          <div class="flex gap-10 mb-8 text-xs">
+            <div><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Issue Date</div><div class="font-semibold text-gray-700">{{ formatDate(invoice.issue_date) }}</div></div>
+            <div><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Due Date</div><div class="font-semibold text-gray-700">{{ formatDate(invoice.due_date) }}</div></div>
+            <div v-if="invoice.currency !== 'USD'"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Currency</div><div class="font-semibold text-gray-700">{{ invoice.currency }}</div></div>
+            <div v-if="invoice.po_number"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">PO Number</div><div class="font-semibold text-gray-700">{{ invoice.po_number }}</div></div>
           </div>
           <div class="mb-8">
-            <div class="text-[10px] uppercase tracking-widest text-gray-400 mb-2">Bill To</div>
-            <div class="font-semibold text-gray-800">{{ invoice.toName }}</div>
-            <div v-if="invoice.toEmail" class="text-xs text-gray-500">{{ invoice.toEmail }}</div>
-            <div v-if="invoice.toPhone" class="text-xs text-gray-500">{{ invoice.toPhone }}</div>
-            <div v-if="invoice.toAddress" class="text-xs text-gray-500 whitespace-pre-line mt-1">{{ invoice.toAddress }}</div>
+            <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:10px">Bill To</div>
+            <div class="font-semibold text-gray-800 text-sm">{{ invoice.to_name || '—' }}</div>
+            <div v-if="invoice.to_company" class="text-xs text-gray-500">{{ invoice.to_company }}</div>
+            <div v-if="invoice.to_email" class="text-xs text-gray-500">{{ invoice.to_email }}</div>
+            <div v-if="invoice.to_phone" class="text-xs text-gray-500">{{ invoice.to_phone }}</div>
+            <div v-if="invoice.to_address" class="text-xs text-gray-500 whitespace-pre-line mt-1">{{ invoice.to_address }}</div>
           </div>
-          <table class="w-full mb-6 text-sm">
+          <table class="w-full mb-6" style="border-collapse:collapse">
             <thead>
-              <tr :style="{ backgroundColor: invoice.accentColor + '18' }">
-                <th class="text-left py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">Description</th>
-                <th class="text-center py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">Qty</th>
-                <th class="text-right py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">Rate</th>
-                <th class="text-right py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">Amount</th>
+              <tr :style="{ backgroundColor: invoice.accent_color + '18' }">
+                <th class="text-left py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Description</th>
+                <th class="text-center py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Qty</th>
+                <th class="text-center py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Unit</th>
+                <th class="text-right py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Rate</th>
+                <th class="text-right py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Amount</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in invoice.items" :key="item.id" class="border-b border-gray-100">
+              <tr v-for="item in invoice.items" :key="item.id" style="border-bottom:1px solid #f3f4f6">
                 <td class="py-3 px-3 text-gray-700">{{ item.description }}</td>
                 <td class="py-3 px-3 text-center text-gray-500">{{ item.qty }}</td>
+                <td class="py-3 px-3 text-center text-gray-400 text-xs">{{ item.unit }}</td>
                 <td class="py-3 px-3 text-right text-gray-500">{{ fmtMoney(item.rate) }}</td>
-                <td class="py-3 px-3 text-right font-medium text-gray-800">{{ fmtMoney(item.qty * item.rate) }}</td>
+                <td class="py-3 px-3 text-right font-semibold text-gray-800">{{ fmtMoney(item.qty * item.rate) }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="flex justify-end mb-8">
+            <div style="width:240px" class="space-y-1.5 text-sm">
+              <div class="flex justify-between text-gray-500"><span>Subtotal</span><span class="font-mono">{{ fmtMoney(invoice.totals.subtotal) }}</span></div>
+              <div v-if="invoice.totals.discount_amt > 0" class="flex justify-between text-gray-500"><span>Discount</span><span class="font-mono text-red-500">-{{ fmtMoney(invoice.totals.discount_amt) }}</span></div>
+              <div v-if="invoice.totals.taxes_total > 0" class="flex justify-between text-gray-500"><span>Tax</span><span class="font-mono">{{ fmtMoney(invoice.totals.taxes_total) }}</span></div>
+              <div style="height:1px;background:#e5e7eb;margin:8px 0"></div>
+              <div class="flex justify-between font-bold text-base"><span class="text-gray-800">Total</span><span class="font-mono" :style="{ color: invoice.accent_color }">{{ fmtMoney(invoice.totals.total) }}</span></div>
+            </div>
+          </div>
+          <div v-if="invoice.signature_url" class="mb-6 flex flex-col items-end">
+            <img :src="invoice.signature_url" alt="Signature" class="h-12 w-auto object-contain" />
+            <div style="width:120px;height:1px;background:#d1d5db;margin-top:4px"></div>
+            <div class="text-gray-400 mt-1" style="font-size:10px">Authorized Signature</div>
+          </div>
+          <div v-if="invoice.show_notes && invoice.notes" style="border-top:1px solid #f3f4f6;padding-top:24px;margin-bottom:16px">
+            <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:10px">Notes</div>
+            <p class="text-gray-500 leading-relaxed whitespace-pre-line" style="font-size:12px">{{ invoice.notes }}</p>
+          </div>
+          <div v-if="invoice.show_bank_details" style="border-top:1px solid #f3f4f6;padding-top:20px;margin-bottom:16px">
+            <div class="text-gray-400 uppercase tracking-widest mb-3" style="font-size:10px">Bank / Payment Details</div>
+            <div class="grid grid-cols-2 gap-x-6 gap-y-1" style="font-size:12px">
+              <div v-if="invoice.from_bank_name" class="flex gap-2"><span class="text-gray-400">Bank:</span><span class="text-gray-700">{{ invoice.from_bank_name }}</span></div>
+              <div v-if="invoice.from_bank_account_name" class="flex gap-2"><span class="text-gray-400">Name:</span><span class="text-gray-700">{{ invoice.from_bank_account_name }}</span></div>
+              <div v-if="invoice.from_bank_account_number" class="flex gap-2"><span class="text-gray-400">Account:</span><span class="font-mono text-gray-700">{{ invoice.from_bank_account_number }}</span></div>
+              <div v-if="invoice.from_bank_sort_code" class="flex gap-2"><span class="text-gray-400">Sort Code:</span><span class="font-mono text-gray-700">{{ invoice.from_bank_sort_code }}</span></div>
+              <div v-if="invoice.from_bank_iban" class="flex gap-2"><span class="text-gray-400">IBAN:</span><span class="font-mono text-gray-700">{{ invoice.from_bank_iban }}</span></div>
+            </div>
+            <div v-if="invoice.payment_links.length" class="flex flex-wrap gap-3 mt-3">
+              <div v-for="plink in invoice.payment_links" :key="plink.id" class="flex items-center gap-1.5" style="font-size:11px">
+                <span class="text-gray-400 font-medium">{{ plink.type }}:</span>
+                <span class="text-blue-600 font-mono">{{ plink.value || '—' }}</span>
+              </div>
+            </div>
+          </div>
+          <div v-if="invoice.show_footer_line" style="border-top:1px solid #e5e7eb;padding-top:20px;margin-top:24px" class="flex justify-between items-center">
+            <div class="text-gray-400" style="font-size:11px">{{ invoice.footer_text || invoice.from_website }}</div>
+            <div v-if="invoice.show_flowtali_tag" class="text-gray-300" style="font-size:10px">Generated with Flowtali · flowtali.io</div>
+          </div>
+          <div v-else-if="invoice.show_flowtali_tag" class="text-center mt-6 text-gray-300" style="font-size:10px">Generated with Flowtali · flowtali.io</div>
+        </div>
+      </div>
+
+      <!-- ── THEME: MODERN ── -->
+      <div
+        v-else-if="invoice.theme === 'modern'"
+        class="print-document w-full max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden text-gray-800 relative flex"
+        :style="{ fontFamily: invoice.font_family || '\'DM Sans\', sans-serif', fontSize: '13px', minHeight: '1080px' }"
+      >
+        <div v-if="invoice.show_watermark && invoice.watermark_text" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
+          <span class="text-7xl font-black tracking-widest opacity-[0.04] text-gray-800 whitespace-nowrap">{{ invoice.watermark_text }}</span>
+        </div>
+        <div v-if="invoice.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-25deg);z-index:2">
+          <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(invoice), borderColor: stampColorFor(invoice) }">{{ invoice.stamp }}</div>
+        </div>
+        <div class="shrink-0 flex flex-col p-8" :style="{ backgroundColor: invoice.accent_color, width: '200px', position: 'relative', zIndex: 3 }">
+          <img v-if="invoice.logo_url && invoice.show_logo" :src="invoice.logo_url" alt="Logo" class="h-12 w-auto object-contain mb-6 brightness-0 invert" />
+          <div v-else class="mb-6"></div>
+          <div class="text-white font-bold text-lg leading-tight mb-1">{{ invoice.from_name }}</div>
+          <div v-if="invoice.from_tagline" class="text-white/70 text-xs mb-4">{{ invoice.from_tagline }}</div>
+          <div class="text-white/60 text-xs leading-relaxed whitespace-pre-line mb-2">{{ invoice.from_address }}</div>
+          <div v-if="invoice.from_email" class="text-white/60 text-xs">{{ invoice.from_email }}</div>
+          <div v-if="invoice.from_phone" class="text-white/60 text-xs">{{ invoice.from_phone }}</div>
+          <div v-if="invoice.from_website" class="text-white/60 text-xs">{{ invoice.from_website }}</div>
+          <div v-if="invoice.show_bank_details" class="mt-8 pt-6" style="border-top:1px solid rgba(255,255,255,0.2)">
+            <div class="text-white/50 uppercase tracking-widest mb-3" style="font-size:9px">Bank / Payment</div>
+            <div class="space-y-1 text-xs text-white/70">
+              <div v-if="invoice.from_bank_name">{{ invoice.from_bank_name }}</div>
+              <div v-if="invoice.from_bank_account_name">{{ invoice.from_bank_account_name }}</div>
+              <div v-if="invoice.from_bank_account_number" class="font-mono">{{ invoice.from_bank_account_number }}</div>
+              <div v-if="invoice.from_bank_iban" class="font-mono text-[10px]">{{ invoice.from_bank_iban }}</div>
+              <div v-for="plink in invoice.payment_links" :key="plink.id" class="text-white/60" style="font-size:10px">
+                <span class="text-white/40">{{ plink.type }}:</span> {{ plink.value || '—' }}
+              </div>
+            </div>
+          </div>
+          <div class="flex-1"></div>
+          <div v-if="invoice.show_flowtali_tag" class="text-white/30 text-center" style="font-size:9px">flowtali.io</div>
+        </div>
+        <div class="flex-1 p-10" style="position:relative;z-index:3">
+          <div class="flex justify-between items-start mb-8">
+            <div>
+              <div class="text-3xl font-bold text-gray-200 tracking-widest" style="letter-spacing:0.12em">INVOICE</div>
+              <div class="font-mono text-sm text-gray-400 mt-1">{{ invoice.number }}</div>
+            </div>
+            <div class="text-right text-xs">
+              <div class="mb-2"><div class="text-gray-400 uppercase tracking-widest" style="font-size:10px">Issue Date</div><div class="font-semibold text-gray-700">{{ formatDate(invoice.issue_date) }}</div></div>
+              <div><div class="text-gray-400 uppercase tracking-widest" style="font-size:10px">Due Date</div><div class="font-semibold text-gray-700">{{ formatDate(invoice.due_date) }}</div></div>
+            </div>
+          </div>
+          <div class="mb-8 p-4 rounded-lg" :style="{ backgroundColor: invoice.accent_color + '0d' }">
+            <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:10px">Bill To</div>
+            <div class="font-semibold text-gray-800">{{ invoice.to_name || '—' }}</div>
+            <div v-if="invoice.to_company" class="text-xs text-gray-500">{{ invoice.to_company }}</div>
+            <div v-if="invoice.to_email" class="text-xs text-gray-500">{{ invoice.to_email }}</div>
+            <div v-if="invoice.to_address" class="text-xs text-gray-500 whitespace-pre-line mt-1">{{ invoice.to_address }}</div>
+          </div>
+          <table class="w-full mb-6" style="border-collapse:collapse">
+            <thead><tr :style="{ borderBottom: `2px solid ${invoice.accent_color}` }">
+              <th class="text-left pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Description</th>
+              <th class="text-center pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Qty</th>
+              <th class="text-center pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Unit</th>
+              <th class="text-right pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Rate</th>
+              <th class="text-right pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Amount</th>
+            </tr></thead>
+            <tbody>
+              <tr v-for="item in invoice.items" :key="item.id" style="border-bottom:1px solid #f3f4f6">
+                <td class="py-3 text-gray-700">{{ item.description }}</td>
+                <td class="py-3 text-center text-gray-500">{{ item.qty }}</td>
+                <td class="py-3 text-center text-gray-400 text-xs">{{ item.unit }}</td>
+                <td class="py-3 text-right text-gray-500">{{ fmtMoney(item.rate) }}</td>
+                <td class="py-3 text-right font-semibold text-gray-800">{{ fmtMoney(item.qty * item.rate) }}</td>
               </tr>
             </tbody>
           </table>
           <div class="flex justify-end mb-6">
-            <div class="w-56 space-y-1.5 text-sm">
-              <div class="flex justify-between text-gray-500"><span>Subtotal</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
-              <div v-if="invoice.discount > 0" class="flex justify-between text-gray-500"><span>Discount ({{ invoice.discount }}%)</span><span class="font-mono text-red-500">-{{ fmtMoney(discountAmt) }}</span></div>
-              <div v-if="invoice.tax > 0" class="flex justify-between text-gray-500"><span>Tax ({{ invoice.tax }}%)</span><span class="font-mono">{{ fmtMoney(taxAmt) }}</span></div>
-              <div class="h-px bg-gray-200 my-2"></div>
-              <div class="flex justify-between font-bold text-base"><span>Total</span><span class="font-mono" :style="{ color: invoice.accentColor }">{{ fmtMoney(total) }}</span></div>
+            <div style="width:240px" class="space-y-1.5 text-sm">
+              <div class="flex justify-between text-gray-500"><span>Subtotal</span><span class="font-mono">{{ fmtMoney(invoice.totals.subtotal) }}</span></div>
+              <div v-if="invoice.totals.discount_amt > 0" class="flex justify-between text-gray-500"><span>Discount</span><span class="font-mono text-red-500">-{{ fmtMoney(invoice.totals.discount_amt) }}</span></div>
+              <div v-if="invoice.totals.taxes_total > 0" class="flex justify-between text-gray-500"><span>Tax</span><span class="font-mono">{{ fmtMoney(invoice.totals.taxes_total) }}</span></div>
+              <div style="height:1px;background:#e5e7eb;margin:8px 0"></div>
+              <div class="flex justify-between font-bold text-base"><span class="text-gray-800">Total</span><span class="font-mono" :style="{ color: invoice.accent_color }">{{ fmtMoney(invoice.totals.total) }}</span></div>
             </div>
           </div>
-          <div v-if="invoice.notes" class="border-t border-gray-100 pt-6">
-            <div class="text-[10px] uppercase tracking-widest text-gray-400 mb-1.5">Notes</div>
-            <p class="text-xs text-gray-500 leading-relaxed">{{ invoice.notes }}</p>
+          <div v-if="invoice.signature_url" class="mb-4 flex flex-col items-end">
+            <img :src="invoice.signature_url" alt="Signature" class="h-10 w-auto object-contain" />
+            <div style="width:120px;height:1px;background:#d1d5db;margin-top:4px"></div>
+            <div class="text-gray-400 mt-1" style="font-size:10px">Authorized Signature</div>
           </div>
-          <div class="mt-8 text-center"><div class="text-[10px] text-gray-300">Generated with Flowtali · flowtali.io</div></div>
-          <div v-if="invoice.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none" style="transform:rotate(-25deg)">
-            <div class="text-5xl font-extrabold tracking-widest border-4 px-6 py-3 rounded opacity-20"
-              :style="{ color: invoice.stamp === 'PAID' ? '#4ade80' : invoice.stamp === 'VOID' ? '#f87171' : '#9ca3af', borderColor: 'currentColor' }">
-              {{ invoice.stamp }}
+          <div v-if="invoice.show_notes && invoice.notes" style="border-top:1px solid #f3f4f6;padding-top:20px">
+            <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:10px">Notes</div>
+            <p class="text-gray-500 leading-relaxed whitespace-pre-line" style="font-size:12px">{{ invoice.notes }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── THEME: MINIMAL ── -->
+      <div
+        v-else-if="invoice.theme === 'minimal'"
+        class="print-document w-full max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden text-gray-700 relative"
+        :style="{ fontFamily: invoice.font_family || '\'DM Sans\', sans-serif', fontSize: '13px', minHeight: '1080px' }"
+      >
+        <div v-if="invoice.show_watermark && invoice.watermark_text" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
+          <span class="text-7xl font-black tracking-widest opacity-[0.04] text-gray-800 whitespace-nowrap">{{ invoice.watermark_text }}</span>
+        </div>
+        <div v-if="invoice.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-25deg);z-index:2">
+          <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(invoice), borderColor: stampColorFor(invoice) }">{{ invoice.stamp }}</div>
+        </div>
+        <div class="p-12" style="position:relative;z-index:3">
+          <div class="flex justify-between items-start mb-10">
+            <div>
+              <img v-if="invoice.logo_url && invoice.show_logo" :src="invoice.logo_url" alt="Logo" class="h-8 w-auto object-contain mb-3" />
+              <div class="font-semibold text-gray-900 uppercase tracking-widest text-sm">{{ invoice.from_name }}</div>
+              <div v-if="invoice.from_tagline" class="text-gray-400 text-xs mt-0.5">{{ invoice.from_tagline }}</div>
             </div>
+            <div class="text-right">
+              <div class="text-4xl font-light text-gray-200 tracking-widest uppercase">Invoice</div>
+              <div class="font-mono text-xs text-gray-400 mt-2">{{ invoice.number }}</div>
+            </div>
+          </div>
+          <div style="height:1px;background:#e5e7eb;margin-bottom:32px"></div>
+          <div class="flex gap-16 mb-8 text-xs">
+            <div>
+              <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">From</div>
+              <div class="text-gray-500 whitespace-pre-line leading-relaxed">{{ invoice.from_address }}</div>
+              <div v-if="invoice.from_email" class="text-gray-500">{{ invoice.from_email }}</div>
+            </div>
+            <div>
+              <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Bill To</div>
+              <div class="font-medium text-gray-700">{{ invoice.to_name || '—' }}</div>
+              <div v-if="invoice.to_company" class="text-gray-500">{{ invoice.to_company }}</div>
+              <div v-if="invoice.to_email" class="text-gray-500">{{ invoice.to_email }}</div>
+              <div v-if="invoice.to_address" class="text-gray-500 whitespace-pre-line">{{ invoice.to_address }}</div>
+            </div>
+            <div>
+              <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Dates</div>
+              <div class="text-gray-400" style="font-size:10px">Issued</div>
+              <div class="font-medium text-gray-700 mb-2">{{ formatDate(invoice.issue_date) }}</div>
+              <div class="text-gray-400" style="font-size:10px">Due</div>
+              <div class="font-medium text-gray-700">{{ formatDate(invoice.due_date) }}</div>
+            </div>
+          </div>
+          <div style="height:1px;background:#e5e7eb;margin-bottom:24px"></div>
+          <table class="w-full mb-6" style="border-collapse:collapse">
+            <thead><tr style="border-bottom:1px solid #e5e7eb">
+              <th class="text-left pb-2 text-gray-400 uppercase tracking-wide font-medium" style="font-size:9px">Description</th>
+              <th class="text-center pb-2 text-gray-400 uppercase tracking-wide font-medium" style="font-size:9px">Qty</th>
+              <th class="text-center pb-2 text-gray-400 uppercase tracking-wide font-medium" style="font-size:9px">Unit</th>
+              <th class="text-right pb-2 text-gray-400 uppercase tracking-wide font-medium" style="font-size:9px">Rate</th>
+              <th class="text-right pb-2 text-gray-400 uppercase tracking-wide font-medium" style="font-size:9px">Amount</th>
+            </tr></thead>
+            <tbody>
+              <tr v-for="item in invoice.items" :key="item.id" style="border-bottom:1px solid #f9fafb">
+                <td class="py-3 text-gray-700">{{ item.description }}</td>
+                <td class="py-3 text-center text-gray-500">{{ item.qty }}</td>
+                <td class="py-3 text-center text-gray-400 text-xs">{{ item.unit }}</td>
+                <td class="py-3 text-right text-gray-500">{{ fmtMoney(item.rate) }}</td>
+                <td class="py-3 text-right text-gray-800">{{ fmtMoney(item.qty * item.rate) }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="flex justify-end mb-8">
+            <div style="width:220px" class="space-y-1.5 text-sm">
+              <div class="flex justify-between text-gray-400"><span>Subtotal</span><span class="font-mono">{{ fmtMoney(invoice.totals.subtotal) }}</span></div>
+              <div v-if="invoice.totals.discount_amt > 0" class="flex justify-between text-gray-400"><span>Discount</span><span class="font-mono">-{{ fmtMoney(invoice.totals.discount_amt) }}</span></div>
+              <div v-if="invoice.totals.taxes_total > 0" class="flex justify-between text-gray-400"><span>Tax</span><span class="font-mono">{{ fmtMoney(invoice.totals.taxes_total) }}</span></div>
+              <div style="height:1px;background:#111827;margin:8px 0"></div>
+              <div class="flex justify-between font-bold text-base text-gray-900"><span>Total</span><span class="font-mono">{{ fmtMoney(invoice.totals.total) }}</span></div>
+            </div>
+          </div>
+          <div v-if="invoice.show_notes && invoice.notes" style="border-top:1px solid #f3f4f6;padding-top:24px;margin-bottom:16px">
+            <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:9px">Notes</div>
+            <p class="text-gray-400 leading-relaxed whitespace-pre-line" style="font-size:12px">{{ invoice.notes }}</p>
+          </div>
+          <div v-if="invoice.show_footer_line" style="border-top:1px solid #e5e7eb;padding-top:20px;margin-top:24px" class="flex justify-between">
+            <div class="text-gray-400" style="font-size:11px">{{ invoice.footer_text || invoice.from_website }}</div>
+            <div v-if="invoice.show_flowtali_tag" class="text-gray-300" style="font-size:10px">Generated with Flowtali</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── THEME: BOLD ── -->
+      <div
+        v-else-if="invoice.theme === 'bold'"
+        class="print-document w-full max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden text-gray-800 relative"
+        :style="{ fontFamily: invoice.font_family || '\'DM Sans\', sans-serif', fontSize: '13px', minHeight: '1080px' }"
+      >
+        <div v-if="invoice.show_watermark && invoice.watermark_text" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
+          <span class="text-7xl font-black tracking-widest opacity-[0.04] text-gray-800 whitespace-nowrap">{{ invoice.watermark_text }}</span>
+        </div>
+        <div v-if="invoice.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-25deg);z-index:2">
+          <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(invoice), borderColor: stampColorFor(invoice) }">{{ invoice.stamp }}</div>
+        </div>
+        <div :style="{ backgroundColor: invoice.accent_color }" class="px-10 py-8 flex justify-between items-center" style="position:relative;z-index:3">
+          <div class="flex items-center gap-4">
+            <img v-if="invoice.logo_url && invoice.show_logo" :src="invoice.logo_url" alt="Logo" class="h-14 w-auto object-contain brightness-0 invert" />
+            <div>
+              <div class="text-white font-bold text-xl">{{ invoice.from_name }}</div>
+              <div v-if="invoice.from_tagline" class="text-white/70 text-sm">{{ invoice.from_tagline }}</div>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-white font-black text-5xl tracking-widest" style="letter-spacing:0.15em">INVOICE</div>
+            <div class="font-mono text-white/70 text-sm mt-1">{{ invoice.number }}</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-6 px-10 py-5 bg-gray-50 border-b border-gray-200" style="position:relative;z-index:3">
+          <div class="text-xs">
+            <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Contact</div>
+            <div v-if="invoice.from_email" class="text-gray-600">{{ invoice.from_email }}</div>
+            <div v-if="invoice.from_phone" class="text-gray-600">{{ invoice.from_phone }}</div>
+          </div>
+          <div class="text-xs">
+            <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Address</div>
+            <div class="text-gray-600 whitespace-pre-line">{{ invoice.from_address }}</div>
+          </div>
+          <div class="text-xs text-right">
+            <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Issue Date</div>
+            <div class="text-gray-700 font-medium">{{ formatDate(invoice.issue_date) }}</div>
+            <div class="text-gray-400 uppercase tracking-widest mt-2 mb-1" style="font-size:9px">Due Date</div>
+            <div class="text-gray-700 font-medium">{{ formatDate(invoice.due_date) }}</div>
+          </div>
+        </div>
+        <div class="px-10 py-8" style="position:relative;z-index:3">
+          <div class="mb-8">
+            <div :style="{ color: invoice.accent_color }" class="uppercase tracking-widest font-bold mb-2" style="font-size:10px">Bill To</div>
+            <div class="font-semibold text-gray-800 text-sm">{{ invoice.to_name || '—' }}</div>
+            <div v-if="invoice.to_company" class="text-xs text-gray-500">{{ invoice.to_company }}</div>
+            <div v-if="invoice.to_email" class="text-xs text-gray-500">{{ invoice.to_email }}</div>
+            <div v-if="invoice.to_address" class="text-xs text-gray-500 whitespace-pre-line mt-1">{{ invoice.to_address }}</div>
+          </div>
+          <table class="w-full mb-6" style="border-collapse:collapse">
+            <thead><tr :style="{ backgroundColor: invoice.accent_color }">
+              <th class="text-left py-3 px-4 text-white uppercase tracking-wide font-semibold" style="font-size:10px">Description</th>
+              <th class="text-center py-3 px-4 text-white uppercase tracking-wide font-semibold" style="font-size:10px">Qty</th>
+              <th class="text-center py-3 px-4 text-white uppercase tracking-wide font-semibold" style="font-size:10px">Unit</th>
+              <th class="text-right py-3 px-4 text-white uppercase tracking-wide font-semibold" style="font-size:10px">Rate</th>
+              <th class="text-right py-3 px-4 text-white uppercase tracking-wide font-semibold" style="font-size:10px">Amount</th>
+            </tr></thead>
+            <tbody>
+              <tr v-for="(item, idx) in invoice.items" :key="item.id" :style="{ backgroundColor: idx % 2 === 0 ? '#ffffff' : '#f9fafb', borderBottom: '1px solid #f3f4f6' }">
+                <td class="py-3 px-4 text-gray-700">{{ item.description }}</td>
+                <td class="py-3 px-4 text-center text-gray-500">{{ item.qty }}</td>
+                <td class="py-3 px-4 text-center text-gray-400 text-xs">{{ item.unit }}</td>
+                <td class="py-3 px-4 text-right text-gray-500">{{ fmtMoney(item.rate) }}</td>
+                <td class="py-3 px-4 text-right font-semibold text-gray-800">{{ fmtMoney(item.qty * item.rate) }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="flex justify-end mb-8">
+            <div style="width:260px">
+              <div class="space-y-1.5 text-sm">
+                <div class="flex justify-between text-gray-500"><span>Subtotal</span><span class="font-mono">{{ fmtMoney(invoice.totals.subtotal) }}</span></div>
+                <div v-if="invoice.totals.discount_amt > 0" class="flex justify-between text-gray-500"><span>Discount</span><span class="font-mono text-red-500">-{{ fmtMoney(invoice.totals.discount_amt) }}</span></div>
+                <div v-if="invoice.totals.taxes_total > 0" class="flex justify-between text-gray-500"><span>Tax</span><span class="font-mono">{{ fmtMoney(invoice.totals.taxes_total) }}</span></div>
+              </div>
+              <div :style="{ backgroundColor: invoice.accent_color }" class="flex justify-between font-bold text-base text-white px-4 py-3 rounded mt-3">
+                <span>Total Due</span><span class="font-mono">{{ fmtMoney(invoice.totals.total) }}</span>
+              </div>
+            </div>
+          </div>
+          <div v-if="invoice.show_notes && invoice.notes" style="border-top:1px solid #f3f4f6;padding-top:20px;margin-bottom:16px">
+            <div :style="{ color: invoice.accent_color }" class="uppercase tracking-widest font-bold mb-2" style="font-size:10px">Notes</div>
+            <p class="text-gray-500 leading-relaxed whitespace-pre-line" style="font-size:12px">{{ invoice.notes }}</p>
+          </div>
+          <div v-if="invoice.show_footer_line" style="border-top:1px solid #e5e7eb;padding-top:16px;margin-top:24px" class="flex justify-between">
+            <div class="text-gray-400 text-xs">{{ invoice.footer_text || invoice.from_website }}</div>
+            <div v-if="invoice.show_flowtali_tag" class="text-gray-300" style="font-size:10px">Generated with Flowtali · flowtali.io</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── THEME: EXECUTIVE ── -->
+      <div
+        v-else
+        class="print-document w-full max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden text-gray-800 relative"
+        :style="{ fontFamily: invoice.font_family || '\'DM Sans\', sans-serif', fontSize: '13px', minHeight: '1080px' }"
+      >
+        <div v-if="invoice.show_watermark && invoice.watermark_text" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
+          <span class="text-7xl font-black tracking-widest opacity-[0.04] text-gray-800 whitespace-nowrap">{{ invoice.watermark_text }}</span>
+        </div>
+        <div v-if="invoice.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-25deg);z-index:2">
+          <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(invoice), borderColor: stampColorFor(invoice) }">{{ invoice.stamp }}</div>
+        </div>
+        <div class="p-10" style="position:relative;z-index:3">
+          <div class="grid grid-cols-2 gap-6 mb-8">
+            <div class="p-5 rounded border" :style="{ borderColor: invoice.accent_color + '40' }">
+              <div :style="{ color: invoice.accent_color }" class="uppercase tracking-widest font-bold mb-3" style="font-size:9px">From</div>
+              <img v-if="invoice.logo_url && invoice.show_logo" :src="invoice.logo_url" alt="Logo" class="h-10 w-auto object-contain mb-3" />
+              <div class="font-bold text-gray-800 text-sm">{{ invoice.from_name }}</div>
+              <div v-if="invoice.from_tagline" class="text-xs text-gray-400 mb-2">{{ invoice.from_tagline }}</div>
+              <div class="text-xs text-gray-500 whitespace-pre-line leading-relaxed">{{ invoice.from_address }}</div>
+              <div v-if="invoice.from_email" class="text-xs text-gray-500 mt-1">{{ invoice.from_email }}</div>
+              <div v-if="invoice.from_phone" class="text-xs text-gray-500">{{ invoice.from_phone }}</div>
+            </div>
+            <div class="p-5 rounded border" :style="{ borderColor: invoice.accent_color + '40' }">
+              <div :style="{ color: invoice.accent_color }" class="uppercase tracking-widest font-bold mb-3" style="font-size:9px">Invoice Details</div>
+              <div class="text-3xl font-black tracking-widest text-gray-200 mb-3" style="letter-spacing:0.1em">INVOICE</div>
+              <div class="space-y-2 text-xs">
+                <div class="flex justify-between"><span class="text-gray-400">Number</span><span class="font-mono font-semibold text-gray-700">{{ invoice.number }}</span></div>
+                <div class="flex justify-between"><span class="text-gray-400">Issue Date</span><span class="font-semibold text-gray-700">{{ formatDate(invoice.issue_date) }}</span></div>
+                <div class="flex justify-between"><span class="text-gray-400">Due Date</span><span class="font-semibold text-gray-700">{{ formatDate(invoice.due_date) }}</span></div>
+                <div style="border-top:1px solid #f3f4f6;padding-top:8px;margin-top:8px">
+                  <div class="text-gray-400 mb-1" style="font-size:9px;text-transform:uppercase;letter-spacing:0.1em">Bill To</div>
+                  <div class="font-semibold text-gray-800">{{ invoice.to_name || '—' }}</div>
+                  <div v-if="invoice.to_company" class="text-gray-500">{{ invoice.to_company }}</div>
+                  <div v-if="invoice.to_email" class="text-gray-500">{{ invoice.to_email }}</div>
+                  <div v-if="invoice.to_address" class="text-gray-500 whitespace-pre-line">{{ invoice.to_address }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <table class="w-full mb-6" style="border-collapse:collapse;border:1px solid #e5e7eb">
+            <thead><tr :style="{ backgroundColor: invoice.accent_color + '14', borderBottom: `2px solid ${invoice.accent_color}` }">
+              <th class="text-left py-3 px-4 text-gray-600 uppercase tracking-wide font-semibold" style="font-size:10px">Description</th>
+              <th class="text-center py-3 px-4 text-gray-600 uppercase tracking-wide font-semibold" style="font-size:10px">Qty</th>
+              <th class="text-center py-3 px-4 text-gray-600 uppercase tracking-wide font-semibold" style="font-size:10px">Unit</th>
+              <th class="text-right py-3 px-4 text-gray-600 uppercase tracking-wide font-semibold" style="font-size:10px">Rate</th>
+              <th class="text-right py-3 px-4 text-gray-600 uppercase tracking-wide font-semibold" style="font-size:10px">Amount</th>
+            </tr></thead>
+            <tbody>
+              <tr v-for="(item, idx) in invoice.items" :key="item.id" :style="{ backgroundColor: idx % 2 === 0 ? '#ffffff' : '#f9fafb', borderBottom: '1px solid #e5e7eb' }">
+                <td class="py-3 px-4 text-gray-700">{{ item.description }}</td>
+                <td class="py-3 px-4 text-center text-gray-500">{{ item.qty }}</td>
+                <td class="py-3 px-4 text-center text-gray-400 text-xs">{{ item.unit }}</td>
+                <td class="py-3 px-4 text-right text-gray-500">{{ fmtMoney(item.rate) }}</td>
+                <td class="py-3 px-4 text-right font-semibold text-gray-800">{{ fmtMoney(item.qty * item.rate) }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="grid grid-cols-2 gap-6 mb-6">
+            <div>
+              <div v-if="invoice.show_notes && invoice.notes">
+                <div :style="{ color: invoice.accent_color }" class="uppercase tracking-widest font-bold mb-2" style="font-size:9px">Notes</div>
+                <p class="text-gray-500 leading-relaxed whitespace-pre-line" style="font-size:12px">{{ invoice.notes }}</p>
+              </div>
+              <div v-if="invoice.show_bank_details" :class="invoice.show_notes && invoice.notes ? 'mt-4' : ''">
+                <div :style="{ color: invoice.accent_color }" class="uppercase tracking-widest font-bold mb-2" style="font-size:9px">Payment Details</div>
+                <div class="text-xs text-gray-600 space-y-0.5">
+                  <div v-if="invoice.from_bank_name">Bank: {{ invoice.from_bank_name }}</div>
+                  <div v-if="invoice.from_bank_account_number" class="font-mono">Account: {{ invoice.from_bank_account_number }}</div>
+                  <div v-if="invoice.from_bank_iban" class="font-mono">IBAN: {{ invoice.from_bank_iban }}</div>
+                  <div v-for="plink in invoice.payment_links" :key="plink.id">
+                    <span class="text-gray-400">{{ plink.type }}:</span> <span class="text-blue-500 font-mono">{{ plink.value || '—' }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div :style="{ color: invoice.accent_color }" class="uppercase tracking-widest font-bold mb-3" style="font-size:9px">Summary</div>
+              <div class="space-y-1.5 text-sm border rounded p-4" :style="{ borderColor: invoice.accent_color + '30' }">
+                <div class="flex justify-between text-gray-500"><span>Subtotal</span><span class="font-mono">{{ fmtMoney(invoice.totals.subtotal) }}</span></div>
+                <div v-if="invoice.totals.discount_amt > 0" class="flex justify-between text-gray-500"><span>Discount</span><span class="font-mono text-red-500">-{{ fmtMoney(invoice.totals.discount_amt) }}</span></div>
+                <div v-if="invoice.totals.taxes_total > 0" class="flex justify-between text-gray-500"><span>Tax</span><span class="font-mono">{{ fmtMoney(invoice.totals.taxes_total) }}</span></div>
+                <div style="height:1px;background:#e5e7eb;margin:8px 0"></div>
+                <div class="flex justify-between font-bold text-base"><span class="text-gray-800">Total</span><span class="font-mono" :style="{ color: invoice.accent_color }">{{ fmtMoney(invoice.totals.total) }}</span></div>
+              </div>
+              <div v-if="invoice.signature_url" class="mt-6 flex flex-col items-end">
+                <img :src="invoice.signature_url" alt="Signature" class="h-10 w-auto object-contain" />
+                <div style="width:120px;height:1px;background:#d1d5db;margin-top:4px"></div>
+                <div class="text-gray-400 mt-1" style="font-size:10px">Authorized Signature</div>
+              </div>
+            </div>
+          </div>
+          <div v-if="invoice.show_footer_line" style="border-top:2px solid;margin-top:24px;padding-top:16px" :style="{ borderColor: invoice.accent_color + '40' }" class="flex justify-between">
+            <div class="text-gray-400 text-xs">{{ invoice.footer_text || invoice.from_website }}</div>
+            <div v-if="invoice.show_flowtali_tag" class="text-gray-300" style="font-size:10px">Generated with Flowtali · flowtali.io</div>
           </div>
         </div>
       </div>

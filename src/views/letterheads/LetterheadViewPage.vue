@@ -199,7 +199,7 @@ function lastUsedLabel(): string {
           <div
             v-if="lh.theme === 'classic'"
             class="print-document w-full max-w-2xl bg-white shadow-2xl relative overflow-hidden"
-            :style="{ fontFamily: lh.font_family, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
+            :style="{ fontFamily: lh.font_family ?? undefined, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
           >
             <div v-if="lh.show_top_bar" class="h-1.5 w-full" :style="{ backgroundColor: lh.accent_color }"></div>
             <div v-if="lh.show_watermark && lh.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
@@ -253,7 +253,7 @@ function lastUsedLabel(): string {
           <div
             v-else-if="lh.theme === 'modern'"
             class="print-document w-full max-w-2xl bg-white shadow-2xl relative overflow-hidden flex"
-            :style="{ fontFamily: lh.font_family, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
+            :style="{ fontFamily: lh.font_family ?? undefined, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
           >
             <div v-if="lh.show_watermark && lh.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
               <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: lh.watermark_color }">{{ lh.watermark }}</span>
@@ -312,7 +312,7 @@ function lastUsedLabel(): string {
           <div
             v-else-if="lh.theme === 'minimal'"
             class="print-document w-full max-w-2xl bg-white shadow-2xl relative overflow-hidden"
-            :style="{ fontFamily: lh.font_family, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
+            :style="{ fontFamily: lh.font_family ?? undefined, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
           >
             <div v-if="lh.show_watermark && lh.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
               <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: lh.watermark_color }">{{ lh.watermark }}</span>
@@ -349,7 +349,7 @@ function lastUsedLabel(): string {
           <div
             v-else-if="lh.theme === 'bold'"
             class="print-document w-full max-w-2xl bg-white shadow-2xl relative overflow-hidden"
-            :style="{ fontFamily: lh.font_family, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
+            :style="{ fontFamily: lh.font_family ?? undefined, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
           >
             <div v-if="lh.show_watermark && lh.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
               <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: lh.watermark_color }">{{ lh.watermark }}</span>
@@ -451,7 +451,7 @@ function lastUsedLabel(): string {
           <div
             v-else-if="lh.theme === 'executive'"
             class="print-document w-full max-w-2xl bg-white shadow-2xl relative overflow-hidden"
-            :style="{ fontFamily: lh.font_family, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
+            :style="{ fontFamily: lh.font_family ?? undefined, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
           >
             <div v-if="lh.show_top_bar" class="h-2 w-full" :style="{ backgroundColor: lh.accent_color }"></div>
             <div v-if="lh.show_watermark && lh.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">

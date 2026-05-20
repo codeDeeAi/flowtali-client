@@ -5,13 +5,20 @@ import { Icon } from '@iconify/vue'
 import { useLoaders } from '@/composables/loaders.ts'
 import { useNotification } from '@/composables/notification.ts'
 import ShareLinkModal from '@/components/modals/ShareLinkModal.vue'
+import { useAuthStore } from '@/stores/auth'
+import { InvoiceService, type IInvoiceDraftData } from '@/services/invoice.service'
+import { MediaService } from '@/services/media.service'
 
 // ─── Props & Emits ────────────────────────────────────────────────────────────
 interface Props {
   mode: 'create' | 'edit'
+  invoiceId?: string
   initialData?: Partial<typeof form.value>
 }
 const props = withDefaults(defineProps<Props>(), { mode: 'create' })
+
+const authStore = useAuthStore()
+const orgId     = computed(() => authStore.getCurrentOrganization?.id ?? '')
 
 // ─── Composables ──────────────────────────────────────────────────────────────
 const router = useRouter()
@@ -74,7 +81,7 @@ const form = ref({
   fontFamily: "'DM Sans', sans-serif",
   signatureUrl: '',
   stampUrl: '',
-  stamp: '' as '' | 'PAID' | 'DRAFT' | 'VOID' | 'OVERDUE' | 'APPROVED',
+  stamp: '' as string,
   stampCustomText: '',
   showWatermark: false,
   watermarkText: 'CONFIDENTIAL',
@@ -90,10 +97,37 @@ const form = ref({
   footerText: '',
 })
 
+// ─── Draft data (clients, logos, org info) ────────────────────────────────────
+const draftData      = ref<IInvoiceDraftData | null>(null)
+const isDraftLoading = ref(false)
+const isUploadingLogo = ref(false)
+const isUploadingSig  = ref(false)
+
+const clientPresets  = computed(() => draftData.value?.clients ?? [])
+const savedLogos     = computed(() => draftData.value?.logos ?? [])
+const savedSignatures = computed(() => draftData.value?.signatures ?? [])
+const orgStamps      = computed(() => draftData.value?.organization?.stamps ?? [])
+const orgBrandColors = computed(() => draftData.value?.organization?.brand_colors ?? [])
+const stampColorFor  = (label: string) => orgStamps.value.find(s => s.label === label)?.color ?? '#9ca3af'
+
 // ─── Init from props ───────────────────────────────────────────────────────────
-onMounted(() => {
-  if (props.initialData) {
-    Object.assign(form.value, props.initialData)
+onMounted(async () => {
+  if (props.initialData) Object.assign(form.value, props.initialData)
+
+  if (orgId.value) {
+    isDraftLoading.value = true
+    try {
+      const res = await InvoiceService.draftData(orgId.value)
+      draftData.value = res.data.data
+      if (props.mode === 'create' && !props.initialData && draftData.value?.organization) {
+        const org = draftData.value.organization
+        if (org.name && !form.value.fromName) form.value.fromName = org.name
+      }
+    } catch {
+      // non-critical
+    } finally {
+      isDraftLoading.value = false
+    }
   }
 })
 
@@ -180,74 +214,76 @@ const zoomIn = () => { zoom.value = Math.min(1.0, parseFloat((zoom.value + 0.1).
 const zoomOut = () => { zoom.value = Math.max(0.4, parseFloat((zoom.value - 0.1).toFixed(2))) }
 const zoomFit = () => { zoom.value = 0.75 }
 
-// ─── Preset orgs ─────────────────────────────────────────────────────────────
-const orgPresets = [
-  {
-    name: 'Acme Design Studio',
-    tagline: 'Creative Agency & Digital Studio',
-    email: 'hello@acme.studio',
-    phone: '+1 415 555 0199',
-    website: 'www.acme.studio',
-    address: '123 Design Street\nSan Francisco, CA 94105',
-  },
-  {
-    name: 'Freelance – Ada Lovelace',
-    tagline: 'Independent Software Consultant',
-    email: 'ada@lovelace.dev',
-    phone: '+44 20 7946 1815',
-    website: 'lovelace.dev',
-    address: '1 Computing Lane\nLondon, EC2A 4BX',
-  },
-]
-const fillFrom = (preset: typeof orgPresets[0]) => {
-  form.value.fromName = preset.name
-  form.value.fromTagline = preset.tagline
-  form.value.fromEmail = preset.email
-  form.value.fromPhone = preset.phone
-  form.value.fromWebsite = preset.website
-  form.value.fromAddress = preset.address
+// ─── Org quick-fill ───────────────────────────────────────────────────────────
+const fillFrom = (p: { name: string; email: string | null; phone: string | null; address: string | null }) => {
+  form.value.fromName    = p.name
+  form.value.fromEmail   = p.email ?? ''
+  form.value.fromPhone   = p.phone ?? ''
+  form.value.fromAddress = p.address ?? ''
 }
 
-// ─── Preset clients ───────────────────────────────────────────────────────────
-const clients = [
-  { initials: 'JJ', color: '#60a5fa', name: 'James Johnson', company: 'Globex Corporation', email: 'james@globex.com', phone: '+1 212 555 0100', address: '742 Evergreen Terrace\nSpringfield, IL 62701' },
-  { initials: 'SM', color: '#a78bfa', name: 'Sofia Martinez', company: 'Pixel Works Ltd', email: 'sofia@pixelworks.io', phone: '+44 20 7946 0958', address: '10 Downing St\nLondon SW1A 2AA' },
-  { initials: 'KA', color: '#f87171', name: 'Kofi Acheampong', company: 'Nova Agency', email: 'kofi@nova.co', phone: '+233 30 295 0100', address: 'Ring Road Central\nAccra, Ghana' },
-  { initials: 'PN', color: '#4ade80', name: 'Priya Nair', company: 'Freelance', email: 'priya@mail.com', phone: '+91 98765 43210', address: 'Bandra West\nMumbai 400050' },
-  { initials: 'MB', color: '#e8a83e', name: 'Marcus Bell', company: 'Studio X', email: 'marcus@studiox.co', phone: '+1 415 555 0199', address: '555 Mission St\nSan Francisco, CA' },
-  { initials: 'CW', color: '#38bdf8', name: 'Chen Wei', company: 'Frontier Tech', email: 'chen@frontier.tech', phone: '+86 10 6552 9988', address: 'Zhongguancun\nHaidian, Beijing' },
-]
-const fillTo = (c: typeof clients[0]) => {
-  form.value.toName = c.name
-  form.value.toCompany = c.company
-  form.value.toEmail = c.email
-  form.value.toPhone = c.phone
-  form.value.toAddress = c.address
+// ─── Client quick-fill ────────────────────────────────────────────────────────
+const fillTo = (c: { name: string; company: string | null; email: string | null; phone: string | null; address: string | null }) => {
+  form.value.toName    = c.name
+  form.value.toCompany = c.company ?? ''
+  form.value.toEmail   = c.email ?? ''
+  form.value.toPhone   = c.phone ?? ''
+  form.value.toAddress = c.address ?? ''
+}
+
+function clientInitials(name: string) {
+  return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
 }
 
 // ─── Logo / Signature upload ──────────────────────────────────────────────────
-const readFile = (file: File): Promise<string> =>
-  new Promise((res, rej) => {
-    const r = new FileReader()
-    r.onload = () => res(r.result as string)
-    r.onerror = rej
-    r.readAsDataURL(file)
-  })
-
 const handleLogoUpload = async (e: Event) => {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
-  form.value.logoUrl = await readFile(file)
+  isUploadingLogo.value = true
+  try {
+    const fd = new FormData()
+    fd.append('files[0][type]', 'org_logo')
+    fd.append('files[0][file]', file)
+    const res = await MediaService.upload(fd)
+    const uploaded = res.data.data[0]
+    if (uploaded) {
+      form.value.logoUrl = uploaded.url
+      if (draftData.value) draftData.value.logos.unshift({ id: uploaded.id, url: uploaded.url })
+    }
+  } catch {
+    notify('Logo upload failed', 'error')
+  } finally {
+    isUploadingLogo.value = false
+  }
 }
+
 const handleSignatureUpload = async (e: Event) => {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
-  form.value.signatureUrl = await readFile(file)
+  isUploadingSig.value = true
+  try {
+    const fd = new FormData()
+    fd.append('files[0][type]', 'org_signature')
+    fd.append('files[0][file]', file)
+    const res = await MediaService.upload(fd)
+    const uploaded = res.data.data[0]
+    if (uploaded) {
+      form.value.signatureUrl = uploaded.url
+      if (draftData.value) draftData.value.signatures.unshift({ id: uploaded.id, url: uploaded.url })
+    }
+  } catch {
+    notify('Signature upload failed', 'error')
+  } finally {
+    isUploadingSig.value = false
+  }
 }
+
 const handleStampUpload = async (e: Event) => {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
-  form.value.stampUrl = await readFile(file)
+  const reader = new FileReader()
+  reader.onload = () => { form.value.stampUrl = reader.result as string }
+  reader.readAsDataURL(file)
 }
 
 // ─── Design options ───────────────────────────────────────────────────────────
@@ -280,10 +316,7 @@ let nextLinkId = 1
 const addPaymentLink  = () => form.value.paymentLinks.push({ id: nextLinkId++, type: 'PayPal', value: '' })
 const removePaymentLink = (id: number) => { form.value.paymentLinks = form.value.paymentLinks.filter(l => l.id !== id) }
 
-const stampOptions = ['', 'PAID', 'DRAFT', 'VOID', 'OVERDUE', 'APPROVED'] as const
-const stampColor: Record<string, string> = {
-  PAID: '#4ade80', APPROVED: '#60a5fa', DRAFT: '#9ca3af', VOID: '#f87171', OVERDUE: '#f87171',
-}
+// stamp options come from org via draft data (orgStamps computed above)
 
 const toggleFields = [
   { key: 'showTopBar', label: 'Top accent bar' },
@@ -299,24 +332,81 @@ const handlePrint = () => window.print()
 
 // ─── Share ────────────────────────────────────────────────────────────────────
 const showShareModal = ref(false)
-// Mock saved invoice id — in a real app this comes from the API response
-const savedInvoiceId = ref(1)
+const savedInvoiceId = ref('')
 
 // ─── Save ─────────────────────────────────────────────────────────────────────
-const handleSave = async () => {
+const buildPayload = (overrides?: Record<string, any>) => ({
+  number:                   form.value.number,
+  issue_date:               form.value.issueDate || null,
+  due_date:                 form.value.dueDate || null,
+  payment_terms:            form.value.paymentTerms || null,
+  currency:                 form.value.currency,
+  po_number:                form.value.poNumber || null,
+  from_name:                form.value.fromName,
+  from_tagline:             form.value.fromTagline || null,
+  from_email:               form.value.fromEmail || null,
+  from_phone:               form.value.fromPhone || null,
+  from_website:             form.value.fromWebsite || null,
+  from_address:             form.value.fromAddress || null,
+  from_bank_name:           form.value.fromBankName || null,
+  from_bank_account_name:   form.value.fromBankAccountName || null,
+  from_bank_account_number: form.value.fromBankAccountNumber || null,
+  from_bank_sort_code:      form.value.fromBankSortCode || null,
+  from_bank_iban:           form.value.fromBankIban || null,
+  logo_url:                 form.value.logoUrl || null,
+  payment_links:            form.value.paymentLinks,
+  to_name:                  form.value.toName || null,
+  to_company:               form.value.toCompany || null,
+  to_email:                 form.value.toEmail || null,
+  to_phone:                 form.value.toPhone || null,
+  to_address:               form.value.toAddress || null,
+  items:                    form.value.items,
+  taxes:                    form.value.taxes,
+  discount_type:            form.value.discountType,
+  discount:                 form.value.discount,
+  theme:                    form.value.theme,
+  accent_color:             form.value.accentColor,
+  font_family:              form.value.fontFamily || null,
+  signature_url:            form.value.signatureUrl || null,
+  stamp_url:                form.value.stampUrl || null,
+  stamp:                    form.value.stamp || null,
+  stamp_custom_text:        form.value.stampCustomText || null,
+  show_watermark:           form.value.showWatermark,
+  watermark_text:           form.value.watermarkText || null,
+  show_top_bar:             form.value.showTopBar,
+  show_logo:                form.value.showLogo,
+  show_footer_line:         form.value.showFooterLine,
+  show_notes:               form.value.showNotes,
+  show_bank_details:        form.value.showBankDetails,
+  show_flowtali_tag:        form.value.showFlowtaliTag,
+  notes:                    form.value.notes || null,
+  footer_text:              form.value.footerText || null,
+  ...overrides,
+})
+
+const handleSave = async (statusOverride?: string) => {
+  if (!orgId.value) return
   setLoader('isSaving', true)
-  await new Promise(r => setTimeout(r, 1000))
-  setLoader('isSaving', false)
-  const msg = props.mode === 'create' ? 'Invoice created successfully!' : 'Invoice saved successfully!'
-  notify(msg, 'success')
-  emit('save', form.value)
-  router.push({ name: 'invoices' })
+  try {
+    const payload = buildPayload(statusOverride ? { status: statusOverride } : undefined)
+    if (props.mode === 'create') {
+      const res = await InvoiceService.create(orgId.value, payload)
+      savedInvoiceId.value = res.data.data.id
+      notify('Invoice created successfully!', 'success')
+    } else {
+      await InvoiceService.update(orgId.value, props.invoiceId!, payload)
+      notify('Invoice saved successfully!', 'success')
+    }
+    emit('save', form.value)
+    router.push({ name: 'invoices' })
+  } catch {
+    notify('Failed to save invoice', 'error')
+  } finally {
+    setLoader('isSaving', false)
+  }
 }
 
-const handleSaveDraft = async () => {
-  form.value.stamp = 'DRAFT'
-  await handleSave()
-}
+const handleSaveDraft = () => handleSave('draft')
 
 </script>
 
@@ -368,7 +458,7 @@ const handleSaveDraft = async () => {
           Save Draft
         </button>
         <button
-          @click="handleSave"
+          @click="() => handleSave()"
           :disabled="getLoader('isSaving')"
           class="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg transition-colors bg-amber hover:bg-amber/90 text-charcoal-900 disabled:opacity-60 disabled:cursor-not-allowed"
         >
@@ -407,16 +497,19 @@ const handleSaveDraft = async () => {
             <!-- Org quick-picker -->
             <div>
               <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Quick-fill from profile</p>
-              <div class="space-y-2">
+              <div v-if="isDraftLoading" class="flex items-center gap-2 text-xs text-cream-faint py-2">
+                <Icon icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" /> Loading…
+              </div>
+              <div v-else-if="draftData?.organization" class="space-y-2">
                 <button
-                  v-for="org in orgPresets" :key="org.name"
-                  @click="fillFrom(org)"
+                  @click="fillFrom({ name: draftData!.organization!.name, email: null, phone: null, address: null })"
                   class="w-full text-left p-3 rounded-lg border border-charcoal-600 bg-charcoal-700/40 hover:border-amber/50 hover:bg-charcoal-700 transition-colors group"
                 >
-                  <p class="text-xs font-medium text-cream group-hover:text-amber transition-colors">{{ org.name }}</p>
-                  <p class="text-[10px] text-cream-faint mt-0.5">{{ org.email }} · {{ org.phone }}</p>
+                  <p class="text-xs font-medium text-cream group-hover:text-amber transition-colors">{{ draftData.organization.name }}</p>
+                  <p class="text-[10px] text-cream-faint mt-0.5">Organization profile</p>
                 </button>
               </div>
+              <p v-else-if="!isDraftLoading" class="text-[10px] text-cream-faint/60">No org profile set up yet</p>
             </div>
 
             <div class="h-px bg-charcoal-700"></div>
@@ -531,26 +624,26 @@ const handleSaveDraft = async () => {
             <!-- Client quick-picker -->
             <div>
               <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Select client</p>
-              <div class="space-y-1.5 max-h-64 overflow-y-auto pr-1">
+              <div v-if="isDraftLoading" class="flex items-center gap-2 text-xs text-cream-faint py-2">
+                <Icon icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" /> Loading clients…
+              </div>
+              <div v-else-if="clientPresets.length" class="space-y-1.5 max-h-64 overflow-y-auto pr-1">
                 <button
-                  v-for="c in clients" :key="c.email"
+                  v-for="c in clientPresets" :key="c.id"
                   @click="fillTo(c)"
                   class="w-full text-left p-2.5 rounded-lg border border-charcoal-600 bg-charcoal-700/40 hover:border-amber/50 hover:bg-charcoal-700 transition-colors group flex items-center gap-3"
                   :class="form.toEmail === c.email ? 'border-amber/60 bg-amber/5' : ''"
                 >
-                  <div
-                    class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                    :style="{ backgroundColor: c.color }"
-                  >{{ c.initials }}</div>
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-charcoal-900 bg-amber/80 shrink-0">
+                    {{ clientInitials(c.name) }}
+                  </div>
                   <div class="min-w-0">
                     <p class="text-xs font-medium text-cream truncate">{{ c.name }}</p>
-                    <p class="text-[10px] text-cream-faint truncate">{{ c.company }}</p>
-                  </div>
-                  <div class="ml-auto shrink-0">
-                    <div class="w-2 h-2 rounded-full" :style="{ backgroundColor: c.color }"></div>
+                    <p class="text-[10px] text-cream-faint truncate">{{ c.company ?? c.email }}</p>
                   </div>
                 </button>
               </div>
+              <p v-else-if="!isDraftLoading" class="text-[10px] text-cream-faint/60">No clients added yet</p>
             </div>
 
             <div class="h-px bg-charcoal-700"></div>
@@ -784,6 +877,18 @@ const handleSaveDraft = async () => {
                 <input type="color" v-model="form.accentColor" class="w-9 h-9 rounded cursor-pointer border border-charcoal-600 bg-charcoal-800 p-0.5 shrink-0" />
                 <input v-model="form.accentColor" class="app-inp text-sm flex-1 font-mono" placeholder="#E8A83E" />
               </div>
+              <div v-if="orgBrandColors.length" class="mb-2">
+                <p class="text-[10px] text-cream-faint/60 mb-1.5">Brand</p>
+                <div class="flex flex-wrap gap-1.5">
+                  <button
+                    v-for="c in orgBrandColors" :key="c"
+                    @click="form.accentColor = c"
+                    class="w-6 h-6 rounded-full border-2 transition-transform hover:scale-110"
+                    :class="form.accentColor === c ? 'border-cream/80' : 'border-transparent'"
+                    :style="{ background: c }"
+                  />
+                </div>
+              </div>
               <div class="flex flex-wrap gap-1.5">
                 <button
                   v-for="c in accentSwatches" :key="c"
@@ -816,10 +921,21 @@ const handleSaveDraft = async () => {
                   <Icon icon="lucide:trash-2" class="w-3 h-3" /> Remove
                 </button>
               </div>
+              <div v-if="savedLogos.length" class="flex flex-wrap gap-2 mb-2">
+                <button
+                  v-for="logo in savedLogos" :key="logo.id"
+                  @click="form.logoUrl = logo.url"
+                  class="rounded border p-0.5 transition-colors"
+                  :class="form.logoUrl === logo.url ? 'border-amber' : 'border-charcoal-600 hover:border-amber/50'"
+                >
+                  <img :src="logo.url" alt="Logo" class="h-8 w-auto object-contain" style="max-width: 60px" />
+                </button>
+              </div>
               <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-dashed border-charcoal-600 hover:border-amber/50 text-xs text-cream-faint hover:text-cream transition-colors">
-                <Icon icon="lucide:upload" class="w-3.5 h-3.5" />
-                {{ form.logoUrl ? 'Replace logo' : 'Upload logo' }}
-                <input type="file" accept="image/*" class="hidden" @change="handleLogoUpload" />
+                <Icon v-if="isUploadingLogo" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
+                <Icon v-else icon="lucide:upload" class="w-3.5 h-3.5" />
+                {{ isUploadingLogo ? 'Uploading…' : form.logoUrl ? 'Replace logo' : 'Upload logo' }}
+                <input type="file" accept="image/*" class="hidden" :disabled="isUploadingLogo" @change="handleLogoUpload" />
               </label>
             </div>
 
@@ -832,10 +948,21 @@ const handleSaveDraft = async () => {
                   <Icon icon="lucide:trash-2" class="w-3 h-3" /> Remove
                 </button>
               </div>
+              <div v-if="savedSignatures.length" class="flex flex-wrap gap-2 mb-2">
+                <button
+                  v-for="sig in savedSignatures" :key="sig.id"
+                  @click="form.signatureUrl = sig.url"
+                  class="rounded border p-0.5 transition-colors"
+                  :class="form.signatureUrl === sig.url ? 'border-amber' : 'border-charcoal-600 hover:border-amber/50'"
+                >
+                  <img :src="sig.url" alt="Signature" class="h-8 w-auto object-contain" style="max-width: 80px" />
+                </button>
+              </div>
               <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-dashed border-charcoal-600 hover:border-amber/50 text-xs text-cream-faint hover:text-cream transition-colors">
-                <Icon icon="lucide:pen-line" class="w-3.5 h-3.5" />
-                {{ form.signatureUrl ? 'Replace signature' : 'Upload signature' }}
-                <input type="file" accept="image/*" class="hidden" @change="handleSignatureUpload" />
+                <Icon v-if="isUploadingSig" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
+                <Icon v-else icon="lucide:pen-line" class="w-3.5 h-3.5" />
+                {{ isUploadingSig ? 'Uploading…' : form.signatureUrl ? 'Replace signature' : 'Upload signature' }}
+                <input type="file" accept="image/*" class="hidden" :disabled="isUploadingSig" @change="handleSignatureUpload" />
               </label>
             </div>
 
@@ -846,17 +973,21 @@ const handleSaveDraft = async () => {
               <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Stamp / Watermark</p>
               <div class="grid grid-cols-3 gap-1.5">
                 <button
-                  v-for="s in stampOptions" :key="s"
-                  @click="form.stamp = s"
+                  @click="form.stamp = ''"
                   :class="[
                     'py-1.5 rounded border text-xs font-semibold transition-colors',
-                    form.stamp === s ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500'
+                    form.stamp === '' ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500'
                   ]"
-                  :style="form.stamp !== s && s ? { color: stampColor[s] + '99', borderColor: stampColor[s] + '40' } : {}"
-                >
-                  <span v-if="s" :style="form.stamp === s ? {} : { color: stampColor[s] }">{{ s }}</span>
-                  <span v-else>None</span>
-                </button>
+                >None</button>
+                <button
+                  v-for="s in orgStamps" :key="s.label"
+                  @click="form.stamp = s.label"
+                  :class="[
+                    'py-1.5 rounded border text-xs font-semibold transition-colors',
+                    form.stamp === s.label ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500'
+                  ]"
+                  :style="form.stamp !== s.label ? { color: s.color + 'cc', borderColor: s.color + '40' } : {}"
+                >{{ s.label }}</button>
               </div>
             </div>
 
@@ -1034,7 +1165,7 @@ const handleSaveDraft = async () => {
               >
                 <div
                   class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]"
-                  :style="{ color: stampColor[form.stamp], borderColor: stampColor[form.stamp] }"
+                  :style="{ color: stampColorFor(form.stamp), borderColor: stampColorFor(form.stamp) }"
                 >{{ form.stamp }}</div>
               </div>
 
@@ -1191,7 +1322,7 @@ const handleSaveDraft = async () => {
               </div>
               <!-- Stamp -->
               <div v-if="form.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-25deg); z-index: 2">
-                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[form.stamp], borderColor: stampColor[form.stamp] }">{{ form.stamp }}</div>
+                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(form.stamp), borderColor: stampColorFor(form.stamp) }">{{ form.stamp }}</div>
               </div>
 
               <!-- Left sidebar -->
@@ -1324,7 +1455,7 @@ const handleSaveDraft = async () => {
               </div>
               <!-- Stamp -->
               <div v-if="form.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-25deg); z-index: 2">
-                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[form.stamp], borderColor: stampColor[form.stamp] }">{{ form.stamp }}</div>
+                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(form.stamp), borderColor: stampColorFor(form.stamp) }">{{ form.stamp }}</div>
               </div>
 
               <div class="p-12" style="position: relative; z-index: 3">
@@ -1457,7 +1588,7 @@ const handleSaveDraft = async () => {
               </div>
               <!-- Stamp -->
               <div v-if="form.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-25deg); z-index: 2">
-                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[form.stamp], borderColor: stampColor[form.stamp] }">{{ form.stamp }}</div>
+                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(form.stamp), borderColor: stampColorFor(form.stamp) }">{{ form.stamp }}</div>
               </div>
 
               <!-- Full-width header -->
@@ -1600,7 +1731,7 @@ const handleSaveDraft = async () => {
               </div>
               <!-- Stamp -->
               <div v-if="form.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-25deg); z-index: 2">
-                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[form.stamp], borderColor: stampColor[form.stamp] }">{{ form.stamp }}</div>
+                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(form.stamp), borderColor: stampColorFor(form.stamp) }">{{ form.stamp }}</div>
               </div>
 
               <div class="p-10" style="position: relative; z-index: 3">
@@ -1738,6 +1869,7 @@ const handleSaveDraft = async () => {
   <ShareLinkModal
     v-if="showShareModal"
     resource-type="invoice"
+    :org-id="orgId"
     :resource-id="savedInvoiceId"
     :resource-name="form.number"
     @close="showShareModal = false"

@@ -1,41 +1,99 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { Icon } from '@iconify/vue';
+import { ref, computed, onMounted, watch } from 'vue'
+import { Icon } from '@iconify/vue'
+import { useAuthStore } from '@/stores/auth'
+import { AuditLogService, type IAuditLog } from '@/services/audit-log.service'
+import Pagination from '@/components/ui/Pagination.vue'
 
-interface AuditLog {
-  id: number;
-  event: string;
-  eventIcon: string;
-  eventColor: string;
-  user: string;
-  userColor: string;
-  resource: string;
-  ip: string;
-  time: string;
-  success: boolean;
+const authStore = useAuthStore()
+const orgId     = computed(() => authStore.getCurrentOrganization?.id ?? '')
+
+const searchQuery = ref('')
+const eventFilter = ref('')
+const dateFrom    = ref('')
+const dateTo      = ref('')
+const currentPage = ref(1)
+const perPage     = 20
+
+const logs       = ref<IAuditLog[]>([])
+const total      = ref(0)
+const isLoading  = ref(false)
+
+const eventFilters = [
+  { key: '',           label: 'All events' },
+  { key: 'invoice',    label: 'Invoices' },
+  { key: 'letterhead', label: 'Letterheads' },
+  { key: 'member',     label: 'Members' },
+  { key: 'auth',       label: 'Auth' },
+  { key: 'org',        label: 'Org' },
+]
+
+async function loadLogs() {
+  if (!orgId.value) return
+  isLoading.value = true
+  try {
+    const res = await AuditLogService.list(orgId.value, {
+      search:    searchQuery.value || undefined,
+      event:     eventFilter.value || undefined,
+      date_from: dateFrom.value || undefined,
+      date_to:   dateTo.value || undefined,
+      page:      currentPage.value,
+      per_page:  perPage,
+    })
+    logs.value  = res.data.data.data
+    total.value = res.data.data.total
+  } catch {
+    // non-critical
+  } finally {
+    isLoading.value = false
+  }
 }
 
-const searchQuery = ref('');
+let searchTimer: ReturnType<typeof setTimeout>
+watch(searchQuery, () => {
+  clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => { currentPage.value = 1; loadLogs() }, 400)
+})
+watch([eventFilter, dateFrom, dateTo, currentPage], () => loadLogs())
+onMounted(() => loadLogs())
 
-const logs: AuditLog[] = [
-  { id: 1, event: 'Invoice Created',    eventIcon: 'lucide:file-plus',     eventColor: '#4ade80', user: 'Ada Lovelace',  userColor: '#e8a83e', resource: 'INV-0042',              ip: '196.22.44.10', time: 'Mar 15, 2025 09:32', success: true  },
-  { id: 2, event: 'Member Invited',     eventIcon: 'lucide:user-plus',      eventColor: '#60a5fa', user: 'Ada Lovelace',  userColor: '#e8a83e', resource: 'james@studio.co',        ip: '196.22.44.10', time: 'Mar 15, 2025 09:10', success: true  },
-  { id: 3, event: 'Login Failed',       eventIcon: 'lucide:shield-x',       eventColor: '#f87171', user: 'Unknown',       userColor: '#f87171', resource: 'ada@acmestudio.io',      ip: '203.11.5.88',  time: 'Mar 14, 2025 22:15', success: false },
-  { id: 4, event: 'Invoice Paid',       eventIcon: 'lucide:check-circle',   eventColor: '#4ade80', user: 'System',        userColor: '#4ade80', resource: 'INV-0041',              ip: '—',            time: 'Mar 14, 2025 14:00', success: true  },
-  { id: 5, event: 'Role Changed',       eventIcon: 'lucide:shield',         eventColor: '#a78bfa', user: 'Ada Lovelace',  userColor: '#e8a83e', resource: 'Luca Ferretti → Admin', ip: '196.22.44.10', time: 'Mar 13, 2025 11:42', success: true  },
-  { id: 6, event: 'Settings Updated',   eventIcon: 'lucide:settings',       eventColor: '#e8a83e', user: 'Ada Lovelace',  userColor: '#e8a83e', resource: 'Invoice defaults',      ip: '196.22.44.10', time: 'Mar 12, 2025 16:05', success: true  },
-  { id: 7, event: 'PDF Exported',       eventIcon: 'lucide:download',       eventColor: '#b8b0a0', user: 'Luca Ferretti', userColor: '#60a5fa', resource: 'INV-0040.pdf',           ip: '88.100.22.4',  time: 'Mar 12, 2025 10:30', success: true  },
-  { id: 8, event: 'API Key Generated',  eventIcon: 'lucide:key',            eventColor: '#38bdf8', user: 'Ada Lovelace',  userColor: '#e8a83e', resource: 'prod_key_****3fa2',     ip: '196.22.44.10', time: 'Mar 11, 2025 09:01', success: true  },
-];
+const onFilter = () => { currentPage.value = 1 }
 
-const filtered = computed(() => {
-  if (!searchQuery.value.trim()) return logs;
-  const q = searchQuery.value.toLowerCase();
-  return logs.filter(l => l.event.toLowerCase().includes(q) || l.user.toLowerCase().includes(q) || l.resource.toLowerCase().includes(q));
-});
+// Event icon / color based on event prefix
+function eventMeta(event: string, status: string) {
+  if (status === 'failed') return { icon: 'lucide:shield-x', color: '#f87171' }
+  const prefix = event.split('.')[0] ?? ''
+  const map: Record<string, { icon: string; color: string }> = {
+    invoice:    { icon: 'lucide:file-text',  color: '#4ade80' },
+    letterhead: { icon: 'lucide:scroll',     color: '#60a5fa' },
+    member:     { icon: 'lucide:users',      color: '#a78bfa' },
+    auth:       { icon: 'lucide:shield',     color: '#e8a83e' },
+    org:        { icon: 'lucide:building-2', color: '#38bdf8' },
+    client:     { icon: 'lucide:user',       color: '#fb923c' },
+  }
+  return map[prefix] ?? { icon: 'lucide:activity', color: '#9ca3af' }
+}
 
-function userInitials(name: string) {
-  return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+function fmtDateTime(iso: string) {
+  return new Date(iso).toLocaleDateString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  })
+}
+
+function userLabel(userId: string | null) {
+  if (!userId) return 'System'
+  return userId.slice(0, 8) + '…'
+}
+
+const colorPalette = ['#60a5fa', '#a78bfa', '#f87171', '#4ade80', '#e8a83e', '#38bdf8']
+function userColor(userId: string | null) {
+  if (!userId) return '#4ade80'
+  return colorPalette[userId.charCodeAt(0) % colorPalette.length]
+}
+function userInitials(userId: string | null) {
+  if (!userId) return 'SY'
+  return userId.slice(0, 2).toUpperCase()
 }
 </script>
 
@@ -46,17 +104,14 @@ function userInitials(name: string) {
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div>
         <h1 class="page-title">Audit Logs</h1>
-        <p class="page-subtitle">Full activity trail for Acme Design Studio</p>
+        <p class="page-subtitle">Full activity trail for your organization</p>
       </div>
       <div class="flex items-center gap-2">
         <button class="flex items-center gap-2 bg-charcoal-800 border border-charcoal-700 hover:border-charcoal-500 text-cream-muted hover:text-cream text-xs px-3 py-2 rounded-lg transition-colors">
           <Icon icon="lucide:download" class="w-3.5 h-3.5" /> Export Logs
         </button>
-        <select class="app-select text-xs py-2 w-36">
-          <option>All events</option>
-          <option>User actions</option>
-          <option>Document events</option>
-          <option>Admin events</option>
+        <select v-model="eventFilter" @change="onFilter" class="app-select text-xs py-2 w-36">
+          <option v-for="f in eventFilters" :key="f.key" :value="f.key">{{ f.label }}</option>
         </select>
       </div>
     </div>
@@ -69,12 +124,21 @@ function userInitials(name: string) {
           <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint" />
           <input v-model="searchQuery" placeholder="Search logs…" class="app-inp pl-8 text-xs py-2 w-52" />
         </div>
-        <input type="date" class="app-inp text-xs py-2 w-36 text-cream-muted" />
-        <span class="text-xs text-cream-faint ml-auto">Showing {{ filtered.length }} of 1,247 events</span>
+        <div class="flex items-center gap-2">
+          <input v-model="dateFrom" type="date" class="app-inp text-xs py-2 w-36 text-cream-muted" @change="onFilter" />
+          <span class="text-cream-faint text-xs">–</span>
+          <input v-model="dateTo"   type="date" class="app-inp text-xs py-2 w-36 text-cream-muted" @change="onFilter" />
+        </div>
+        <span class="text-xs text-cream-faint ml-auto">{{ total.toLocaleString() }} event{{ total !== 1 ? 's' : '' }}</span>
+      </div>
+
+      <!-- Loading -->
+      <div v-if="isLoading" class="flex items-center justify-center py-16">
+        <Icon icon="lucide:loader-2" class="w-6 h-6 text-amber animate-spin" />
       </div>
 
       <!-- Desktop table -->
-      <div class="hidden sm:block overflow-x-auto">
+      <div v-else class="hidden sm:block overflow-x-auto">
         <table class="app-table">
           <thead>
             <tr>
@@ -87,64 +151,70 @@ function userInitials(name: string) {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="log in filtered" :key="log.id">
+            <tr v-for="log in logs" :key="log.id">
               <td>
                 <div class="flex items-center gap-2.5">
-                  <div class="w-7 h-7 rounded-md flex items-center justify-center shrink-0" :style="{ backgroundColor: log.eventColor + '18' }">
-                    <Icon :icon="log.eventIcon" class="w-3.5 h-3.5" :style="{ color: log.eventColor }" />
+                  <div class="w-7 h-7 rounded-md flex items-center justify-center shrink-0" :style="{ backgroundColor: eventMeta(log.event, log.status).color + '18' }">
+                    <Icon :icon="eventMeta(log.event, log.status).icon" class="w-3.5 h-3.5" :style="{ color: eventMeta(log.event, log.status).color }" />
                   </div>
-                  <span class="text-sm font-medium text-cream">{{ log.event }}</span>
+                  <div>
+                    <div class="text-sm font-medium text-cream leading-tight">{{ log.action }}</div>
+                    <div class="text-[10px] text-cream-faint/60 font-mono">{{ log.event }}</div>
+                  </div>
                 </div>
               </td>
               <td>
                 <div class="flex items-center gap-2">
-                  <div class="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold text-charcoal-900 shrink-0" :style="{ backgroundColor: log.userColor }">
-                    {{ userInitials(log.user) }}
+                  <div class="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold text-charcoal-900 shrink-0" :style="{ backgroundColor: userColor(log.user_id) }">
+                    {{ userInitials(log.user_id) }}
                   </div>
-                  <span class="text-cream-muted text-xs">{{ log.user }}</span>
+                  <span class="text-cream-muted text-xs font-mono">{{ userLabel(log.user_id) }}</span>
                 </div>
               </td>
-              <td class="font-mono text-xs text-cream-faint max-w-40 truncate">{{ log.resource }}</td>
-              <td class="font-mono text-xs text-cream-faint">{{ log.ip }}</td>
-              <td class="text-xs text-cream-faint whitespace-nowrap">{{ log.time }}</td>
               <td>
-                <span :class="['status-badge', log.success ? 'status-active' : 'status-overdue']">
-                  {{ log.success ? 'Success' : 'Failed' }}
+                <div v-if="log.resource_label || log.resource_type" class="text-xs">
+                  <span class="font-mono text-cream-faint">{{ log.resource_label || '—' }}</span>
+                  <span v-if="log.resource_type" class="text-cream-faint/50 ml-1">({{ log.resource_type }})</span>
+                </div>
+                <span v-else class="text-cream-faint/40 text-xs">—</span>
+              </td>
+              <td class="font-mono text-xs text-cream-faint">{{ log.ip_address || '—' }}</td>
+              <td class="text-xs text-cream-faint whitespace-nowrap">{{ fmtDateTime(log.created_at) }}</td>
+              <td>
+                <span :class="['status-badge', log.status === 'success' ? 'status-active' : 'status-overdue']">
+                  {{ log.status === 'success' ? 'Success' : 'Failed' }}
                 </span>
               </td>
+            </tr>
+            <tr v-if="logs.length === 0">
+              <td colspan="6" class="text-center py-12 text-cream-faint text-sm">No audit logs found</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <!-- Mobile list -->
-      <div class="sm:hidden divide-y divide-charcoal-700">
-        <div v-for="log in filtered" :key="log.id" class="px-4 py-3.5">
+      <div v-if="!isLoading" class="sm:hidden divide-y divide-charcoal-700">
+        <div v-for="log in logs" :key="log.id" class="px-4 py-3.5">
           <div class="flex items-start justify-between gap-2 mb-1">
             <div class="flex items-center gap-2">
-              <div class="w-6 h-6 rounded-md flex items-center justify-center shrink-0" :style="{ backgroundColor: log.eventColor + '18' }">
-                <Icon :icon="log.eventIcon" class="w-3 h-3" :style="{ color: log.eventColor }" />
+              <div class="w-6 h-6 rounded-md flex items-center justify-center shrink-0" :style="{ backgroundColor: eventMeta(log.event, log.status).color + '18' }">
+                <Icon :icon="eventMeta(log.event, log.status).icon" class="w-3 h-3" :style="{ color: eventMeta(log.event, log.status).color }" />
               </div>
-              <span class="text-sm font-medium text-cream">{{ log.event }}</span>
+              <span class="text-sm font-medium text-cream">{{ log.action }}</span>
             </div>
-            <span :class="['status-badge', log.success ? 'status-active' : 'status-overdue']">
-              {{ log.success ? 'OK' : 'Fail' }}
+            <span :class="['status-badge', log.status === 'success' ? 'status-active' : 'status-overdue']">
+              {{ log.status === 'success' ? 'OK' : 'Fail' }}
             </span>
           </div>
-          <div class="text-xs text-cream-faint ml-8">{{ log.user }} · {{ log.time }}</div>
+          <div class="text-xs text-cream-faint ml-8">{{ log.resource_label || '—' }} · {{ fmtDateTime(log.created_at) }}</div>
         </div>
+        <div v-if="logs.length === 0" class="text-center py-12 text-cream-faint text-sm">No audit logs found</div>
       </div>
 
       <!-- Pagination -->
-      <div class="flex items-center justify-between px-4 py-3 border-t border-charcoal-700">
-        <span class="text-xs text-cream-faint">Page 1 of 125</span>
-        <div class="flex items-center gap-1">
-          <button class="text-xs text-cream-muted hover:text-cream px-2 py-1 rounded-md hover:bg-charcoal-700 transition-colors">← Prev</button>
-          <button class="text-xs bg-charcoal-700 text-cream px-2.5 py-1 rounded-md">1</button>
-          <button class="text-xs text-cream-muted hover:text-cream px-2.5 py-1 rounded-md hover:bg-charcoal-700 transition-colors">2</button>
-          <button class="text-xs text-cream-muted hover:text-cream px-2.5 py-1 rounded-md hover:bg-charcoal-700 transition-colors">3</button>
-          <button class="text-xs text-cream-muted hover:text-cream px-2 py-1 rounded-md hover:bg-charcoal-700 transition-colors">Next →</button>
-        </div>
+      <div class="px-4 py-3 border-t border-charcoal-700">
+        <Pagination v-model="currentPage" :total="total" :per-page="perPage" />
       </div>
     </div>
   </div>
