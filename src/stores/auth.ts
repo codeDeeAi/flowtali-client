@@ -1,49 +1,71 @@
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import type { IState } from '@/stores/types/auth.store.types'
+import 'pinia-plugin-persistedstate'
 import type { ILoginData, IOrganization } from '@/types/auth.types'
+import type { IAuthUser } from '@/stores/types/auth.store.types'
 
-export const useAuthStore = defineStore('auth-store', {
-  state: (): IState => ({
-    isAuthenticated: false,
-    user: null,
-    organizations: [],
-    currentOrganization: null,
-  }),
+export const useAuthStore = defineStore(
+  'auth-store',
+  () => {
+    const isAuthenticated = ref(false)
+    const user = ref<IAuthUser | null>(null)
+    const organizations = ref<IOrganization[]>([])
+    const currentOrganization = ref<IOrganization | null>(null)
 
-  getters: {
-    getUser: (state) => state.user,
-    getToken: (state) => state.user?.token ?? null,
-    isLoggedIn: (state) => state.isAuthenticated,
-    getOrganizations: (state) => state.organizations,
-    getCurrentOrganization: (state) => state.currentOrganization,
-    getPermissions: (state) => state.currentOrganization?.permissions ?? [],
-    getRoles: (state) => state.currentOrganization?.roles ?? [],
+    const getUser = computed(() => user.value)
+    const getToken = computed(() => user.value?.token ?? null)
+    const isLoggedIn = computed(() => isAuthenticated.value)
+    const getOrganizations = computed(() => organizations.value)
+    const getCurrentOrganization = computed(() => currentOrganization.value)
+    const getPermissions = computed(() => currentOrganization.value?.permissions ?? [])
+    const getRoles = computed(() => currentOrganization.value?.roles ?? [])
+
+    function setAuthData(loginData: ILoginData) {
+      const { organizations: orgs, ...userData } = loginData
+      user.value = userData
+      organizations.value = orgs
+      currentOrganization.value = orgs[0] ?? null
+      isAuthenticated.value = true
+    }
+
+    function setCurrentOrganization(org: IOrganization) {
+      currentOrganization.value = org
+    }
+
+    function addOrganization(org: IOrganization) {
+      organizations.value.push(org)
+      currentOrganization.value = org
+    }
+
+    function logout() {
+      isAuthenticated.value = false
+      user.value = null
+      organizations.value = []
+      currentOrganization.value = null
+    }
+
+    function clearAuthData() {
+      logout()
+    }
+
+    return {
+      isAuthenticated,
+      user,
+      organizations,
+      currentOrganization,
+      getUser,
+      getToken,
+      isLoggedIn,
+      getOrganizations,
+      getCurrentOrganization,
+      getPermissions,
+      getRoles,
+      setAuthData,
+      setCurrentOrganization,
+      addOrganization,
+      logout,
+      clearAuthData,
+    }
   },
-
-  actions: {
-    setAuthData(loginData: ILoginData) {
-      const { organizations, ...user } = loginData
-      this.user = user
-      this.organizations = organizations
-      this.currentOrganization = organizations[0] ?? null
-      this.isAuthenticated = true
-    },
-
-    setCurrentOrganization(org: IOrganization) {
-      this.currentOrganization = org
-    },
-
-    logout() {
-      this.isAuthenticated = false
-      this.user = null
-      this.organizations = []
-      this.currentOrganization = null
-    },
-
-    clearAuthData() {
-      this.logout()
-    },
-  },
-
-  persist: true,
-})
+  { persist: true },
+)

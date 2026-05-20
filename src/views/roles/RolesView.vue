@@ -9,7 +9,7 @@ import type { IRole, IPermissionGroup } from '@/types/role.types'
 
 const { notify } = useNotification()
 const authStore = useAuthStore()
-const orgId = computed(() => authStore.getCurrentOrganization?.id ?? '')
+const orgId = computed(() => authStore.currentOrganization?.id ?? '')
 
 const ALL_TAGS = ['read', 'create', 'update', 'delete', 'manage'] as const
 type Tag = (typeof ALL_TAGS)[number]

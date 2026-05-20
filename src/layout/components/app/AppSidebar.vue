@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import { Icon } from '@iconify/vue';
+import { useAuthStore } from '@/stores/auth';
+import { OrgService } from '@/services/org.service';
+import type { IOrganization } from '@/types/auth.types';
 
 defineProps<{
   mobileOpen: boolean;
@@ -13,51 +16,55 @@ defineEmits<{
 
 const collapsed = ref(false);
 const route = useRoute();
+const authStore = useAuthStore();
 
 // ── Org switcher ──────────────────────────────────────────────
-interface Org {
-  id: number;
-  name: string;
-  initials: string;
-  plan: string;
-  color: string;
-  role: string;
-}
+const organizations = computed(() => authStore.getOrganizations);
+const currentOrg = computed(() => authStore.getCurrentOrganization);
 
-const organizations: Org[] = [
-  { id: 1, name: 'Acme Design Studio', initials: 'AD', plan: 'Pro',     color: '#e8a83e', role: 'Owner' },
-  { id: 2, name: 'Pixel Works Ltd',    initials: 'PW', plan: 'Starter', color: '#60a5fa', role: 'Admin' },
-  { id: 3, name: 'Solo Freelance',     initials: 'SF', plan: 'Pro',     color: '#4ade80', role: 'Owner' },
-];
-
-const currentOrg = ref<Org>(organizations[0]!);
 const orgDropOpen = ref(false);
 const showCreateModal = ref(false);
 const newOrgName = ref('');
-const newOrgType = ref<'B2B' | 'B2C'>('B2B');
+const newOrgType = ref<'business' | 'personal'>('business');
+const isCreating = ref(false);
 
-function switchOrg(org: Org) {
-  currentOrg.value = org;
+const PALETTE = ['#e8a83e', '#60a5fa', '#4ade80', '#a78bfa', '#f87171', '#fb923c', '#38bdf8', '#34d399'];
+
+function orgInitials(name: string): string {
+  return name.split(' ').slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('');
+}
+
+function orgColor(id: string): string {
+  const hash = id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  return PALETTE[hash % PALETTE.length]!;
+}
+
+function orgRole(org: IOrganization): string {
+  if (org.is_owner) return 'Owner';
+  return org.roles[0]?.name ?? 'Member';
+}
+
+function switchOrg(org: IOrganization) {
+  authStore.setCurrentOrganization(org);
   orgDropOpen.value = false;
 }
 
-function createOrg() {
-  if (!newOrgName.value.trim()) return;
-  const initials = newOrgName.value.trim().split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  const colors = ['#a78bfa', '#f87171', '#38bdf8', '#fb923c', '#34d399'];
-  const newOrg: Org = {
-    id: organizations.length + 1,
-    name: newOrgName.value.trim(),
-    initials,
-    plan: 'Starter',
-    color: colors[organizations.length % colors.length] ?? '#a78bfa',
-    role: 'Owner',
-  };
-  organizations.push(newOrg);
-  currentOrg.value = newOrg;
-  newOrgName.value = '';
-  showCreateModal.value = false;
-  orgDropOpen.value = false;
+async function createOrg() {
+  if (!newOrgName.value.trim() || isCreating.value) return;
+  isCreating.value = true;
+  try {
+    const res = await OrgService.create({
+      name: newOrgName.value.trim(),
+      type: newOrgType.value,
+    });
+    authStore.addOrganization(res.data.data);
+    newOrgName.value = '';
+    newOrgType.value = 'business';
+    showCreateModal.value = false;
+    orgDropOpen.value = false;
+  } finally {
+    isCreating.value = false;
+  }
 }
 
 // v-click-outside directive (local) — uses WeakMap to avoid patching HTMLElement
@@ -187,21 +194,22 @@ function isActive(to: string) {
             : 'hover:bg-charcoal-700 border-transparent',
           collapsed ? 'justify-center' : '',
         ]"
-        :title="collapsed ? currentOrg.name : undefined"
+        :title="collapsed ? (currentOrg?.name ?? '') : undefined"
         @click="orgDropOpen = !orgDropOpen"
       >
         <div
+          v-if="currentOrg"
           class="w-7 h-7 rounded-md flex items-center justify-center text-xs font-bold text-charcoal-900 shrink-0"
-          :style="{ backgroundColor: currentOrg.color }"
+          :style="{ backgroundColor: orgColor(currentOrg.id) }"
         >
-          {{ currentOrg.initials }}
+          {{ orgInitials(currentOrg.name) }}
         </div>
         <div
           :class="['flex-1 min-w-0 text-left overflow-hidden transition-all duration-300', collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100']"
         >
-          <div class="text-sm font-medium text-cream truncate leading-tight">{{ currentOrg.name }}</div>
+          <div class="text-sm font-medium text-cream truncate leading-tight">{{ currentOrg?.name ?? 'Select organization' }}</div>
           <div class="flex items-center gap-1.5 mt-0.5">
-            <span class="text-xs text-amber font-medium">{{ currentOrg.plan }}</span>
+            <span class="text-xs text-amber font-medium capitalize">{{ currentOrg?.type ?? '' }}</span>
           </div>
         </div>
         <Icon
@@ -229,21 +237,21 @@ function isActive(to: string) {
               v-for="org in organizations"
               :key="org.id"
               class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg transition-colors group/item"
-              :class="currentOrg.id === org.id ? 'bg-amber/8' : 'hover:bg-charcoal-700'"
+              :class="currentOrg?.id === org.id ? 'bg-amber/8' : 'hover:bg-charcoal-700'"
               @click="switchOrg(org)"
             >
               <div
                 class="w-7 h-7 rounded-md flex items-center justify-center text-[10px] font-bold text-charcoal-900 shrink-0"
-                :style="{ backgroundColor: org.color }"
+                :style="{ backgroundColor: orgColor(org.id) }"
               >
-                {{ org.initials }}
+                {{ orgInitials(org.name) }}
               </div>
               <div class="flex-1 min-w-0 text-left">
                 <div class="text-xs font-medium text-cream truncate leading-tight">{{ org.name }}</div>
-                <div class="text-[10px] text-cream-faint">{{ org.role }}</div>
+                <div class="text-[10px] text-cream-faint">{{ orgRole(org) }}</div>
               </div>
               <Icon
-                v-if="currentOrg.id === org.id"
+                v-if="currentOrg?.id === org.id"
                 icon="lucide:check"
                 class="w-3.5 h-3.5 text-amber shrink-0"
               />
@@ -296,21 +304,21 @@ function isActive(to: string) {
                   <button
                     :class="[
                       'p-3 rounded-lg border text-left transition-colors',
-                      newOrgType === 'B2B' ? 'border-amber/40 bg-amber/6' : 'border-charcoal-600 hover:border-charcoal-500',
+                      newOrgType === 'business' ? 'border-amber/40 bg-amber/6' : 'border-charcoal-600 hover:border-charcoal-500',
                     ]"
-                    @click="newOrgType = 'B2B'"
+                    @click="newOrgType = 'business'"
                   >
-                    <div class="text-xs font-semibold" :class="newOrgType === 'B2B' ? 'text-amber' : 'text-cream-muted'">Business (B2B)</div>
+                    <div class="text-xs font-semibold" :class="newOrgType === 'business' ? 'text-amber' : 'text-cream-muted'">Business</div>
                     <div class="text-[10px] text-cream-faint mt-0.5">Team & client management</div>
                   </button>
                   <button
                     :class="[
                       'p-3 rounded-lg border text-left transition-colors',
-                      newOrgType === 'B2C' ? 'border-amber/40 bg-amber/6' : 'border-charcoal-600 hover:border-charcoal-500',
+                      newOrgType === 'personal' ? 'border-amber/40 bg-amber/6' : 'border-charcoal-600 hover:border-charcoal-500',
                     ]"
-                    @click="newOrgType = 'B2C'"
+                    @click="newOrgType = 'personal'"
                   >
-                    <div class="text-xs font-semibold" :class="newOrgType === 'B2C' ? 'text-amber' : 'text-cream-muted'">Personal (B2C)</div>
+                    <div class="text-xs font-semibold" :class="newOrgType === 'personal' ? 'text-amber' : 'text-cream-muted'">Personal</div>
                     <div class="text-[10px] text-cream-faint mt-0.5">Solo freelancer mode</div>
                   </button>
                 </div>
@@ -325,11 +333,14 @@ function isActive(to: string) {
                 Cancel
               </button>
               <button
-                class="flex-1 py-2 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                :disabled="!newOrgName.trim()"
+                class="flex-1 py-2 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                :disabled="!newOrgName.trim() || isCreating"
                 @click="createOrg"
               >
-                Create
+                <svg v-if="isCreating" class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" />
+                </svg>
+                <span>{{ isCreating ? 'Creating…' : 'Create' }}</span>
               </button>
             </div>
           </div>
@@ -393,28 +404,30 @@ function isActive(to: string) {
 
     <!-- User profile (bottom) -->
     <div class="px-2 py-3 border-t border-charcoal-700 shrink-0">
-      <button
+      <RouterLink
+        :to="{ name: 'profile' }"
         :class="[
           'w-full flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-charcoal-700 transition-colors group',
           collapsed ? 'justify-center' : '',
         ]"
-        :title="collapsed ? 'Ada Lovelace' : undefined"
+        :title="collapsed ? `${authStore.getUser?.first_name} ${authStore.getUser?.last_name}` : undefined"
       >
         <div class="w-7 h-7 rounded-full bg-amber flex items-center justify-center text-xs font-bold text-charcoal-900 shrink-0">
-          AL
+          {{ (authStore.getUser?.first_name?.[0] ?? '').toUpperCase() }}{{ (authStore.getUser?.last_name?.[0] ?? '').toUpperCase() }}
         </div>
         <div
           :class="['flex-1 min-w-0 text-left overflow-hidden transition-all duration-300', collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100']"
         >
-          <div class="text-sm font-medium text-cream truncate leading-tight">Ada Lovelace</div>
-          <div class="text-xs text-cream-faint truncate">ada@acmestudio.io</div>
+          <div class="text-sm font-medium text-cream truncate leading-tight capitalize">
+            {{ authStore.getUser?.first_name }} {{ authStore.getUser?.last_name }}
+          </div>
         </div>
         <Icon
           v-if="!collapsed"
           icon="lucide:more-horizontal"
           class="w-4 h-4 text-cream-faint group-hover:text-cream-muted shrink-0 transition-colors"
         />
-      </button>
+      </RouterLink>
     </div>
   </aside>
 </template>

@@ -11,7 +11,7 @@ const router = useRouter()
 const route = useRoute()
 const { notify } = useNotification()
 const authStore = useAuthStore()
-const orgId = computed(() => authStore.getCurrentOrganization?.id ?? '')
+const orgId = computed(() => authStore.currentOrganization?.id ?? '')
 
 const member = ref<IMember | null>(null)
 const availableRoles = ref<IMemberRole[]>([])

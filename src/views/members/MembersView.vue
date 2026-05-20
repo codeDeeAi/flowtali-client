@@ -13,7 +13,7 @@ const router = useRouter()
 const { notify } = useNotification()
 const { initLoaders, setLoader, getLoader } = useLoaders()
 const authStore = useAuthStore()
-const orgId = computed(() => authStore.getCurrentOrganization?.id ?? '')
+const orgId = computed(() => authStore.currentOrganization?.id ?? '')
 
 initLoaders({ isSending: false })
 

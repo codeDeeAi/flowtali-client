@@ -1,4 +1,6 @@
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import 'pinia-plugin-persistedstate'
 
 export interface ViewLogEntry {
   timestamp: string
@@ -15,7 +17,7 @@ export interface SharedLink {
   label: string
   visibility: 'public' | 'private'
   accessCode: string
-  expiresAt: string | null   // ISO date string, null = never
+  expiresAt: string | null
   createdAt: string
   isActive: boolean
   views: number
@@ -25,41 +27,39 @@ export interface SharedLink {
 }
 
 function generateToken(): string {
-  return Math.random().toString(36).slice(2, 8) +
-         Math.random().toString(36).slice(2, 8)
+  return Math.random().toString(36).slice(2, 8) + Math.random().toString(36).slice(2, 8)
 }
 
 function generateCode(): string {
   return Math.random().toString(36).slice(2, 8).toUpperCase()
 }
 
-export const useSharedLinksStore = defineStore('shared-links', {
-  state: () => ({
-    links: [] as SharedLink[],
-  }),
+export const useSharedLinksStore = defineStore(
+  'shared-links',
+  () => {
+    const links = ref<SharedLink[]>([])
 
-  getters: {
-    forResource: (state) => (type: 'invoice' | 'letterhead', id: number) =>
-      state.links.filter(l => l.resourceType === type && l.resourceId === id),
+    function forResource(type: 'invoice' | 'letterhead', id: number): SharedLink[] {
+      return links.value.filter(l => l.resourceType === type && l.resourceId === id)
+    }
 
-    byToken: (state) => (token: string) =>
-      state.links.find(l => l.token === token) ?? null,
+    function byToken(token: string): SharedLink | null {
+      return links.value.find(l => l.token === token) ?? null
+    }
 
-    isExpired: () => (link: SharedLink): boolean => {
+    function isExpired(link: SharedLink): boolean {
       if (!link.expiresAt) return false
       return new Date(link.expiresAt) < new Date()
-    },
-  },
+    }
 
-  actions: {
-    createLink(payload: {
+    function createLink(payload: {
       resourceType: 'invoice' | 'letterhead'
       resourceId: number
       resourceName: string
       label: string
       visibility: 'public' | 'private'
       accessCode?: string
-      validityDays: number | null  // null = never expires
+      validityDays: number | null
     }): SharedLink {
       const expiresAt = payload.validityDays
         ? new Date(Date.now() + payload.validityDays * 86_400_000).toISOString()
@@ -73,9 +73,8 @@ export const useSharedLinksStore = defineStore('shared-links', {
         resourceName: payload.resourceName,
         label: payload.label || '',
         visibility: payload.visibility,
-        accessCode: payload.visibility === 'private'
-          ? (payload.accessCode?.trim() || generateCode())
-          : '',
+        accessCode:
+          payload.visibility === 'private' ? (payload.accessCode?.trim() || generateCode()) : '',
         expiresAt,
         createdAt: new Date().toISOString(),
         isActive: true,
@@ -84,21 +83,21 @@ export const useSharedLinksStore = defineStore('shared-links', {
         lastViewedAt: null,
         viewLog: [],
       }
-      this.links.push(link)
+      links.value.push(link)
       return link
-    },
+    }
 
-    revokeLink(id: string) {
-      const link = this.links.find(l => l.id === id)
+    function revokeLink(id: string): void {
+      const link = links.value.find(l => l.id === id)
       if (link) link.isActive = false
-    },
+    }
 
-    deleteLink(id: string) {
-      this.links = this.links.filter(l => l.id !== id)
-    },
+    function deleteLink(id: string): void {
+      links.value = links.value.filter(l => l.id !== id)
+    }
 
-    recordView(token: string) {
-      const link = this.links.find(l => l.token === token)
+    function recordView(token: string): void {
+      const link = links.value.find(l => l.token === token)
       if (!link) return
       link.views++
       link.uniqueViews++
@@ -106,14 +105,18 @@ export const useSharedLinksStore = defineStore('shared-links', {
       link.viewLog.unshift({
         timestamp: new Date().toISOString(),
         country: 'Unknown',
-        browser: navigator?.userAgent?.includes('Chrome') ? 'Chrome'
-          : navigator?.userAgent?.includes('Firefox') ? 'Firefox'
-          : navigator?.userAgent?.includes('Safari') ? 'Safari' : 'Other',
+        browser: navigator?.userAgent?.includes('Chrome')
+          ? 'Chrome'
+          : navigator?.userAgent?.includes('Firefox')
+            ? 'Firefox'
+            : navigator?.userAgent?.includes('Safari')
+              ? 'Safari'
+              : 'Other',
       })
-      // Keep last 50 log entries
       if (link.viewLog.length > 50) link.viewLog = link.viewLog.slice(0, 50)
-    },
-  },
+    }
 
-  persist: true,
-})
+    return { links, forResource, byToken, isExpired, createLink, revokeLink, deleteLink, recordView }
+  },
+  { persist: true },
+)
