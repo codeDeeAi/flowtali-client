@@ -39,6 +39,7 @@ export interface ILetterhead {
   show_watermark: boolean
   watermark_color: string
   stamp: string | null
+  stamp_color: string | null
   show_top_bar: boolean
   show_bottom_bar: boolean
   show_logo: boolean
@@ -70,7 +71,7 @@ export interface ILetterheadDraftData {
     name: string
     logo: string | null
     brand_colors: string[]
-    stamps: string[]
+    stamps: Array<{ label: string; color: string }>
   } | null
   clients: Array<{
     id: string

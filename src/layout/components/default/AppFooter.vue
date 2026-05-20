@@ -34,14 +34,14 @@
         <div>
           <div class="text-cream text-sm font-semibold mb-4">Company</div>
           <div class="flex flex-col gap-2.5">
-            <span v-for="l in ['About', 'Blog']" :key="l"
-              class="text-cream-faint text-sm hover:text-cream cursor-pointer transition-colors">{{ l }}</span>
+            <router-link :to="{ name: 'about' }"
+              class="text-cream-faint text-sm hover:text-cream transition-colors">About</router-link>
             <router-link :to="{ name: 'privacy' }"
               class="text-cream-faint text-sm hover:text-cream transition-colors">Privacy</router-link>
             <router-link :to="{ name: 'terms' }"
               class="text-cream-faint text-sm hover:text-cream transition-colors">Terms</router-link>
-            <a href="mailto:flowtaliltd@gmail.com"
-              class="text-cream-faint text-sm hover:text-cream transition-colors">Contact</a>
+            <router-link :to="{ name: 'contact' }"
+              class="text-cream-faint text-sm hover:text-cream transition-colors">Contact</router-link>
           </div>
         </div>
       </div>
@@ -49,9 +49,10 @@
       <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="text-cream-faint text-xs">© {{ new Date().getFullYear() }} Flowtali. All rights reserved.</div>
         <div class="flex gap-5 text-cream-faint text-xs">
+          <router-link :to="{ name: 'about' }" class="hover:text-cream transition-colors">About</router-link>
           <router-link :to="{ name: 'privacy' }" class="hover:text-cream transition-colors">Privacy</router-link>
           <router-link :to="{ name: 'terms' }" class="hover:text-cream transition-colors">Terms</router-link>
-          <a href="mailto:flowtaliltd@gmail.com" class="hover:text-cream transition-colors">Contact</a>
+          <router-link :to="{ name: 'contact' }" class="hover:text-cream transition-colors">Contact</router-link>
         </div>
       </div>
     </div>

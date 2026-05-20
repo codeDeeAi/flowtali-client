@@ -30,6 +30,18 @@ const publicShareRoutes = [
     component: () => import('@/views/legal/TermsOfServiceView.vue'),
     meta: { layout: layouts.Public },
   },
+  {
+    path: '/about',
+    name: 'about',
+    component: () => import('@/views/legal/AboutView.vue'),
+    meta: { layout: layouts.Public },
+  },
+  {
+    path: '/contact',
+    name: 'contact',
+    component: () => import('@/views/legal/ContactView.vue'),
+    meta: { layout: layouts.Public },
+  },
 ]
 
 declare module 'vue-router' {

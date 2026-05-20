@@ -59,7 +59,7 @@ const form = ref({
   watermark:    '',
   showWatermark:false,
   watermarkColor: '#000000',
-  stamp:        '' as '' | 'DRAFT' | 'CONFIDENTIAL' | 'APPROVED' | 'FINAL',
+  stamp:        '' as string,
   showTopBar:   true,
   showBottomBar:false,
   showLogo:     true,
@@ -188,10 +188,11 @@ const fonts = [
   { value: "Georgia, serif",               label: 'Georgia (Traditional)' },
 ]
 
-const stampOptions = ['', 'DRAFT', 'CONFIDENTIAL', 'APPROVED', 'FINAL'] as const
-const stampColor: Record<string, string> = {
-  DRAFT: '#9ca3af', CONFIDENTIAL: '#f87171', APPROVED: '#4ade80', FINAL: '#60a5fa',
-}
+const orgStamps = computed(() => draftData.value?.organization?.stamps ?? [])
+const stampColorFor = (label: string) =>
+  orgStamps.value.find(s => s.label === label)?.color ?? '#9ca3af'
+
+const orgBrandColors = computed(() => draftData.value?.organization?.brand_colors ?? [])
 
 const toggleFields = [
   { key: 'showTopBar',       label: 'Top accent bar' },
@@ -565,6 +566,20 @@ const handleSave = async () => {
                 <input type="color" v-model="form.accentColor" class="w-9 h-9 rounded cursor-pointer border border-charcoal-600 bg-charcoal-800 p-0.5" />
                 <input v-model="form.accentColor" class="app-inp text-sm flex-1 font-mono" />
               </div>
+              <!-- Brand colors from org -->
+              <template v-if="orgBrandColors.length">
+                <p class="text-[9px] uppercase tracking-wider text-cream-faint/60 mb-1.5">Brand</p>
+                <div class="flex gap-1.5 flex-wrap mb-2">
+                  <button
+                    v-for="c in orgBrandColors" :key="c"
+                    @click="form.accentColor = c"
+                    class="w-6 h-6 rounded-full border-2 transition-transform hover:scale-110"
+                    :class="form.accentColor === c ? 'border-cream' : 'border-transparent'"
+                    :style="{ background: c }"
+                  />
+                </div>
+                <p class="text-[9px] uppercase tracking-wider text-cream-faint/60 mb-1.5">Palette</p>
+              </template>
               <div class="flex gap-1.5 flex-wrap">
                 <button
                   v-for="c in accentPresets" :key="c"
@@ -605,18 +620,24 @@ const handleSave = async () => {
             <div>
               <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Stamp</p>
               <div class="grid grid-cols-3 gap-1.5">
+                <!-- None option -->
                 <button
-                  v-for="s in stampOptions" :key="s"
-                  @click="form.stamp = s"
+                  @click="form.stamp = ''"
                   :class="[
                     'py-1.5 rounded border text-xs font-semibold transition-colors',
-                    form.stamp === s ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500'
+                    form.stamp === '' ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500'
                   ]"
-                  :style="form.stamp !== s && s ? { color: stampColor[s] + '99', borderColor: stampColor[s] + '40' } : {}"
-                >
-                  <span v-if="s" :style="form.stamp === s ? {} : { color: stampColor[s] }">{{ s }}</span>
-                  <span v-else>None</span>
-                </button>
+                >None</button>
+                <!-- Org stamps from draft-data -->
+                <button
+                  v-for="s in orgStamps" :key="s.label"
+                  @click="form.stamp = s.label"
+                  :class="[
+                    'py-1.5 rounded border text-xs font-semibold transition-colors',
+                    form.stamp === s.label ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 hover:border-charcoal-500'
+                  ]"
+                  :style="form.stamp !== s.label ? { color: s.color + 'cc', borderColor: s.color + '40' } : {}"
+                >{{ s.label }}</button>
               </div>
             </div>
 
@@ -728,7 +749,7 @@ const handleSave = async () => {
               </div>
               <!-- Stamp -->
               <div v-if="form.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-25deg); z-index: 2">
-                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[form.stamp], borderColor: stampColor[form.stamp] }">{{ form.stamp }}</div>
+                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(form.stamp), borderColor: stampColorFor(form.stamp) }">{{ form.stamp }}</div>
               </div>
 
               <div class="p-12" style="position: relative; z-index: 3">
@@ -823,7 +844,7 @@ const handleSave = async () => {
                 <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: form.watermarkColor }">{{ form.watermark }}</span>
               </div>
               <div v-if="form.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-25deg); z-index: 2">
-                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[form.stamp], borderColor: stampColor[form.stamp] }">{{ form.stamp }}</div>
+                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(form.stamp), borderColor: stampColorFor(form.stamp) }">{{ form.stamp }}</div>
               </div>
 
               <!-- Left panel -->
@@ -891,7 +912,7 @@ const handleSave = async () => {
                 <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: form.watermarkColor }">{{ form.watermark }}</span>
               </div>
               <div v-if="form.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-25deg); z-index: 2">
-                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[form.stamp], borderColor: stampColor[form.stamp] }">{{ form.stamp }}</div>
+                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(form.stamp), borderColor: stampColorFor(form.stamp) }">{{ form.stamp }}</div>
               </div>
               <div class="p-14" style="position: relative; z-index: 3; max-width: 600px; margin: 0 auto">
                 <div class="mb-10">
@@ -928,7 +949,7 @@ const handleSave = async () => {
                 <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: form.watermarkColor }">{{ form.watermark }}</span>
               </div>
               <div v-if="form.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-25deg); z-index: 2">
-                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[form.stamp], borderColor: stampColor[form.stamp] }">{{ form.stamp }}</div>
+                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(form.stamp), borderColor: stampColorFor(form.stamp) }">{{ form.stamp }}</div>
               </div>
               <!-- Bold header block -->
               <div class="px-12 py-10 relative" :style="{ backgroundColor: form.accentColor, zIndex: 3 }">
@@ -980,7 +1001,7 @@ const handleSave = async () => {
                 <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: form.watermarkColor }">{{ form.watermark }}</span>
               </div>
               <div v-if="form.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-25deg); z-index: 2">
-                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[form.stamp], borderColor: stampColor[form.stamp] }">{{ form.stamp }}</div>
+                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(form.stamp), borderColor: stampColorFor(form.stamp) }">{{ form.stamp }}</div>
               </div>
               <div class="p-12 pb-24" style="position: relative; z-index: 3">
                 <!-- Legal header: centred -->
@@ -1042,7 +1063,7 @@ const handleSave = async () => {
                 <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: form.watermarkColor }">{{ form.watermark }}</span>
               </div>
               <div v-if="form.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-25deg); z-index: 2">
-                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[form.stamp], borderColor: stampColor[form.stamp] }">{{ form.stamp }}</div>
+                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(form.stamp), borderColor: stampColorFor(form.stamp) }">{{ form.stamp }}</div>
               </div>
               <div class="px-12 py-10" style="position: relative; z-index: 3">
                 <!-- Executive header: two columns -->
