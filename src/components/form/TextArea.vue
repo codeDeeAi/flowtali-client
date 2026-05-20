@@ -105,9 +105,6 @@ textarea {
   border-color: #e3e3e3;
 }
 
-textarea::placeholder {
-  color: #d1d1d1;
-}
 
 textarea.error {
   border-color: #e4626f;

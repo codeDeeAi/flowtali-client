@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { RouterView } from 'vue-router';
-import AppHeader from './components/app/AppHeader.vue';
-import AppSidebar from './components/app/AppSidebar.vue';
+import { ref } from 'vue'
+import { RouterView } from 'vue-router'
+import { Icon } from '@iconify/vue'
+import AppHeader from './components/app/AppHeader.vue'
+import AppSidebar from './components/app/AppSidebar.vue'
 
-const mobileOpen = ref(false);
+const mobileOpen = ref(false)
+const collapsed = ref(false)
 </script>
 
 <template>
   <div class="flex flex-col h-screen overflow-hidden">
     <AppHeader @toggle-sidebar="mobileOpen = !mobileOpen" />
+
     <main class="flex flex-row h-full overflow-hidden relative">
       <!-- Mobile overlay backdrop -->
       <Transition name="fade">
@@ -20,7 +23,25 @@ const mobileOpen = ref(false);
         />
       </Transition>
 
-      <AppSidebar :mobile-open="mobileOpen" @close="mobileOpen = false" />
+      <AppSidebar
+        :mobile-open="mobileOpen"
+        :collapsed="collapsed"
+        @close="mobileOpen = false"
+        @toggle-collapse="collapsed = !collapsed"
+      />
+
+      <!-- Floating collapse toggle (desktop only) -->
+      <button
+        class="hidden md:flex absolute top-5 z-40 w-5 h-5 rounded-full bg-charcoal-800 border border-charcoal-600 items-center justify-center text-cream-faint hover:text-cream hover:border-charcoal-500 transition-all duration-300 shadow-lg"
+        :style="{ left: collapsed ? 'calc(60px - 10px)' : 'calc(256px - 10px)' }"
+        :aria-label="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+        @click="collapsed = !collapsed"
+      >
+        <Icon
+          :icon="collapsed ? 'lucide:chevron-right' : 'lucide:chevron-left'"
+          class="w-3 h-3"
+        />
+      </button>
 
       <div class="flex-1 bg-charcoal-900 overflow-auto">
         <RouterView />

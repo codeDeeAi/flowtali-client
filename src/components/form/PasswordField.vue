@@ -158,9 +158,6 @@ input {
   border-color: #e3e3e3;
 }
 
-input::placeholder {
-  color: #d1d1d1;
-}
 
 input.error {
   border-color: #e4626f !important;

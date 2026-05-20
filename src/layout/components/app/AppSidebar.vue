@@ -9,13 +9,13 @@ import type { IOrganization } from '@/types/auth.types';
 
 defineProps<{
   mobileOpen: boolean;
+  collapsed: boolean;
 }>();
 
 defineEmits<{
   close: [];
+  toggleCollapse: [];
 }>();
-
-const collapsed = ref(false);
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
@@ -156,51 +156,25 @@ function isActive(to: string) {
   <!-- Sidebar: fixed overlay on mobile, static in flex on desktop -->
   <aside
     :class="[
-      'flex flex-col bg-dark-light border-r border-charcoal-700 shrink-0 transition-all duration-300 h-full overflow-hidden',
-      // Mobile: absolute overlay, slide in/out
+      'flex flex-col bg-dark-light border-r border-charcoal-700 shrink-0 transition-all duration-300 h-full relative',
       'fixed md:static inset-y-0 left-0 z-30',
-      // Mobile open/close
       mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
-      // Desktop collapsed state
       collapsed ? 'w-[60px]' : 'w-64',
     ]"
   >
-    <!-- Logo row -->
-    <div class="flex items-center h-14 px-3 border-b border-charcoal-700 shrink-0">
-      <div class="flex items-center gap-2.5 flex-1 min-w-0">
-        <div class="w-7 h-7 rounded-md bg-amber flex items-center justify-center shrink-0">
-          <Icon icon="lucide:zap" class="w-4 h-4 text-charcoal-900" />
-        </div>
-        <span
-          :class="['font-semibold text-cream text-sm overflow-hidden transition-all duration-300', collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100']"
-        >
-          Flowtali
-        </span>
-      </div>
-
-      <!-- Collapse toggle (desktop only) -->
-      <button
-        class="hidden md:flex items-center justify-center w-6 h-6 rounded text-cream-faint hover:text-cream hover:bg-charcoal-700 transition-colors shrink-0"
-        @click="collapsed = !collapsed"
-        :aria-label="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
-      >
-        <Icon :icon="collapsed ? 'lucide:panel-left-open' : 'lucide:panel-left-close'" class="w-4 h-4" />
-      </button>
-
-      <!-- Close button (mobile only) -->
-      <button
-        class="md:hidden flex items-center justify-center w-6 h-6 rounded text-cream-faint hover:text-cream hover:bg-charcoal-700 transition-colors shrink-0"
-        @click="$emit('close')"
-        aria-label="Close sidebar"
-      >
-        <Icon icon="lucide:x" class="w-4 h-4" />
-      </button>
-    </div>
+    <!-- Mobile close button (floating, top-right) -->
+    <button
+      class="md:hidden absolute top-3 right-3 z-50 flex items-center justify-center w-7 h-7 rounded-md text-cream-faint hover:text-cream hover:bg-charcoal-700 transition-colors"
+      @click="$emit('close')"
+      aria-label="Close sidebar"
+    >
+      <Icon icon="lucide:x" class="w-4 h-4" />
+    </button>
 
     <!-- Workspace switcher -->
     <div
       data-org-switcher
-      :class="['mx-2 mt-3 mb-1 shrink-0 relative', collapsed ? 'px-0' : '']"
+      :class="['mx-2 mb-1 shrink-0 relative mt-12 md:mt-3', collapsed ? 'px-0' : '']"
       v-click-outside="() => (orgDropOpen = false)"
     >
       <!-- Trigger button -->
