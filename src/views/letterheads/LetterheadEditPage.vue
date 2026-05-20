@@ -1,31 +1,72 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import LetterheadEditor from './LetterheadEditor.vue'
+import { useAuthStore } from '@/stores/auth'
+import { LetterheadService } from '@/services/letterhead.service'
 
 const route      = useRoute()
+const authStore  = useAuthStore()
+const orgId      = computed(() => authStore.getCurrentOrganization?.id ?? '')
 const isLoading  = ref(true)
 const notFound   = ref(false)
 const initialData = ref<Record<string, any> | undefined>(undefined)
 
-const mockLetterheads = [
-  { id: 1, name: 'Agency Proposal',          theme: 'classic',   accentColor: '#e8a83e', company: 'ACME STUDIO', tagline: 'Creative Agency',      watermark: '',             showWatermark: false, stamp: '' },
-  { id: 2, name: 'Client Engagement Letter', theme: 'modern',    accentColor: '#60a5fa', company: 'ACME STUDIO', tagline: '',                      watermark: 'CONFIDENTIAL', showWatermark: true,  stamp: '' },
-  { id: 3, name: 'Partnership Agreement',    theme: 'bold',      accentColor: '#f87171', company: 'ACME STUDIO', tagline: '',                      watermark: 'DRAFT',        showWatermark: true,  stamp: 'DRAFT' },
-  { id: 4, name: 'Service Quote',            theme: 'minimal',   accentColor: '#4ade80', company: 'ACME STUDIO', tagline: 'Professional Services', watermark: '',             showWatermark: false, stamp: '' },
-  { id: 5, name: 'NDA Template',             theme: 'legal',     accentColor: '#a78bfa', company: 'ACME STUDIO', tagline: '',                      watermark: 'CONFIDENTIAL', showWatermark: true,  stamp: 'CONFIDENTIAL' },
-  { id: 6, name: 'Project Proposal',         theme: 'executive', accentColor: '#fb923c', company: 'ACME STUDIO', tagline: 'Creative Agency',       watermark: '',             showWatermark: false, stamp: '' },
-  { id: 7, name: 'Invoice Cover Letter',     theme: 'classic',   accentColor: '#34d399', company: 'ACME STUDIO', tagline: '',                      watermark: '',             showWatermark: false, stamp: '' },
-]
-
 onMounted(async () => {
-  await new Promise(r => setTimeout(r, 350))
-  const id   = Number(route.params.id)
-  const data = mockLetterheads.find(l => l.id === id)
-  if (!data) { notFound.value = true; isLoading.value = false; return }
-  initialData.value = { ...data }
-  isLoading.value = false
+  if (!orgId.value) { notFound.value = true; isLoading.value = false; return }
+  try {
+    const id  = String(route.params.id)
+    const res = await LetterheadService.get(orgId.value, id)
+    const lh  = res.data.data
+    // Map snake_case API fields to camelCase form fields
+    initialData.value = {
+      name:             lh.name,
+      company:          lh.company ?? '',
+      tagline:          lh.tagline ?? '',
+      email:            lh.email ?? '',
+      phone:            lh.phone ?? '',
+      website:          lh.website ?? '',
+      address:          lh.address ?? '',
+      regNumber:        lh.reg_number ?? '',
+      vatNumber:        lh.vat_number ?? '',
+      logoUrl:          lh.logo_url ?? '',
+      signatureUrl:     lh.signature_url ?? '',
+      subject:          lh.subject ?? '',
+      salutation:       lh.salutation ?? '',
+      body:             lh.body ?? '',
+      closing:          lh.closing ?? '',
+      signerName:       lh.signer_name ?? '',
+      signerTitle:      lh.signer_title ?? '',
+      footerLeft:       lh.footer_left ?? '',
+      footerCenter:     lh.footer_center ?? '',
+      footerRight:      lh.footer_right ?? '',
+      date:             lh.date ?? '',
+      refNumber:        lh.ref_number ?? '',
+      showDate:         lh.show_date,
+      showRef:          lh.show_ref,
+      theme:            lh.theme,
+      accentColor:      lh.accent_color,
+      fontFamily:       lh.font_family ?? "'DM Sans', sans-serif",
+      headerLayout:     lh.header_layout,
+      watermark:        lh.watermark ?? '',
+      showWatermark:    lh.show_watermark,
+      watermarkColor:   lh.watermark_color,
+      stamp:            lh.stamp ?? '',
+      showTopBar:       lh.show_top_bar,
+      showBottomBar:    lh.show_bottom_bar,
+      showLogo:         lh.show_logo,
+      showDivider:      lh.show_divider,
+      showFooter:       lh.show_footer,
+      showLineNumbers:  lh.show_line_numbers,
+      paperSize:        lh.paper_size,
+      orientation:      lh.orientation,
+    }
+  } catch {
+    notFound.value = true
+  } finally {
+    isLoading.value = false
+  }
 })
 </script>
 

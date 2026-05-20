@@ -3,114 +3,52 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useNotification } from '@/composables/notification'
-import { useSharedLinksStore } from '@/stores/sharedLinks'
 import ShareLinkModal from '@/components/modals/ShareLinkModal.vue'
+import { useAuthStore } from '@/stores/auth'
+import { LetterheadService, type ILetterhead } from '@/services/letterhead.service'
+import { SharedLinksService, type ISharedLink } from '@/services/shared-links.service'
 
-const router = useRouter()
-const route  = useRoute()
+const router    = useRouter()
+const route     = useRoute()
+const authStore = useAuthStore()
 const { notify } = useNotification()
-const linksStore = useSharedLinksStore()
-
-// ── Data model ────────────────────────────────────────────────────────────────
-interface LetterheadDoc {
-  id: number
-  name: string
-  template: string
-  uses: number
-  lastUsed: string
-  // design
-  accentColor: string
-  fontFamily: string
-  watermark: string
-  showWatermark: boolean
-  watermarkColor: string
-  stamp: string
-  showTopBar: boolean
-  showBottomBar: boolean
-  showDivider: boolean
-  showFooter: boolean
-  logoUrl: string
-  signatureUrl: string
-  // company
-  company: string
-  tagline: string
-  email: string
-  phone: string
-  website: string
-  address: string
-  regNumber: string
-  vatNumber: string
-  // letter content
-  date: string
-  refNumber: string
-  showDate: boolean
-  showRef: boolean
-  subject: string
-  salutation: string
-  body: string
-  closing: string
-  signerName: string
-  signerTitle: string
-  footerLeft: string
-  footerCenter: string
-  footerRight: string
-}
+const orgId     = computed(() => authStore.getCurrentOrganization?.id ?? '')
 
 const stampColor: Record<string, string> = {
   DRAFT: '#9ca3af', CONFIDENTIAL: '#f87171', APPROVED: '#4ade80', FINAL: '#60a5fa',
 }
 
-const today = new Date().toISOString().slice(0, 10)
-
-const defaults = {
-  email: 'hello@acme.studio', phone: '+1 415 555 0199',
-  website: 'www.acme.studio', address: '123 Design Street\nSan Francisco, CA 94105',
-  regNumber: '', vatNumber: '', logoUrl: '', signatureUrl: '',
-  date: today, refNumber: 'REF-001', showDate: true, showRef: true,
-  subject: '', salutation: 'Dear [Client Name],',
-  body: 'We are pleased to present our proposal for your upcoming project.\n\nPlease find attached the relevant details for your review. Should you have any questions or require further clarification, please do not hesitate to reach out.\n\nWe look forward to working with you.',
-  closing: 'Yours sincerely,', signerName: 'James Holloway', signerTitle: 'Creative Director',
-  footerLeft: '', footerCenter: '', footerRight: 'Page 1 of 1',
-  showTopBar: true, showBottomBar: false, showDivider: true, showFooter: true,
-  watermarkColor: '#000000',
-}
-
-const mockLetterheads: LetterheadDoc[] = [
-  { id: 1, name: 'Agency Proposal',          template: 'classic',   uses: 14, lastUsed: '2 days ago',  accentColor: '#e8a83e', fontFamily: "'DM Sans', sans-serif",       company: 'ACME STUDIO', tagline: 'Creative Agency',       watermark: '',             showWatermark: false, stamp: '', ...defaults },
-  { id: 2, name: 'Client Engagement Letter', template: 'modern',    uses: 7,  lastUsed: '1 week ago',  accentColor: '#60a5fa', fontFamily: "'Inter', sans-serif",          company: 'ACME STUDIO', tagline: '',                      watermark: 'CONFIDENTIAL', showWatermark: true,  stamp: '', ...defaults },
-  { id: 3, name: 'Partnership Agreement',    template: 'bold',      uses: 3,  lastUsed: '2 weeks ago', accentColor: '#f87171', fontFamily: "'Montserrat', sans-serif",     company: 'ACME STUDIO', tagline: '',                      watermark: 'DRAFT',        showWatermark: true,  stamp: 'DRAFT', ...defaults },
-  { id: 4, name: 'Service Quote',            template: 'minimal',   uses: 22, lastUsed: '3 weeks ago', accentColor: '#4ade80', fontFamily: "'Lato', sans-serif",            company: 'ACME STUDIO', tagline: 'Professional Services', watermark: '',             showWatermark: false, stamp: '', ...defaults },
-  { id: 5, name: 'NDA Template',             template: 'legal',     uses: 5,  lastUsed: '1 month ago', accentColor: '#a78bfa', fontFamily: "'Georgia, serif'",             company: 'ACME STUDIO', tagline: '',                      watermark: 'CONFIDENTIAL', showWatermark: true,  stamp: 'CONFIDENTIAL', ...defaults },
-  { id: 6, name: 'Project Proposal',         template: 'executive', uses: 9,  lastUsed: '3 days ago',  accentColor: '#fb923c', fontFamily: "'Playfair Display', serif",   company: 'ACME STUDIO', tagline: 'Creative Agency',       watermark: '',             showWatermark: false, stamp: '', ...defaults },
-  { id: 7, name: 'Invoice Cover Letter',     template: 'classic',   uses: 11, lastUsed: '5 days ago',  accentColor: '#34d399', fontFamily: "'DM Sans', sans-serif",       company: 'ACME STUDIO', tagline: '',                      watermark: '',             showWatermark: false, stamp: '', ...defaults },
-]
-
 // ── State ─────────────────────────────────────────────────────────────────────
-const lh       = ref<LetterheadDoc | null>(null)
+const lh       = ref<ILetterhead | null>(null)
 const loading  = ref(true)
 const notFound = ref(false)
 const showDeleteConfirm = ref(false)
 const showShareModal    = ref(false)
+const isDeleting        = ref(false)
+
+const links = ref<ISharedLink[]>([])
 
 onMounted(async () => {
-  await new Promise(r => setTimeout(r, 300))
-  const id   = Number(route.params.id)
-  const data = mockLetterheads.find(l => l.id === id)
-  if (!data) { notFound.value = true; loading.value = false; return }
-  lh.value      = data
-  loading.value = false
+  if (!orgId.value) { notFound.value = true; loading.value = false; return }
+  try {
+    const id  = String(route.params.id)
+    const [lhRes, linksRes] = await Promise.all([
+      LetterheadService.get(orgId.value, id),
+      SharedLinksService.list(orgId.value, id),
+    ])
+    lh.value    = lhRes.data.data
+    links.value = linksRes.data.data
+  } catch {
+    notFound.value = true
+  } finally {
+    loading.value = false
+  }
 })
 
 // ── Links analytics ───────────────────────────────────────────────────────────
-const links = computed(() =>
-  lh.value
-    ? linksStore.forResource('letterhead', lh.value.id)
-        .slice()
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    : []
-)
+const sortedLinks  = computed(() => [...links.value].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()))
 const totalViews   = computed(() => links.value.reduce((s, l) => s + l.views, 0))
-const activeLinks  = computed(() => links.value.filter(l => l.isActive && !linksStore.isExpired(l)).length)
+const activeLinks  = computed(() => links.value.filter(l => l.is_active && !isExpired(l)).length)
 const privateLinks = computed(() => links.value.filter(l => l.visibility === 'private').length)
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -127,19 +65,27 @@ const templateBadgeClass: Record<string, string> = {
   executive: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
 }
 
-const formatDate = (d: string) => {
+const formatDate = (d: string | null) => {
   if (!d) return ''
   const [y, m, day] = d.split('-')
   if (!y || !m || !day) return d
   return new Date(+y, +m - 1, +day).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 }
-const fmtFooter = (s: string) => s.replace('{page}', '1').replace('{total}', '1')
+const fmtFooter = (s: string | null) => (s ?? '').replace('{page}', '1').replace('{total}', '1')
 
 function handlePrint() { window.print() }
 
-function handleDelete() {
-  notify(`${lh.value?.name} deleted`, 'success')
-  router.push({ name: 'letterheads' })
+async function handleDelete() {
+  if (!lh.value || !orgId.value) return
+  isDeleting.value = true
+  try {
+    await LetterheadService.delete(orgId.value, lh.value.id)
+    notify(`${lh.value.name} deleted`, 'success')
+    router.push({ name: 'letterheads' })
+  } catch {
+    notify('Failed to delete letterhead', 'error')
+    isDeleting.value = false
+  }
 }
 
 function linkUrl(token: string): string {
@@ -149,9 +95,13 @@ function copyLink(token: string) {
   navigator.clipboard.writeText(linkUrl(token)).catch(() => {})
   notify('Link copied to clipboard', 'success')
 }
-function statusLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
-  if (!link.isActive)             return { text: 'Revoked', cls: 'text-red-400 bg-red-500/10 border-red-500/20' }
-  if (linksStore.isExpired(link)) return { text: 'Expired', cls: 'text-gray-400 bg-charcoal-700 border-charcoal-600' }
+function isExpired(link: ISharedLink): boolean {
+  if (!link.expires_at) return false
+  return new Date(link.expires_at) < new Date()
+}
+function statusLabel(link: ISharedLink) {
+  if (!link.is_active)  return { text: 'Revoked', cls: 'text-red-400 bg-red-500/10 border-red-500/20' }
+  if (isExpired(link))  return { text: 'Expired', cls: 'text-gray-400 bg-charcoal-700 border-charcoal-600' }
   return { text: 'Active', cls: 'text-green-400 bg-green-500/10 border-green-500/20' }
 }
 function fmtDate(iso: string | null) {
@@ -162,10 +112,22 @@ function fmtDateTime(iso: string | null) {
   if (!iso) return 'Never'
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
-function expiryLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
-  if (!link.expiresAt)            return 'Never expires'
-  if (linksStore.isExpired(link)) return `Expired ${fmtDate(link.expiresAt)}`
-  return `Expires ${fmtDate(link.expiresAt)}`
+function expiryLabel(link: ISharedLink) {
+  if (!link.expires_at) return 'Never expires'
+  if (isExpired(link))  return `Expired ${fmtDate(link.expires_at)}`
+  return `Expires ${fmtDate(link.expires_at)}`
+}
+
+function lastUsedLabel(): string {
+  if (!lh.value?.last_used_at) return 'Never used'
+  const d = new Date(lh.value.last_used_at)
+  const days = Math.floor((Date.now() - d.getTime()) / 86_400_000)
+  if (days === 0) return 'Today'
+  if (days === 1) return '1 day ago'
+  if (days < 7)  return `${days} days ago`
+  if (days < 14) return '1 week ago'
+  if (days < 30) return `${Math.floor(days / 7)} weeks ago`
+  return `${Math.floor(days / 30)} months ago`
 }
 </script>
 
@@ -194,14 +156,14 @@ function expiryLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
           <div>
             <div class="flex items-center gap-2 flex-wrap">
               <h1 class="page-title">{{ lh.name }}</h1>
-              <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium', templateBadgeClass[lh.template] ?? 'bg-charcoal-700 text-cream-faint border-charcoal-600']">
-                {{ templateLabel[lh.template] ?? lh.template }}
+              <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium', templateBadgeClass[lh.theme] ?? 'bg-charcoal-700 text-cream-faint border-charcoal-600']">
+                {{ templateLabel[lh.theme] ?? lh.theme }}
               </span>
               <span v-if="lh.stamp" class="text-[9px] px-1.5 py-0.5 rounded border font-medium" :style="{ color: stampColor[lh.stamp], borderColor: stampColor[lh.stamp] + '60', backgroundColor: stampColor[lh.stamp] + '15' }">
                 {{ lh.stamp }}
               </span>
             </div>
-            <p class="page-subtitle">{{ lh.company }} · {{ lh.uses }} uses · Last used {{ lh.lastUsed }}</p>
+            <p class="page-subtitle">{{ lh.company }} · {{ lh.uses }} uses · Last used {{ lastUsedLabel() }}</p>
           </div>
         </div>
         <div class="flex items-center gap-2 ml-9 sm:ml-0">
@@ -235,13 +197,13 @@ function expiryLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
 
           <!-- ══ CLASSIC ══ -->
           <div
-            v-if="lh.template === 'classic'"
+            v-if="lh.theme === 'classic'"
             class="print-document w-full max-w-2xl bg-white shadow-2xl relative overflow-hidden"
-            :style="{ fontFamily: lh.fontFamily, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
+            :style="{ fontFamily: lh.font_family, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
           >
-            <div v-if="lh.showTopBar" class="h-1.5 w-full" :style="{ backgroundColor: lh.accentColor }"></div>
-            <div v-if="lh.showWatermark && lh.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
-              <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: lh.watermarkColor }">{{ lh.watermark }}</span>
+            <div v-if="lh.show_top_bar" class="h-1.5 w-full" :style="{ backgroundColor: lh.accent_color }"></div>
+            <div v-if="lh.show_watermark && lh.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
+              <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: lh.watermark_color }">{{ lh.watermark }}</span>
             </div>
             <div v-if="lh.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-25deg);z-index:2">
               <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[lh.stamp], borderColor: stampColor[lh.stamp] }">{{ lh.stamp }}</div>
@@ -249,8 +211,8 @@ function expiryLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
             <div class="p-12" style="position:relative;z-index:3">
               <div class="flex justify-between items-start mb-8">
                 <div>
-                  <img v-if="lh.logoUrl" :src="lh.logoUrl" alt="Logo" class="h-14 w-auto object-contain mb-2" />
-                  <div class="text-lg font-bold" :style="{ color: lh.accentColor }">{{ lh.company }}</div>
+                  <img v-if="lh.logo_url" :src="lh.logo_url" alt="Logo" class="h-14 w-auto object-contain mb-2" />
+                  <div class="text-lg font-bold" :style="{ color: lh.accent_color }">{{ lh.company }}</div>
                   <div v-if="lh.tagline" class="text-xs text-gray-400 mt-0.5">{{ lh.tagline }}</div>
                 </div>
                 <div class="text-right text-xs text-gray-500 space-y-0.5">
@@ -259,49 +221,49 @@ function expiryLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
                   <div v-if="lh.website">{{ lh.website }}</div>
                 </div>
               </div>
-              <div v-if="lh.showDivider" class="h-px mb-8" :style="{ backgroundColor: lh.accentColor + '40' }"></div>
-              <div v-if="lh.showDate || lh.showRef" class="flex gap-8 mb-6 text-xs">
-                <div v-if="lh.showDate"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Date</div><div class="font-semibold text-gray-700">{{ formatDate(lh.date) }}</div></div>
-                <div v-if="lh.showRef"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Reference</div><div class="font-semibold text-gray-700 font-mono">{{ lh.refNumber }}</div></div>
+              <div v-if="lh.show_divider" class="h-px mb-8" :style="{ backgroundColor: lh.accent_color + '40' }"></div>
+              <div v-if="lh.show_date || lh.show_ref" class="flex gap-8 mb-6 text-xs">
+                <div v-if="lh.show_date"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Date</div><div class="font-semibold text-gray-700">{{ formatDate(lh.date) }}</div></div>
+                <div v-if="lh.show_ref"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Reference</div><div class="font-semibold text-gray-700 font-mono">{{ lh.ref_number }}</div></div>
               </div>
               <div v-if="lh.subject" class="mb-6"><span class="font-semibold text-gray-800">Re: </span><span class="text-gray-700">{{ lh.subject }}</span></div>
               <p v-if="lh.salutation" class="text-gray-700 mb-4">{{ lh.salutation }}</p>
               <div class="text-gray-600 leading-relaxed mb-8 whitespace-pre-line" style="line-height:1.8">{{ lh.body }}</div>
               <div class="mb-10">
                 <p class="text-gray-700 mb-12">{{ lh.closing }}</p>
-                <img v-if="lh.signatureUrl" :src="lh.signatureUrl" alt="Signature" class="h-12 w-auto object-contain mb-1" />
-                <div class="font-semibold text-gray-800">{{ lh.signerName }}</div>
-                <div class="text-xs text-gray-500">{{ lh.signerTitle }}</div>
+                <img v-if="lh.signature_url" :src="lh.signature_url" alt="Signature" class="h-12 w-auto object-contain mb-1" />
+                <div class="font-semibold text-gray-800">{{ lh.signer_name }}</div>
+                <div class="text-xs text-gray-500">{{ lh.signer_title }}</div>
                 <div class="text-xs text-gray-400">{{ lh.company }}</div>
               </div>
-              <div v-if="lh.regNumber || lh.vatNumber" class="border-t border-gray-100 pt-4 text-xs text-gray-400 flex flex-wrap gap-x-6">
-                <span v-if="lh.regNumber">Reg. No: {{ lh.regNumber }}</span>
-                <span v-if="lh.vatNumber">VAT: {{ lh.vatNumber }}</span>
+              <div v-if="lh.reg_number || lh.vat_number" class="border-t border-gray-100 pt-4 text-xs text-gray-400 flex flex-wrap gap-x-6">
+                <span v-if="lh.reg_number">Reg. No: {{ lh.reg_number }}</span>
+                <span v-if="lh.vat_number">VAT: {{ lh.vat_number }}</span>
               </div>
-              <div v-if="lh.showFooter" class="absolute bottom-8 left-12 right-12 flex justify-between items-center" style="font-size:10px">
-                <span class="text-gray-400">{{ fmtFooter(lh.footerLeft) || lh.website }}</span>
-                <span class="text-gray-400">{{ fmtFooter(lh.footerCenter) || lh.company }}</span>
-                <span class="text-gray-400">{{ fmtFooter(lh.footerRight) }}</span>
+              <div v-if="lh.show_footer" class="absolute bottom-8 left-12 right-12 flex justify-between items-center" style="font-size:10px">
+                <span class="text-gray-400">{{ fmtFooter(lh.footer_left) || lh.website }}</span>
+                <span class="text-gray-400">{{ fmtFooter(lh.footer_center) || lh.company }}</span>
+                <span class="text-gray-400">{{ fmtFooter(lh.footer_right) }}</span>
               </div>
-              <div v-if="lh.showBottomBar" class="absolute bottom-0 left-0 right-0 h-1.5" :style="{ backgroundColor: lh.accentColor }"></div>
+              <div v-if="lh.show_bottom_bar" class="absolute bottom-0 left-0 right-0 h-1.5" :style="{ backgroundColor: lh.accent_color }"></div>
             </div>
           </div>
 
           <!-- ══ MODERN ══ -->
           <div
-            v-else-if="lh.template === 'modern'"
+            v-else-if="lh.theme === 'modern'"
             class="print-document w-full max-w-2xl bg-white shadow-2xl relative overflow-hidden flex"
-            :style="{ fontFamily: lh.fontFamily, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
+            :style="{ fontFamily: lh.font_family, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
           >
-            <div v-if="lh.showWatermark && lh.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
-              <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: lh.watermarkColor }">{{ lh.watermark }}</span>
+            <div v-if="lh.show_watermark && lh.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
+              <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: lh.watermark_color }">{{ lh.watermark }}</span>
             </div>
             <div v-if="lh.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-25deg);z-index:2">
               <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[lh.stamp], borderColor: stampColor[lh.stamp] }">{{ lh.stamp }}</div>
             </div>
             <!-- Left colour panel -->
-            <div class="shrink-0 flex flex-col p-8" :style="{ backgroundColor: lh.accentColor, width: '220px', position: 'relative', zIndex: 3 }">
-              <img v-if="lh.logoUrl" :src="lh.logoUrl" alt="Logo" class="h-12 w-auto object-contain mb-6 brightness-0 invert" />
+            <div class="shrink-0 flex flex-col p-8" :style="{ backgroundColor: lh.accent_color, width: '220px', position: 'relative', zIndex: 3 }">
+              <img v-if="lh.logo_url" :src="lh.logo_url" alt="Logo" class="h-12 w-auto object-contain mb-6 brightness-0 invert" />
               <div v-else class="mb-6"></div>
               <div class="text-white font-bold text-lg leading-tight mb-1">{{ lh.company }}</div>
               <div v-if="lh.tagline" class="text-white/70 text-xs mb-6">{{ lh.tagline }}</div>
@@ -316,89 +278,89 @@ function expiryLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
                   <div class="text-white/50 uppercase tracking-widest mb-1" style="font-size:9px">Address</div>
                   <div class="text-white/80 text-xs whitespace-pre-line leading-relaxed">{{ lh.address }}</div>
                 </div>
-                <div v-if="lh.regNumber || lh.vatNumber">
+                <div v-if="lh.reg_number || lh.vat_number">
                   <div class="text-white/50 uppercase tracking-widest mb-1" style="font-size:9px">Registration</div>
-                  <div v-if="lh.regNumber" class="text-white/70 text-xs font-mono">{{ lh.regNumber }}</div>
-                  <div v-if="lh.vatNumber" class="text-white/70 text-xs font-mono">{{ lh.vatNumber }}</div>
+                  <div v-if="lh.reg_number" class="text-white/70 text-xs font-mono">{{ lh.reg_number }}</div>
+                  <div v-if="lh.vat_number" class="text-white/70 text-xs font-mono">{{ lh.vat_number }}</div>
                 </div>
               </div>
             </div>
             <!-- Right content -->
             <div class="flex-1 p-10 flex flex-col" style="position:relative;z-index:3">
               <div class="flex justify-end gap-6 mb-8 text-xs">
-                <div v-if="lh.showDate" class="text-right"><div class="text-gray-400 uppercase tracking-widest mb-0.5" style="font-size:9px">Date</div><div class="font-semibold text-gray-700">{{ formatDate(lh.date) }}</div></div>
-                <div v-if="lh.showRef" class="text-right"><div class="text-gray-400 uppercase tracking-widest mb-0.5" style="font-size:9px">Reference</div><div class="font-semibold text-gray-700 font-mono">{{ lh.refNumber }}</div></div>
+                <div v-if="lh.show_date" class="text-right"><div class="text-gray-400 uppercase tracking-widest mb-0.5" style="font-size:9px">Date</div><div class="font-semibold text-gray-700">{{ formatDate(lh.date) }}</div></div>
+                <div v-if="lh.show_ref" class="text-right"><div class="text-gray-400 uppercase tracking-widest mb-0.5" style="font-size:9px">Reference</div><div class="font-semibold text-gray-700 font-mono">{{ lh.ref_number }}</div></div>
               </div>
-              <div v-if="lh.subject" class="text-base font-bold mb-6" :style="{ color: lh.accentColor }">Re: {{ lh.subject }}</div>
+              <div v-if="lh.subject" class="text-base font-bold mb-6" :style="{ color: lh.accent_color }">Re: {{ lh.subject }}</div>
               <p v-if="lh.salutation" class="text-gray-700 mb-4">{{ lh.salutation }}</p>
               <div class="text-gray-600 leading-relaxed mb-10 whitespace-pre-line flex-1" style="line-height:1.8">{{ lh.body }}</div>
               <div class="mb-6">
                 <p class="text-gray-700 mb-10">{{ lh.closing }}</p>
-                <img v-if="lh.signatureUrl" :src="lh.signatureUrl" alt="Signature" class="h-10 w-auto object-contain mb-1" />
-                <div class="font-semibold text-gray-800">{{ lh.signerName }}</div>
-                <div class="text-xs text-gray-500">{{ lh.signerTitle }}</div>
+                <img v-if="lh.signature_url" :src="lh.signature_url" alt="Signature" class="h-10 w-auto object-contain mb-1" />
+                <div class="font-semibold text-gray-800">{{ lh.signer_name }}</div>
+                <div class="text-xs text-gray-500">{{ lh.signer_title }}</div>
               </div>
-              <div v-if="lh.showFooter" class="border-t border-gray-100 pt-4 flex justify-between" style="font-size:10px">
-                <span class="text-gray-400">{{ fmtFooter(lh.footerLeft) || lh.website }}</span>
-                <span class="text-gray-400">{{ fmtFooter(lh.footerCenter) }}</span>
-                <span class="text-gray-400">{{ fmtFooter(lh.footerRight) }}</span>
+              <div v-if="lh.show_footer" class="border-t border-gray-100 pt-4 flex justify-between" style="font-size:10px">
+                <span class="text-gray-400">{{ fmtFooter(lh.footer_left) || lh.website }}</span>
+                <span class="text-gray-400">{{ fmtFooter(lh.footer_center) }}</span>
+                <span class="text-gray-400">{{ fmtFooter(lh.footer_right) }}</span>
               </div>
             </div>
           </div>
 
           <!-- ══ MINIMAL ══ -->
           <div
-            v-else-if="lh.template === 'minimal'"
+            v-else-if="lh.theme === 'minimal'"
             class="print-document w-full max-w-2xl bg-white shadow-2xl relative overflow-hidden"
-            :style="{ fontFamily: lh.fontFamily, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
+            :style="{ fontFamily: lh.font_family, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
           >
-            <div v-if="lh.showWatermark && lh.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
-              <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: lh.watermarkColor }">{{ lh.watermark }}</span>
+            <div v-if="lh.show_watermark && lh.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
+              <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: lh.watermark_color }">{{ lh.watermark }}</span>
             </div>
             <div v-if="lh.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-25deg);z-index:2">
               <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[lh.stamp], borderColor: stampColor[lh.stamp] }">{{ lh.stamp }}</div>
             </div>
             <div class="p-14" style="position:relative;z-index:3;max-width:600px;margin:0 auto">
               <div class="mb-10">
-                <img v-if="lh.logoUrl" :src="lh.logoUrl" alt="Logo" class="h-10 w-auto object-contain mb-3" />
+                <img v-if="lh.logo_url" :src="lh.logo_url" alt="Logo" class="h-10 w-auto object-contain mb-3" />
                 <div class="font-bold text-xl text-gray-900">{{ lh.company }}</div>
                 <div v-if="lh.tagline" class="text-xs text-gray-400 mt-0.5">{{ lh.tagline }}</div>
               </div>
-              <div v-if="lh.showDivider" class="w-8 mb-8" style="height:2px" :style="{ backgroundColor: lh.accentColor }"></div>
+              <div v-if="lh.show_divider" class="w-8 mb-8" style="height:2px" :style="{ backgroundColor: lh.accent_color }"></div>
               <div class="flex gap-8 mb-8 text-xs text-gray-500">
-                <div v-if="lh.showDate">{{ formatDate(lh.date) }}</div>
-                <div v-if="lh.showRef" class="font-mono">{{ lh.refNumber }}</div>
+                <div v-if="lh.show_date">{{ formatDate(lh.date) }}</div>
+                <div v-if="lh.show_ref" class="font-mono">{{ lh.ref_number }}</div>
               </div>
               <div v-if="lh.subject" class="font-semibold text-gray-800 mb-6">{{ lh.subject }}</div>
               <p v-if="lh.salutation" class="text-gray-700 mb-5">{{ lh.salutation }}</p>
               <div class="text-gray-600 leading-loose mb-12 whitespace-pre-line" style="line-height:2">{{ lh.body }}</div>
               <p class="text-gray-700 mb-14">{{ lh.closing }}</p>
-              <img v-if="lh.signatureUrl" :src="lh.signatureUrl" alt="Signature" class="h-10 w-auto object-contain mb-1" />
-              <div class="font-semibold text-gray-800">{{ lh.signerName }}</div>
-              <div class="text-xs text-gray-500">{{ lh.signerTitle }}</div>
-              <div v-if="lh.showFooter" class="absolute bottom-10 left-14 right-14 flex justify-between border-t border-gray-100 pt-4" style="font-size:10px">
-                <span class="text-gray-400">{{ fmtFooter(lh.footerLeft) || lh.company }}</span>
-                <span class="text-gray-400">{{ fmtFooter(lh.footerRight) }}</span>
+              <img v-if="lh.signature_url" :src="lh.signature_url" alt="Signature" class="h-10 w-auto object-contain mb-1" />
+              <div class="font-semibold text-gray-800">{{ lh.signer_name }}</div>
+              <div class="text-xs text-gray-500">{{ lh.signer_title }}</div>
+              <div v-if="lh.show_footer" class="absolute bottom-10 left-14 right-14 flex justify-between border-t border-gray-100 pt-4" style="font-size:10px">
+                <span class="text-gray-400">{{ fmtFooter(lh.footer_left) || lh.company }}</span>
+                <span class="text-gray-400">{{ fmtFooter(lh.footer_right) }}</span>
               </div>
             </div>
           </div>
 
           <!-- ══ BOLD ══ -->
           <div
-            v-else-if="lh.template === 'bold'"
+            v-else-if="lh.theme === 'bold'"
             class="print-document w-full max-w-2xl bg-white shadow-2xl relative overflow-hidden"
-            :style="{ fontFamily: lh.fontFamily, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
+            :style="{ fontFamily: lh.font_family, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
           >
-            <div v-if="lh.showWatermark && lh.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
-              <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: lh.watermarkColor }">{{ lh.watermark }}</span>
+            <div v-if="lh.show_watermark && lh.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
+              <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: lh.watermark_color }">{{ lh.watermark }}</span>
             </div>
             <div v-if="lh.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-25deg);z-index:2">
               <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[lh.stamp], borderColor: stampColor[lh.stamp] }">{{ lh.stamp }}</div>
             </div>
-            <div class="px-12 py-10 relative" :style="{ backgroundColor: lh.accentColor, zIndex: 3 }">
+            <div class="px-12 py-10 relative" :style="{ backgroundColor: lh.accent_color, zIndex: 3 }">
               <div class="flex justify-between items-end">
                 <div>
-                  <img v-if="lh.logoUrl" :src="lh.logoUrl" alt="Logo" class="h-12 w-auto object-contain mb-3 brightness-0 invert" />
+                  <img v-if="lh.logo_url" :src="lh.logo_url" alt="Logo" class="h-12 w-auto object-contain mb-3 brightness-0 invert" />
                   <div class="text-white font-black text-2xl tracking-tight">{{ lh.company }}</div>
                   <div v-if="lh.tagline" class="text-white/70 text-sm">{{ lh.tagline }}</div>
                 </div>
@@ -411,44 +373,44 @@ function expiryLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
             </div>
             <div class="p-12" style="position:relative;z-index:3">
               <div class="flex gap-8 mb-8 text-xs">
-                <div v-if="lh.showDate"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Date</div><div class="font-bold text-gray-800">{{ formatDate(lh.date) }}</div></div>
-                <div v-if="lh.showRef"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Reference</div><div class="font-bold text-gray-800 font-mono">{{ lh.refNumber }}</div></div>
+                <div v-if="lh.show_date"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Date</div><div class="font-bold text-gray-800">{{ formatDate(lh.date) }}</div></div>
+                <div v-if="lh.show_ref"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Reference</div><div class="font-bold text-gray-800 font-mono">{{ lh.ref_number }}</div></div>
               </div>
-              <div v-if="lh.subject" class="text-lg font-black text-gray-900 mb-6 pb-3" :style="{ borderBottom: `3px solid ${lh.accentColor}` }">{{ lh.subject }}</div>
+              <div v-if="lh.subject" class="text-lg font-black text-gray-900 mb-6 pb-3" :style="{ borderBottom: `3px solid ${lh.accent_color}` }">{{ lh.subject }}</div>
               <p v-if="lh.salutation" class="text-gray-700 mb-4">{{ lh.salutation }}</p>
               <div class="text-gray-600 leading-relaxed mb-10 whitespace-pre-line" style="line-height:1.9">{{ lh.body }}</div>
               <p class="text-gray-700 mb-12">{{ lh.closing }}</p>
-              <img v-if="lh.signatureUrl" :src="lh.signatureUrl" alt="Signature" class="h-10 w-auto object-contain mb-1" />
-              <div class="font-bold text-gray-800">{{ lh.signerName }}</div>
-              <div class="text-xs text-gray-500">{{ lh.signerTitle }}</div>
-              <div v-if="lh.address" class="mt-6 p-4 rounded text-xs text-gray-500 leading-relaxed" :style="{ backgroundColor: lh.accentColor + '10', borderLeft: `3px solid ${lh.accentColor}` }">
+              <img v-if="lh.signature_url" :src="lh.signature_url" alt="Signature" class="h-10 w-auto object-contain mb-1" />
+              <div class="font-bold text-gray-800">{{ lh.signer_name }}</div>
+              <div class="text-xs text-gray-500">{{ lh.signer_title }}</div>
+              <div v-if="lh.address" class="mt-6 p-4 rounded text-xs text-gray-500 leading-relaxed" :style="{ backgroundColor: lh.accent_color + '10', borderLeft: `3px solid ${lh.accent_color}` }">
                 <span class="font-semibold text-gray-700">Address: </span>{{ lh.address.replace(/\n/g, ', ') }}
-                <span v-if="lh.regNumber"> · Reg: {{ lh.regNumber }}</span>
-                <span v-if="lh.vatNumber"> · VAT: {{ lh.vatNumber }}</span>
+                <span v-if="lh.reg_number"> · Reg: {{ lh.reg_number }}</span>
+                <span v-if="lh.vat_number"> · VAT: {{ lh.vat_number }}</span>
               </div>
-              <div v-if="lh.showFooter" class="absolute bottom-8 left-12 right-12 flex justify-between" style="font-size:10px">
-                <span class="text-gray-400">{{ fmtFooter(lh.footerLeft) || lh.website }}</span>
-                <span class="text-gray-400">{{ fmtFooter(lh.footerCenter) }}</span>
-                <span class="text-gray-400">{{ fmtFooter(lh.footerRight) }}</span>
+              <div v-if="lh.show_footer" class="absolute bottom-8 left-12 right-12 flex justify-between" style="font-size:10px">
+                <span class="text-gray-400">{{ fmtFooter(lh.footer_left) || lh.website }}</span>
+                <span class="text-gray-400">{{ fmtFooter(lh.footer_center) }}</span>
+                <span class="text-gray-400">{{ fmtFooter(lh.footer_right) }}</span>
               </div>
             </div>
           </div>
 
           <!-- ══ LEGAL ══ -->
           <div
-            v-else-if="lh.template === 'legal'"
+            v-else-if="lh.theme === 'legal'"
             class="print-document w-full max-w-2xl bg-white shadow-2xl relative overflow-hidden"
             style="font-family:'Times New Roman',Times,serif;color:#111827;font-size:13px;min-height:1080px"
           >
-            <div v-if="lh.showWatermark && lh.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
-              <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: lh.watermarkColor }">{{ lh.watermark }}</span>
+            <div v-if="lh.show_watermark && lh.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
+              <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: lh.watermark_color }">{{ lh.watermark }}</span>
             </div>
             <div v-if="lh.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-25deg);z-index:2">
               <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[lh.stamp], borderColor: stampColor[lh.stamp] }">{{ lh.stamp }}</div>
             </div>
             <div class="p-12 pb-24" style="position:relative;z-index:3">
               <div class="text-center mb-8">
-                <img v-if="lh.logoUrl" :src="lh.logoUrl" alt="Logo" class="h-12 w-auto object-contain mx-auto mb-3" />
+                <img v-if="lh.logo_url" :src="lh.logo_url" alt="Logo" class="h-12 w-auto object-contain mx-auto mb-3" />
                 <div class="text-base font-bold uppercase tracking-widest text-gray-900">{{ lh.company }}</div>
                 <div v-if="lh.tagline" class="text-xs text-gray-500 mt-0.5">{{ lh.tagline }}</div>
                 <div class="text-xs text-gray-500 mt-1">{{ [lh.email, lh.phone, lh.website].filter(Boolean).join(' · ') }}</div>
@@ -457,43 +419,43 @@ function expiryLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
               <div class="h-px bg-gray-400 mb-0.5"></div>
               <div class="h-px bg-gray-200 mb-8"></div>
               <div class="flex justify-between text-xs text-gray-500 mb-8">
-                <span v-if="lh.showDate">{{ formatDate(lh.date) }}</span>
-                <span v-if="lh.showRef" class="font-mono">Ref: {{ lh.refNumber }}</span>
+                <span v-if="lh.show_date">{{ formatDate(lh.date) }}</span>
+                <span v-if="lh.show_ref" class="font-mono">Ref: {{ lh.ref_number }}</span>
               </div>
               <div v-if="lh.subject" class="text-center font-bold uppercase text-gray-800 mb-8 tracking-wider">{{ lh.subject }}</div>
               <p v-if="lh.salutation" class="mb-6 text-gray-800">{{ lh.salutation }}</p>
               <div class="text-gray-700 leading-relaxed mb-12 whitespace-pre-line text-justify" style="line-height:2">{{ lh.body }}</div>
               <p class="text-gray-800 mb-14">{{ lh.closing }}</p>
-              <img v-if="lh.signatureUrl" :src="lh.signatureUrl" alt="Signature" class="h-12 w-auto object-contain mb-1" />
-              <div class="font-bold text-gray-800">{{ lh.signerName }}</div>
-              <div class="text-sm text-gray-600">{{ lh.signerTitle }}</div>
+              <img v-if="lh.signature_url" :src="lh.signature_url" alt="Signature" class="h-12 w-auto object-contain mb-1" />
+              <div class="font-bold text-gray-800">{{ lh.signer_name }}</div>
+              <div class="text-sm text-gray-600">{{ lh.signer_title }}</div>
               <div class="text-sm text-gray-600">{{ lh.company }}</div>
-              <div v-if="lh.regNumber || lh.vatNumber" class="mt-4 text-xs text-gray-400">
-                <span v-if="lh.regNumber">Reg. No: {{ lh.regNumber }}</span>
-                <span v-if="lh.regNumber && lh.vatNumber"> · </span>
-                <span v-if="lh.vatNumber">VAT: {{ lh.vatNumber }}</span>
+              <div v-if="lh.reg_number || lh.vat_number" class="mt-4 text-xs text-gray-400">
+                <span v-if="lh.reg_number">Reg. No: {{ lh.reg_number }}</span>
+                <span v-if="lh.reg_number && lh.vat_number"> · </span>
+                <span v-if="lh.vat_number">VAT: {{ lh.vat_number }}</span>
               </div>
             </div>
-            <div v-if="lh.showFooter" class="absolute bottom-0 left-0 right-0 px-12 pb-6">
+            <div v-if="lh.show_footer" class="absolute bottom-0 left-0 right-0 px-12 pb-6">
               <div class="h-px bg-gray-400 mb-0.5"></div>
               <div class="h-px bg-gray-200 mb-3"></div>
               <div class="flex justify-between text-xs text-gray-400">
-                <span>{{ fmtFooter(lh.footerLeft) || lh.company }}</span>
-                <span>{{ fmtFooter(lh.footerCenter) }}</span>
-                <span>{{ fmtFooter(lh.footerRight) }}</span>
+                <span>{{ fmtFooter(lh.footer_left) || lh.company }}</span>
+                <span>{{ fmtFooter(lh.footer_center) }}</span>
+                <span>{{ fmtFooter(lh.footer_right) }}</span>
               </div>
             </div>
           </div>
 
           <!-- ══ EXECUTIVE ══ -->
           <div
-            v-else-if="lh.template === 'executive'"
+            v-else-if="lh.theme === 'executive'"
             class="print-document w-full max-w-2xl bg-white shadow-2xl relative overflow-hidden"
-            :style="{ fontFamily: lh.fontFamily, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
+            :style="{ fontFamily: lh.font_family, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
           >
-            <div v-if="lh.showTopBar" class="h-2 w-full" :style="{ backgroundColor: lh.accentColor }"></div>
-            <div v-if="lh.showWatermark && lh.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
-              <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: lh.watermarkColor }">{{ lh.watermark }}</span>
+            <div v-if="lh.show_top_bar" class="h-2 w-full" :style="{ backgroundColor: lh.accent_color }"></div>
+            <div v-if="lh.show_watermark && lh.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
+              <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: lh.watermark_color }">{{ lh.watermark }}</span>
             </div>
             <div v-if="lh.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-25deg);z-index:2">
               <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[lh.stamp], borderColor: stampColor[lh.stamp] }">{{ lh.stamp }}</div>
@@ -501,8 +463,8 @@ function expiryLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
             <div class="px-12 py-10" style="position:relative;z-index:3">
               <div class="flex justify-between items-start mb-8">
                 <div>
-                  <img v-if="lh.logoUrl" :src="lh.logoUrl" alt="Logo" class="h-14 w-auto object-contain mb-3" />
-                  <div class="text-2xl font-bold" :style="{ color: lh.accentColor }">{{ lh.company }}</div>
+                  <img v-if="lh.logo_url" :src="lh.logo_url" alt="Logo" class="h-14 w-auto object-contain mb-3" />
+                  <div class="text-2xl font-bold" :style="{ color: lh.accent_color }">{{ lh.company }}</div>
                   <div v-if="lh.tagline" class="text-xs text-gray-400 mt-0.5">{{ lh.tagline }}</div>
                 </div>
                 <div class="text-right text-xs text-gray-500 space-y-0.5 mt-1">
@@ -512,29 +474,29 @@ function expiryLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
                   <div v-if="lh.address" class="whitespace-pre-line mt-1">{{ lh.address }}</div>
                 </div>
               </div>
-              <div class="flex mb-8" style="height:3px;border-radius:2px" :style="{ backgroundColor: lh.accentColor }"></div>
-              <div class="grid grid-cols-3 gap-4 border border-gray-100 rounded p-4 mb-8 text-xs" :style="{ backgroundColor: lh.accentColor + '08' }">
-                <div v-if="lh.showDate"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Date</div><div class="font-semibold text-gray-700">{{ formatDate(lh.date) }}</div></div>
-                <div v-if="lh.showRef"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Reference</div><div class="font-semibold text-gray-700 font-mono">{{ lh.refNumber }}</div></div>
+              <div class="flex mb-8" style="height:3px;border-radius:2px" :style="{ backgroundColor: lh.accent_color }"></div>
+              <div class="grid grid-cols-3 gap-4 border border-gray-100 rounded p-4 mb-8 text-xs" :style="{ backgroundColor: lh.accent_color + '08' }">
+                <div v-if="lh.show_date"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Date</div><div class="font-semibold text-gray-700">{{ formatDate(lh.date) }}</div></div>
+                <div v-if="lh.show_ref"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Reference</div><div class="font-semibold text-gray-700 font-mono">{{ lh.ref_number }}</div></div>
                 <div v-if="lh.subject"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Subject</div><div class="font-semibold text-gray-700">{{ lh.subject }}</div></div>
               </div>
               <p v-if="lh.salutation" class="text-gray-700 mb-5">{{ lh.salutation }}</p>
               <div class="text-gray-600 leading-relaxed mb-10 whitespace-pre-line" style="line-height:1.9">{{ lh.body }}</div>
               <p class="text-gray-700 mb-12">{{ lh.closing }}</p>
-              <img v-if="lh.signatureUrl" :src="lh.signatureUrl" alt="Signature" class="h-12 w-auto object-contain mb-1" />
-              <div class="font-semibold text-gray-800">{{ lh.signerName }}</div>
-              <div class="text-xs text-gray-500">{{ lh.signerTitle }}</div>
+              <img v-if="lh.signature_url" :src="lh.signature_url" alt="Signature" class="h-12 w-auto object-contain mb-1" />
+              <div class="font-semibold text-gray-800">{{ lh.signer_name }}</div>
+              <div class="text-xs text-gray-500">{{ lh.signer_title }}</div>
               <div class="text-xs text-gray-400">{{ lh.company }}</div>
-              <div v-if="lh.regNumber || lh.vatNumber" class="mt-2 text-xs text-gray-400">
-                <span v-if="lh.regNumber">Reg: {{ lh.regNumber }}</span>
-                <span v-if="lh.vatNumber"> · VAT: {{ lh.vatNumber }}</span>
+              <div v-if="lh.reg_number || lh.vat_number" class="mt-2 text-xs text-gray-400">
+                <span v-if="lh.reg_number">Reg: {{ lh.reg_number }}</span>
+                <span v-if="lh.vat_number"> · VAT: {{ lh.vat_number }}</span>
               </div>
-              <div v-if="lh.showFooter" class="absolute bottom-8 left-12 right-12 border-t-2 pt-4 flex justify-between" :style="{ borderColor: lh.accentColor + '40' }">
-                <span class="text-gray-400" style="font-size:10px">{{ fmtFooter(lh.footerLeft) || lh.website }}</span>
-                <span class="text-gray-400" style="font-size:10px">{{ fmtFooter(lh.footerCenter) || lh.company }}</span>
-                <span class="text-gray-400" style="font-size:10px">{{ fmtFooter(lh.footerRight) }}</span>
+              <div v-if="lh.show_footer" class="absolute bottom-8 left-12 right-12 border-t-2 pt-4 flex justify-between" :style="{ borderColor: lh.accent_color + '40' }">
+                <span class="text-gray-400" style="font-size:10px">{{ fmtFooter(lh.footer_left) || lh.website }}</span>
+                <span class="text-gray-400" style="font-size:10px">{{ fmtFooter(lh.footer_center) || lh.company }}</span>
+                <span class="text-gray-400" style="font-size:10px">{{ fmtFooter(lh.footer_right) }}</span>
               </div>
-              <div v-if="lh.showBottomBar" class="absolute bottom-0 left-0 right-0 h-2" :style="{ backgroundColor: lh.accentColor }"></div>
+              <div v-if="lh.show_bottom_bar" class="absolute bottom-0 left-0 right-0 h-2" :style="{ backgroundColor: lh.accent_color }"></div>
             </div>
           </div>
 
@@ -552,17 +514,17 @@ function expiryLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
                 <div class="text-[9px] text-cream-faint uppercase tracking-wide mt-0.5">Total Uses</div>
               </div>
               <div class="bg-charcoal-900/50 rounded-lg p-2.5 text-center">
-                <div class="text-lg font-bold text-cream">{{ links.length }}</div>
+                <div class="text-lg font-bold text-cream">{{ sortedLinks.length }}</div>
                 <div class="text-[9px] text-cream-faint uppercase tracking-wide mt-0.5">Shared Links</div>
               </div>
             </div>
             <div class="space-y-1.5 text-xs text-cream-faint pt-0.5">
               <div class="flex items-center justify-between">
-                <span>Last used</span><span class="text-cream-muted">{{ lh.lastUsed }}</span>
+                <span>Last used</span><span class="text-cream-muted">{{ lastUsedLabel() }}</span>
               </div>
               <div class="flex items-center justify-between">
                 <span>Template</span>
-                <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium', templateBadgeClass[lh.template] ?? '']">{{ templateLabel[lh.template] }}</span>
+                <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium', templateBadgeClass[lh.theme] ?? '']">{{ templateLabel[lh.theme] }}</span>
               </div>
               <div class="flex items-center justify-between">
                 <span>Watermark</span>
@@ -584,7 +546,7 @@ function expiryLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
             </div>
             <div class="grid grid-cols-3 gap-2">
               <div class="bg-charcoal-900/50 rounded-lg p-2.5 text-center">
-                <div class="text-lg font-bold text-cream">{{ links.length }}</div>
+                <div class="text-lg font-bold text-cream">{{ sortedLinks.length }}</div>
                 <div class="text-[9px] text-cream-faint uppercase tracking-wide mt-0.5">Total</div>
               </div>
               <div class="bg-charcoal-900/50 rounded-lg p-2.5 text-center">
@@ -598,14 +560,14 @@ function expiryLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
             </div>
             <div class="flex items-center gap-3 text-xs text-cream-faint">
               <span class="flex items-center gap-1"><Icon icon="lucide:lock" class="w-3 h-3" /> {{ privateLinks }} private</span>
-              <span class="flex items-center gap-1"><Icon icon="lucide:globe" class="w-3 h-3" /> {{ links.length - privateLinks }} public</span>
+              <span class="flex items-center gap-1"><Icon icon="lucide:globe" class="w-3 h-3" /> {{ sortedLinks.length - privateLinks }} public</span>
             </div>
           </div>
 
           <!-- Link list -->
-          <div v-if="links.length > 0" class="space-y-2">
+          <div v-if="sortedLinks.length > 0" class="space-y-2">
             <div
-              v-for="link in links" :key="link.id"
+              v-for="link in sortedLinks" :key="link.id"
               class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-3.5 space-y-2.5"
             >
               <!-- Top -->
@@ -628,24 +590,24 @@ function expiryLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
                 </div>
                 <button
                   @click="copyLink(link.token)"
-                  :disabled="!link.isActive || linksStore.isExpired(link)"
+                  :disabled="!link.is_active || isExpired(link)"
                   class="p-1 rounded bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream transition-colors disabled:opacity-40"
                 ><Icon icon="lucide:copy" class="w-3 h-3" /></button>
               </div>
               <!-- Access code -->
-              <div v-if="link.visibility === 'private'" class="flex items-center gap-1.5">
+              <div v-if="link.visibility === 'private' && link.access_code" class="flex items-center gap-1.5">
                 <Icon icon="lucide:key-round" class="w-3 h-3 text-amber shrink-0" />
-                <span class="text-[10px] font-mono text-amber tracking-widest">{{ link.accessCode }}</span>
+                <span class="text-[10px] font-mono text-amber tracking-widest">{{ link.access_code }}</span>
               </div>
               <!-- Stats -->
               <div class="flex items-center gap-3 text-[10px] text-cream-faint border-t border-charcoal-700/50 pt-2">
                 <span class="flex items-center gap-1"><Icon icon="lucide:eye" class="w-3 h-3" /> {{ link.views }} views</span>
-                <span class="flex items-center gap-1 ml-auto"><Icon icon="lucide:clock" class="w-3 h-3" /> {{ fmtDateTime(link.lastViewedAt) }}</span>
+                <span class="flex items-center gap-1 ml-auto"><Icon icon="lucide:clock" class="w-3 h-3" /> {{ fmtDateTime(link.last_viewed_at) }}</span>
               </div>
               <!-- View log -->
-              <div v-if="link.viewLog.length > 0" class="space-y-1 border-t border-charcoal-700/50 pt-2">
+              <div v-if="link.view_log.length > 0" class="space-y-1 border-t border-charcoal-700/50 pt-2">
                 <p class="text-[9px] uppercase tracking-wider text-cream-faint">Recent Views</p>
-                <div v-for="(entry, i) in link.viewLog.slice(0, 5)" :key="i" class="flex items-center justify-between text-[10px] text-cream-faint">
+                <div v-for="(entry, i) in link.view_log.slice(0, 5)" :key="i" class="flex items-center justify-between text-[10px] text-cream-faint">
                   <span>{{ entry.browser }}</span>
                   <span>{{ fmtDateTime(entry.timestamp) }}</span>
                 </div>
@@ -654,7 +616,7 @@ function expiryLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
           </div>
 
           <!-- Empty state -->
-          <div v-else class="bg-charcoal-800 border border-dashed border-charcoal-600 rounded-xl p-6 flex flex-col items-center text-center gap-2">
+          <div v-else-if="sortedLinks.length === 0" class="bg-charcoal-800 border border-dashed border-charcoal-600 rounded-xl p-6 flex flex-col items-center text-center gap-2">
             <Icon icon="lucide:share-2" class="w-8 h-8 text-cream-faint" />
             <p class="text-xs font-medium text-cream-muted">No shared links yet</p>
             <p class="text-[11px] text-cream-faint">Generate a link to share this letterhead with clients</p>
@@ -688,7 +650,10 @@ function expiryLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
             </div>
             <div class="flex justify-end gap-2">
               <button @click="showDeleteConfirm = false" class="px-4 py-2 text-xs font-medium text-cream-faint hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 rounded-lg transition-colors">Cancel</button>
-              <button @click="handleDelete" class="px-4 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors">Delete</button>
+              <button @click="handleDelete" :disabled="isDeleting" class="px-4 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors disabled:opacity-60">
+                <Icon v-if="isDeleting" icon="lucide:loader-2" class="w-3 h-3 animate-spin inline mr-1" />
+                Delete
+              </button>
             </div>
           </div>
         </div>
@@ -701,6 +666,7 @@ function expiryLabel(link: ReturnType<typeof linksStore.forResource>[0]) {
       resource-type="letterhead"
       :resource-id="lh.id"
       :resource-name="lh.name"
+      :org-id="orgId"
       @close="showShareModal = false"
     />
 

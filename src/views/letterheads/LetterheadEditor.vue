@@ -1,16 +1,22 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useLoaders } from '@/composables/loaders.ts'
 import { useNotification } from '@/composables/notification.ts'
 import ShareLinkModal from '@/components/modals/ShareLinkModal.vue'
+import { useAuthStore } from '@/stores/auth'
+import { LetterheadService } from '@/services/letterhead.service'
 
 interface Props {
   mode: 'create' | 'edit'
   initialData?: Record<string, any>
 }
 const props = withDefaults(defineProps<Props>(), { mode: 'create' })
+
+const route     = useRoute()
+const authStore = useAuthStore()
+const orgId     = computed(() => authStore.getCurrentOrganization?.id ?? '')
 
 const router = useRouter()
 const { notify } = useNotification()
@@ -171,16 +177,73 @@ const fmtFooter = (s: string) => s.replace('{page}', '1').replace('{total}', '1'
 const handlePrint = () => window.print()
 
 // ─── Share ─────────────────────────────────────────────────────────────────────
-const showShareModal = ref(false)
-const savedLetterheadId = ref(1)
+const showShareModal    = ref(false)
+const savedLetterheadId = ref<string>('')
 
 // ─── Save ──────────────────────────────────────────────────────────────────────
 const handleSave = async () => {
+  if (!orgId.value) return
   setLoader('isSaving', true)
-  await new Promise(r => setTimeout(r, 900))
-  setLoader('isSaving', false)
-  notify(props.mode === 'create' ? 'Letterhead created!' : 'Letterhead saved!', 'success')
-  router.push({ name: 'letterheads' })
+  try {
+    const payload = {
+      name:             form.value.name,
+      company:          form.value.company,
+      tagline:          form.value.tagline,
+      email:            form.value.email,
+      phone:            form.value.phone,
+      website:          form.value.website,
+      address:          form.value.address,
+      reg_number:       form.value.regNumber,
+      vat_number:       form.value.vatNumber,
+      logo_url:         form.value.logoUrl || null,
+      signature_url:    form.value.signatureUrl || null,
+      subject:          form.value.subject,
+      salutation:       form.value.salutation,
+      body:             form.value.body,
+      closing:          form.value.closing,
+      signer_name:      form.value.signerName,
+      signer_title:     form.value.signerTitle,
+      footer_left:      form.value.footerLeft,
+      footer_center:    form.value.footerCenter,
+      footer_right:     form.value.footerRight,
+      date:             form.value.date,
+      ref_number:       form.value.refNumber,
+      show_date:        form.value.showDate,
+      show_ref:         form.value.showRef,
+      theme:            form.value.theme,
+      accent_color:     form.value.accentColor,
+      font_family:      form.value.fontFamily,
+      header_layout:    form.value.headerLayout,
+      watermark:        form.value.watermark || null,
+      show_watermark:   form.value.showWatermark,
+      watermark_color:  form.value.watermarkColor,
+      stamp:            form.value.stamp || null,
+      show_top_bar:     form.value.showTopBar,
+      show_bottom_bar:  form.value.showBottomBar,
+      show_logo:        form.value.showLogo,
+      show_divider:     form.value.showDivider,
+      show_footer:      form.value.showFooter,
+      show_line_numbers:form.value.showLineNumbers,
+      paper_size:       form.value.paperSize,
+      orientation:      form.value.orientation,
+    }
+
+    if (props.mode === 'create') {
+      const res = await LetterheadService.create(orgId.value, payload as any)
+      savedLetterheadId.value = res.data.data.id
+    } else {
+      const id = String(route.params.id)
+      await LetterheadService.update(orgId.value, id, payload as any)
+      savedLetterheadId.value = id
+    }
+
+    notify(props.mode === 'create' ? 'Letterhead created!' : 'Letterhead saved!', 'success')
+    router.push({ name: 'letterheads' })
+  } catch {
+    notify('Failed to save letterhead. Please try again.', 'error')
+  } finally {
+    setLoader('isSaving', false)
+  }
 }
 </script>
 
@@ -972,6 +1035,7 @@ const handleSave = async () => {
   <ShareLinkModal
     v-if="showShareModal"
     resource-type="letterhead"
+    :org-id="orgId"
     :resource-id="savedLetterheadId"
     :resource-name="form.name"
     @close="showShareModal = false"

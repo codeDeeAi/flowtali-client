@@ -2,67 +2,65 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
-import { useSharedLinksStore } from '@/stores/sharedLinks'
+import { SharedLinksService } from '@/services/shared-links.service'
+import type { ILetterhead } from '@/services/letterhead.service'
 
 const route = useRoute()
-const store = useSharedLinksStore()
+const token = route.params.token as string
 
-const token   = route.params.token as string
-const link    = ref(store.byToken(token))
-const loading = ref(true)
-const locked  = ref(false)
-const invalid = ref(false)
-const codeInput = ref('')
-const codeError = ref('')
-const unlocked  = ref(false)
-
-interface Letterhead {
-  id: number; name: string; template: string; color: string
-  company: string; tagline: string; lastUsed: string; watermark: string; uses: number
+const loading    = ref(true)
+const locked     = ref(false)
+const invalid    = ref(false)
+const codeInput  = ref('')
+const codeError  = ref('')
+const unlocked   = ref(false)
+const letterhead = ref<ILetterhead | null>(null)
+const stampColor: Record<string, string> = {
+  DRAFT: '#9ca3af', CONFIDENTIAL: '#f87171', APPROVED: '#4ade80', FINAL: '#60a5fa',
 }
-const mockLetterheads: Letterhead[] = [
-  { id: 1, name: 'Agency Proposal',          template: 'Classic', color: '#e8a83e', company: 'ACME STUDIO', tagline: 'Creative Agency',       lastUsed: '2 days ago',   watermark: '',             uses: 14 },
-  { id: 2, name: 'Client Engagement Letter', template: 'Modern',  color: '#60a5fa', company: 'ACME STUDIO', tagline: '',                       lastUsed: '1 week ago',   watermark: 'CONFIDENTIAL', uses: 7  },
-  { id: 3, name: 'Partnership Agreement',    template: 'Bold',    color: '#f87171', company: 'ACME STUDIO', tagline: '',                       lastUsed: '2 weeks ago',  watermark: 'DRAFT',        uses: 3  },
-  { id: 4, name: 'Service Quote',            template: 'Minimal', color: '#4ade80', company: 'ACME STUDIO', tagline: 'Professional Services',  lastUsed: '3 weeks ago',  watermark: '',             uses: 22 },
-  { id: 5, name: 'NDA Template',             template: 'Legal',   color: '#a78bfa', company: 'ACME STUDIO', tagline: '',                       lastUsed: '1 month ago',  watermark: 'CONFIDENTIAL', uses: 5  },
-  { id: 6, name: 'Project Proposal',         template: 'Executive',color: '#fb923c',company: 'ACME STUDIO', tagline: 'Creative Agency',        lastUsed: '3 days ago',   watermark: '',             uses: 9  },
-  { id: 7, name: 'Invoice Cover Letter',     template: 'Classic', color: '#34d399', company: 'ACME STUDIO', tagline: '',                       lastUsed: '5 days ago',   watermark: '',             uses: 11 },
-]
-
-const letterhead = ref<Letterhead | null>(null)
-const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 
 onMounted(async () => {
-  await new Promise(r => setTimeout(r, 400))
-  loading.value = false
-
-  const l = link.value
-  if (!l) { invalid.value = true; return }
-  if (!l.isActive || store.isExpired(l)) { invalid.value = true; return }
-
-  if (l.visibility === 'private') { locked.value = true; return }
-
-  letterhead.value = mockLetterheads.find(lh => lh.id === l.resourceId) ?? null
-  if (!letterhead.value) { invalid.value = true; return }
-  store.recordView(token)
+  try {
+    const res = await SharedLinksService.getByToken(token)
+    letterhead.value = res.data.data.letterhead
+    await SharedLinksService.recordView(token)
+  } catch (err: any) {
+    const status = err?.response?.status
+    if (status === 403) {
+      locked.value = true
+    } else {
+      invalid.value = true
+    }
+  } finally {
+    loading.value = false
+  }
 })
 
 const printPage = () => window.print()
 
-function submitCode() {
+async function submitCode() {
   codeError.value = ''
-  const l = link.value
-  if (!l) return
-  if (codeInput.value.trim().toUpperCase() !== l.accessCode.toUpperCase()) {
-    codeError.value = 'Incorrect access code. Please try again.'
-    return
+  try {
+    const res = await SharedLinksService.getByToken(token, codeInput.value.trim())
+    letterhead.value = res.data.data.letterhead
+    locked.value   = false
+    unlocked.value = true
+    await SharedLinksService.recordView(token)
+  } catch (err: any) {
+    if (err?.response?.status === 403) {
+      codeError.value = 'Incorrect access code. Please try again.'
+    } else {
+      invalid.value = true
+    }
   }
-  locked.value   = false
-  unlocked.value = true
-  letterhead.value = mockLetterheads.find(lh => lh.id === l.resourceId) ?? null
-  if (!letterhead.value) { invalid.value = true; return }
-  store.recordView(token)
+}
+
+const fmtFooter = (s: string | null) => (s ?? '').replace('{page}', '1').replace('{total}', '1')
+const formatDate = (d: string | null) => {
+  if (!d) return ''
+  const [y, m, day] = d.split('-')
+  if (!y || !m || !day) return d
+  return new Date(+y, +m - 1, +day).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 }
 </script>
 
@@ -133,68 +131,105 @@ function submitCode() {
         <Icon icon="lucide:unlock" class="w-3.5 h-3.5" /> Access granted
       </div>
 
-      <!-- Document -->
+      <!-- Document (classic) -->
       <div
+        v-if="letterhead.theme === 'classic' || !letterhead.theme"
         class="print-document w-full max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden relative"
-        style="font-family: 'DM Sans', sans-serif; color: #1f2937; font-size: 13px; min-height: 900px;"
+        :style="{ fontFamily: letterhead.font_family || 'DM Sans, sans-serif', color: '#1f2937', fontSize: '13px', minHeight: '900px' }"
       >
-        <!-- Top bar -->
-        <div class="h-1.5 w-full" :style="{ backgroundColor: letterhead.color }"></div>
-
-        <!-- Watermark -->
-        <div v-if="letterhead.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-35deg); z-index: 1">
-          <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap text-gray-800">{{ letterhead.watermark }}</span>
+        <div v-if="letterhead.show_top_bar" class="h-1.5 w-full" :style="{ backgroundColor: letterhead.accent_color }"></div>
+        <div v-if="letterhead.show_watermark && letterhead.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
+          <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: letterhead.watermark_color }">{{ letterhead.watermark }}</span>
         </div>
-
-        <div class="p-12" style="position: relative; z-index: 3">
-          <!-- Header (split layout) -->
+        <div v-if="letterhead.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-25deg);z-index:2">
+          <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[letterhead.stamp], borderColor: stampColor[letterhead.stamp] }">{{ letterhead.stamp }}</div>
+        </div>
+        <div class="p-12" style="position:relative;z-index:3">
           <div class="flex justify-between items-start mb-8">
             <div>
-              <div class="text-lg font-bold" :style="{ color: letterhead.color }">{{ letterhead.company }}</div>
+              <img v-if="letterhead.logo_url && letterhead.show_logo" :src="letterhead.logo_url" alt="Logo" class="h-14 w-auto object-contain mb-2" />
+              <div class="text-lg font-bold" :style="{ color: letterhead.accent_color }">{{ letterhead.company }}</div>
               <div v-if="letterhead.tagline" class="text-xs text-gray-400 mt-0.5">{{ letterhead.tagline }}</div>
             </div>
             <div class="text-right text-xs text-gray-500 space-y-0.5">
-              <div>hello@acme.studio</div>
-              <div>+1 415 555 0199</div>
-              <div>www.acme.studio</div>
+              <div v-if="letterhead.email">{{ letterhead.email }}</div>
+              <div v-if="letterhead.phone">{{ letterhead.phone }}</div>
+              <div v-if="letterhead.website">{{ letterhead.website }}</div>
             </div>
           </div>
-
-          <div class="h-px mb-8" :style="{ backgroundColor: letterhead.color + '40' }"></div>
-
-          <!-- Date / Ref -->
-          <div class="flex gap-8 mb-6 text-xs">
-            <div>
-              <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Date</div>
-              <div class="font-semibold text-gray-700">{{ today }}</div>
-            </div>
-            <div>
-              <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Reference</div>
-              <div class="font-semibold text-gray-700 font-mono">REF-001</div>
-            </div>
+          <div v-if="letterhead.show_divider" class="h-px mb-8" :style="{ backgroundColor: letterhead.accent_color + '40' }"></div>
+          <div v-if="letterhead.show_date || letterhead.show_ref" class="flex gap-8 mb-6 text-xs">
+            <div v-if="letterhead.show_date"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Date</div><div class="font-semibold text-gray-700">{{ formatDate(letterhead.date) }}</div></div>
+            <div v-if="letterhead.show_ref"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Reference</div><div class="font-semibold text-gray-700 font-mono">{{ letterhead.ref_number }}</div></div>
           </div>
-
-          <!-- Salutation / Body -->
-          <p class="text-gray-700 mb-4">Dear [Client Name],</p>
-          <div class="text-gray-600 leading-relaxed mb-8 whitespace-pre-line" style="line-height: 1.8">We are pleased to present our proposal for your upcoming project.
-
-Please find attached the relevant details for your review. Should you have any questions or require further clarification, please do not hesitate to reach out.
-
-We look forward to working with you.</div>
-
-          <!-- Closing -->
+          <div v-if="letterhead.subject" class="mb-6"><span class="font-semibold text-gray-800">Re: </span><span class="text-gray-700">{{ letterhead.subject }}</span></div>
+          <p v-if="letterhead.salutation" class="text-gray-700 mb-4">{{ letterhead.salutation }}</p>
+          <div class="text-gray-600 leading-relaxed mb-8 whitespace-pre-line" style="line-height:1.8">{{ letterhead.body }}</div>
           <div class="mb-10">
-            <p class="text-gray-700 mb-12">Yours sincerely,</p>
-            <div class="font-semibold text-gray-800">James Holloway</div>
-            <div class="text-xs text-gray-500">Creative Director</div>
+            <p class="text-gray-700 mb-12">{{ letterhead.closing }}</p>
+            <img v-if="letterhead.signature_url" :src="letterhead.signature_url" alt="Signature" class="h-12 w-auto object-contain mb-1" />
+            <div class="font-semibold text-gray-800">{{ letterhead.signer_name }}</div>
+            <div class="text-xs text-gray-500">{{ letterhead.signer_title }}</div>
             <div class="text-xs text-gray-400">{{ letterhead.company }}</div>
           </div>
+          <div v-if="letterhead.reg_number || letterhead.vat_number" class="border-t border-gray-100 pt-4 text-xs text-gray-400 flex flex-wrap gap-x-6">
+            <span v-if="letterhead.reg_number">Reg. No: {{ letterhead.reg_number }}</span>
+            <span v-if="letterhead.vat_number">VAT: {{ letterhead.vat_number }}</span>
+          </div>
+          <div v-if="letterhead.show_footer" class="absolute bottom-8 left-12 right-12 flex justify-between items-center" style="font-size:10px">
+            <span class="text-gray-400">{{ fmtFooter(letterhead.footer_left) || letterhead.website }}</span>
+            <span class="text-gray-400">{{ fmtFooter(letterhead.footer_center) || letterhead.company }}</span>
+            <span class="text-gray-400">{{ fmtFooter(letterhead.footer_right) }}</span>
+          </div>
+          <div v-if="letterhead.show_bottom_bar" class="absolute bottom-0 left-0 right-0 h-1.5" :style="{ backgroundColor: letterhead.accent_color }"></div>
+        </div>
+      </div>
 
-          <!-- Footer -->
-          <div class="absolute bottom-8 left-12 right-12 flex justify-between items-center" style="font-size: 10px">
-            <span class="text-gray-400">www.acme.studio</span>
-            <span class="text-gray-400">{{ letterhead.company }}</span>
-            <span class="text-gray-400">Page 1 of 1</span>
+      <!-- Document (other themes — delegate to same render as view page) -->
+      <div
+        v-else
+        class="print-document w-full max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden relative"
+        :style="{ fontFamily: letterhead.font_family || 'DM Sans, sans-serif', color: '#1f2937', fontSize: '13px', minHeight: '900px' }"
+      >
+        <div v-if="letterhead.show_top_bar" class="h-1.5 w-full" :style="{ backgroundColor: letterhead.accent_color }"></div>
+        <div v-if="letterhead.show_watermark && letterhead.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
+          <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: letterhead.watermark_color }">{{ letterhead.watermark }}</span>
+        </div>
+        <div v-if="letterhead.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-25deg);z-index:2">
+          <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColor[letterhead.stamp], borderColor: stampColor[letterhead.stamp] }">{{ letterhead.stamp }}</div>
+        </div>
+        <div class="p-12" style="position:relative;z-index:3">
+          <div class="flex justify-between items-start mb-8">
+            <div>
+              <img v-if="letterhead.logo_url && letterhead.show_logo" :src="letterhead.logo_url" alt="Logo" class="h-14 w-auto object-contain mb-2" />
+              <div class="text-lg font-bold" :style="{ color: letterhead.accent_color }">{{ letterhead.company }}</div>
+              <div v-if="letterhead.tagline" class="text-xs text-gray-400 mt-0.5">{{ letterhead.tagline }}</div>
+            </div>
+            <div class="text-right text-xs text-gray-500 space-y-0.5">
+              <div v-if="letterhead.email">{{ letterhead.email }}</div>
+              <div v-if="letterhead.phone">{{ letterhead.phone }}</div>
+              <div v-if="letterhead.website">{{ letterhead.website }}</div>
+            </div>
+          </div>
+          <div v-if="letterhead.show_divider" class="h-px mb-8" :style="{ backgroundColor: letterhead.accent_color + '40' }"></div>
+          <div v-if="letterhead.show_date || letterhead.show_ref" class="flex gap-8 mb-6 text-xs">
+            <div v-if="letterhead.show_date"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Date</div><div class="font-semibold text-gray-700">{{ formatDate(letterhead.date) }}</div></div>
+            <div v-if="letterhead.show_ref"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Reference</div><div class="font-semibold text-gray-700 font-mono">{{ letterhead.ref_number }}</div></div>
+          </div>
+          <div v-if="letterhead.subject" class="mb-6"><span class="font-semibold text-gray-800">Re: </span><span class="text-gray-700">{{ letterhead.subject }}</span></div>
+          <p v-if="letterhead.salutation" class="text-gray-700 mb-4">{{ letterhead.salutation }}</p>
+          <div class="text-gray-600 leading-relaxed mb-8 whitespace-pre-line" style="line-height:1.8">{{ letterhead.body }}</div>
+          <div class="mb-10">
+            <p class="text-gray-700 mb-12">{{ letterhead.closing }}</p>
+            <img v-if="letterhead.signature_url" :src="letterhead.signature_url" alt="Signature" class="h-12 w-auto object-contain mb-1" />
+            <div class="font-semibold text-gray-800">{{ letterhead.signer_name }}</div>
+            <div class="text-xs text-gray-500">{{ letterhead.signer_title }}</div>
+            <div class="text-xs text-gray-400">{{ letterhead.company }}</div>
+          </div>
+          <div v-if="letterhead.show_footer" class="absolute bottom-8 left-12 right-12 flex justify-between items-center" style="font-size:10px">
+            <span class="text-gray-400">{{ fmtFooter(letterhead.footer_left) || letterhead.website }}</span>
+            <span class="text-gray-400">{{ fmtFooter(letterhead.footer_center) || letterhead.company }}</span>
+            <span class="text-gray-400">{{ fmtFooter(letterhead.footer_right) }}</span>
           </div>
         </div>
       </div>

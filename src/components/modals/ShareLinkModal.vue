@@ -1,29 +1,25 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
-import { useSharedLinksStore, type SharedLink } from '@/stores/sharedLinks'
 import { useNotification } from '@/composables/notification'
+import { SharedLinksService, type ISharedLink } from '@/services/shared-links.service'
 
 const props = defineProps<{
   resourceType: 'invoice' | 'letterhead'
-  resourceId: number
+  resourceId: string
   resourceName: string
+  orgId: string
 }>()
 
 const emit = defineEmits<{ close: [] }>()
 
-const store = useSharedLinksStore()
 const { notify } = useNotification()
 
-// ── existing links for this resource ──────────────────────────────────────────
-const links = computed(() =>
-  store.forResource(props.resourceType, props.resourceId)
-    .slice()
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-)
+const links       = ref<ISharedLink[]>([])
+const loadingLinks = ref(false)
+const showCreate  = ref(false)
+const isCreating  = ref(false)
 
-// ── create form ───────────────────────────────────────────────────────────────
-const showCreate = ref(links.value.length === 0)
 const form = ref({
   label: '',
   visibility: 'public' as 'public' | 'private',
@@ -40,20 +36,43 @@ const validityOptions: { label: string; value: number | null }[] = [
   { label: 'No expiry', value: null },
 ]
 
-function handleCreate() {
-  const link = store.createLink({
-    resourceType: props.resourceType,
-    resourceId:   props.resourceId,
-    resourceName: props.resourceName,
-    label:        form.value.label,
-    visibility:   form.value.visibility,
-    accessCode:   form.value.accessCode,
-    validityDays: form.value.validityDays,
-  })
-  copyToClipboard(link)
-  notify('Link created and copied to clipboard', 'success')
-  form.value = { label: '', visibility: 'public', accessCode: '', validityDays: 7 }
-  showCreate.value = false
+async function loadLinks() {
+  if (!props.orgId || props.resourceType !== 'letterhead') return
+  loadingLinks.value = true
+  try {
+    const res = await SharedLinksService.list(props.orgId, props.resourceId)
+    links.value = res.data.data
+    showCreate.value = links.value.length === 0
+  } catch {
+    notify('Failed to load shared links', 'error')
+  } finally {
+    loadingLinks.value = false
+  }
+}
+
+onMounted(loadLinks)
+
+async function handleCreate() {
+  if (!props.orgId) return
+  isCreating.value = true
+  try {
+    const res = await SharedLinksService.create(props.orgId, props.resourceId, {
+      label:        form.value.label || undefined,
+      visibility:   form.value.visibility,
+      access_code:  form.value.accessCode || undefined,
+      validity_days: form.value.validityDays ?? undefined,
+    })
+    const newLink = res.data.data
+    links.value.unshift(newLink)
+    copyToClipboard(newLink)
+    notify('Link created and copied to clipboard', 'success')
+    form.value = { label: '', visibility: 'public', accessCode: '', validityDays: 7 }
+    showCreate.value = false
+  } catch {
+    notify('Failed to create link', 'error')
+  } finally {
+    isCreating.value = false
+  }
 }
 
 // ── helpers ───────────────────────────────────────────────────────────────────
@@ -63,7 +82,7 @@ function linkUrl(token: string): string {
   return `${base}/share/${path}/${token}`
 }
 
-function copyToClipboard(link: SharedLink) {
+function copyToClipboard(link: ISharedLink) {
   navigator.clipboard.writeText(linkUrl(link.token)).catch(() => {})
   notify('Link copied to clipboard', 'success')
 }
@@ -73,22 +92,36 @@ function copyCode(code: string) {
   notify('Access code copied', 'success')
 }
 
-function revokeLink(id: string) {
-  store.revokeLink(id)
-  notify('Link revoked', 'success')
+async function revokeLink(id: string) {
+  if (!props.orgId) return
+  try {
+    await SharedLinksService.revoke(props.orgId, props.resourceId, id)
+    const link = links.value.find(l => l.id === id)
+    if (link) link.is_active = false
+    notify('Link revoked', 'success')
+  } catch {
+    notify('Failed to revoke link', 'error')
+  }
 }
 
-function deleteLink(id: string) {
-  store.deleteLink(id)
-  notify('Link deleted', 'success')
+async function deleteLink(id: string) {
+  if (!props.orgId) return
+  try {
+    await SharedLinksService.delete(props.orgId, props.resourceId, id)
+    links.value = links.value.filter(l => l.id !== id)
+    notify('Link deleted', 'success')
+  } catch {
+    notify('Failed to delete link', 'error')
+  }
 }
 
-function isExpired(link: SharedLink): boolean {
-  return store.isExpired(link)
+function isExpired(link: ISharedLink): boolean {
+  if (!link.expires_at) return false
+  return new Date(link.expires_at) < new Date()
 }
 
-function statusLabel(link: SharedLink): { text: string; cls: string } {
-  if (!link.isActive) return { text: 'Revoked', cls: 'text-red-400 bg-red-500/10 border-red-500/20' }
+function statusLabel(link: ISharedLink): { text: string; cls: string } {
+  if (!link.is_active) return { text: 'Revoked', cls: 'text-red-400 bg-red-500/10 border-red-500/20' }
   if (isExpired(link))  return { text: 'Expired', cls: 'text-gray-400 bg-charcoal-700 border-charcoal-600' }
   return { text: 'Active', cls: 'text-green-400 bg-green-500/10 border-green-500/20' }
 }
@@ -103,10 +136,10 @@ function fmtDateTime(iso: string | null): string {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
-function expiryLabel(link: SharedLink): string {
-  if (!link.expiresAt) return 'Never expires'
-  if (isExpired(link)) return `Expired ${fmtDate(link.expiresAt)}`
-  return `Expires ${fmtDate(link.expiresAt)}`
+function expiryLabel(link: ISharedLink): string {
+  if (!link.expires_at) return 'Never expires'
+  if (isExpired(link)) return `Expired ${fmtDate(link.expires_at)}`
+  return `Expires ${fmtDate(link.expires_at)}`
 }
 </script>
 
@@ -192,8 +225,9 @@ function expiryLabel(link: SharedLink): string {
 
               <!-- Actions -->
               <div class="flex gap-2 pt-1">
-                <button @click="handleCreate" class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold bg-amber hover:bg-amber/90 text-charcoal-900 rounded-lg transition-colors">
-                  <Icon icon="lucide:link" class="w-3.5 h-3.5" /> Generate Link
+                <button @click="handleCreate" :disabled="isCreating" class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold bg-amber hover:bg-amber/90 text-charcoal-900 rounded-lg transition-colors disabled:opacity-60">
+                  <Icon v-if="isCreating" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
+                  <Icon v-else icon="lucide:link" class="w-3.5 h-3.5" /> Generate Link
                 </button>
                 <button v-if="links.length > 0" @click="showCreate = false" class="px-3 py-2 text-xs text-cream-faint hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 rounded-lg transition-colors">
                   Cancel
@@ -228,7 +262,7 @@ function expiryLabel(link: SharedLink): string {
                         {{ link.visibility === 'private' ? 'Private' : 'Public' }}
                       </span>
                     </div>
-                    <p class="text-[10px] text-cream-faint mt-0.5">{{ expiryLabel(link) }} · Created {{ fmtDate(link.createdAt) }}</p>
+                    <p class="text-[10px] text-cream-faint mt-0.5">{{ expiryLabel(link) }} · Created {{ fmtDate(link.created_at) }}</p>
                   </div>
                 </div>
 
@@ -239,19 +273,19 @@ function expiryLabel(link: SharedLink): string {
                   </div>
                   <button
                     @click="copyToClipboard(link)"
-                    :disabled="!link.isActive || isExpired(link)"
+                    :disabled="!link.is_active || isExpired(link)"
                     class="shrink-0 p-1.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                     title="Copy link"
                   ><Icon icon="lucide:copy" class="w-3.5 h-3.5" /></button>
                 </div>
 
                 <!-- Access code (private) -->
-                <div v-if="link.visibility === 'private'" class="flex items-center gap-2">
+                <div v-if="link.visibility === 'private' && link.access_code" class="flex items-center gap-2">
                   <div class="flex-1 bg-amber/5 border border-amber/20 rounded-lg px-2.5 py-1.5 flex items-center gap-2">
                     <Icon icon="lucide:key-round" class="w-3 h-3 text-amber shrink-0" />
-                    <span class="text-xs font-mono text-amber tracking-widest">{{ link.accessCode }}</span>
+                    <span class="text-xs font-mono text-amber tracking-widest">{{ link.access_code }}</span>
                   </div>
-                  <button @click="copyCode(link.accessCode)" class="shrink-0 p-1.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream transition-colors" title="Copy code">
+                  <button @click="copyCode(link.access_code!)" class="shrink-0 p-1.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream transition-colors" title="Copy code">
                     <Icon icon="lucide:copy" class="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -259,14 +293,14 @@ function expiryLabel(link: SharedLink): string {
                 <!-- Stats -->
                 <div class="flex items-center gap-4 text-[10px] text-cream-faint border-t border-charcoal-700/60 pt-2.5 mt-0.5">
                   <span class="flex items-center gap-1"><Icon icon="lucide:eye" class="w-3 h-3" /> {{ link.views }} views</span>
-                  <span class="flex items-center gap-1"><Icon icon="lucide:users" class="w-3 h-3" /> {{ link.uniqueViews }} unique</span>
-                  <span class="flex items-center gap-1 ml-auto"><Icon icon="lucide:clock" class="w-3 h-3" /> {{ fmtDateTime(link.lastViewedAt) }}</span>
+                  <span class="flex items-center gap-1"><Icon icon="lucide:users" class="w-3 h-3" /> {{ link.unique_views }} unique</span>
+                  <span class="flex items-center gap-1 ml-auto"><Icon icon="lucide:clock" class="w-3 h-3" /> {{ fmtDateTime(link.last_viewed_at) }}</span>
                 </div>
 
                 <!-- Actions -->
                 <div class="flex items-center gap-1.5 border-t border-charcoal-700/60 pt-2.5">
                   <button
-                    v-if="link.isActive && !isExpired(link)"
+                    v-if="link.is_active && !isExpired(link)"
                     @click="revokeLink(link.id)"
                     class="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-orange-400 hover:text-orange-300 bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/20 rounded-md transition-colors"
                   ><Icon icon="lucide:ban" class="w-3 h-3" /> Revoke</button>
