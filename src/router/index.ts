@@ -47,7 +47,16 @@ const router = createRouter({
   ],
 })
 
-const guestOnlyRoutes = new Set(['signin', 'signup', 'forgot-password'])
+const guestOnlyRoutes = new Set([
+  'signin',
+  'signup',
+  'forgot-password',
+  'auth.reset-password',
+  'auth.mfa-verify',
+  'auth.magic-login',
+  'auth.magic-login.verify',
+  'auth.google-callback',
+])
 
 router.beforeEach((to) => {
   const authStore = useAuthStore()

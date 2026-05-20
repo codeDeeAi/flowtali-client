@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+
+const authStore = useAuthStore();
+const isLoggedIn = computed(() => authStore.isLoggedIn);
 
 const pages = [
   {
@@ -80,8 +84,13 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
         <span v-for="page in pages" :key="page.id" class="nav-link" @click="scrollTo(page.id)">{{ page.name }}</span>
       </div>
       <div class="hidden md:flex items-center gap-3">
-        <router-link :to="{ name: 'signin' }" class="btn-ghost text-sm px-4 py-2">Log in</router-link>
-        <router-link :to="{ name: 'signup' }" class="btn-primary text-sm px-5 py-2.5">Get started free</router-link>
+        <template v-if="isLoggedIn">
+          <router-link :to="{ name: 'dashboard' }" class="btn-primary text-sm px-5 py-2.5">Dashboard</router-link>
+        </template>
+        <template v-else>
+          <router-link :to="{ name: 'signin' }" class="btn-ghost text-sm px-4 py-2">Log in</router-link>
+          <router-link :to="{ name: 'signup' }" class="btn-primary text-sm px-5 py-2.5">Get started free</router-link>
+        </template>
       </div>
       <button class="md:hidden p-2 text-cream-muted" @click="mobileMenuOpen = true">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -111,8 +120,13 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 
     </div>
     <div class="mt-auto flex flex-col gap-3">
-      <router-link :to="{ name: 'signin' }" class="btn-ghost w-full py-3">Log in</router-link>
-      <router-link :to="{ name: 'signup' }" class="btn-primary w-full py-3">Get started free</router-link>
+      <template v-if="isLoggedIn">
+        <router-link :to="{ name: 'dashboard' }" class="btn-primary w-full py-3">Dashboard</router-link>
+      </template>
+      <template v-else>
+        <router-link :to="{ name: 'signin' }" class="btn-ghost w-full py-3">Log in</router-link>
+        <router-link :to="{ name: 'signup' }" class="btn-primary w-full py-3">Get started free</router-link>
+      </template>
     </div>
   </div>
 </template>
