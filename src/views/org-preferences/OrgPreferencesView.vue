@@ -160,6 +160,9 @@ async function deleteColor(index: number) {
 }
 
 // ── Signature — instant upload ────────────────────────────────────────────────
+const sigDeleting = ref(false)
+const logoDeleting = ref(false)
+
 function openSigForm() {
   showSigForm.value = true
 }
@@ -196,6 +199,20 @@ async function onSigFileChange(e: Event) {
     if (sigFileRef.value) sigFileRef.value.value = ''
   } finally {
     sigUploading.value = false
+  }
+}
+
+async function clearSigMedia() {
+  if (!sigMediaId.value) return
+  sigDeleting.value = true
+  try {
+    await MediaService.delete([sigMediaId.value])
+  } finally {
+    sigMediaId.value = null
+    sigPreview.value = null
+    sigUploadError.value = null
+    sigDeleting.value = false
+    if (sigFileRef.value) sigFileRef.value.value = ''
   }
 }
 
@@ -262,6 +279,20 @@ async function onLogoFileChange(e: Event) {
     if (logoFileRef.value) logoFileRef.value.value = ''
   } finally {
     logoUploading.value = false
+  }
+}
+
+async function clearLogoMedia() {
+  if (!logoMediaId.value) return
+  logoDeleting.value = true
+  try {
+    await MediaService.delete([logoMediaId.value])
+  } finally {
+    logoMediaId.value = null
+    logoPreview.value = null
+    logoUploadError.value = null
+    logoDeleting.value = false
+    if (logoFileRef.value) logoFileRef.value.value = ''
   }
 }
 
@@ -447,9 +478,21 @@ async function deleteLogo(mediaId: string) {
                 </div>
                 <!-- Preview after upload -->
                 <div v-else-if="sigPreview && sigMediaId" class="flex flex-col items-center gap-1.5">
-                  <img :src="sigPreview" class="max-h-14 object-contain" />
+                  <div class="relative inline-flex">
+                    <img :src="sigPreview" class="max-h-14 object-contain rounded" />
+                    <!-- Floating delete button -->
+                    <button
+                      class="absolute -top-2 -right-2 w-5 h-5 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white shadow transition-colors disabled:opacity-60"
+                      :disabled="sigDeleting"
+                      @click.stop="clearSigMedia"
+                      title="Remove uploaded image"
+                    >
+                      <Icon v-if="sigDeleting" icon="lucide:loader-circle" class="w-3 h-3 animate-spin" />
+                      <Icon v-else icon="lucide:x" class="w-3 h-3" />
+                    </button>
+                  </div>
                   <span class="text-[10px] text-green-400 flex items-center gap-1">
-                    <Icon icon="lucide:check-circle" class="w-3 h-3" /> Uploaded — click to replace
+                    <Icon icon="lucide:check-circle" class="w-3 h-3" /> Uploaded — click image area to replace
                   </span>
                 </div>
                 <!-- Error state -->
@@ -617,9 +660,21 @@ async function deleteLogo(mediaId: string) {
                   <span class="text-xs text-cream-faint">Uploading…</span>
                 </div>
                 <div v-else-if="logoPreview && logoMediaId" class="flex flex-col items-center gap-1.5">
-                  <img :src="logoPreview" class="max-h-14 object-contain" />
+                  <div class="relative inline-flex">
+                    <img :src="logoPreview" class="max-h-14 object-contain rounded" />
+                    <!-- Floating delete button -->
+                    <button
+                      class="absolute -top-2 -right-2 w-5 h-5 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white shadow transition-colors disabled:opacity-60"
+                      :disabled="logoDeleting"
+                      @click.stop="clearLogoMedia"
+                      title="Remove uploaded image"
+                    >
+                      <Icon v-if="logoDeleting" icon="lucide:loader-circle" class="w-3 h-3 animate-spin" />
+                      <Icon v-else icon="lucide:x" class="w-3 h-3" />
+                    </button>
+                  </div>
                   <span class="text-[10px] text-green-400 flex items-center gap-1">
-                    <Icon icon="lucide:check-circle" class="w-3 h-3" /> Uploaded — click to replace
+                    <Icon icon="lucide:check-circle" class="w-3 h-3" /> Uploaded — click image area to replace
                   </span>
                 </div>
                 <div v-else-if="logoUploadError" class="flex flex-col items-center gap-1">
