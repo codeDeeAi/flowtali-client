@@ -179,9 +179,9 @@ const handleGoogleSignup = async () => {
           </div>
           <span class="text-cream-faint text-sm">
             I agree to Flowtali's
-            <span class="text-amber hover:underline cursor-pointer">Terms</span>
+            <router-link :to="{ name: 'terms' }" target="_blank" class="text-amber hover:underline">Terms</router-link>
             and
-            <span class="text-amber hover:underline cursor-pointer">Privacy Policy</span>
+            <router-link :to="{ name: 'privacy' }" target="_blank" class="text-amber hover:underline">Privacy Policy</router-link>
           </span>
         </label>
         <p v-if="getError('agreed').value" class="text-red-400 text-xs -mt-2">{{ getError('agreed').value }}</p>

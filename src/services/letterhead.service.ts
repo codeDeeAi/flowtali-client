@@ -64,6 +64,33 @@ export interface ILetterheadListItem {
   created_at: string
 }
 
+export interface ILetterheadDraftData {
+  organization: {
+    id: string
+    name: string
+    logo: string | null
+    brand_colors: string[]
+    stamps: string[]
+  } | null
+  clients: Array<{
+    id: string
+    name: string
+    company: string | null
+    email: string | null
+    phone: string | null
+    address: string | null
+  }>
+  logos: Array<{ id: string; url: string }>
+  signatures: Array<{ id: string; url: string }>
+}
+
+export interface ILetterheadStats {
+  total: number
+  total_uses: number
+  confidential: number
+  most_used: { id: string; name: string; uses: number } | null
+}
+
 export const LetterheadService = {
   list(orgId: string, params?: { search?: string; page?: number; per_page?: number }) {
     return http.get<{ data: { data: ILetterhead[] } }>(`/api/v1/orgs/${orgId}/letterheads`, { params })
@@ -83,5 +110,13 @@ export const LetterheadService = {
 
   delete(orgId: string, id: string) {
     return http.delete(`/api/v1/orgs/${orgId}/letterheads/${id}`)
+  },
+
+  draftData(orgId: string) {
+    return http.get<{ data: ILetterheadDraftData }>(`/api/v1/orgs/${orgId}/letterheads/draft-data`)
+  },
+
+  stats(orgId: string) {
+    return http.get<{ data: ILetterheadStats }>(`/api/v1/orgs/${orgId}/letterheads/stats`)
   },
 }

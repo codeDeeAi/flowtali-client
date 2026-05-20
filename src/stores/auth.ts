@@ -48,6 +48,11 @@ export const useAuthStore = defineStore(
       logout()
     }
 
+    function updateUserInfo(data: Partial<{ first_name: string; last_name: string }>) {
+      if (!user.value) return
+      user.value = { ...user.value, ...data }
+    }
+
     return {
       isAuthenticated,
       user,
@@ -65,6 +70,7 @@ export const useAuthStore = defineStore(
       addOrganization,
       logout,
       clearAuthData,
+      updateUserInfo,
     }
   },
   { persist: true },

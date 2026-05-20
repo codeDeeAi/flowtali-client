@@ -18,6 +18,18 @@ const publicShareRoutes = [
     component: () => import('@/views/public/PublicLetterheadView.vue'),
     meta: { layout: layouts.Public },
   },
+  {
+    path: '/privacy',
+    name: 'privacy',
+    component: () => import('@/views/legal/PrivacyPolicyView.vue'),
+    meta: { layout: layouts.Public },
+  },
+  {
+    path: '/terms',
+    name: 'terms',
+    component: () => import('@/views/legal/TermsOfServiceView.vue'),
+    meta: { layout: layouts.Public },
+  },
 ]
 
 declare module 'vue-router' {

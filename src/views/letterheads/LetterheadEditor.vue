@@ -6,7 +6,8 @@ import { useLoaders } from '@/composables/loaders.ts'
 import { useNotification } from '@/composables/notification.ts'
 import ShareLinkModal from '@/components/modals/ShareLinkModal.vue'
 import { useAuthStore } from '@/stores/auth'
-import { LetterheadService } from '@/services/letterhead.service'
+import { LetterheadService, type ILetterheadDraftData } from '@/services/letterhead.service'
+import { MediaService } from '@/services/media.service'
 
 interface Props {
   mode: 'create' | 'edit'
@@ -75,8 +76,34 @@ const form = ref({
   showRef:      true,
 })
 
-onMounted(() => {
+// ─── Draft data (clients, logos, signatures) ───────────────────────────────────
+const draftData = ref<ILetterheadDraftData | null>(null)
+const isDraftLoading = ref(false)
+
+const clientPresets = computed(() =>
+  draftData.value?.clients ?? []
+)
+const savedLogos = computed(() => draftData.value?.logos ?? [])
+const savedSignatures = computed(() => draftData.value?.signatures ?? [])
+
+onMounted(async () => {
   if (props.initialData) Object.assign(form.value, props.initialData)
+  if (orgId.value) {
+    isDraftLoading.value = true
+    try {
+      const res = await LetterheadService.draftData(orgId.value)
+      draftData.value = res.data.data
+      // Pre-fill company from org if creating and no initial data
+      if (props.mode === 'create' && !props.initialData && draftData.value?.organization) {
+        const org = draftData.value.organization
+        if (org.name && !form.value.company) form.value.company = org.name
+      }
+    } catch {
+      // non-critical
+    } finally {
+      isDraftLoading.value = false
+    }
+  }
 })
 
 // ─── Tabs ──────────────────────────────────────────────────────────────────────
@@ -91,33 +118,51 @@ const zoomOut = () => { zoom.value = Math.max(0.3, +(zoom.value - 0.1).toFixed(1
 const zoomFit = () => { zoom.value = 0.75 }
 
 // ─── Logo / Signature upload ───────────────────────────────────────────────────
-const handleLogoUpload = (e: Event) => {
+const isUploadingLogo = ref(false)
+const isUploadingSig  = ref(false)
+
+async function handleLogoUpload(e: Event) {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
-  const reader = new FileReader()
-  reader.onload = ev => { form.value.logoUrl = ev.target?.result as string }
-  reader.readAsDataURL(file)
-}
-const handleSignatureUpload = (e: Event) => {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (!file) return
-  const reader = new FileReader()
-  reader.onload = ev => { form.value.signatureUrl = ev.target?.result as string }
-  reader.readAsDataURL(file)
+  isUploadingLogo.value = true
+  try {
+    const fd = new FormData()
+    fd.append('files[0][type]', 'org_logo')
+    fd.append('files[0][file]', file)
+    const res = await MediaService.upload(fd)
+    form.value.logoUrl = res.data.data[0]?.url ?? ''
+    if (draftData.value) draftData.value.logos.unshift({ id: res.data.data[0].id, url: form.value.logoUrl })
+  } catch {
+    notify('Logo upload failed', 'error')
+  } finally {
+    isUploadingLogo.value = false
+  }
 }
 
-// ─── Org presets ───────────────────────────────────────────────────────────────
-const orgPresets = [
-  { company: 'Acme Studio', tagline: 'Creative Agency', email: 'hello@acme.studio', phone: '+1 415 555 0199', website: 'www.acme.studio', address: '123 Design Street\nSan Francisco, CA 94105' },
-  { company: 'Pixel Works', tagline: 'Digital Products', email: 'info@pixelworks.io', phone: '+44 20 7946 0958', website: 'pixelworks.io', address: '10 Downing St\nLondon SW1A 2AA' },
-]
-const fillCompany = (p: typeof orgPresets[0]) => {
-  form.value.company  = p.company
-  form.value.tagline  = p.tagline
-  form.value.email    = p.email
-  form.value.phone    = p.phone
-  form.value.website  = p.website
-  form.value.address  = p.address
+async function handleSignatureUpload(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  isUploadingSig.value = true
+  try {
+    const fd = new FormData()
+    fd.append('files[0][type]', 'org_signature')
+    fd.append('files[0][file]', file)
+    const res = await MediaService.upload(fd)
+    form.value.signatureUrl = res.data.data[0]?.url ?? ''
+    if (draftData.value) draftData.value.signatures.unshift({ id: res.data.data[0].id, url: form.value.signatureUrl })
+  } catch {
+    notify('Signature upload failed', 'error')
+  } finally {
+    isUploadingSig.value = false
+  }
+}
+
+// ─── Client presets (from draft-data) ─────────────────────────────────────────
+const fillCompany = (p: { name: string; company: string | null; email: string | null; phone: string | null; address: string | null }) => {
+  form.value.company = p.company ?? p.name
+  form.value.email   = p.email ?? ''
+  form.value.phone   = p.phone ?? ''
+  form.value.address = p.address ?? ''
 }
 
 // ─── Themes ────────────────────────────────────────────────────────────────────
@@ -304,17 +349,23 @@ const handleSave = async () => {
           <!-- ══════════════════════════ COMPANY TAB ══════════════════════════ -->
           <template v-if="tab === 'Company'">
 
-            <!-- Org presets -->
+            <!-- Client presets -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Quick-fill</p>
-              <div class="space-y-2">
+              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Quick-fill from Clients</p>
+              <div v-if="isDraftLoading" class="flex items-center gap-2 text-xs text-cream-faint py-2">
+                <Icon icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" /> Loading clients…
+              </div>
+              <div v-else-if="clientPresets.length === 0" class="text-xs text-cream-faint py-2">
+                No clients yet. <a class="text-amber underline" href="/app/clients/create">Add one</a>
+              </div>
+              <div v-else class="space-y-2 max-h-48 overflow-y-auto">
                 <button
-                  v-for="org in orgPresets" :key="org.company"
-                  @click="fillCompany(org)"
+                  v-for="client in clientPresets" :key="client.id"
+                  @click="fillCompany(client)"
                   class="w-full text-left p-3 rounded-lg border border-charcoal-600 bg-charcoal-700/40 hover:border-amber/50 hover:bg-charcoal-700 transition-colors group"
                 >
-                  <p class="text-xs font-medium text-cream group-hover:text-amber transition-colors">{{ org.company }}</p>
-                  <p class="text-[10px] text-cream-faint mt-0.5">{{ org.email }}</p>
+                  <p class="text-xs font-medium text-cream group-hover:text-amber transition-colors">{{ client.company ?? client.name }}</p>
+                  <p class="text-[10px] text-cream-faint mt-0.5">{{ client.email ?? '—' }}</p>
                 </button>
               </div>
             </div>
@@ -331,10 +382,22 @@ const handleSave = async () => {
                 </button>
               </div>
               <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-dashed border-charcoal-600 hover:border-amber/50 text-xs text-cream-faint hover:text-cream transition-colors">
-                <Icon icon="lucide:upload" class="w-3.5 h-3.5" />
+                <Icon v-if="isUploadingLogo" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
+                <Icon v-else icon="lucide:upload" class="w-3.5 h-3.5" />
                 {{ form.logoUrl ? 'Replace logo' : 'Upload logo' }}
-                <input type="file" accept="image/*" class="hidden" @change="handleLogoUpload" />
+                <input type="file" accept="image/*" class="hidden" @change="handleLogoUpload" :disabled="isUploadingLogo" />
               </label>
+              <!-- Previously uploaded logos -->
+              <div v-if="savedLogos.length" class="mt-2 flex gap-2 flex-wrap">
+                <button
+                  v-for="logo in savedLogos" :key="logo.id"
+                  @click="form.logoUrl = logo.url"
+                  :class="['rounded border p-0.5 transition-colors', form.logoUrl === logo.url ? 'border-amber' : 'border-charcoal-600 hover:border-amber/50']"
+                  title="Use this logo"
+                >
+                  <img :src="logo.url" class="h-8 w-auto max-w-[60px] object-contain" />
+                </button>
+              </div>
             </div>
 
             <div class="h-px bg-charcoal-700"></div>
@@ -389,10 +452,22 @@ const handleSave = async () => {
                 </button>
               </div>
               <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-dashed border-charcoal-600 hover:border-amber/50 text-xs text-cream-faint hover:text-cream transition-colors">
-                <Icon icon="lucide:pen-line" class="w-3.5 h-3.5" />
+                <Icon v-if="isUploadingSig" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
+                <Icon v-else icon="lucide:pen-line" class="w-3.5 h-3.5" />
                 {{ form.signatureUrl ? 'Replace signature' : 'Upload signature' }}
-                <input type="file" accept="image/*" class="hidden" @change="handleSignatureUpload" />
+                <input type="file" accept="image/*" class="hidden" @change="handleSignatureUpload" :disabled="isUploadingSig" />
               </label>
+              <!-- Previously uploaded signatures -->
+              <div v-if="savedSignatures.length" class="mt-2 flex gap-2 flex-wrap">
+                <button
+                  v-for="sig in savedSignatures" :key="sig.id"
+                  @click="form.signatureUrl = sig.url"
+                  :class="['rounded border p-0.5 transition-colors', form.signatureUrl === sig.url ? 'border-amber' : 'border-charcoal-600 hover:border-amber/50']"
+                  title="Use this signature"
+                >
+                  <img :src="sig.url" class="h-8 w-auto max-w-[80px] object-contain" />
+                </button>
+              </div>
             </div>
           </template>
 

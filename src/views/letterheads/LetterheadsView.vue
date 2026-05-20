@@ -5,7 +5,7 @@ import { Icon } from '@iconify/vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import ShareLinkModal from '@/components/modals/ShareLinkModal.vue'
 import { useAuthStore } from '@/stores/auth'
-import { LetterheadService, type ILetterhead } from '@/services/letterhead.service'
+import { LetterheadService, type ILetterhead, type ILetterheadStats } from '@/services/letterhead.service'
 import { useNotification } from '@/composables/notification'
 
 const router    = useRouter()
@@ -22,6 +22,7 @@ const total       = ref(0)
 const loading     = ref(false)
 
 const letterheads = ref<ILetterhead[]>([])
+const stats       = ref<ILetterheadStats | null>(null)
 
 const showDeleteConfirm = ref(false)
 const deleteTarget      = ref<ILetterhead | null>(null)
@@ -45,7 +46,17 @@ async function fetchLetterheads() {
   }
 }
 
-onMounted(fetchLetterheads)
+async function fetchStats() {
+  if (!orgId.value) return
+  try {
+    const res = await LetterheadService.stats(orgId.value)
+    stats.value = res.data.data
+  } catch {
+    // non-critical
+  }
+}
+
+onMounted(() => { fetchLetterheads(); fetchStats() })
 
 const onSearch = () => { currentPage.value = 1; fetchLetterheads() }
 const onPageChange = () => fetchLetterheads()
@@ -121,19 +132,20 @@ function lastUsedLabel(lh: ILetterhead): string {
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
       <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4">
         <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-1">Total Templates</p>
-        <p class="text-2xl font-bold text-cream">{{ total }}</p>
+        <p class="text-2xl font-bold text-cream">{{ stats?.total ?? total }}</p>
       </div>
       <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4">
         <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-1">Total Uses</p>
-        <p class="text-2xl font-bold text-cream">{{ letterheads.reduce((s,l) => s + l.uses, 0) }}</p>
+        <p class="text-2xl font-bold text-cream">{{ stats?.total_uses ?? '—' }}</p>
       </div>
       <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4">
         <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-1">Most Used</p>
-        <p class="text-sm font-semibold text-cream truncate">{{ [...letterheads].sort((a,b) => b.uses - a.uses)[0]?.name ?? '—' }}</p>
+        <p class="text-sm font-semibold text-cream truncate">{{ stats?.most_used?.name ?? '—' }}</p>
+        <p v-if="stats?.most_used" class="text-[10px] text-cream-faint mt-0.5">{{ stats.most_used.uses }} uses</p>
       </div>
       <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4">
         <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-1">Confidential</p>
-        <p class="text-2xl font-bold text-cream">{{ letterheads.filter(l => l.watermark === 'CONFIDENTIAL').length }}</p>
+        <p class="text-2xl font-bold text-cream">{{ stats?.confidential ?? '—' }}</p>
       </div>
     </div>
 
