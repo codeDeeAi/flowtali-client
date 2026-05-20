@@ -14,20 +14,16 @@ export const OrgPreferencesService = {
     return http.put<{ data: { brand_colors: IOrgBrandColor[] } }>(`/api/v1/orgs/${orgId}/preferences/brand-colors`, { brand_colors })
   },
 
-  uploadSignature(orgId: string, formData: FormData) {
-    return http.post(`/api/v1/orgs/${orgId}/preferences/signatures`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    })
+  attachSignature(orgId: string, payload: { name: string; role: string; media_id: string }) {
+    return http.post(`/api/v1/orgs/${orgId}/preferences/signatures`, payload)
   },
 
   deleteSignature(orgId: string, mediaId: string) {
     return http.delete(`/api/v1/orgs/${orgId}/preferences/signatures/${mediaId}`)
   },
 
-  uploadLogo(orgId: string, formData: FormData) {
-    return http.post(`/api/v1/orgs/${orgId}/preferences/logos`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    })
+  attachLogo(orgId: string, payload: { label: string; media_id: string }) {
+    return http.post(`/api/v1/orgs/${orgId}/preferences/logos`, payload)
   },
 
   deleteLogo(orgId: string, mediaId: string) {

@@ -14,6 +14,23 @@ const orgId = computed(() => authStore.currentOrganization?.id ?? '')
 const ALL_TAGS = ['read', 'create', 'update', 'delete', 'manage'] as const
 type Tag = (typeof ALL_TAGS)[number]
 
+// ─── Permission toggle helpers ────────────────────────────────────────────────
+const togglePerm = (perms: Set<string>, identifier: string) => {
+  if (perms.has(identifier)) perms.delete(identifier)
+  else perms.add(identifier)
+}
+
+const groupAllEnabled = (perms: Set<string>, group: IPermissionGroup): boolean =>
+  group.permissions.length > 0 && group.permissions.every(p => perms.has(p.identifier))
+
+const toggleGroup = (perms: Set<string>, group: IPermissionGroup) => {
+  if (groupAllEnabled(perms, group)) {
+    group.permissions.forEach(p => perms.delete(p.identifier))
+  } else {
+    group.permissions.forEach(p => perms.add(p.identifier))
+  }
+}
+
 // ─── State ────────────────────────────────────────────────────────────────────
 const roles = ref<IRole[]>([])
 const permissionGroups = ref<IPermissionGroup[]>([])
@@ -106,19 +123,6 @@ const openDelete = (role: IRole) => {
   showDeleteConfirm.value = true
 }
 
-const toggleCreatePerm = (group: IPermissionGroup, tag: Tag) => {
-  const id = getIdentifier(group, tag)
-  if (!id) return
-  if (createForm.value.permissions.has(id)) createForm.value.permissions.delete(id)
-  else createForm.value.permissions.add(id)
-}
-
-const toggleEditPerm = (group: IPermissionGroup, tag: Tag) => {
-  const id = getIdentifier(group, tag)
-  if (!id) return
-  if (editForm.value.permissions.has(id)) editForm.value.permissions.delete(id)
-  else editForm.value.permissions.add(id)
-}
 
 const handleCreate = async () => {
   if (!createForm.value.name.trim()) return
@@ -329,30 +333,58 @@ const handleDelete = async () => {
             </div>
 
             <div>
-              <div class="text-xs font-medium text-cream-faint uppercase tracking-wider mb-3">Permissions</div>
-              <div class="border border-charcoal-600 rounded-xl overflow-hidden">
-                <div class="grid grid-cols-[1fr_repeat(5,40px)] gap-0 text-[10px] font-semibold uppercase tracking-wider text-cream-faint bg-charcoal-700/50 px-4 py-2">
-                  <span>Resource</span>
-                  <span class="text-center" v-for="tag in ALL_TAGS" :key="tag">{{ tag[0]?.toUpperCase() }}</span>
-                </div>
-                <div
-                  v-for="(group, i) in permissionGroups" :key="group.group_name"
-                  :class="['grid grid-cols-[1fr_repeat(5,40px)] gap-0 items-center px-4 py-2.5 border-t border-charcoal-700/40', i % 2 !== 0 ? 'bg-charcoal-700/20' : '']"
+              <div class="flex items-center justify-between mb-3">
+                <label class="text-xs font-semibold text-cream">Permissions <span class="text-red-400">*</span></label>
+                <button
+                  class="w-6 h-6 flex items-center justify-center rounded-md text-cream-faint hover:text-cream hover:bg-charcoal-700 transition-colors"
+                  title="Reset all permissions"
+                  @click="createForm.permissions = new Set()"
                 >
-                  <span class="text-sm text-cream">{{ group.name }}</span>
-                  <div v-for="tag in ALL_TAGS" :key="tag" class="flex justify-center">
+                  <Icon icon="lucide:rotate-ccw" class="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div class="space-y-2.5">
+                <div
+                  v-for="group in permissionGroups" :key="group.group_name"
+                  class="border border-charcoal-600 rounded-xl overflow-hidden"
+                >
+                  <!-- Group header -->
+                  <div class="flex items-start justify-between gap-3 px-4 py-3.5 bg-charcoal-700/30">
+                    <div class="min-w-0">
+                      <div class="text-sm font-semibold text-cream">{{ group.name }}</div>
+                      <div class="text-xs text-cream-faint mt-0.5 leading-relaxed">{{ group.description }}</div>
+                    </div>
                     <button
-                      v-if="groupHasTag(group, tag)"
-                      @click="toggleCreatePerm(group, tag)"
-                      :class="['w-5 h-5 rounded border transition-colors', createForm.permissions.has(getIdentifier(group, tag)!) ? 'bg-amber border-amber' : 'border-charcoal-500 hover:border-charcoal-400']"
+                      class="text-xs font-semibold text-amber hover:text-amber-light shrink-0 mt-0.5 transition-colors"
+                      @click="toggleGroup(createForm.permissions, group)"
                     >
-                      <Icon v-if="createForm.permissions.has(getIdentifier(group, tag)!)" icon="lucide:check" class="w-3 h-3 text-charcoal-900 mx-auto" />
+                      Toggle Group
                     </button>
-                    <div v-else class="w-5 h-5"></div>
+                  </div>
+                  <!-- Individual permissions -->
+                  <div
+                    v-for="perm in group.permissions" :key="perm.identifier"
+                    class="flex items-start justify-between gap-3 px-4 py-3 border-t border-charcoal-600/60"
+                  >
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-sm font-medium text-cream">{{ perm.name }}</span>
+                        <span class="text-[10px] font-mono font-semibold text-cream-faint border border-charcoal-500 bg-charcoal-700 px-1.5 py-0.5 rounded leading-none">
+                          {{ perm.tag.toUpperCase() }}
+                        </span>
+                      </div>
+                      <p class="text-xs text-cream-faint mt-0.5 leading-relaxed">{{ perm.description }}</p>
+                    </div>
+                    <!-- Toggle switch -->
+                    <button
+                      :class="['relative w-10 h-5 rounded-full overflow-hidden transition-colors duration-200 shrink-0 mt-0.5 focus:outline-none', createForm.permissions.has(perm.identifier) ? 'bg-amber' : 'bg-charcoal-600 border border-charcoal-500']"
+                      @click="togglePerm(createForm.permissions, perm.identifier)"
+                    >
+                      <span :class="['absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform duration-200', createForm.permissions.has(perm.identifier) ? 'translate-x-5' : 'translate-x-0']" />
+                    </button>
                   </div>
                 </div>
               </div>
-              <p class="text-[10px] text-cream-faint mt-1.5">R=Read · C=Create · U=Update · D=Delete · M=Manage</p>
             </div>
           </div>
 
@@ -397,30 +429,58 @@ const handleDelete = async () => {
             </div>
 
             <div>
-              <div class="text-xs font-medium text-cream-faint uppercase tracking-wider mb-3">Permissions</div>
-              <div class="border border-charcoal-600 rounded-xl overflow-hidden">
-                <div class="grid grid-cols-[1fr_repeat(5,40px)] gap-0 text-[10px] font-semibold uppercase tracking-wider text-cream-faint bg-charcoal-700/50 px-4 py-2">
-                  <span>Resource</span>
-                  <span class="text-center" v-for="tag in ALL_TAGS" :key="tag">{{ tag[0]?.toUpperCase() }}</span>
-                </div>
-                <div
-                  v-for="(group, i) in permissionGroups" :key="group.group_name"
-                  :class="['grid grid-cols-[1fr_repeat(5,40px)] gap-0 items-center px-4 py-2.5 border-t border-charcoal-700/40', i % 2 !== 0 ? 'bg-charcoal-700/20' : '']"
+              <div class="flex items-center justify-between mb-3">
+                <label class="text-xs font-semibold text-cream">Permissions <span class="text-red-400">*</span></label>
+                <button
+                  class="w-6 h-6 flex items-center justify-center rounded-md text-cream-faint hover:text-cream hover:bg-charcoal-700 transition-colors"
+                  title="Reset all permissions"
+                  @click="editForm.permissions = new Set()"
                 >
-                  <span class="text-sm text-cream">{{ group.name }}</span>
-                  <div v-for="tag in ALL_TAGS" :key="tag" class="flex justify-center">
+                  <Icon icon="lucide:rotate-ccw" class="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div class="space-y-2.5">
+                <div
+                  v-for="group in permissionGroups" :key="group.group_name"
+                  class="border border-charcoal-600 rounded-xl overflow-hidden"
+                >
+                  <!-- Group header -->
+                  <div class="flex items-start justify-between gap-3 px-4 py-3.5 bg-charcoal-700/30">
+                    <div class="min-w-0">
+                      <div class="text-sm font-semibold text-cream">{{ group.name }}</div>
+                      <div class="text-xs text-cream-faint mt-0.5 leading-relaxed">{{ group.description }}</div>
+                    </div>
                     <button
-                      v-if="groupHasTag(group, tag)"
-                      @click="toggleEditPerm(group, tag)"
-                      :class="['w-5 h-5 rounded border transition-colors', editForm.permissions.has(getIdentifier(group, tag)!) ? 'bg-amber border-amber' : 'border-charcoal-500 hover:border-charcoal-400']"
+                      class="text-xs font-semibold text-amber hover:text-amber-light shrink-0 mt-0.5 transition-colors"
+                      @click="toggleGroup(editForm.permissions, group)"
                     >
-                      <Icon v-if="editForm.permissions.has(getIdentifier(group, tag)!)" icon="lucide:check" class="w-3 h-3 text-charcoal-900 mx-auto" />
+                      Toggle Group
                     </button>
-                    <div v-else class="w-5 h-5"></div>
+                  </div>
+                  <!-- Individual permissions -->
+                  <div
+                    v-for="perm in group.permissions" :key="perm.identifier"
+                    class="flex items-start justify-between gap-3 px-4 py-3 border-t border-charcoal-600/60"
+                  >
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-sm font-medium text-cream">{{ perm.name }}</span>
+                        <span class="text-[10px] font-mono font-semibold text-cream-faint border border-charcoal-500 bg-charcoal-700 px-1.5 py-0.5 rounded leading-none">
+                          {{ perm.tag.toUpperCase() }}
+                        </span>
+                      </div>
+                      <p class="text-xs text-cream-faint mt-0.5 leading-relaxed">{{ perm.description }}</p>
+                    </div>
+                    <!-- Toggle switch -->
+                    <button
+                      :class="['relative w-10 h-5 rounded-full overflow-hidden transition-colors duration-200 shrink-0 mt-0.5 focus:outline-none', editForm.permissions.has(perm.identifier) ? 'bg-amber' : 'bg-charcoal-600 border border-charcoal-500']"
+                      @click="togglePerm(editForm.permissions, perm.identifier)"
+                    >
+                      <span :class="['absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform duration-200', editForm.permissions.has(perm.identifier) ? 'translate-x-5' : 'translate-x-0']" />
+                    </button>
                   </div>
                 </div>
               </div>
-              <p class="text-[10px] text-cream-faint mt-1.5">R=Read · C=Create · U=Update · D=Delete · M=Manage</p>
             </div>
           </div>
 
