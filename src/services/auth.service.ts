@@ -1,6 +1,12 @@
 import http from '@/services/utils/http'
 import type { ILoginData } from '@/types/auth.types'
 
+export interface IMfaChallenge {
+  type: '2fa'
+  user_id: string
+  email: string
+}
+
 export const AuthService = {
   register(data: {
     first_name: string
@@ -13,9 +19,7 @@ export const AuthService = {
   },
 
   login(email: string, password: string) {
-    return http.post<{
-      data: { mfa_required: true; user_id: string } | ({ mfa_required: false } & ILoginData)
-    }>('/api/v1/auth/login', { email, password })
+    return http.post<{ data: ILoginData | IMfaChallenge }>('/api/v1/auth/login', { email, password })
   },
 
   verifyMfa(user_id: string, otp: string) {

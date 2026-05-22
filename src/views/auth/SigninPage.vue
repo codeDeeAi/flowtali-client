@@ -9,7 +9,7 @@ import InputField from '@/components/form/InputField.vue'
 import BasicAlert from '@/components/alerts/BasicAlert.vue'
 import PasswordField from '@/components/form/PasswordField.vue'
 import { useNotification } from '@/composables/notification.ts'
-import { AuthService } from '@/services/auth.service'
+import { AuthService, type IMfaChallenge } from '@/services/auth.service'
 import { useAuthStore } from '@/stores/auth'
 import type { ILoginData } from '@/types/auth.types'
 
@@ -53,17 +53,21 @@ const handleSignin = async () => {
 
   try {
     const res = await AuthService.login(signinForm.value.email, signinForm.value.password)
-    const payload = res.data.data
 
-    if (payload.mfa_required) {
+    if (res.status === 202) {
+      const challenge = res.data.data as IMfaChallenge
       router.push({
         name: 'auth.mfa-verify',
-        query: { user_id: payload.user_id, redirect: route.query.redirect },
+        query: {
+          user_id: challenge.user_id,
+          email: challenge.email,
+          redirect: route.query.redirect,
+        },
       })
       return
     }
 
-    handleLoginSuccess(payload as ILoginData)
+    handleLoginSuccess(res.data.data as ILoginData)
   } catch (err: any) {
     const message = err?.response?.data?.message ?? 'Sign in failed. Please try again.'
     if (err?.response?.data?.error === 'email_not_verified') {
