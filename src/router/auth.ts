@@ -40,6 +40,12 @@ export const authRoutes = [
     meta,
   },
   {
+    path: '/auth/mfa-setup',
+    name: 'auth.mfa-setup',
+    component: () => import('@/views/auth/MfaForcedSetupPage.vue'),
+    meta,
+  },
+  {
     path: '/auth/magic-login',
     name: 'auth.magic-login',
     component: () => import('@/views/auth/MagicLoginPage.vue'),

@@ -12,6 +12,7 @@ export interface IOrganization {
   is_owner: boolean;
   roles: IOrganizationRole[];
   permissions: string[];
+  require_mfa?: boolean;
 }
 
 export interface ILoginData {
@@ -19,5 +20,6 @@ export interface ILoginData {
   last_name: string;
   avatar: string | null;
   token: string;
+  mfa_enabled: boolean;
   organizations: IOrganization[];
 }

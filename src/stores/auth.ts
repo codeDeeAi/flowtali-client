@@ -53,6 +53,16 @@ export const useAuthStore = defineStore(
       user.value = { ...user.value, ...data }
     }
 
+    function updateMfaEnabled(enabled: boolean) {
+      if (user.value) user.value = { ...user.value, mfa_enabled: enabled }
+    }
+
+    function updateOrganization(org: IOrganization) {
+      const idx = organizations.value.findIndex(o => o.id === org.id)
+      if (idx !== -1) organizations.value[idx] = org
+      if (currentOrganization.value?.id === org.id) currentOrganization.value = org
+    }
+
     function updateCurrentOrgLogo(logo: string | null) {
       if (!currentOrganization.value) return
       currentOrganization.value = { ...currentOrganization.value, logo }
@@ -79,6 +89,8 @@ export const useAuthStore = defineStore(
       logout,
       clearAuthData,
       updateUserInfo,
+      updateMfaEnabled,
+      updateOrganization,
       updateCurrentOrgLogo,
     }
   },

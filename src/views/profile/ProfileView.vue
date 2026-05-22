@@ -8,6 +8,8 @@ import { useNotification } from '@/composables/notification'
 const authStore   = useAuthStore()
 const { notify }  = useNotification()
 
+const orgRequiresMfa = computed(() => authStore.getCurrentOrganization?.require_mfa === true)
+
 // ── state ──────────────────────────────────────────────────────────────────────
 const profile     = ref<IUserProfile | null>(null)
 const sessions    = ref<ISession[]>([])
@@ -187,6 +189,7 @@ async function confirmEnableMfa() {
   try {
     const res = await ProfileService.enableMfa(mfaOtp.value)
     profile.value = res.data.data
+    authStore.updateMfaEnabled(true)
     mfaStep.value = 'idle'
     mfaOtp.value = ''
     notify('Two-factor authentication enabled', 'success')
@@ -202,6 +205,7 @@ async function disableMfa() {
   try {
     const res = await ProfileService.disableMfa()
     profile.value = res.data.data
+    authStore.updateMfaEnabled(false)
     notify('Two-factor authentication disabled', 'success')
   } catch (err: any) {
     notify(err?.response?.data?.message ?? 'Failed to disable 2FA', 'error')
@@ -425,17 +429,22 @@ function fmtRelative(iso: string | null): string {
               Enable 2FA
             </button>
 
-            <!-- Disable button -->
-            <button
-              v-else
-              @click="disableMfa"
-              :disabled="isMfaDisabling"
-              class="flex items-center gap-2 text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 border border-red-500/20 disabled:opacity-50 px-4 py-2 rounded-lg transition-colors"
-            >
-              <Icon v-if="isMfaDisabling" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
-              <Icon v-else icon="lucide:shield-off" class="w-3.5 h-3.5" />
-              Disable 2FA
-            </button>
+            <!-- Disable button (locked when org enforces MFA) -->
+            <div v-else class="flex flex-col gap-2">
+              <button
+                @click="disableMfa"
+                :disabled="isMfaDisabling || orgRequiresMfa"
+                class="flex items-center gap-2 text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 border border-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-lg transition-colors"
+              >
+                <Icon v-if="isMfaDisabling" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
+                <Icon v-else icon="lucide:shield-off" class="w-3.5 h-3.5" />
+                Disable 2FA
+              </button>
+              <p v-if="orgRequiresMfa" class="text-[11px] text-amber/70 flex items-center gap-1.5">
+                <Icon icon="lucide:info" class="w-3 h-3 shrink-0" />
+                Required by your organization — cannot be disabled.
+              </p>
+            </div>
           </div>
 
           <!-- Active sessions -->

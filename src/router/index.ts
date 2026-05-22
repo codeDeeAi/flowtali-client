@@ -79,6 +79,7 @@ const guestOnlyRoutes = new Set([
   'forgot-password',
   'auth.reset-password',
   'auth.mfa-verify',
+  'auth.mfa-setup',
   'auth.magic-login',
   'auth.magic-login.verify',
   'auth.google-callback',

@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { Icon } from '@iconify/vue';
 import { useAuthStore } from '@/stores/auth';
+import { usePermissions } from '@/composables/usePermissions';
 import { AnalyticsService, type IAnalyticsData } from '@/services/analytics.service';
 import StatCard from './components/StatCard.vue';
 import RevenueChart from './components/RevenueChart.vue';
@@ -13,6 +14,7 @@ import PlanUsage from './components/PlanUsage.vue';
 
 const router    = useRouter()
 const authStore = useAuthStore()
+const { can }   = usePermissions()
 
 const hour = new Date().getHours();
 const greeting = computed(() =>
@@ -33,15 +35,8 @@ function fmt(val: number) {
 
 const stats = computed(() => {
   const k = analytics.value?.kpis
-  const sb = analytics.value?.status_breakdown
 
-  const activeClients = sb
-    ? new Set([
-        ...Object.values(sb).flatMap(() => []),
-      ]).size
-    : 0
-
-  return [
+  const all = [
     {
       title: 'Total Revenue',
       value: k ? fmt(k.total_revenue.value) : '—',
@@ -49,6 +44,7 @@ const stats = computed(() => {
       icon: 'lucide:dollar-sign',
       color: 'amber' as const,
       progress: k ? Math.min(Math.round((k.total_revenue.value / Math.max(k.total_revenue.value + k.outstanding.value, 1)) * 100), 100) : 0,
+      permission: 'dashboard.revenue.read',
     },
     {
       title: 'Outstanding',
@@ -57,6 +53,7 @@ const stats = computed(() => {
       icon: 'lucide:clock',
       color: 'red' as const,
       progress: k ? Math.min(Math.round((k.outstanding.value / Math.max(k.total_revenue.value + k.outstanding.value, 1)) * 100), 100) : 0,
+      permission: 'dashboard.revenue.read',
     },
     {
       title: 'Invoices Sent',
@@ -65,6 +62,7 @@ const stats = computed(() => {
       icon: 'lucide:send',
       color: 'blue' as const,
       progress: k ? Math.min(k.total_invoices.value, 100) : 0,
+      permission: 'dashboard.invoices.read',
     },
     {
       title: 'Collection Rate',
@@ -73,8 +71,11 @@ const stats = computed(() => {
       icon: 'lucide:trending-up',
       color: 'green' as const,
       progress: k ? Math.min(Math.round(k.collection_rate.value), 100) : 0,
+      permission: 'dashboard.revenue.read',
     },
   ]
+
+  return all.filter(s => can(s.permission))
 })
 
 onMounted(async () => {
@@ -129,13 +130,13 @@ onMounted(async () => {
 
       <!-- Left column (2/3) -->
       <div class="xl:col-span-2 flex flex-col gap-4">
-        <RevenueChart :trend-data="analytics?.revenue_trend" />
-        <RecentInvoices />
+        <RevenueChart v-if="can('dashboard.revenue.read')" :trend-data="analytics?.revenue_trend" />
+        <RecentInvoices v-if="can('dashboard.invoices.read')" />
       </div>
 
       <!-- Right column (1/3) -->
       <div class="flex flex-col gap-4">
-        <InvoiceStatusChart :breakdown="analytics?.status_breakdown" />
+        <InvoiceStatusChart v-if="can('dashboard.invoices.read')" :breakdown="analytics?.status_breakdown" />
         <QuickActions />
         <PlanUsage />
       </div>

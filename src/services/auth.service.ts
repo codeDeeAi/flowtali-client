@@ -2,7 +2,7 @@ import http from '@/services/utils/http'
 import type { ILoginData } from '@/types/auth.types'
 
 export interface IMfaChallenge {
-  type: '2fa'
+  type: '2fa' | 'mfa_setup'
   user_id: string
   email: string
 }
@@ -28,6 +28,14 @@ export const AuthService = {
 
   resendMfaCode(user_id: string) {
     return http.post('/api/v1/auth/mfa/resend', { user_id })
+  },
+
+  completeForcedMfaSetup(user_id: string, otp: string) {
+    return http.post<{ data: ILoginData }>('/api/v1/auth/mfa/setup/complete', { user_id, otp })
+  },
+
+  resendForcedSetupCode(user_id: string) {
+    return http.post('/api/v1/auth/mfa/setup/resend', { user_id })
   },
 
   logout() {

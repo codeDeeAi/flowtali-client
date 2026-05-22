@@ -56,8 +56,9 @@ const handleSignin = async () => {
 
     if (res.status === 202) {
       const challenge = res.data.data as IMfaChallenge
+      const routeName = challenge.type === 'mfa_setup' ? 'auth.mfa-setup' : 'auth.mfa-verify'
       router.push({
-        name: 'auth.mfa-verify',
+        name: routeName,
         query: {
           user_id: challenge.user_id,
           email: challenge.email,
