@@ -44,4 +44,16 @@ export const SettingsService = {
   updateNotificationPrefs(data: INotificationPrefs) {
     return http.put<{ data: INotificationPrefs }>('/api/v1/profile/notifications', data)
   },
+
+  uploadOrgLogo(orgId: string, file: File) {
+    const form = new FormData()
+    form.append('logo', file)
+    return http.post<{ data: { logo: string | null } }>(`/api/v1/orgs/${orgId}/settings/logo`, form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  },
+
+  deleteOrgLogo(orgId: string) {
+    return http.delete(`/api/v1/orgs/${orgId}/settings/logo`)
+  },
 }

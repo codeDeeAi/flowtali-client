@@ -74,6 +74,7 @@ async function handleAvatarChange(e: Event) {
   try {
     const res = await ProfileService.uploadAvatar(file)
     profile.value = res.data.data
+    authStore.updateUserInfo({ avatar: res.data.data.avatar })
     notify('Avatar updated', 'success')
   } catch {
     notify('Failed to upload avatar', 'error')

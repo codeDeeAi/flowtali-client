@@ -191,10 +191,11 @@ function isActive(to: string) {
       >
         <div
           v-if="currentOrg"
-          class="w-7 h-7 rounded-md flex items-center justify-center text-xs font-bold text-charcoal-900 shrink-0"
-          :style="{ backgroundColor: orgColor(currentOrg.id) }"
+          class="w-7 h-7 rounded-md overflow-hidden shrink-0 flex items-center justify-center text-xs font-bold text-charcoal-900"
+          :style="currentOrg.logo ? {} : { backgroundColor: orgColor(currentOrg.id) }"
         >
-          {{ orgInitials(currentOrg.name) }}
+          <img v-if="currentOrg.logo" :src="currentOrg.logo" :alt="currentOrg.name" class="w-full h-full object-cover" />
+          <span v-else>{{ orgInitials(currentOrg.name) }}</span>
         </div>
         <div
           :class="['flex-1 min-w-0 text-left overflow-hidden transition-all duration-300', collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100']"
@@ -233,10 +234,11 @@ function isActive(to: string) {
               @click="switchOrg(org)"
             >
               <div
-                class="w-7 h-7 rounded-md flex items-center justify-center text-[10px] font-bold text-charcoal-900 shrink-0"
-                :style="{ backgroundColor: orgColor(org.id) }"
+                class="w-7 h-7 rounded-md overflow-hidden shrink-0 flex items-center justify-center text-[10px] font-bold text-charcoal-900"
+                :style="org.logo ? {} : { backgroundColor: orgColor(org.id) }"
               >
-                {{ orgInitials(org.name) }}
+                <img v-if="org.logo" :src="org.logo" :alt="org.name" class="w-full h-full object-cover" />
+                <span v-else>{{ orgInitials(org.name) }}</span>
               </div>
               <div class="flex-1 min-w-0 text-left">
                 <div class="text-xs font-medium text-cream truncate leading-tight">{{ org.name }}</div>
@@ -439,8 +441,18 @@ function isActive(to: string) {
         :title="collapsed ? `${authStore.getUser?.first_name} ${authStore.getUser?.last_name}` : undefined"
         @click="userMenuOpen = !userMenuOpen"
       >
-        <div class="w-7 h-7 rounded-full bg-amber flex items-center justify-center text-xs font-bold text-charcoal-900 shrink-0">
-          {{ (authStore.getUser?.first_name?.[0] ?? '').toUpperCase() }}{{ (authStore.getUser?.last_name?.[0] ?? '').toUpperCase() }}
+        <div class="w-7 h-7 rounded-full overflow-hidden shrink-0 flex items-center justify-center text-xs font-bold text-charcoal-900"
+          :class="authStore.getUser?.avatar ? '' : 'bg-amber'"
+        >
+          <img
+            v-if="authStore.getUser?.avatar"
+            :src="authStore.getUser.avatar"
+            :alt="`${authStore.getUser.first_name} ${authStore.getUser.last_name}`"
+            class="w-full h-full object-cover"
+          />
+          <span v-else>
+            {{ (authStore.getUser?.first_name?.[0] ?? '').toUpperCase() }}{{ (authStore.getUser?.last_name?.[0] ?? '').toUpperCase() }}
+          </span>
         </div>
         <div
           :class="['flex-1 min-w-0 text-left overflow-hidden transition-all duration-300', collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100']"

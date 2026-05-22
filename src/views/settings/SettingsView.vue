@@ -25,7 +25,11 @@ const settings = ref<IOrgSettings>({
   default_currency: 'USD', payment_terms: 'Net 30', default_tax_rate: 0,
   require_mfa: false, ip_allowlist: [],
 })
-const orgName     = ref('')
+const orgName        = ref('')
+const orgLogoUrl     = ref<string | null>(null)
+const logoInput      = ref<HTMLInputElement | null>(null)
+const isUploadingLogo = ref(false)
+const isDeletingLogo  = ref(false)
 const isSavingGen = ref(false)
 const isSavingSec = ref(false)
 const genSaved    = ref(false)
@@ -37,6 +41,30 @@ async function loadSettings() {
     const res = await SettingsService.getOrgSettings(orgId.value)
     settings.value = res.data.data
   } catch {}
+}
+
+async function handleLogoChange(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (!file || !orgId.value) return
+  isUploadingLogo.value = true
+  try {
+    const res = await SettingsService.uploadOrgLogo(orgId.value, file)
+    orgLogoUrl.value = res.data.data.logo
+    authStore.updateCurrentOrgLogo(res.data.data.logo)
+  } catch {} finally {
+    isUploadingLogo.value = false
+    if (logoInput.value) logoInput.value.value = ''
+  }
+}
+
+async function deleteLogo() {
+  if (!orgId.value) return
+  isDeletingLogo.value = true
+  try {
+    await SettingsService.deleteOrgLogo(orgId.value)
+    orgLogoUrl.value = null
+    authStore.updateCurrentOrgLogo(null)
+  } catch {} finally { isDeletingLogo.value = false }
 }
 
 async function saveGeneral() {
@@ -140,7 +168,8 @@ const apiKeys = [
 ]
 
 onMounted(async () => {
-  orgName.value = org.value?.name ?? ''
+  orgName.value    = org.value?.name ?? ''
+  orgLogoUrl.value = org.value?.logo ?? null
   await Promise.all([loadSettings(), loadNotifPrefs()])
 })
 </script>
@@ -177,6 +206,44 @@ onMounted(async () => {
         <!-- ─── General ─────────────────────────────────────── -->
         <div v-if="activeTab === 'general'" class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 space-y-5">
           <h3 class="text-sm font-semibold text-cream">Organization Details</h3>
+
+          <!-- Logo upload -->
+          <div class="flex items-center gap-5">
+            <!-- Preview -->
+            <div class="w-16 h-16 rounded-xl border border-charcoal-600 overflow-hidden bg-charcoal-700 flex items-center justify-center shrink-0">
+              <img v-if="orgLogoUrl" :src="orgLogoUrl" :alt="orgName" class="w-full h-full object-cover" />
+              <Icon v-else icon="lucide:building-2" class="w-7 h-7 text-cream-faint/40" />
+            </div>
+            <!-- Actions -->
+            <div>
+              <div class="text-sm font-medium text-cream mb-1">Organization Logo</div>
+              <div class="text-xs text-cream-faint mb-3">PNG, JPG or WebP · max 2 MB</div>
+              <div class="flex items-center gap-2">
+                <input ref="logoInput" type="file" accept="image/*" class="hidden" @change="handleLogoChange" />
+                <button
+                  type="button"
+                  :disabled="isUploadingLogo"
+                  class="flex items-center gap-1.5 text-xs bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 hover:border-charcoal-500 text-cream-muted hover:text-cream px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                  @click="logoInput?.click()"
+                >
+                  <Icon v-if="isUploadingLogo" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
+                  <Icon v-else icon="lucide:upload" class="w-3.5 h-3.5" />
+                  {{ isUploadingLogo ? 'Uploading…' : 'Upload logo' }}
+                </button>
+                <button
+                  v-if="orgLogoUrl"
+                  type="button"
+                  :disabled="isDeletingLogo"
+                  class="text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                  @click="deleteLogo"
+                >
+                  {{ isDeletingLogo ? 'Removing…' : 'Remove' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="h-px bg-charcoal-700"></div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="app-label">Organization Name</label>

@@ -17,6 +17,7 @@ export interface IOrganization {
 export interface ILoginData {
   first_name: string;
   last_name: string;
+  avatar: string | null;
   token: string;
   organizations: IOrganization[];
 }

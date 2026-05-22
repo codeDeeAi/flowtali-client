@@ -1,12 +1,24 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 import { Icon } from '@iconify/vue'
+import { useAuthStore } from '@/stores/auth'
+import { ProfileService } from '@/services/profile.service'
 import AppHeader from './components/app/AppHeader.vue'
 import AppSidebar from './components/app/AppSidebar.vue'
 
+const authStore  = ref(useAuthStore())
 const mobileOpen = ref(false)
-const collapsed = ref(false)
+const collapsed  = ref(false)
+
+// Sync avatar from API on every mount so the sidebar always shows the latest photo
+// even for sessions that pre-date the avatar field being added to the login response.
+onMounted(async () => {
+  try {
+    const res = await ProfileService.get()
+    authStore.value.updateUserInfo({ avatar: res.data.data.avatar })
+  } catch {}
+})
 </script>
 
 <template>

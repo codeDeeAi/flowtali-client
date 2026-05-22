@@ -48,9 +48,17 @@ export const useAuthStore = defineStore(
       logout()
     }
 
-    function updateUserInfo(data: Partial<{ first_name: string; last_name: string }>) {
+    function updateUserInfo(data: Partial<{ first_name: string; last_name: string; avatar: string | null }>) {
       if (!user.value) return
       user.value = { ...user.value, ...data }
+    }
+
+    function updateCurrentOrgLogo(logo: string | null) {
+      if (!currentOrganization.value) return
+      currentOrganization.value = { ...currentOrganization.value, logo }
+      // Also update the logo in the organizations list
+      const idx = organizations.value.findIndex(o => o.id === currentOrganization.value?.id)
+      if (idx !== -1) organizations.value[idx] = { ...organizations.value[idx]!, logo }
     }
 
     return {
@@ -71,6 +79,7 @@ export const useAuthStore = defineStore(
       logout,
       clearAuthData,
       updateUserInfo,
+      updateCurrentOrgLogo,
     }
   },
   { persist: true },
