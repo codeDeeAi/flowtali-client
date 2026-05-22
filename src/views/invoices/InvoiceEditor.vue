@@ -797,10 +797,10 @@ const handleSaveDraft = () => handleSave('draft')
             <div>
               <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Tax Lines</p>
               <div class="space-y-2">
-                <div v-for="(tax, ti) in form.taxes" :key="tax.id" class="space-y-1">
+                <div v-for="(tax, ti) in form.taxes" :key="tax.id" class="space-y-1.5">
+                  <!-- Row 1: label + toggle + remove -->
                   <div class="flex gap-1.5 items-center">
                     <input v-model="tax.label" class="app-inp text-sm min-w-0 flex-1" placeholder="VAT" />
-                    <!-- type toggle -->
                     <div class="flex rounded border border-charcoal-600 overflow-hidden shrink-0 text-xs">
                       <button
                         type="button"
@@ -813,15 +813,21 @@ const handleSaveDraft = () => handleSave('draft')
                         :class="['px-2 py-1 transition-colors', tax.type === 'flat' ? 'bg-amber text-charcoal-900 font-semibold' : 'text-cream-faint hover:bg-charcoal-700']"
                       >$</button>
                     </div>
-                    <input v-model.number="tax.rate" type="number" min="0" class="app-inp text-sm w-16 shrink-0" :placeholder="tax.type === 'flat' ? '0.00' : '0'" />
                     <button type="button" v-if="form.taxes.length > 1" @click="removeTax(tax.id)" class="text-cream-faint hover:text-red-400 transition-colors shrink-0">
                       <Icon icon="lucide:x" class="w-3.5 h-3.5" />
                     </button>
                   </div>
-                  <!-- calculated amount -->
-                  <div v-if="tax.rate > 0" class="flex justify-between text-[11px] text-cream-faint/70 px-0.5">
-                    <span>{{ tax.type === 'flat' ? 'Fixed amount' : `${tax.rate}% of after-discount` }}</span>
-                    <span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span>
+                  <!-- Row 2: rate input full width + calculated amount -->
+                  <div class="flex items-center gap-2">
+                    <input
+                      v-model.number="tax.rate"
+                      type="number" min="0"
+                      class="app-inp text-sm flex-1"
+                      :placeholder="tax.type === 'flat' ? '0.00' : '0'"
+                    />
+                    <span v-if="tax.rate > 0" class="text-xs font-mono text-cream-faint whitespace-nowrap shrink-0">
+                      = {{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}
+                    </span>
                   </div>
                 </div>
               </div>

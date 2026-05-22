@@ -1,46 +1,148 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Icon } from '@iconify/vue';
+import { ref, computed, onMounted } from 'vue'
+import { Icon } from '@iconify/vue'
+import { useAuthStore } from '@/stores/auth'
+import { SettingsService, type IOrgSettings, type INotificationPrefs } from '@/services/settings.service'
 
-type Tab = 'general' | 'notifications' | 'security' | 'api';
-const activeTab = ref<Tab>('general');
+const authStore = useAuthStore()
+const orgId     = computed(() => authStore.getCurrentOrganization?.id ?? '')
+const org       = computed(() => authStore.getCurrentOrganization)
+
+type Tab = 'general' | 'notifications' | 'security' | 'api'
+const activeTab = ref<Tab>('general')
 
 const tabs = [
-  { key: 'general'      as Tab, label: 'General',             icon: 'lucide:settings-2'    },
-  { key: 'notifications'as Tab, label: 'Notifications',       icon: 'lucide:bell'          },
-  { key: 'security'     as Tab, label: 'Security',            icon: 'lucide:shield-check'  },
-  { key: 'api'          as Tab, label: 'API & Integrations',  icon: 'lucide:code-2'        },
-];
+  { key: 'general'       as Tab, label: 'General',            icon: 'lucide:settings-2'   },
+  { key: 'notifications' as Tab, label: 'Notifications',      icon: 'lucide:bell'         },
+  { key: 'security'      as Tab, label: 'Security',           icon: 'lucide:shield-check' },
+  { key: 'api'           as Tab, label: 'API & Integrations', icon: 'lucide:code-2'       },
+]
+
+// ─── General / Security settings ─────────────────────────────────────────────
+
+const settings = ref<IOrgSettings>({
+  industry: null, company_size: null, address: null,
+  default_currency: 'USD', payment_terms: 'Net 30', default_tax_rate: 0,
+  require_mfa: false, ip_allowlist: [],
+})
+const orgName     = ref('')
+const isSavingGen = ref(false)
+const isSavingSec = ref(false)
+const genSaved    = ref(false)
+const secSaved    = ref(false)
+
+async function loadSettings() {
+  if (!orgId.value) return
+  try {
+    const res = await SettingsService.getOrgSettings(orgId.value)
+    settings.value = res.data.data
+  } catch {}
+}
+
+async function saveGeneral() {
+  if (!orgId.value) return
+  isSavingGen.value = true
+  genSaved.value    = false
+  try {
+    const res = await SettingsService.updateGeneralSettings(orgId.value, {
+      industry:         settings.value.industry,
+      company_size:     settings.value.company_size,
+      address:          settings.value.address,
+      default_currency: settings.value.default_currency,
+      payment_terms:    settings.value.payment_terms,
+      default_tax_rate: settings.value.default_tax_rate,
+    })
+    settings.value = res.data.data
+    genSaved.value = true
+    setTimeout(() => { genSaved.value = false }, 2500)
+  } catch {} finally { isSavingGen.value = false }
+}
+
+async function saveSecurity() {
+  if (!orgId.value) return
+  isSavingSec.value = true
+  secSaved.value    = false
+  try {
+    const res = await SettingsService.updateSecuritySettings(orgId.value, {
+      require_mfa:  settings.value.require_mfa,
+      ip_allowlist: ipAllowlistText.value
+        .split('\n')
+        .map(s => s.trim())
+        .filter(Boolean),
+    })
+    settings.value = res.data.data
+    secSaved.value = true
+    setTimeout(() => { secSaved.value = false }, 2500)
+  } catch {} finally { isSavingSec.value = false }
+}
+
+// IP allowlist as textarea text
+const ipAllowlistText = computed({
+  get: () => (settings.value.ip_allowlist ?? []).join('\n'),
+  set: (v: string) => {
+    settings.value.ip_allowlist = v.split('\n').map(s => s.trim()).filter(Boolean)
+  },
+})
+
+// ─── Notification prefs ───────────────────────────────────────────────────────
+
+const notifPrefs = ref<INotificationPrefs>({
+  invoice_paid:    { email: true,  in_app: true  },
+  invoice_overdue: { email: true,  in_app: true  },
+  invoice_viewed:  { email: false, in_app: true  },
+  member_joined:   { email: true,  in_app: false },
+  role_changed:    { email: true,  in_app: true  },
+})
+const isSavingNotif = ref(false)
+const notifSaved    = ref(false)
+
+async function loadNotifPrefs() {
+  try {
+    const res = await SettingsService.getNotificationPrefs()
+    notifPrefs.value = res.data.data
+  } catch {}
+}
+
+async function saveNotifPrefs() {
+  isSavingNotif.value = true
+  notifSaved.value    = false
+  try {
+    const res = await SettingsService.updateNotificationPrefs(notifPrefs.value)
+    notifPrefs.value = res.data.data
+    notifSaved.value = true
+    setTimeout(() => { notifSaved.value = false }, 2500)
+  } catch {} finally { isSavingNotif.value = false }
+}
 
 const notifGroups = [
   {
     group: 'Invoices',
     items: [
-      { label: 'Invoice paid',     desc: 'When a client pays an invoice',         email: true,  inApp: true  },
-      { label: 'Invoice overdue',  desc: 'When an invoice passes its due date',   email: true,  inApp: true  },
-      { label: 'Invoice viewed',   desc: 'When a client views an invoice',        email: false, inApp: true  },
+      { key: 'invoice_paid'    as keyof INotificationPrefs, label: 'Invoice paid',    desc: 'When a client pays an invoice'         },
+      { key: 'invoice_overdue' as keyof INotificationPrefs, label: 'Invoice overdue', desc: 'When an invoice passes its due date'   },
+      { key: 'invoice_viewed'  as keyof INotificationPrefs, label: 'Invoice viewed',  desc: 'When a client views an invoice'        },
     ],
   },
   {
     group: 'Team',
     items: [
-      { label: 'Member joined',   desc: 'When a team member accepts an invite',  email: true,  inApp: false },
-      { label: 'Role changed',    desc: 'When a member role is updated',         email: true,  inApp: true  },
+      { key: 'member_joined' as keyof INotificationPrefs, label: 'Member joined', desc: 'When a team member accepts an invite'  },
+      { key: 'role_changed'  as keyof INotificationPrefs, label: 'Role changed',  desc: 'When a member role is updated'         },
     ],
   },
-];
+]
 
-const securitySettings = [
-  { label: 'Two-Factor Authentication', desc: 'Require 2FA for all team members',                enabled: false, action: null    },
-  { label: 'SSO (Single Sign-On)',      desc: 'Use your organization SSO provider',              enabled: false, action: 'Configure' },
-  { label: 'Session Timeout',           desc: 'Auto sign out after 24h of inactivity',           enabled: true,  action: null    },
-  { label: 'IP Allowlist',              desc: 'Restrict access to specific IP ranges',           enabled: false, action: 'Set up' },
-];
+// ─── API keys (static placeholder) ───────────────────────────────────────────
 
 const apiKeys = [
-  { id: 1, name: 'Production API Key',   masked: 'flw_live_••••••••••••3fa2', lastUsed: '2 days ago' },
-  { id: 2, name: 'Development API Key',  masked: 'flw_test_••••••••••••9b1d', lastUsed: '1 week ago' },
-];
+  { id: 1, name: 'Production API Key',  masked: 'flw_live_••••••••••••3fa2', lastUsed: '2 days ago' },
+  { id: 2, name: 'Development API Key', masked: 'flw_test_••••••••••••9b1d', lastUsed: '1 week ago' },
+]
+
+onMounted(async () => {
+  orgName.value = org.value?.name ?? ''
+  await Promise.all([loadSettings(), loadNotifPrefs()])
+})
 </script>
 
 <template>
@@ -72,85 +174,171 @@ const apiKeys = [
       <!-- Content -->
       <div class="md:col-span-3">
 
-        <!-- General -->
+        <!-- ─── General ─────────────────────────────────────── -->
         <div v-if="activeTab === 'general'" class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 space-y-5">
           <h3 class="text-sm font-semibold text-cream">Organization Details</h3>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div><label class="app-label">Organization Name</label><input class="app-inp" value="Acme Design Studio" /></div>
-            <div><label class="app-label">Display Name / Alias</label><input class="app-inp" placeholder="How you appear to others" /></div>
-            <div><label class="app-label">Industry</label>
-              <select class="app-select">
-                <option>Design & Creative</option><option>Technology</option><option>Finance</option><option>Consulting</option><option>Other</option>
+            <div>
+              <label class="app-label">Organization Name</label>
+              <input class="app-inp" :value="orgName" disabled title="Change from the organization page" />
+            </div>
+            <div>
+              <label class="app-label">Industry</label>
+              <select v-model="settings.industry" class="app-select">
+                <option :value="null">Select industry…</option>
+                <option>Design & Creative</option>
+                <option>Technology</option>
+                <option>Finance</option>
+                <option>Consulting</option>
+                <option>Marketing</option>
+                <option>Legal</option>
+                <option>Healthcare</option>
+                <option>Education</option>
+                <option>Other</option>
               </select>
             </div>
-            <div><label class="app-label">Company Size</label>
-              <select class="app-select">
-                <option>1 (Just me)</option><option>2–10</option><option>11–50</option><option>50+</option>
+            <div>
+              <label class="app-label">Company Size</label>
+              <select v-model="settings.company_size" class="app-select">
+                <option :value="null">Select size…</option>
+                <option>1 (Just me)</option>
+                <option>2–10</option>
+                <option>11–50</option>
+                <option>50+</option>
               </select>
             </div>
-            <div class="sm:col-span-2"><label class="app-label">Business Address</label><textarea class="app-inp" rows="3" placeholder="123 Street, City, Country"></textarea></div>
+            <div class="sm:col-span-2">
+              <label class="app-label">Business Address</label>
+              <textarea v-model="settings.address" class="app-inp" rows="3" placeholder="123 Street, City, Country"></textarea>
+            </div>
           </div>
+
           <div class="h-px bg-charcoal-700"></div>
           <h3 class="text-sm font-semibold text-cream">Default Invoice Settings</h3>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div><label class="app-label">Default Currency</label>
-              <select class="app-select"><option>USD ($)</option><option>EUR (€)</option><option>GBP (£)</option><option>NGN (₦)</option></select>
+            <div>
+              <label class="app-label">Default Currency</label>
+              <select v-model="settings.default_currency" class="app-select">
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="NGN">NGN (₦)</option>
+                <option value="CAD">CAD (C$)</option>
+                <option value="AUD">AUD (A$)</option>
+              </select>
             </div>
-            <div><label class="app-label">Payment Terms</label>
-              <select class="app-select"><option>Net 30</option><option>Net 15</option><option>Due on receipt</option><option>Net 60</option></select>
+            <div>
+              <label class="app-label">Payment Terms</label>
+              <select v-model="settings.payment_terms" class="app-select">
+                <option>Net 30</option>
+                <option>Net 15</option>
+                <option>Due on receipt</option>
+                <option>Net 60</option>
+                <option>Net 90</option>
+              </select>
             </div>
-            <div><label class="app-label">Default Tax Rate (%)</label><input class="app-inp" value="10" type="number" /></div>
+            <div>
+              <label class="app-label">Default Tax Rate (%)</label>
+              <input v-model.number="settings.default_tax_rate" class="app-inp" type="number" min="0" max="100" step="0.01" />
+            </div>
           </div>
-          <button class="bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-sm px-4 py-2 rounded-lg transition-colors">
-            Save Changes
-          </button>
+
+          <div class="flex items-center gap-3">
+            <button
+              :disabled="isSavingGen"
+              @click="saveGeneral"
+              class="bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-60 flex items-center gap-2"
+            >
+              <Icon v-if="isSavingGen" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
+              Save Changes
+            </button>
+            <span v-if="genSaved" class="text-xs text-green-400 flex items-center gap-1">
+              <Icon icon="lucide:check" class="w-3.5 h-3.5" /> Saved
+            </span>
+          </div>
         </div>
 
-        <!-- Notifications -->
+        <!-- ─── Notifications ───────────────────────────────── -->
         <div v-if="activeTab === 'notifications'" class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
           <h3 class="text-sm font-semibold text-cream mb-4">Notification Preferences</h3>
           <div v-for="group in notifGroups" :key="group.group" class="mb-5">
             <div class="text-[10px] font-semibold uppercase tracking-widest text-cream-faint mb-3">{{ group.group }}</div>
-            <div v-for="item in group.items" :key="item.label" class="flex items-center justify-between py-3 border-b border-charcoal-700 last:border-0">
+            <div v-for="item in group.items" :key="item.key" class="flex items-center justify-between py-3 border-b border-charcoal-700 last:border-0">
               <div class="flex-1 pr-4">
                 <div class="text-sm text-cream">{{ item.label }}</div>
                 <div class="text-xs text-cream-faint mt-0.5">{{ item.desc }}</div>
               </div>
               <div class="flex items-center gap-4">
                 <label class="flex items-center gap-1.5 cursor-pointer">
-                  <input type="checkbox" :checked="item.email" class="accent-amber w-3.5 h-3.5" />
+                  <input type="checkbox" v-model="notifPrefs[item.key].email" class="accent-amber w-3.5 h-3.5" />
                   <span class="text-xs text-cream-faint">Email</span>
                 </label>
                 <label class="flex items-center gap-1.5 cursor-pointer">
-                  <input type="checkbox" :checked="item.inApp" class="accent-amber w-3.5 h-3.5" />
+                  <input type="checkbox" v-model="notifPrefs[item.key].in_app" class="accent-amber w-3.5 h-3.5" />
                   <span class="text-xs text-cream-faint">In-app</span>
                 </label>
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- Security -->
-        <div v-if="activeTab === 'security'" class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
-          <h3 class="text-sm font-semibold text-cream mb-4">Security Settings</h3>
-          <div v-for="sec in securitySettings" :key="sec.label" class="flex items-center justify-between py-4 border-b border-charcoal-700 last:border-0">
-            <div class="flex-1 pr-4">
-              <div class="text-sm font-medium text-cream">{{ sec.label }}</div>
-              <div class="text-xs text-cream-faint mt-0.5">{{ sec.desc }}</div>
-            </div>
-            <div class="shrink-0">
-              <button v-if="sec.action" class="text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-3 py-1.5 rounded-md transition-colors">
-                {{ sec.action }}
-              </button>
-              <label v-else class="app-toggle">
-                <input type="checkbox" :checked="sec.enabled" />
-                <span class="app-toggle-track"></span>
-              </label>
-            </div>
+          <div class="flex items-center gap-3 mt-4">
+            <button
+              :disabled="isSavingNotif"
+              @click="saveNotifPrefs"
+              class="bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-60 flex items-center gap-2"
+            >
+              <Icon v-if="isSavingNotif" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
+              Save Preferences
+            </button>
+            <span v-if="notifSaved" class="text-xs text-green-400 flex items-center gap-1">
+              <Icon icon="lucide:check" class="w-3.5 h-3.5" /> Saved
+            </span>
           </div>
         </div>
 
-        <!-- API -->
+        <!-- ─── Security ────────────────────────────────────── -->
+        <div v-if="activeTab === 'security'" class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 space-y-5">
+          <h3 class="text-sm font-semibold text-cream">Security Settings</h3>
+
+          <!-- Two-Factor Authentication -->
+          <div class="flex items-start justify-between py-4 border-b border-charcoal-700">
+            <div class="flex-1 pr-4">
+              <div class="text-sm font-medium text-cream">Two-Factor Authentication</div>
+              <div class="text-xs text-cream-faint mt-0.5">Require 2FA for all organization members</div>
+            </div>
+            <label class="app-toggle shrink-0">
+              <input type="checkbox" v-model="settings.require_mfa" />
+              <span class="app-toggle-track"></span>
+            </label>
+          </div>
+
+          <!-- IP Allowlist -->
+          <div>
+            <div class="text-sm font-medium text-cream mb-1">IP Allowlist</div>
+            <div class="text-xs text-cream-faint mb-3">Restrict access to specific IP ranges. Leave empty to allow all IPs. Enter one IP or CIDR block per line.</div>
+            <textarea
+              v-model="ipAllowlistText"
+              class="app-inp font-mono text-xs"
+              rows="4"
+              placeholder="192.168.1.0/24&#10;10.0.0.1"
+            ></textarea>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button
+              :disabled="isSavingSec"
+              @click="saveSecurity"
+              class="bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-60 flex items-center gap-2"
+            >
+              <Icon v-if="isSavingSec" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
+              Save Security Settings
+            </button>
+            <span v-if="secSaved" class="text-xs text-green-400 flex items-center gap-1">
+              <Icon icon="lucide:check" class="w-3.5 h-3.5" /> Saved
+            </span>
+          </div>
+        </div>
+
+        <!-- ─── API ─────────────────────────────────────────── -->
         <div v-if="activeTab === 'api'" class="space-y-4">
           <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
             <div class="flex items-center justify-between mb-4">
