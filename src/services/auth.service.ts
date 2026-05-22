@@ -22,6 +22,10 @@ export const AuthService = {
     return http.post<{ data: ILoginData }>('/api/v1/auth/mfa/verify', { user_id, otp })
   },
 
+  resendMfaCode(user_id: string) {
+    return http.post('/api/v1/auth/mfa/resend', { user_id })
+  },
+
   logout() {
     return http.post('/api/v1/auth/logout')
   },

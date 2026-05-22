@@ -28,6 +28,13 @@ const isLoadingSessions  = ref(false)
 const isRevokingAll      = ref(false)
 const revokingId         = ref<number | null>(null)
 
+// ── MFA state ──────────────────────────────────────────────────────────────────
+const mfaStep           = ref<'idle' | 'otp'>('idle')
+const mfaOtp            = ref('')
+const isMfaInitiating   = ref(false)
+const isMfaSubmitting   = ref(false)
+const isMfaDisabling    = ref(false)
+
 // ── computed ───────────────────────────────────────────────────────────────────
 const initials = computed(() => {
   if (!profile.value) return '?'
@@ -156,6 +163,50 @@ async function revokeAll() {
     notify('Failed to sign out sessions', 'error')
   } finally {
     isRevokingAll.value = false
+  }
+}
+
+// ── MFA handlers ──────────────────────────────────────────────────────────────
+async function initiateMfa() {
+  isMfaInitiating.value = true
+  try {
+    await ProfileService.initiateMfa()
+    mfaStep.value = 'otp'
+    mfaOtp.value = ''
+    notify('Verification code sent to your email', 'success')
+  } catch (err: any) {
+    notify(err?.response?.data?.message ?? 'Failed to send code', 'error')
+  } finally {
+    isMfaInitiating.value = false
+  }
+}
+
+async function confirmEnableMfa() {
+  if (mfaOtp.value.length !== 6) return
+  isMfaSubmitting.value = true
+  try {
+    const res = await ProfileService.enableMfa(mfaOtp.value)
+    profile.value = res.data.data
+    mfaStep.value = 'idle'
+    mfaOtp.value = ''
+    notify('Two-factor authentication enabled', 'success')
+  } catch (err: any) {
+    notify(err?.response?.data?.message ?? 'Invalid code', 'error')
+  } finally {
+    isMfaSubmitting.value = false
+  }
+}
+
+async function disableMfa() {
+  isMfaDisabling.value = true
+  try {
+    const res = await ProfileService.disableMfa()
+    profile.value = res.data.data
+    notify('Two-factor authentication disabled', 'success')
+  } catch (err: any) {
+    notify(err?.response?.data?.message ?? 'Failed to disable 2FA', 'error')
+  } finally {
+    isMfaDisabling.value = false
   }
 }
 
@@ -311,6 +362,79 @@ function fmtRelative(iso: string | null): string {
             >
               <Icon v-if="isSavingPw" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
               Update Password
+            </button>
+          </div>
+
+          <!-- Two-Factor Authentication -->
+          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+            <div class="flex items-start justify-between mb-1">
+              <h3 class="text-sm font-semibold text-cream">Two-Factor Authentication</h3>
+              <span
+                :class="[
+                  'text-[10px] font-semibold px-2 py-0.5 rounded-full',
+                  profile?.mfa_enabled
+                    ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                    : 'bg-charcoal-600 text-cream-muted border border-charcoal-500',
+                ]"
+              >
+                {{ profile?.mfa_enabled ? 'Enabled' : 'Disabled' }}
+              </span>
+            </div>
+            <p class="text-xs text-cream-faint mb-4">
+              Add an extra layer of security — a one-time code is emailed on every login.
+            </p>
+
+            <!-- OTP confirmation step -->
+            <div v-if="mfaStep === 'otp'" class="space-y-3">
+              <p class="text-xs text-cream-muted">Enter the 6-character code sent to your email:</p>
+              <input
+                v-model="mfaOtp"
+                class="app-inp tracking-widest font-mono text-center"
+                placeholder="A1B2C3"
+                maxlength="6"
+                autocomplete="one-time-code"
+                @keyup.enter="confirmEnableMfa"
+              />
+              <div class="flex gap-2">
+                <button
+                  @click="confirmEnableMfa"
+                  :disabled="mfaOtp.length !== 6 || isMfaSubmitting"
+                  class="flex items-center gap-2 bg-amber hover:bg-amber-light disabled:opacity-60 text-charcoal-900 font-semibold text-xs px-4 py-2 rounded-lg transition-colors"
+                >
+                  <Icon v-if="isMfaSubmitting" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
+                  Verify & Enable
+                </button>
+                <button
+                  @click="mfaStep = 'idle'"
+                  class="text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-4 py-2 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+
+            <!-- Enable button -->
+            <button
+              v-else-if="!profile?.mfa_enabled"
+              @click="initiateMfa"
+              :disabled="isMfaInitiating"
+              class="flex items-center gap-2 text-sm text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 disabled:opacity-50 px-4 py-2 rounded-lg transition-colors"
+            >
+              <Icon v-if="isMfaInitiating" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
+              <Icon v-else icon="lucide:shield-check" class="w-4 h-4" />
+              Enable 2FA
+            </button>
+
+            <!-- Disable button -->
+            <button
+              v-else
+              @click="disableMfa"
+              :disabled="isMfaDisabling"
+              class="flex items-center gap-2 text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 border border-red-500/20 disabled:opacity-50 px-4 py-2 rounded-lg transition-colors"
+            >
+              <Icon v-if="isMfaDisabling" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
+              <Icon v-else icon="lucide:shield-off" class="w-3.5 h-3.5" />
+              Disable 2FA
             </button>
           </div>
 

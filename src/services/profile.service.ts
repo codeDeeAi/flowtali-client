@@ -55,4 +55,16 @@ export const ProfileService = {
   revokeAllSessions() {
     return http.delete<{ data: { revoked: number } }>('/api/v1/profile/sessions')
   },
+
+  initiateMfa() {
+    return http.post('/api/v1/profile/mfa/initiate')
+  },
+
+  enableMfa(otp: string) {
+    return http.post<{ data: IUserProfile }>('/api/v1/profile/mfa/enable', { otp })
+  },
+
+  disableMfa() {
+    return http.delete<{ data: IUserProfile }>('/api/v1/profile/mfa/disable')
+  },
 }

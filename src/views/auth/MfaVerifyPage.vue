@@ -20,7 +20,7 @@ const { getError, setError, clearAllErrors } = useFormErrors()
 const otp = ref('')
 const userId = ref('')
 
-initLoaders({ isVerifying: false })
+initLoaders({ isVerifying: false, isResending: false })
 
 onMounted(() => {
   userId.value = String(route.query.user_id ?? '')
@@ -30,6 +30,18 @@ onMounted(() => {
 })
 
 const canSubmit = computed(() => otp.value.length === 6)
+
+const handleResend = async () => {
+  setLoader('isResending', true)
+  try {
+    await AuthService.resendMfaCode(userId.value)
+    notify('A new code has been sent to your email.', 'success')
+  } catch {
+    notify('Could not resend code. Please try signing in again.', 'error')
+  } finally {
+    setLoader('isResending', false)
+  }
+}
 
 const handleVerify = async () => {
   clearAllErrors()
@@ -113,7 +125,16 @@ const handleVerify = async () => {
 
       <p class="text-cream-faint text-sm text-center mt-5">
         Didn't receive a code?
-        <router-link :to="{ name: 'signin' }" class="text-amber hover:underline">Try signing in again</router-link>
+        <button
+          class="text-amber hover:underline disabled:opacity-50"
+          :disabled="getLoader('isResending')"
+          @click="handleResend"
+        >
+          <span v-if="getLoader('isResending')">Sending…</span>
+          <span v-else>Resend code</span>
+        </button>
+        ·
+        <router-link :to="{ name: 'signin' }" class="text-cream-muted hover:text-cream">Sign in again</router-link>
       </p>
     </div>
   </div>

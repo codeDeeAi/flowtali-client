@@ -1,6 +1,17 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 
+export interface IRevenueTrendItem {
+  month: string
+  year: number
+  billed: number
+  collected: number
+}
+
+const props = defineProps<{
+  trendData?: IRevenueTrendItem[]
+}>()
+
 type Period = '7D' | '1M' | '3M' | '1Y';
 
 const activePeriod = ref<Period>('1M');
@@ -13,7 +24,12 @@ const allData: Record<Period, number[]> = {
   '1Y': [30, 38, 45, 42, 55, 48, 52, 62, 58, 68, 72, 95],
 };
 
-const data = computed(() => allData[activePeriod.value]);
+const data = computed(() => {
+  if (props.trendData && props.trendData.length > 0) {
+    return props.trendData.map(d => d.collected)
+  }
+  return allData[activePeriod.value]
+})
 
 const chartW = 300;
 const chartH = 120;
@@ -24,7 +40,7 @@ const paddingBottom = 8;
 
 const bars = computed(() => {
   const values = data.value;
-  const maxVal = Math.max(...values);
+  const maxVal = Math.max(...values, 1);
   const totalBars = values.length;
   const availableW = chartW - paddingX * 2;
   const barW = Math.floor(availableW / totalBars) - barGap;
@@ -50,7 +66,7 @@ const bars = computed(() => {
         <h3 class="text-sm font-semibold text-cream">Revenue Overview</h3>
         <p class="text-xs text-cream-faint mt-0.5">Invoice payments received</p>
       </div>
-      <div class="flex items-center gap-0.5 bg-charcoal-700 rounded-lg p-0.5">
+      <div v-if="!trendData" class="flex items-center gap-0.5 bg-charcoal-700 rounded-lg p-0.5">
         <button
           v-for="p in periods"
           :key="p"

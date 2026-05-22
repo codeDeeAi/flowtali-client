@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { Icon } from '@iconify/vue';
+import { useAuthStore } from '@/stores/auth';
+import { AnalyticsService, type IAnalyticsData } from '@/services/analytics.service';
 import StatCard from './components/StatCard.vue';
 import RevenueChart from './components/RevenueChart.vue';
 import RecentInvoices from './components/RecentInvoices.vue';
@@ -8,17 +11,84 @@ import InvoiceStatusChart from './components/InvoiceStatusChart.vue';
 import QuickActions from './components/QuickActions.vue';
 import PlanUsage from './components/PlanUsage.vue';
 
+const router    = useRouter()
+const authStore = useAuthStore()
+
 const hour = new Date().getHours();
 const greeting = computed(() =>
   hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
 );
 
-const stats = [
-  { title: 'Total Revenue',   value: '$48,200', change: 12,  icon: 'lucide:dollar-sign',  color: 'amber' as const, progress: 68 },
-  { title: 'Outstanding',     value: '$12,350', change: -3,  icon: 'lucide:clock',         color: 'red'   as const, progress: 35 },
-  { title: 'Invoices Sent',   value: '47',      change: 8,   icon: 'lucide:send',          color: 'blue'  as const, progress: 52 },
-  { title: 'Active Clients',  value: '18',      change: 22,  icon: 'lucide:users',         color: 'green' as const, progress: 80 },
-];
+const userName  = computed(() => authStore.getUser?.first_name ?? 'there')
+const orgName   = computed(() => authStore.getCurrentOrganization?.name ?? 'your organization')
+
+const analytics  = ref<IAnalyticsData | null>(null)
+const isLoading  = ref(true)
+
+function fmt(val: number) {
+  if (val >= 1_000_000) return `$${(val / 1_000_000).toFixed(1)}M`
+  if (val >= 1_000)     return `$${(val / 1_000).toFixed(1)}K`
+  return `$${val.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+}
+
+const stats = computed(() => {
+  const k = analytics.value?.kpis
+  const sb = analytics.value?.status_breakdown
+
+  const activeClients = sb
+    ? new Set([
+        ...Object.values(sb).flatMap(() => []),
+      ]).size
+    : 0
+
+  return [
+    {
+      title: 'Total Revenue',
+      value: k ? fmt(k.total_revenue.value) : '—',
+      change: k?.total_revenue.change_pct ?? 0,
+      icon: 'lucide:dollar-sign',
+      color: 'amber' as const,
+      progress: k ? Math.min(Math.round((k.total_revenue.value / Math.max(k.total_revenue.value + k.outstanding.value, 1)) * 100), 100) : 0,
+    },
+    {
+      title: 'Outstanding',
+      value: k ? fmt(k.outstanding.value) : '—',
+      change: k?.outstanding.change_pct ?? 0,
+      icon: 'lucide:clock',
+      color: 'red' as const,
+      progress: k ? Math.min(Math.round((k.outstanding.value / Math.max(k.total_revenue.value + k.outstanding.value, 1)) * 100), 100) : 0,
+    },
+    {
+      title: 'Invoices Sent',
+      value: k ? String(k.total_invoices.value) : '—',
+      change: k?.total_invoices.change_pct ?? 0,
+      icon: 'lucide:send',
+      color: 'blue' as const,
+      progress: k ? Math.min(k.total_invoices.value, 100) : 0,
+    },
+    {
+      title: 'Collection Rate',
+      value: k ? `${k.collection_rate.value}%` : '—',
+      change: k?.collection_rate.change_pct ?? 0,
+      icon: 'lucide:trending-up',
+      color: 'green' as const,
+      progress: k ? Math.min(Math.round(k.collection_rate.value), 100) : 0,
+    },
+  ]
+})
+
+onMounted(async () => {
+  const orgId = authStore.getCurrentOrganization?.id
+  if (!orgId) { isLoading.value = false; return }
+  try {
+    const res = await AnalyticsService.get(orgId, '30d')
+    analytics.value = res.data.data
+  } catch {
+    // analytics fails gracefully — cards show '—'
+  } finally {
+    isLoading.value = false
+  }
+})
 </script>
 
 <template>
@@ -28,20 +98,19 @@ const stats = [
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
         <h1 class="text-xl md:text-2xl font-bold text-cream">
-          {{ greeting }}, Ada 👋
+          {{ greeting }}, {{ userName }} 👋
         </h1>
         <p class="text-sm text-cream-muted mt-1">
-          Here's what's happening with Acme Design Studio today
+          Here's what's happening with {{ orgName }} today
         </p>
       </div>
       <div class="flex items-center gap-2 shrink-0">
-        <button class="flex items-center gap-2 bg-charcoal-800 border border-charcoal-700 hover:border-charcoal-500 text-cream-muted hover:text-cream text-sm px-3 py-2 rounded-lg transition-colors">
-          <Icon icon="lucide:calendar" class="w-4 h-4" />
-          <span>This Month</span>
-        </button>
-        <button class="flex items-center gap-1.5 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-sm px-4 py-2 rounded-lg transition-colors">
+        <button
+          class="flex items-center gap-1.5 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
+          @click="router.push({ name: 'invoices.create' })"
+        >
           <Icon icon="lucide:plus" class="w-4 h-4" />
-          <span>Create</span>
+          <span>New Invoice</span>
         </button>
       </div>
     </div>
@@ -60,13 +129,13 @@ const stats = [
 
       <!-- Left column (2/3) -->
       <div class="xl:col-span-2 flex flex-col gap-4">
-        <RevenueChart />
+        <RevenueChart :trend-data="analytics?.revenue_trend" />
         <RecentInvoices />
       </div>
 
       <!-- Right column (1/3) -->
       <div class="flex flex-col gap-4">
-        <InvoiceStatusChart />
+        <InvoiceStatusChart :breakdown="analytics?.status_breakdown" />
         <QuickActions />
         <PlanUsage />
       </div>

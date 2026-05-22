@@ -1,14 +1,36 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-const segments = [
-  { label: 'Paid',    value: 28, color: '#4ade80' },
-  { label: 'Due',     value: 11, color: '#e8a83e' },
-  { label: 'Overdue', value: 5,  color: '#f87171' },
-  { label: 'Draft',   value: 3,  color: '#6b7280' },
-];
+export interface IStatusBreakdown {
+  paid:    { count: number; amount: number }
+  sent:    { count: number; amount: number }
+  overdue: { count: number; amount: number }
+  draft:   { count: number; amount: number }
+  void:    { count: number; amount: number }
+}
 
-const total = segments.reduce((sum, s) => sum + s.value, 0);
+const props = defineProps<{
+  breakdown?: IStatusBreakdown
+}>()
+
+const segments = computed(() => {
+  if (props.breakdown) {
+    return [
+      { label: 'Paid',    value: props.breakdown.paid.count,    color: '#4ade80' },
+      { label: 'Sent',    value: props.breakdown.sent.count,    color: '#38bdf8' },
+      { label: 'Overdue', value: props.breakdown.overdue.count, color: '#f87171' },
+      { label: 'Draft',   value: props.breakdown.draft.count,   color: '#6b7280' },
+    ].filter(s => s.value > 0)
+  }
+  return [
+    { label: 'Paid',    value: 28, color: '#4ade80' },
+    { label: 'Due',     value: 11, color: '#e8a83e' },
+    { label: 'Overdue', value: 5,  color: '#f87171' },
+    { label: 'Draft',   value: 3,  color: '#6b7280' },
+  ]
+})
+
+const total = computed(() => segments.value.reduce((sum, s) => sum + s.value, 0))
 
 const R = 40;
 const cx = 50;
@@ -18,9 +40,11 @@ const gap = 2.5;
 const circumference = 2 * Math.PI * R;
 
 const arcs = computed(() => {
-  let offset = -(circumference / 4); // start from top
-  return segments.map(seg => {
-    const length = (seg.value / total) * circumference - gap;
+  let offset = -(circumference / 4);
+  return segments.value.map(seg => {
+    const length = total.value > 0
+      ? (seg.value / total.value) * circumference - gap
+      : 0;
     const dasharray = `${length} ${circumference}`;
     const dashoffset = offset;
     offset -= length + gap;
@@ -39,8 +63,13 @@ const arcs = computed(() => {
       </div>
     </div>
 
+    <!-- Empty state -->
+    <div v-if="total === 0" class="flex items-center justify-center h-28 text-xs text-cream-faint">
+      No invoices yet
+    </div>
+
     <!-- Donut chart + legend -->
-    <div class="flex items-center gap-6">
+    <div v-else class="flex items-center gap-6">
       <!-- SVG Donut -->
       <div class="relative shrink-0">
         <svg viewBox="0 0 100 100" class="w-28 h-28 -rotate-0">
@@ -58,7 +87,6 @@ const arcs = computed(() => {
             stroke-linecap="butt"
           />
         </svg>
-        <!-- Center label -->
         <div class="absolute inset-0 flex flex-col items-center justify-center">
           <span class="text-2xl font-bold text-cream leading-none">{{ total }}</span>
           <span class="text-[10px] text-cream-faint mt-0.5">total</span>
