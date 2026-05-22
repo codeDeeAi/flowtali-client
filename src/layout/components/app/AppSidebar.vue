@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { Icon } from '@iconify/vue';
 import { useAuthStore } from '@/stores/auth';
+import { usePermissions } from '@/composables/usePermissions';
 import { OrgService } from '@/services/org.service';
 import { AuthService } from '@/services/auth.service';
 import type { IOrganization } from '@/types/auth.types';
@@ -18,7 +19,8 @@ defineEmits<{
 }>();
 const route = useRoute();
 const router = useRouter();
-const authStore = useAuthStore();
+const authStore    = useAuthStore();
+const { can, isBusinessOrg } = usePermissions();
 
 // ── User menu ────────────────────────────────────────────────
 const userMenuOpen = ref(false);
@@ -105,7 +107,6 @@ interface NavItem {
   name: string;
   icon: string;
   to: string;
-  badge?: number;
 }
 
 interface NavSection {
@@ -113,39 +114,54 @@ interface NavSection {
   items: NavItem[];
 }
 
-const navSections: NavSection[] = [
-  {
+const navSections = computed<NavSection[]>(() => {
+  const sections: NavSection[] = []
+
+  // ── Always visible ────────────────────────────────────
+  sections.push({
     items: [
       { name: 'Dashboard', icon: 'lucide:layout-dashboard', to: '/app/dashboard' },
     ],
-  },
-  {
-    label: 'Documents',
-    items: [
-      { name: 'Invoices', icon: 'lucide:file-text', to: '/app/invoices', badge: 12 },
-      { name: 'Letterheads', icon: 'lucide:file', to: '/app/letterheads' },
-      { name: 'Clients', icon: 'lucide:users', to: '/app/clients' },
-    ],
-  },
-  {
-    label: 'Organization',
-    items: [
-      { name: 'Members', icon: 'lucide:users-2', to: '/app/members' },
-      { name: 'Roles & Permissions', icon: 'lucide:shield', to: '/app/roles' },
-      { name: 'Org Preferences', icon: 'lucide:building-2', to: '/app/org-preferences' },
-      { name: 'Audit Logs', icon: 'lucide:scroll-text', to: '/app/audit-logs' },
-    ],
-  },
-  {
+  })
+
+  // ── Documents ─────────────────────────────────────────
+  const docItems: NavItem[] = [
+    { name: 'Invoices',     icon: 'lucide:file-text', to: '/app/invoices' },
+    { name: 'Letterheads',  icon: 'lucide:file',      to: '/app/letterheads' },
+  ]
+  if (can('clients.read')) {
+    docItems.push({ name: 'Clients', icon: 'lucide:users', to: '/app/clients' })
+  }
+  sections.push({ label: 'Documents', items: docItems })
+
+  // ── Organization (business only) ─────────────────────
+  const orgItems: NavItem[] = []
+  if (isBusinessOrg.value) {
+    if (can('members.read')) {
+      orgItems.push({ name: 'Members', icon: 'lucide:users-2', to: '/app/members' })
+    }
+    if (can('roles.read')) {
+      orgItems.push({ name: 'Roles & Permissions', icon: 'lucide:shield', to: '/app/roles' })
+    }
+  }
+  orgItems.push({ name: 'Org Preferences', icon: 'lucide:building-2', to: '/app/org-preferences' })
+  orgItems.push({ name: 'Audit Logs', icon: 'lucide:scroll-text', to: '/app/audit-logs' })
+
+  sections.push({ label: isBusinessOrg.value ? 'Organization' : 'Workspace', items: orgItems })
+
+  // ── Account ───────────────────────────────────────────
+  sections.push({
     label: 'Account',
     items: [
-      { name: 'Analytics', icon: 'lucide:bar-chart-2', to: '/app/analytics' },
-      { name: 'Subscription', icon: 'lucide:credit-card', to: '/app/subscription' },
-      { name: 'Settings', icon: 'lucide:settings', to: '/app/settings' },
-      { name: 'My Profile', icon: 'lucide:user', to: '/app/profile' },
+      { name: 'Analytics',    icon: 'lucide:bar-chart-2',  to: '/app/analytics' },
+      { name: 'Subscription', icon: 'lucide:credit-card',  to: '/app/subscription' },
+      { name: 'Settings',     icon: 'lucide:settings',     to: '/app/settings' },
+      { name: 'My Profile',   icon: 'lucide:user',         to: '/app/profile' },
     ],
-  },
-];
+  })
+
+  return sections
+})
 
 function isActive(to: string) {
   return route.path.startsWith(to);

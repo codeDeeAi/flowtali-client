@@ -48,6 +48,8 @@ declare module 'vue-router' {
   interface RouteMeta {
     layout?: TLayout
     requiresAuth?: boolean
+    permission?: string          // must have this permission in current org
+    requiresBusinessOrg?: boolean // must be a business org
   }
 }
 
@@ -83,7 +85,7 @@ const guestOnlyRoutes = new Set([
 ])
 
 router.beforeEach((to) => {
-  const authStore = useAuthStore()
+  const authStore  = useAuthStore()
   const isLoggedIn = authStore.isLoggedIn
 
   // Redirect authenticated users away from guest-only pages
@@ -94,6 +96,23 @@ router.beforeEach((to) => {
   // Redirect unauthenticated users away from protected pages
   if (to.meta.requiresAuth && !isLoggedIn) {
     return { name: 'signin', query: { redirect: to.fullPath } }
+  }
+
+  if (!isLoggedIn) return // No org checks needed for public routes
+
+  const org = authStore.getCurrentOrganization
+
+  // Block personal orgs from business-only pages
+  if (to.meta.requiresBusinessOrg && org?.type !== 'business') {
+    return { name: 'dashboard' }
+  }
+
+  // Block users who lack the required permission
+  if (to.meta.permission && org) {
+    const hasPermission = (org.permissions ?? []).includes(to.meta.permission)
+    if (!hasPermission) {
+      return { name: 'dashboard' }
+    }
   }
 })
 

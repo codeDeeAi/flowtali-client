@@ -2,27 +2,37 @@ import { layouts } from '@/types/layout'
 
 const meta = { layout: layouts.App, requiresAuth: true }
 
+// Shorthand helpers
+const p  = (permission: string) => ({ ...meta, permission })
+const bo = (permission?: string) => ({ ...meta, requiresBusinessOrg: true, ...(permission ? { permission } : {}) })
+
 export const appRoutes = [
   {
     path: '/app',
     meta,
     children: [
       { path: 'dashboard',        name: 'dashboard',        component: () => import('@/views/dashboard/DashboardView.vue'),             meta },
+
       { path: 'invoices',              name: 'invoices',        component: () => import('@/views/invoices/InvoicesView.vue'),        meta },
       { path: 'invoices/create',       name: 'invoices.create', component: () => import('@/views/invoices/InvoiceCreatePage.vue'),   meta },
       { path: 'invoices/:id',          name: 'invoices.view',   component: () => import('@/views/invoices/InvoiceViewPage.vue'),     meta },
       { path: 'invoices/:id/edit',     name: 'invoices.edit',   component: () => import('@/views/invoices/InvoiceEditPage.vue'),     meta },
+
       { path: 'letterheads',           name: 'letterheads',        component: () => import('@/views/letterheads/LetterheadsView.vue'),       meta },
       { path: 'letterheads/create',    name: 'letterheads.create', component: () => import('@/views/letterheads/LetterheadCreatePage.vue'),  meta },
       { path: 'letterheads/:id',       name: 'letterheads.view',   component: () => import('@/views/letterheads/LetterheadViewPage.vue'),    meta },
       { path: 'letterheads/:id/edit',  name: 'letterheads.edit',   component: () => import('@/views/letterheads/LetterheadEditPage.vue'),    meta },
-      { path: 'clients',          name: 'clients',          component: () => import('@/views/clients/ClientsView.vue'),                 meta },
-      { path: 'clients/create',   name: 'clients.create',   component: () => import('@/views/clients/ClientCreatePage.vue'),             meta },
-      { path: 'clients/:id',      name: 'clients.view',     component: () => import('@/views/clients/ClientViewPage.vue'),               meta },
-      { path: 'clients/:id/edit', name: 'clients.edit',     component: () => import('@/views/clients/ClientEditPage.vue'),               meta },
-      { path: 'members',          name: 'members',          component: () => import('@/views/members/MembersView.vue'),                 meta },
-      { path: 'members/:id',      name: 'members.view',     component: () => import('@/views/members/MemberViewPage.vue'),               meta },
-      { path: 'roles',            name: 'roles',            component: () => import('@/views/roles/RolesView.vue'),                     meta },
+
+      { path: 'clients',          name: 'clients',          component: () => import('@/views/clients/ClientsView.vue'),       meta: p('clients.read') },
+      { path: 'clients/create',   name: 'clients.create',   component: () => import('@/views/clients/ClientCreatePage.vue'),  meta: p('clients.create') },
+      { path: 'clients/:id',      name: 'clients.view',     component: () => import('@/views/clients/ClientViewPage.vue'),    meta: p('clients.read') },
+      { path: 'clients/:id/edit', name: 'clients.edit',     component: () => import('@/views/clients/ClientEditPage.vue'),    meta: p('clients.update') },
+
+      { path: 'members',          name: 'members',          component: () => import('@/views/members/MembersView.vue'),       meta: bo('members.read') },
+      { path: 'members/:id',      name: 'members.view',     component: () => import('@/views/members/MemberViewPage.vue'),    meta: bo('members.read') },
+
+      { path: 'roles',            name: 'roles',            component: () => import('@/views/roles/RolesView.vue'),            meta: bo('roles.read') },
+
       { path: 'org-preferences',  name: 'org-preferences',  component: () => import('@/views/org-preferences/OrgPreferencesView.vue'), meta },
       { path: 'audit-logs',       name: 'audit-logs',       component: () => import('@/views/audit-logs/AuditLogsView.vue'),           meta },
       { path: 'analytics',        name: 'analytics',        component: () => import('@/views/analytics/AnalyticsView.vue'),             meta },
