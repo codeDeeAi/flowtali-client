@@ -4,18 +4,20 @@ import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { OrgPreferencesService } from '@/services/org-preferences.service'
 import { MediaService } from '@/services/media.service'
-import type { IOrgStamp, IOrgBrandColor, IOrgSignature, IOrgLogo } from '@/types/org-preferences.types'
+import type { IOrgStamp, IOrgBrandColor, IOrgSignature, IOrgLogo, IOrgInvoiceProfile, IOrgBankAccount } from '@/types/org-preferences.types'
 
 const authStore = useAuthStore()
 const orgId = computed(() => authStore.currentOrganization?.id ?? '')
 const orgName = computed(() => authStore.currentOrganization?.name ?? 'your organization')
 
 // ── State ─────────────────────────────────────────────────────────────────────
-const loading     = ref(true)
-const stamps      = ref<IOrgStamp[]>([])
-const brandColors = ref<IOrgBrandColor[]>([])
-const signatures  = ref<IOrgSignature[]>([])
-const orgLogos    = ref<IOrgLogo[]>([])
+const loading         = ref(true)
+const stamps          = ref<IOrgStamp[]>([])
+const brandColors     = ref<IOrgBrandColor[]>([])
+const signatures      = ref<IOrgSignature[]>([])
+const orgLogos        = ref<IOrgLogo[]>([])
+const invoiceProfiles = ref<IOrgInvoiceProfile[]>([])
+const bankAccounts    = ref<IOrgBankAccount[]>([])
 
 // ── Stamp form ─────────────────────────────────────────────────────────────────
 const showStampForm  = ref(false)
@@ -60,10 +62,12 @@ async function loadPreferences() {
   loading.value = true
   try {
     const { data } = await OrgPreferencesService.get(orgId.value)
-    stamps.value      = data.data.stamps       ?? []
-    brandColors.value = data.data.brand_colors ?? []
-    signatures.value  = data.data.signatures   ?? []
-    orgLogos.value    = data.data.logos        ?? []
+    stamps.value          = data.data.stamps           ?? []
+    brandColors.value     = data.data.brand_colors     ?? []
+    invoiceProfiles.value = data.data.invoice_profiles ?? []
+    bankAccounts.value    = data.data.bank_accounts    ?? []
+    signatures.value      = data.data.signatures       ?? []
+    orgLogos.value        = data.data.logos            ?? []
   } finally {
     loading.value = false
   }
@@ -318,6 +322,133 @@ async function deleteLogo(mediaId: string) {
     orgLogos.value = orgLogos.value.filter(l => l.id !== mediaId)
   } finally {
     deletingId.value = null
+  }
+}
+
+// ── Invoice Profiles ──────────────────────────────────────────────────────────
+const showProfileForm  = ref(false)
+const profileSaving    = ref(false)
+const editProfileIndex = ref<number | null>(null)
+const profileForm      = ref<Omit<IOrgInvoiceProfile, 'id'>>({
+  name: '', tagline: '', email: '', phone: '', website: '', address: '', logo_url: ''
+})
+
+function openAddProfile() {
+  editProfileIndex.value = null
+  profileForm.value = { name: '', tagline: '', email: '', phone: '', website: '', address: '', logo_url: '' }
+  showProfileForm.value = true
+}
+
+function openEditProfile(index: number) {
+  editProfileIndex.value = index
+  const p = invoiceProfiles.value[index]
+  if (!p) return
+  profileForm.value = {
+    name: p.name, tagline: p.tagline ?? '', email: p.email ?? '',
+    phone: p.phone ?? '', website: p.website ?? '', address: p.address ?? '', logo_url: p.logo_url ?? ''
+  }
+  showProfileForm.value = true
+}
+
+async function saveProfile() {
+  if (!profileForm.value.name.trim()) return
+  const list = [...invoiceProfiles.value]
+  const entry: IOrgInvoiceProfile = {
+    id: editProfileIndex.value !== null ? (list[editProfileIndex.value]?.id ?? crypto.randomUUID()) : crypto.randomUUID(),
+    name:     profileForm.value.name.trim(),
+    tagline:  profileForm.value.tagline?.trim() || null,
+    email:    profileForm.value.email?.trim() || null,
+    phone:    profileForm.value.phone?.trim() || null,
+    website:  profileForm.value.website?.trim() || null,
+    address:  profileForm.value.address?.trim() || null,
+    logo_url: profileForm.value.logo_url?.trim() || null,
+  }
+  if (editProfileIndex.value !== null) list[editProfileIndex.value] = entry
+  else list.push(entry)
+
+  profileSaving.value = true
+  try {
+    const { data } = await OrgPreferencesService.updateInvoiceProfiles(orgId.value, list)
+    invoiceProfiles.value = data.data.invoice_profiles
+    showProfileForm.value = false
+  } finally {
+    profileSaving.value = false
+  }
+}
+
+async function deleteProfile(index: number) {
+  const list = invoiceProfiles.value.filter((_, i) => i !== index)
+  profileSaving.value = true
+  try {
+    const { data } = await OrgPreferencesService.updateInvoiceProfiles(orgId.value, list)
+    invoiceProfiles.value = data.data.invoice_profiles
+  } finally {
+    profileSaving.value = false
+  }
+}
+
+// ── Bank Accounts ─────────────────────────────────────────────────────────────
+const showBankForm  = ref(false)
+const bankSaving    = ref(false)
+const editBankIndex = ref<number | null>(null)
+const bankForm      = ref<Omit<IOrgBankAccount, 'id'>>({
+  label: '', bank_name: '', account_name: '', account_number: '', sort_code: '', iban: '', swift: '', currency: '', notes: ''
+})
+
+function openAddBank() {
+  editBankIndex.value = null
+  bankForm.value = { label: '', bank_name: '', account_name: '', account_number: '', sort_code: '', iban: '', swift: '', currency: '', notes: '' }
+  showBankForm.value = true
+}
+
+function openEditBank(index: number) {
+  editBankIndex.value = index
+  const b = bankAccounts.value[index]
+  if (!b) return
+  bankForm.value = {
+    label: b.label, bank_name: b.bank_name ?? '', account_name: b.account_name ?? '',
+    account_number: b.account_number ?? '', sort_code: b.sort_code ?? '',
+    iban: b.iban ?? '', swift: b.swift ?? '', currency: b.currency ?? '', notes: b.notes ?? ''
+  }
+  showBankForm.value = true
+}
+
+async function saveBank() {
+  if (!bankForm.value.label.trim()) return
+  const list = [...bankAccounts.value]
+  const entry: IOrgBankAccount = {
+    id: editBankIndex.value !== null ? (list[editBankIndex.value]?.id ?? crypto.randomUUID()) : crypto.randomUUID(),
+    label:          bankForm.value.label.trim(),
+    bank_name:      bankForm.value.bank_name?.trim() || null,
+    account_name:   bankForm.value.account_name?.trim() || null,
+    account_number: bankForm.value.account_number?.trim() || null,
+    sort_code:      bankForm.value.sort_code?.trim() || null,
+    iban:           bankForm.value.iban?.trim() || null,
+    swift:          bankForm.value.swift?.trim() || null,
+    currency:       bankForm.value.currency?.trim() || null,
+    notes:          bankForm.value.notes?.trim() || null,
+  }
+  if (editBankIndex.value !== null) list[editBankIndex.value] = entry
+  else list.push(entry)
+
+  bankSaving.value = true
+  try {
+    const { data } = await OrgPreferencesService.updateBankAccounts(orgId.value, list)
+    bankAccounts.value = data.data.bank_accounts
+    showBankForm.value = false
+  } finally {
+    bankSaving.value = false
+  }
+}
+
+async function deleteBank(index: number) {
+  const list = bankAccounts.value.filter((_, i) => i !== index)
+  bankSaving.value = true
+  try {
+    const { data } = await OrgPreferencesService.updateBankAccounts(orgId.value, list)
+    bankAccounts.value = data.data.bank_accounts
+  } finally {
+    bankSaving.value = false
   }
 }
 </script>
@@ -706,6 +837,203 @@ async function deleteLogo(mediaId: string) {
                 <Icon v-if="logoUploading" icon="lucide:loader-circle" class="w-3 h-3 animate-spin" />
                 {{ logoSubmitting ? 'Saving…' : logoUploading ? 'Uploading…' : 'Save Logo' }}
               </button>
+            </div>
+          </div>
+        </Transition>
+      </div>
+
+      <!-- ── Invoice Quick-Fill Profiles ─────────────────────────────────── -->
+      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 lg:col-span-2">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-sm font-semibold text-cream">Invoice Quick-Fill Profiles</h3>
+            <p class="text-[11px] text-cream-faint mt-0.5">Saved "From" presets — load any profile when creating an invoice to pre-fill your details.</p>
+          </div>
+          <button
+            class="flex items-center gap-1.5 text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-2.5 py-1.5 rounded-md transition-colors shrink-0"
+            @click="openAddProfile"
+          >
+            <Icon icon="lucide:plus" class="w-3 h-3" /> Add Profile
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+          <div
+            v-for="(profile, i) in invoiceProfiles" :key="profile.id"
+            class="group relative flex flex-col gap-1.5 p-3.5 border border-charcoal-700 hover:border-charcoal-500 rounded-lg cursor-pointer transition-colors"
+            @click="openEditProfile(i)"
+          >
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <div class="text-sm font-semibold text-cream truncate">{{ profile.name }}</div>
+                <div v-if="profile.tagline" class="text-[11px] text-cream-faint truncate">{{ profile.tagline }}</div>
+              </div>
+              <button
+                class="w-5 h-5 hidden group-hover:flex items-center justify-center rounded text-cream-faint hover:text-red-400 hover:bg-red-500/10 transition-colors shrink-0"
+                @click.stop="deleteProfile(i)"
+              >
+                <Icon icon="lucide:x" class="w-3 h-3" />
+              </button>
+            </div>
+            <div class="grid grid-cols-1 gap-0.5 text-[11px] text-cream-faint">
+              <span v-if="profile.email" class="flex items-center gap-1 truncate"><Icon icon="lucide:mail" class="w-3 h-3 shrink-0" />{{ profile.email }}</span>
+              <span v-if="profile.phone" class="flex items-center gap-1 truncate"><Icon icon="lucide:phone" class="w-3 h-3 shrink-0" />{{ profile.phone }}</span>
+              <span v-if="profile.website" class="flex items-center gap-1 truncate"><Icon icon="lucide:globe" class="w-3 h-3 shrink-0" />{{ profile.website }}</span>
+            </div>
+          </div>
+          <div v-if="!invoiceProfiles.length" class="col-span-full text-center py-6 text-xs text-cream-faint">
+            No profiles yet. Add one to speed up invoice creation.
+          </div>
+        </div>
+
+        <Transition name="slide-down">
+          <div v-if="showProfileForm" class="mt-4 p-4 bg-charcoal-900 border border-charcoal-600 rounded-lg space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-medium text-cream">{{ editProfileIndex !== null ? 'Edit' : 'New' }} Profile</span>
+              <button class="text-cream-faint hover:text-cream" @click="showProfileForm = false">
+                <Icon icon="lucide:x" class="w-4 h-4" />
+              </button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="sm:col-span-2">
+                <label class="text-xs text-cream-faint mb-1 block">Profile Name <span class="text-red-400">*</span></label>
+                <input v-model="profileForm.name" type="text" placeholder="e.g. Acme Design Studio" class="app-inp w-full text-sm" />
+              </div>
+              <div class="sm:col-span-2">
+                <label class="text-xs text-cream-faint mb-1 block">Tagline / Role</label>
+                <input v-model="profileForm.tagline" type="text" placeholder="e.g. Creative Agency & Digital Studio" class="app-inp w-full text-sm" />
+              </div>
+              <div>
+                <label class="text-xs text-cream-faint mb-1 block">Email</label>
+                <input v-model="profileForm.email" type="email" placeholder="hello@studio.com" class="app-inp w-full text-sm" />
+              </div>
+              <div>
+                <label class="text-xs text-cream-faint mb-1 block">Phone</label>
+                <input v-model="profileForm.phone" type="text" placeholder="+1 415 555 0199" class="app-inp w-full text-sm" />
+              </div>
+              <div>
+                <label class="text-xs text-cream-faint mb-1 block">Website</label>
+                <input v-model="profileForm.website" type="text" placeholder="www.studio.com" class="app-inp w-full text-sm" />
+              </div>
+              <div>
+                <label class="text-xs text-cream-faint mb-1 block">Logo URL</label>
+                <input v-model="profileForm.logo_url" type="text" placeholder="https://…" class="app-inp w-full text-sm" />
+              </div>
+              <div class="sm:col-span-2">
+                <label class="text-xs text-cream-faint mb-1 block">Address</label>
+                <textarea v-model="profileForm.address" rows="2" placeholder="123 Design Street, San Francisco CA 94105" class="app-inp w-full text-sm resize-none"></textarea>
+              </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-1">
+              <button class="text-xs text-cream-muted hover:text-cream px-3 py-1.5 rounded-md hover:bg-charcoal-700 transition-colors" @click="showProfileForm = false">Cancel</button>
+              <button
+                class="text-xs bg-amber hover:bg-amber-light text-charcoal-900 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
+                :disabled="profileSaving || !profileForm.name.trim()"
+                @click="saveProfile"
+              >{{ profileSaving ? 'Saving…' : 'Save Profile' }}</button>
+            </div>
+          </div>
+        </Transition>
+      </div>
+
+      <!-- ── Bank Accounts ────────────────────────────────────────────────── -->
+      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 lg:col-span-2">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-sm font-semibold text-cream">Bank Accounts</h3>
+            <p class="text-[11px] text-cream-faint mt-0.5">Saved bank details — select one when creating an invoice to pre-fill payment info.</p>
+          </div>
+          <button
+            class="flex items-center gap-1.5 text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-2.5 py-1.5 rounded-md transition-colors shrink-0"
+            @click="openAddBank"
+          >
+            <Icon icon="lucide:plus" class="w-3 h-3" /> Add Account
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+          <div
+            v-for="(bank, i) in bankAccounts" :key="bank.id"
+            class="group relative flex flex-col gap-1.5 p-3.5 border border-charcoal-700 hover:border-charcoal-500 rounded-lg cursor-pointer transition-colors"
+            @click="openEditBank(i)"
+          >
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <div class="text-sm font-semibold text-cream truncate">{{ bank.label }}</div>
+                <div v-if="bank.bank_name" class="text-[11px] text-cream-faint truncate">{{ bank.bank_name }}</div>
+              </div>
+              <button
+                class="w-5 h-5 hidden group-hover:flex items-center justify-center rounded text-cream-faint hover:text-red-400 hover:bg-red-500/10 transition-colors shrink-0"
+                @click.stop="deleteBank(i)"
+              >
+                <Icon icon="lucide:x" class="w-3 h-3" />
+              </button>
+            </div>
+            <div class="grid grid-cols-1 gap-0.5 text-[11px] font-mono text-cream-faint">
+              <span v-if="bank.account_name">{{ bank.account_name }}</span>
+              <span v-if="bank.account_number">Acct: {{ bank.account_number }}</span>
+              <span v-if="bank.iban">IBAN: {{ bank.iban }}</span>
+              <span v-if="bank.sort_code">Sort: {{ bank.sort_code }}</span>
+            </div>
+          </div>
+          <div v-if="!bankAccounts.length" class="col-span-full text-center py-6 text-xs text-cream-faint">
+            No bank accounts yet.
+          </div>
+        </div>
+
+        <Transition name="slide-down">
+          <div v-if="showBankForm" class="mt-4 p-4 bg-charcoal-900 border border-charcoal-600 rounded-lg space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-medium text-cream">{{ editBankIndex !== null ? 'Edit' : 'New' }} Bank Account</span>
+              <button class="text-cream-faint hover:text-cream" @click="showBankForm = false">
+                <Icon icon="lucide:x" class="w-4 h-4" />
+              </button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs text-cream-faint mb-1 block">Label <span class="text-red-400">*</span></label>
+                <input v-model="bankForm.label" type="text" placeholder="e.g. Main GBP Account" class="app-inp w-full text-sm" />
+              </div>
+              <div>
+                <label class="text-xs text-cream-faint mb-1 block">Currency</label>
+                <input v-model="bankForm.currency" type="text" placeholder="GBP / USD / EUR" class="app-inp w-full text-sm" />
+              </div>
+              <div>
+                <label class="text-xs text-cream-faint mb-1 block">Bank Name</label>
+                <input v-model="bankForm.bank_name" type="text" placeholder="Barclays" class="app-inp w-full text-sm" />
+              </div>
+              <div>
+                <label class="text-xs text-cream-faint mb-1 block">Account Name</label>
+                <input v-model="bankForm.account_name" type="text" placeholder="Acme Ltd." class="app-inp w-full text-sm" />
+              </div>
+              <div>
+                <label class="text-xs text-cream-faint mb-1 block">Account Number</label>
+                <input v-model="bankForm.account_number" type="text" placeholder="12345678" class="app-inp w-full text-sm font-mono" />
+              </div>
+              <div>
+                <label class="text-xs text-cream-faint mb-1 block">Sort Code</label>
+                <input v-model="bankForm.sort_code" type="text" placeholder="20-00-00" class="app-inp w-full text-sm font-mono" />
+              </div>
+              <div>
+                <label class="text-xs text-cream-faint mb-1 block">IBAN</label>
+                <input v-model="bankForm.iban" type="text" placeholder="GB00 BARC 2000 0055 5555 55" class="app-inp w-full text-sm font-mono" />
+              </div>
+              <div>
+                <label class="text-xs text-cream-faint mb-1 block">SWIFT / BIC</label>
+                <input v-model="bankForm.swift" type="text" placeholder="BARCGB22" class="app-inp w-full text-sm font-mono" />
+              </div>
+              <div class="sm:col-span-2">
+                <label class="text-xs text-cream-faint mb-1 block">Notes</label>
+                <input v-model="bankForm.notes" type="text" placeholder="e.g. USD transfers only" class="app-inp w-full text-sm" />
+              </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-1">
+              <button class="text-xs text-cream-muted hover:text-cream px-3 py-1.5 rounded-md hover:bg-charcoal-700 transition-colors" @click="showBankForm = false">Cancel</button>
+              <button
+                class="text-xs bg-amber hover:bg-amber-light text-charcoal-900 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
+                :disabled="bankSaving || !bankForm.label.trim()"
+                @click="saveBank"
+              >{{ bankSaving ? 'Saving…' : 'Save Account' }}</button>
             </div>
           </div>
         </Transition>

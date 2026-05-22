@@ -246,9 +246,9 @@ const printPage = () => window.print()
           </div>
           <div v-if="invoice.show_footer_line" style="border-top:1px solid #e5e7eb;padding-top:20px;margin-top:24px" class="flex justify-between items-center">
             <div class="text-gray-400" style="font-size:11px">{{ invoice.footer_text || invoice.from_website }}</div>
-            <div v-if="invoice.show_flowtali_tag" class="text-gray-300" style="font-size:10px">Generated with Flowtali · flowtali.io</div>
+            <div v-if="invoice.show_flowtali_tag" class="text-gray-300" style="font-size:10px">Generated with Flowtali · flowtali.com</div>
           </div>
-          <div v-else-if="invoice.show_flowtali_tag" class="text-center mt-6 text-gray-300" style="font-size:10px">Generated with Flowtali · flowtali.io</div>
+          <div v-else-if="invoice.show_flowtali_tag" class="text-center mt-6 text-gray-300" style="font-size:10px">Generated with Flowtali · flowtali.com</div>
         </div>
       </div>
 
@@ -286,7 +286,7 @@ const printPage = () => window.print()
             </div>
           </div>
           <div class="flex-1"></div>
-          <div v-if="invoice.show_flowtali_tag" class="text-white/30 text-center" style="font-size:9px">flowtali.io</div>
+          <div v-if="invoice.show_flowtali_tag" class="text-white/30 text-center" style="font-size:9px">flowtali.com</div>
         </div>
         <div class="flex-1 p-10" style="position:relative;z-index:3">
           <div class="flex justify-between items-start mb-8">
@@ -516,7 +516,7 @@ const printPage = () => window.print()
           </div>
           <div v-if="invoice.show_footer_line" style="border-top:1px solid #e5e7eb;padding-top:16px;margin-top:24px" class="flex justify-between">
             <div class="text-gray-400 text-xs">{{ invoice.footer_text || invoice.from_website }}</div>
-            <div v-if="invoice.show_flowtali_tag" class="text-gray-300" style="font-size:10px">Generated with Flowtali · flowtali.io</div>
+            <div v-if="invoice.show_flowtali_tag" class="text-gray-300" style="font-size:10px">Generated with Flowtali · flowtali.com</div>
           </div>
         </div>
       </div>
@@ -615,12 +615,12 @@ const printPage = () => window.print()
           </div>
           <div v-if="invoice.show_footer_line" style="border-top:2px solid;margin-top:24px;padding-top:16px" :style="{ borderColor: invoice.accent_color + '40' }" class="flex justify-between">
             <div class="text-gray-400 text-xs">{{ invoice.footer_text || invoice.from_website }}</div>
-            <div v-if="invoice.show_flowtali_tag" class="text-gray-300" style="font-size:10px">Generated with Flowtali · flowtali.io</div>
+            <div v-if="invoice.show_flowtali_tag" class="text-gray-300" style="font-size:10px">Generated with Flowtali · flowtali.com</div>
           </div>
         </div>
       </div>
 
-      <p class="text-xs text-gray-400">Shared via Flowtali · flowtali.io</p>
+      <p class="text-xs text-gray-400">Shared via Flowtali · flowtali.com</p>
     </div>
 
   </div>

@@ -71,7 +71,7 @@ export interface ILetterheadDraftData {
     name: string
     logo: string | null
     brand_colors: string[]
-    stamps: Array<{ label: string; color: string }>
+    stamps: Array<{ text: string; color: string; text_color?: string }>
   } | null
   clients: Array<{
     id: string

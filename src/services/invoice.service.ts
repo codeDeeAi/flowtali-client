@@ -96,7 +96,29 @@ export interface IInvoiceDraftData {
     id: string
     name: string
     brand_colors: string[]
-    stamps: Array<{ label: string; color: string }>
+    stamps: Array<{ text: string; color: string; text_color?: string }>
+    invoice_profiles: Array<{
+      id: string
+      name: string
+      tagline?: string | null
+      email?: string | null
+      phone?: string | null
+      website?: string | null
+      address?: string | null
+      logo_url?: string | null
+    }>
+    bank_accounts: Array<{
+      id: string
+      label: string
+      bank_name?: string | null
+      account_name?: string | null
+      account_number?: string | null
+      sort_code?: string | null
+      iban?: string | null
+      swift?: string | null
+      currency?: string | null
+      notes?: string | null
+    }>
   } | null
   clients: Array<{
     id: string

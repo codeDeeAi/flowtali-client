@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
-import { AuditLogService, type IAuditLog } from '@/services/audit-log.service'
+import { AuditLogService, type IAuditLog, type IAuditLogUser } from '@/services/audit-log.service'
 import Pagination from '@/components/ui/Pagination.vue'
 
 const authStore = useAuthStore()
@@ -20,12 +20,15 @@ const total      = ref(0)
 const isLoading  = ref(false)
 
 const eventFilters = [
-  { key: '',           label: 'All events' },
-  { key: 'invoice',    label: 'Invoices' },
-  { key: 'letterhead', label: 'Letterheads' },
-  { key: 'member',     label: 'Members' },
-  { key: 'auth',       label: 'Auth' },
-  { key: 'org',        label: 'Org' },
+  { key: '',                         label: 'All events' },
+  { key: 'invoice',                  label: 'Invoices' },
+  { key: 'invoice.share_link',       label: 'Invoice Share Links' },
+  { key: 'letterhead',               label: 'Letterheads' },
+  { key: 'letterhead.share_link',    label: 'Letterhead Share Links' },
+  { key: 'member',                   label: 'Members' },
+  { key: 'auth',                     label: 'Auth' },
+  { key: 'org',                      label: 'Org' },
+  { key: 'client',                   label: 'Clients' },
 ]
 
 async function loadLogs() {
@@ -81,19 +84,20 @@ function fmtDateTime(iso: string) {
   })
 }
 
-function userLabel(userId: string | null) {
-  if (!userId) return 'System'
-  return userId.slice(0, 8) + '…'
+const colorPalette = ['#60a5fa', '#a78bfa', '#f87171', '#4ade80', '#e8a83e', '#38bdf8']
+
+function userColor(user: IAuditLogUser | null | undefined) {
+  const id = user?.id ?? ''
+  if (!id) return '#4ade80'
+  return colorPalette[id.charCodeAt(0) % colorPalette.length]
 }
 
-const colorPalette = ['#60a5fa', '#a78bfa', '#f87171', '#4ade80', '#e8a83e', '#38bdf8']
-function userColor(userId: string | null) {
-  if (!userId) return '#4ade80'
-  return colorPalette[userId.charCodeAt(0) % colorPalette.length]
-}
-function userInitials(userId: string | null) {
-  if (!userId) return 'SY'
-  return userId.slice(0, 2).toUpperCase()
+function userInitials(user: IAuditLogUser | null | undefined) {
+  if (!user || user.name === 'Unknown User') return '?'
+  const parts = user.name.trim().split(' ')
+  const first = parts[0]?.[0] ?? ''
+  const last  = parts[1]?.[0] ?? ''
+  return (first + last).toUpperCase() || '??'
 }
 </script>
 
@@ -164,11 +168,33 @@ function userInitials(userId: string | null) {
                 </div>
               </td>
               <td>
-                <div class="flex items-center gap-2">
-                  <div class="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold text-charcoal-900 shrink-0" :style="{ backgroundColor: userColor(log.user_id) }">
-                    {{ userInitials(log.user_id) }}
+                <div class="flex items-center gap-2 min-w-0">
+                  <!-- Avatar: photo or initials -->
+                  <div class="relative shrink-0">
+                    <img
+                      v-if="log.user?.profile_photo"
+                      :src="log.user.profile_photo"
+                      :alt="log.user.name"
+                      class="w-6 h-6 rounded-full object-cover"
+                    />
+                    <div
+                      v-else
+                      class="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold text-charcoal-900 shrink-0"
+                      :style="{ backgroundColor: userColor(log.user) }"
+                    >{{ userInitials(log.user) }}</div>
+                    <!-- Dim dot for former member -->
+                    <div
+                      v-if="log.user && !log.user.is_active"
+                      class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-charcoal-600 border border-charcoal-800"
+                      title="Former member"
+                    ></div>
                   </div>
-                  <span class="text-cream-muted text-xs font-mono">{{ userLabel(log.user_id) }}</span>
+                  <div class="min-w-0">
+                    <div class="text-xs text-cream leading-tight truncate max-w-[120px]" :class="{ 'opacity-60': log.user && !log.user.is_active }">
+                      {{ log.user?.name ?? 'System' }}
+                    </div>
+                    <div v-if="log.user?.email" class="text-[10px] text-cream-faint/60 truncate max-w-[120px]">{{ log.user.email }}</div>
+                  </div>
                 </div>
               </td>
               <td>
@@ -208,6 +234,21 @@ function userInitials(userId: string | null) {
             </span>
           </div>
           <div class="text-xs text-cream-faint ml-8">{{ log.resource_label || '—' }} · {{ fmtDateTime(log.created_at) }}</div>
+          <div class="flex items-center gap-1.5 ml-8 mt-1">
+            <img
+              v-if="log.user?.profile_photo"
+              :src="log.user.profile_photo"
+              class="w-4 h-4 rounded-full object-cover shrink-0"
+            />
+            <div
+              v-else
+              class="w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-bold text-charcoal-900 shrink-0"
+              :style="{ backgroundColor: userColor(log.user) }"
+            >{{ userInitials(log.user) }}</div>
+            <span class="text-[10px] text-cream-faint/70 truncate" :class="{ 'opacity-60': log.user && !log.user.is_active }">
+              {{ log.user?.name ?? 'System' }}
+            </span>
+          </div>
         </div>
         <div v-if="logs.length === 0" class="text-center py-12 text-cream-faint text-sm">No audit logs found</div>
       </div>

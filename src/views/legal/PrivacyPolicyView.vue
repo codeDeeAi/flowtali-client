@@ -26,7 +26,7 @@ const router = useRouter()
 
         <section>
           <h2 class="text-xl font-semibold text-cream mb-3">1. Introduction</h2>
-          <p>Flowtali ("we", "our", or "us") is committed to protecting your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your data when you use our platform at flowtali.io (the "Service").</p>
+          <p>Flowtali ("we", "our", or "us") is committed to protecting your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your data when you use our platform at flowtali.com (the "Service").</p>
           <p class="mt-3">By using Flowtali, you agree to the collection and use of information in accordance with this policy.</p>
         </section>
 

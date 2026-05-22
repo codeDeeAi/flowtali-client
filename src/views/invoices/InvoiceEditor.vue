@@ -69,7 +69,7 @@ const form = ref({
   ] as { id: number; description: string; qty: number; unit: string; rate: number }[],
 
   // Taxes
-  taxes: [{ id: 1, label: 'Tax', rate: 0 }] as { id: number; label: string; rate: number }[],
+  taxes: [{ id: 1, label: 'Tax', rate: 0, type: 'percent' as 'percent' | 'flat' }] as { id: number; label: string; rate: number; type: 'percent' | 'flat' }[],
 
   // Totals
   discountType: 'percent' as 'percent' | 'flat',
@@ -108,7 +108,7 @@ const savedLogos     = computed(() => draftData.value?.logos ?? [])
 const savedSignatures = computed(() => draftData.value?.signatures ?? [])
 const orgStamps      = computed(() => draftData.value?.organization?.stamps ?? [])
 const orgBrandColors = computed(() => draftData.value?.organization?.brand_colors ?? [])
-const stampColorFor  = (label: string) => orgStamps.value.find(s => s.label === label)?.color ?? '#9ca3af'
+const stampColorFor  = (label: string) => orgStamps.value.find(s => s.text === label)?.color ?? '#9ca3af'
 
 // ─── Init from props ───────────────────────────────────────────────────────────
 onMounted(async () => {
@@ -158,7 +158,10 @@ const discountAmt = computed(() =>
     : form.value.discount
 )
 const taxesTotal = computed(() =>
-  form.value.taxes.reduce((s, t) => s + (subtotal.value - discountAmt.value) * t.rate / 100, 0)
+  form.value.taxes.reduce((s, t) => {
+    if (t.type === 'flat') return s + t.rate
+    return s + (subtotal.value - discountAmt.value) * t.rate / 100
+  }, 0)
 )
 const total = computed(() => subtotal.value - discountAmt.value + taxesTotal.value)
 
@@ -198,7 +201,7 @@ const removeItem = (id: number) => {
 
 // ─── Taxes ────────────────────────────────────────────────────────────────────
 let nextTaxId = 100
-const addTax = () => form.value.taxes.push({ id: nextTaxId++, label: 'VAT', rate: 0 })
+const addTax = () => form.value.taxes.push({ id: nextTaxId++, label: 'VAT', rate: 0, type: 'percent' })
 const removeTax = (id: number) => {
   if (form.value.taxes.length > 1) form.value.taxes = form.value.taxes.filter(t => t.id !== id)
 }
@@ -215,11 +218,31 @@ const zoomOut = () => { zoom.value = Math.max(0.4, parseFloat((zoom.value - 0.1)
 const zoomFit = () => { zoom.value = 0.75 }
 
 // ─── Org quick-fill ───────────────────────────────────────────────────────────
-const fillFrom = (p: { name: string; email: string | null; phone: string | null; address: string | null }) => {
+const orgProfiles = computed(() => draftData.value?.organization?.invoice_profiles ?? [])
+const orgBankAccounts = computed(() => draftData.value?.organization?.bank_accounts ?? [])
+
+const fillFrom = (p: {
+  name: string; tagline?: string | null; email?: string | null; phone?: string | null
+  website?: string | null; address?: string | null; logo_url?: string | null
+}) => {
   form.value.fromName    = p.name
-  form.value.fromEmail   = p.email ?? ''
-  form.value.fromPhone   = p.phone ?? ''
-  form.value.fromAddress = p.address ?? ''
+  if (p.tagline  !== undefined) form.value.fromTagline = p.tagline  ?? ''
+  if (p.email    !== undefined) form.value.fromEmail   = p.email    ?? ''
+  if (p.phone    !== undefined) form.value.fromPhone   = p.phone    ?? ''
+  if (p.website  !== undefined) form.value.fromWebsite = p.website  ?? ''
+  if (p.address  !== undefined) form.value.fromAddress = p.address  ?? ''
+  if (p.logo_url) form.value.logoUrl = p.logo_url
+}
+
+const fillBank = (b: {
+  bank_name?: string | null; account_name?: string | null; account_number?: string | null
+  sort_code?: string | null; iban?: string | null
+}) => {
+  form.value.fromBankName          = b.bank_name      ?? ''
+  form.value.fromBankAccountName   = b.account_name   ?? ''
+  form.value.fromBankAccountNumber = b.account_number ?? ''
+  form.value.fromBankSortCode      = b.sort_code      ?? ''
+  form.value.fromBankIban          = b.iban            ?? ''
 }
 
 // ─── Client quick-fill ────────────────────────────────────────────────────────
@@ -494,22 +517,36 @@ const handleSaveDraft = () => handleSave('draft')
           <!-- ════════════════════════════════════════════════════════════════ -->
           <template v-if="tab === 'From'">
 
-            <!-- Org quick-picker -->
+            <!-- Quick-fill profiles -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Quick-fill from profile</p>
+              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Quick-Fill Profiles</p>
               <div v-if="isDraftLoading" class="flex items-center gap-2 text-xs text-cream-faint py-2">
                 <Icon icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" /> Loading…
               </div>
-              <div v-else-if="draftData?.organization" class="space-y-2">
+              <div v-else-if="orgProfiles.length" class="space-y-1.5">
                 <button
-                  @click="fillFrom({ name: draftData!.organization!.name, email: null, phone: null, address: null })"
-                  class="w-full text-left p-3 rounded-lg border border-charcoal-600 bg-charcoal-700/40 hover:border-amber/50 hover:bg-charcoal-700 transition-colors group"
+                  v-for="p in orgProfiles" :key="p.id"
+                  type="button"
+                  @click="fillFrom(p)"
+                  class="w-full text-left p-2.5 rounded-lg border border-charcoal-600 bg-charcoal-700/40 hover:border-amber/50 hover:bg-charcoal-700 transition-colors group"
                 >
-                  <p class="text-xs font-medium text-cream group-hover:text-amber transition-colors">{{ draftData.organization.name }}</p>
-                  <p class="text-[10px] text-cream-faint mt-0.5">Organization profile</p>
+                  <p class="text-xs font-medium text-cream group-hover:text-amber transition-colors">{{ p.name }}</p>
+                  <p v-if="p.tagline" class="text-[10px] text-cream-faint mt-0.5 truncate">{{ p.tagline }}</p>
+                  <p v-else-if="p.email" class="text-[10px] text-cream-faint mt-0.5 truncate">{{ p.email }}</p>
                 </button>
               </div>
-              <p v-else-if="!isDraftLoading" class="text-[10px] text-cream-faint/60">No org profile set up yet</p>
+              <div v-else-if="draftData?.organization" class="space-y-1.5">
+                <button
+                  type="button"
+                  @click="fillFrom({ name: draftData!.organization!.name })"
+                  class="w-full text-left p-2.5 rounded-lg border border-charcoal-600 bg-charcoal-700/40 hover:border-amber/50 hover:bg-charcoal-700 transition-colors group"
+                >
+                  <p class="text-xs font-medium text-cream group-hover:text-amber transition-colors">{{ draftData.organization.name }}</p>
+                  <p class="text-[10px] text-cream-faint mt-0.5">Organization name</p>
+                </button>
+                <p class="text-[10px] text-cream-faint/60">Add profiles in Organization Preferences for more options.</p>
+              </div>
+              <p v-else-if="!isDraftLoading" class="text-[10px] text-cream-faint/60">No profiles set up yet</p>
             </div>
 
             <div class="h-px bg-charcoal-700"></div>
@@ -562,7 +599,21 @@ const handleSaveDraft = () => handleSave('draft')
             <!-- Bank / Payment Details -->
             <div class="h-px bg-charcoal-700"></div>
             <div class="space-y-3">
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint">Bank / Payment Details</p>
+              <div class="flex items-center justify-between">
+                <p class="text-[10px] uppercase tracking-wider text-cream-faint">Bank / Payment Details</p>
+              </div>
+              <!-- Saved bank account quick-fill -->
+              <div v-if="orgBankAccounts.length" class="space-y-1">
+                <p class="text-[10px] text-cream-faint/70 mb-1">Quick-fill from saved account:</p>
+                <div class="flex flex-wrap gap-1.5">
+                  <button
+                    v-for="b in orgBankAccounts" :key="b.id"
+                    type="button"
+                    @click="fillBank(b)"
+                    class="text-xs px-2.5 py-1 rounded border border-charcoal-600 text-cream-faint hover:border-amber/50 hover:text-cream transition-colors"
+                  >{{ b.label }}</button>
+                </div>
+              </div>
               <div class="space-y-1">
                 <label class="text-[10px] text-cream-faint">Bank Name</label>
                 <input v-model="form.fromBankName" class="app-inp text-sm" placeholder="Chase Bank" />
@@ -746,15 +797,36 @@ const handleSaveDraft = () => handleSave('draft')
             <div>
               <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Tax Lines</p>
               <div class="space-y-2">
-                <div v-for="(tax, ti) in form.taxes" :key="tax.id" class="flex gap-2 items-center">
-                  <input v-model="tax.label" class="app-inp text-sm flex-1" placeholder="VAT" />
-                  <input v-model.number="tax.rate" type="number" min="0" max="100" class="app-inp text-sm w-20" placeholder="%" />
-                  <button v-if="form.taxes.length > 1" @click="removeTax(tax.id)" class="text-cream-faint hover:text-red-400 transition-colors shrink-0">
-                    <Icon icon="lucide:x" class="w-3.5 h-3.5" />
-                  </button>
+                <div v-for="(tax, ti) in form.taxes" :key="tax.id" class="space-y-1">
+                  <div class="flex gap-1.5 items-center">
+                    <input v-model="tax.label" class="app-inp text-sm min-w-0 flex-1" placeholder="VAT" />
+                    <!-- type toggle -->
+                    <div class="flex rounded border border-charcoal-600 overflow-hidden shrink-0 text-xs">
+                      <button
+                        type="button"
+                        @click="tax.type = 'percent'"
+                        :class="['px-2 py-1 transition-colors', tax.type === 'percent' ? 'bg-amber text-charcoal-900 font-semibold' : 'text-cream-faint hover:bg-charcoal-700']"
+                      >%</button>
+                      <button
+                        type="button"
+                        @click="tax.type = 'flat'"
+                        :class="['px-2 py-1 transition-colors', tax.type === 'flat' ? 'bg-amber text-charcoal-900 font-semibold' : 'text-cream-faint hover:bg-charcoal-700']"
+                      >$</button>
+                    </div>
+                    <input v-model.number="tax.rate" type="number" min="0" class="app-inp text-sm w-16 shrink-0" :placeholder="tax.type === 'flat' ? '0.00' : '0'" />
+                    <button type="button" v-if="form.taxes.length > 1" @click="removeTax(tax.id)" class="text-cream-faint hover:text-red-400 transition-colors shrink-0">
+                      <Icon icon="lucide:x" class="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                  <!-- calculated amount -->
+                  <div v-if="tax.rate > 0" class="flex justify-between text-[11px] text-cream-faint/70 px-0.5">
+                    <span>{{ tax.type === 'flat' ? 'Fixed amount' : `${tax.rate}% of after-discount` }}</span>
+                    <span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span>
+                  </div>
                 </div>
               </div>
               <button
+                type="button"
                 @click="addTax"
                 class="mt-2 flex items-center gap-1.5 text-xs text-cream-faint hover:text-amber transition-colors"
               >
@@ -776,8 +848,8 @@ const handleSaveDraft = () => handleSave('draft')
               </div>
               <template v-for="tax in form.taxes" :key="tax.id">
                 <div v-if="tax.rate > 0" class="flex justify-between text-cream-faint">
-                  <span>{{ tax.label }} ({{ tax.rate }}%)</span>
-                  <span class="font-mono">{{ fmtMoney((subtotal - discountAmt) * tax.rate / 100) }}</span>
+                  <span>{{ tax.label }}{{ tax.type !== 'flat' ? ` (${tax.rate}%)` : '' }}</span>
+                  <span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span>
                 </div>
               </template>
               <div class="h-px bg-charcoal-600"></div>
@@ -973,6 +1045,7 @@ const handleSaveDraft = () => handleSave('draft')
               <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Stamp / Watermark</p>
               <div class="grid grid-cols-3 gap-1.5">
                 <button
+                  type="button"
                   @click="form.stamp = ''"
                   :class="[
                     'py-1.5 rounded border text-xs font-semibold transition-colors',
@@ -980,14 +1053,15 @@ const handleSaveDraft = () => handleSave('draft')
                   ]"
                 >None</button>
                 <button
-                  v-for="s in orgStamps" :key="s.label"
-                  @click="form.stamp = s.label"
+                  v-for="s in orgStamps" :key="s.text"
+                  type="button"
+                  @click="form.stamp = s.text"
                   :class="[
                     'py-1.5 rounded border text-xs font-semibold transition-colors',
-                    form.stamp === s.label ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500'
+                    form.stamp === s.text ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500'
                   ]"
-                  :style="form.stamp !== s.label ? { color: s.color + 'cc', borderColor: s.color + '40' } : {}"
-                >{{ s.label }}</button>
+                  :style="form.stamp !== s.text ? { color: s.color + 'cc', borderColor: s.color + '40' } : {}"
+                >{{ s.text }}</button>
               </div>
             </div>
 
@@ -1256,8 +1330,8 @@ const handleSaveDraft = () => handleSave('draft')
                     </div>
                     <template v-for="tax in form.taxes" :key="tax.id">
                       <div v-if="tax.rate > 0" class="flex justify-between text-gray-500">
-                        <span>{{ tax.label }} ({{ tax.rate }}%)</span>
-                        <span class="font-mono">{{ fmtMoney((subtotal - discountAmt) * tax.rate / 100) }}</span>
+                        <span>{{ tax.label }}{{ tax.type !== 'flat' ? ` (${tax.rate}%)` : '' }}</span>
+                        <span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span>
                       </div>
                     </template>
                     <div style="height: 1px; background: #e5e7eb; margin: 8px 0"></div>
@@ -1302,9 +1376,9 @@ const handleSaveDraft = () => handleSave('draft')
                 <!-- Footer -->
                 <div v-if="form.showFooterLine" style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 24px" class="flex justify-between items-center">
                   <div class="text-gray-400" style="font-size: 11px">{{ form.footerText || form.fromWebsite }}</div>
-                  <div v-if="form.showFlowtaliTag" class="text-gray-300" style="font-size: 10px">Generated with Flowtali · flowtali.io</div>
+                  <div v-if="form.showFlowtaliTag" class="text-gray-300" style="font-size: 10px">Generated with Flowtali · flowtali.com</div>
                 </div>
-                <div v-else-if="form.showFlowtaliTag" class="text-center mt-6 text-gray-300" style="font-size: 10px">Generated with Flowtali · flowtali.io</div>
+                <div v-else-if="form.showFlowtaliTag" class="text-center mt-6 text-gray-300" style="font-size: 10px">Generated with Flowtali · flowtali.com</div>
               </div>
             </div>
 
@@ -1352,7 +1426,7 @@ const handleSaveDraft = () => handleSave('draft')
                 </div>
 
                 <div class="flex-1"></div>
-                <div v-if="form.showFlowtaliTag" class="text-white/30 text-center" style="font-size:9px">flowtali.io</div>
+                <div v-if="form.showFlowtaliTag" class="text-white/30 text-center" style="font-size:9px">flowtali.com</div>
               </div>
 
               <!-- Right content -->
@@ -1417,7 +1491,7 @@ const handleSaveDraft = () => handleSave('draft')
                     <div class="flex justify-between text-gray-500"><span>Subtotal</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
                     <div v-if="form.discount > 0" class="flex justify-between text-gray-500"><span>Discount{{ form.discountType === 'percent' ? ` (${form.discount}%)` : '' }}</span><span class="font-mono text-red-500">-{{ fmtMoney(discountAmt) }}</span></div>
                     <template v-for="tax in form.taxes" :key="tax.id">
-                      <div v-if="tax.rate > 0" class="flex justify-between text-gray-500"><span>{{ tax.label }} ({{ tax.rate }}%)</span><span class="font-mono">{{ fmtMoney((subtotal - discountAmt) * tax.rate / 100) }}</span></div>
+                      <div v-if="tax.rate > 0" class="flex justify-between text-gray-500"><span>{{ tax.label }}{{ tax.type !== 'flat' ? ` (${tax.rate}%)` : '' }}</span><span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span></div>
                     </template>
                     <div style="height: 1px; background: #e5e7eb; margin: 8px 0"></div>
                     <div class="flex justify-between font-bold text-base"><span class="text-gray-800">Total</span><span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span></div>
@@ -1532,7 +1606,7 @@ const handleSaveDraft = () => handleSave('draft')
                     <div class="flex justify-between text-gray-400"><span>Subtotal</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
                     <div v-if="form.discount > 0" class="flex justify-between text-gray-400"><span>Discount</span><span class="font-mono">-{{ fmtMoney(discountAmt) }}</span></div>
                     <template v-for="tax in form.taxes" :key="tax.id">
-                      <div v-if="tax.rate > 0" class="flex justify-between text-gray-400"><span>{{ tax.label }}</span><span class="font-mono">{{ fmtMoney((subtotal - discountAmt) * tax.rate / 100) }}</span></div>
+                      <div v-if="tax.rate > 0" class="flex justify-between text-gray-400"><span>{{ tax.label }}</span><span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span></div>
                     </template>
                     <div style="height: 1px; background: #111827; margin: 8px 0"></div>
                     <div class="flex justify-between font-bold text-base text-gray-900"><span>Total</span><span class="font-mono">{{ fmtMoney(total) }}</span></div>
@@ -1671,7 +1745,7 @@ const handleSaveDraft = () => handleSave('draft')
                       <div class="flex justify-between text-gray-500"><span>Subtotal</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
                       <div v-if="form.discount > 0" class="flex justify-between text-gray-500"><span>Discount{{ form.discountType === 'percent' ? ` (${form.discount}%)` : '' }}</span><span class="font-mono text-red-500">-{{ fmtMoney(discountAmt) }}</span></div>
                       <template v-for="tax in form.taxes" :key="tax.id">
-                        <div v-if="tax.rate > 0" class="flex justify-between text-gray-500"><span>{{ tax.label }} ({{ tax.rate }}%)</span><span class="font-mono">{{ fmtMoney((subtotal - discountAmt) * tax.rate / 100) }}</span></div>
+                        <div v-if="tax.rate > 0" class="flex justify-between text-gray-500"><span>{{ tax.label }}{{ tax.type !== 'flat' ? ` (${tax.rate}%)` : '' }}</span><span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span></div>
                       </template>
                     </div>
                     <div :style="{ backgroundColor: form.accentColor }" class="flex justify-between font-bold text-base text-white px-4 py-3 rounded mt-3">
@@ -1712,7 +1786,7 @@ const handleSaveDraft = () => handleSave('draft')
                 <!-- Footer -->
                 <div v-if="form.showFooterLine" style="border-top: 1px solid #e5e7eb; padding-top: 16px; margin-top: 24px" class="flex justify-between">
                   <div class="text-gray-400 text-xs">{{ form.footerText || form.fromWebsite }}</div>
-                  <div v-if="form.showFlowtaliTag" class="text-gray-300" style="font-size: 10px">Generated with Flowtali · flowtali.io</div>
+                  <div v-if="form.showFlowtaliTag" class="text-gray-300" style="font-size: 10px">Generated with Flowtali · flowtali.com</div>
                 </div>
               </div>
             </div>
@@ -1835,7 +1909,7 @@ const handleSaveDraft = () => handleSave('draft')
                       <div class="flex justify-between text-gray-500"><span>Subtotal</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
                       <div v-if="form.discount > 0" class="flex justify-between text-gray-500"><span>Discount{{ form.discountType === 'percent' ? ` (${form.discount}%)` : '' }}</span><span class="font-mono text-red-500">-{{ fmtMoney(discountAmt) }}</span></div>
                       <template v-for="tax in form.taxes" :key="tax.id">
-                        <div v-if="tax.rate > 0" class="flex justify-between text-gray-500"><span>{{ tax.label }} ({{ tax.rate }}%)</span><span class="font-mono">{{ fmtMoney((subtotal - discountAmt) * tax.rate / 100) }}</span></div>
+                        <div v-if="tax.rate > 0" class="flex justify-between text-gray-500"><span>{{ tax.label }}{{ tax.type !== 'flat' ? ` (${tax.rate}%)` : '' }}</span><span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span></div>
                       </template>
                       <div style="height: 1px; background: #e5e7eb; margin: 8px 0"></div>
                       <div class="flex justify-between font-bold text-base"><span class="text-gray-800">Total</span><span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span></div>
@@ -1853,7 +1927,7 @@ const handleSaveDraft = () => handleSave('draft')
                 <!-- Footer -->
                 <div v-if="form.showFooterLine" style="border-top: 2px solid; margin-top: 24px; padding-top: 16px" :style="{ borderColor: form.accentColor + '40' }" class="flex justify-between">
                   <div class="text-gray-400 text-xs">{{ form.footerText || form.fromWebsite }}</div>
-                  <div v-if="form.showFlowtaliTag" class="text-gray-300" style="font-size: 10px">Generated with Flowtali · flowtali.io</div>
+                  <div v-if="form.showFlowtaliTag" class="text-gray-300" style="font-size: 10px">Generated with Flowtali · flowtali.com</div>
                 </div>
               </div>
             </div>

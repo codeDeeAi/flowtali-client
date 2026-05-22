@@ -173,7 +173,7 @@ const scrollTo = (id: string) => {
               <div class="text-[9px] text-gray-600 leading-relaxed">Dear Mr. Johnson,<br /><br />We are pleased to
                 confirm our engagement for the upcoming brand identity project…</div>
               <div class="h-px bg-gray-100 mt-4 mb-2"></div>
-              <div class="text-[8px] text-gray-400 text-center">123 Design St, San Francisco CA 94105 · flowtali.io
+              <div class="text-[8px] text-gray-400 text-center">123 Design St, San Francisco CA 94105 · flowtali.com
               </div>
             </div>
           </div>

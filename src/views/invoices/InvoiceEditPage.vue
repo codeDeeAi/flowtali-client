@@ -46,7 +46,7 @@ onMounted(async () => {
       toPhone:                  inv.to_phone ?? '',
       toAddress:                inv.to_address ?? '',
       items:                    (inv.items ?? []).map((item, i) => ({ id: i + 1, ...item })),
-      taxes:                    (inv.taxes ?? []).map((t, i) => ({ id: i + 1, ...t })),
+      taxes:                    (inv.taxes ?? []).map((t, i) => ({ id: i + 1, type: 'percent' as 'percent' | 'flat', ...t })),
       discountType:             inv.discount_type,
       discount:                 inv.discount,
       theme:                    inv.theme,

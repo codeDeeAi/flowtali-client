@@ -1,9 +1,18 @@
 import http from './utils/http'
 
+export interface IAuditLogUser {
+  id: string | null
+  name: string
+  email: string | null
+  profile_photo: string | null
+  is_active: boolean
+}
+
 export interface IAuditLog {
   id: string
   organization_id: string | null
   user_id: string | null
+  user: IAuditLogUser
   event: string
   action: string
   resource_type: string | null

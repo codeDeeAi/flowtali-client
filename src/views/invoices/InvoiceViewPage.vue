@@ -284,7 +284,7 @@ async function handleDelete() {
               </div>
 
               <div v-if="invoice.show_flowtali_tag" class="mt-8 text-center">
-                <div class="text-[10px] text-gray-300">Generated with Flowtali · flowtali.io</div>
+                <div class="text-[10px] text-gray-300">Generated with Flowtali · flowtali.com</div>
               </div>
             </div>
           </div>

@@ -196,7 +196,7 @@ const fonts = [
 
 const orgStamps = computed(() => draftData.value?.organization?.stamps ?? [])
 const stampColorFor = (label: string) =>
-  orgStamps.value.find(s => s.label === label)?.color ?? '#9ca3af'
+  orgStamps.value.find(s => s.text === label)?.color ?? '#9ca3af'
 
 const orgBrandColors = computed(() => draftData.value?.organization?.brand_colors ?? [])
 
@@ -628,6 +628,7 @@ const handleSave = async () => {
               <div class="grid grid-cols-3 gap-1.5">
                 <!-- None option -->
                 <button
+                  type="button"
                   @click="form.stamp = ''"
                   :class="[
                     'py-1.5 rounded border text-xs font-semibold transition-colors',
@@ -636,14 +637,15 @@ const handleSave = async () => {
                 >None</button>
                 <!-- Org stamps from draft-data -->
                 <button
-                  v-for="s in orgStamps" :key="s.label"
-                  @click="form.stamp = s.label"
+                  v-for="s in orgStamps" :key="s.text"
+                  type="button"
+                  @click="form.stamp = s.text"
                   :class="[
                     'py-1.5 rounded border text-xs font-semibold transition-colors',
-                    form.stamp === s.label ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 hover:border-charcoal-500'
+                    form.stamp === s.text ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 hover:border-charcoal-500'
                   ]"
-                  :style="form.stamp !== s.label ? { color: s.color + 'cc', borderColor: s.color + '40' } : {}"
-                >{{ s.label }}</button>
+                  :style="form.stamp !== s.text ? { color: s.color + 'cc', borderColor: s.color + '40' } : {}"
+                >{{ s.text }}</button>
               </div>
             </div>
 
