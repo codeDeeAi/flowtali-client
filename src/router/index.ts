@@ -66,6 +66,12 @@ const router = createRouter({
     ...appRoutes,
     ...publicShareRoutes,
     {
+      path: '/invitations/accept',
+      name: 'invitations.accept',
+      component: () => import('@/views/invitations/InviteAcceptPage.vue'),
+      meta: { layout: layouts.Public },
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/views/errors/NotFoundView.vue'),

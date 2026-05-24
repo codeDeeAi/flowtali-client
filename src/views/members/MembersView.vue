@@ -7,7 +7,7 @@ import { useNotification } from '@/composables/notification.ts'
 import { useAuthStore } from '@/stores/auth.ts'
 import Pagination from '@/components/ui/Pagination.vue'
 import { MemberService } from '@/services/member.service.ts'
-import type { IMember, IMemberRole } from '@/types/member.types'
+import type { IMember, IMemberRole, IInvitation } from '@/types/member.types'
 
 const router = useRouter()
 const { notify } = useNotification()
@@ -35,6 +35,9 @@ const selectedMember = ref<IMember | null>(null)
 const addForm = ref({ email: '', role_ids: [] as string[] })
 const addEmailError = ref('')
 const newRoleIds = ref<string[]>([])
+
+const pendingInvitations = ref<IInvitation[]>([])
+const isLoadingInvitations = ref(false)
 
 // ─── Data loading ─────────────────────────────────────────────────────────────
 const loadMembers = async (page = 1) => {
@@ -68,9 +71,35 @@ const loadFormData = async () => {
   }
 }
 
+const loadInvitations = async () => {
+  if (!orgId.value) return
+  isLoadingInvitations.value = true
+  try {
+    const res = await MemberService.listInvitations(orgId.value)
+    pendingInvitations.value = res.data.data
+  } catch {
+    // silently fail
+  } finally {
+    isLoadingInvitations.value = false
+  }
+}
+
+const cancelInvite = async (id: string) => {
+  try {
+    await MemberService.cancelInvitation(orgId.value, id)
+    notify('Invitation cancelled.', 'success')
+    await loadInvitations()
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } } }
+    const msg = err?.response?.data?.message ?? 'Failed to cancel invitation.'
+    notify(msg, 'error')
+  }
+}
+
 onMounted(() => {
   loadMembers()
   loadFormData()
+  loadInvitations()
 })
 
 const onSearch = () => {
@@ -114,16 +143,16 @@ const handleAdd = async () => {
   }
   setLoader('isSending', true)
   try {
-    await MemberService.add(orgId.value, {
+    await MemberService.invite(orgId.value, {
       email: addForm.value.email.trim(),
       role_ids: addForm.value.role_ids,
     })
-    notify(`Member added successfully.`, 'success')
+    notify('Invitation sent successfully.', 'success')
     showAddModal.value = false
-    await loadMembers(currentPage.value)
+    await loadInvitations()
   } catch (e: unknown) {
     const err = e as { response?: { data?: { message?: string } } }
-    const msg = err?.response?.data?.message ?? 'Failed to add member.'
+    const msg = err?.response?.data?.message ?? 'Failed to send invitation.'
     addEmailError.value = msg
   } finally {
     setLoader('isSending', false)
@@ -311,6 +340,34 @@ const handleRemove = async () => {
 
     <Pagination v-if="total > perPage" v-model="currentPage" :total="total" :per-page="perPage" @update:model-value="loadMembers($event)" />
 
+    <!-- Pending Invitations -->
+    <div v-if="isLoadingInvitations || pendingInvitations.length" class="mt-6">
+      <h2 class="text-sm font-semibold text-cream mb-3">Pending Invitations</h2>
+
+      <div v-if="isLoadingInvitations" class="flex justify-center py-8">
+        <Icon icon="lucide:loader-2" class="w-5 h-5 text-cream-faint animate-spin" />
+      </div>
+
+      <div v-else class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden divide-y divide-charcoal-700">
+        <div v-for="inv in pendingInvitations" :key="inv.id" class="flex items-center justify-between px-4 py-3">
+          <div>
+            <div class="text-sm text-cream">{{ inv.email }}</div>
+            <div class="text-xs text-cream-faint mt-0.5">
+              <span v-if="inv.role_ids.length">{{ inv.role_ids.length }} role{{ inv.role_ids.length !== 1 ? 's' : '' }}</span>
+              <span v-else>No roles assigned</span>
+              &middot; Expires {{ new Date(inv.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) }}
+            </div>
+          </div>
+          <button
+            @click="cancelInvite(inv.id)"
+            class="text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 px-2.5 py-1 rounded-md transition-colors whitespace-nowrap"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- ── Add Member Modal ──────────────────────────────────────────────────── -->
@@ -321,7 +378,7 @@ const handleRemove = async () => {
           <div class="flex items-center justify-between mb-5">
             <div>
               <h2 class="font-display text-lg font-semibold text-cream">Add Team Member</h2>
-              <p class="text-xs text-cream-faint mt-0.5">Add an existing user by their email address</p>
+              <p class="text-xs text-cream-faint mt-0.5">An invitation email will be sent to the address</p>
             </div>
             <button @click="showAddModal = false" class="p-1.5 rounded-lg hover:bg-charcoal-700 text-cream-faint hover:text-cream transition-colors">
               <Icon icon="lucide:x" class="w-4 h-4" />
@@ -371,7 +428,7 @@ const handleRemove = async () => {
               :class="['flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg font-semibold text-sm transition-colors', addForm.email.trim() && !getLoader('isSending') ? 'bg-amber hover:bg-amber-light text-charcoal-900' : 'bg-amber/40 text-charcoal-900/50 cursor-not-allowed']"
             >
               <Icon v-if="getLoader('isSending')" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
-              {{ getLoader('isSending') ? 'Adding…' : 'Add Member' }}
+              {{ getLoader('isSending') ? 'Sending…' : 'Send Invite' }}
             </button>
           </div>
         </div>

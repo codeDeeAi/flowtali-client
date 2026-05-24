@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useLoaders } from '@/composables/loaders'
 import { useFormErrors } from '@/composables/formErrors'
 import { AuthService } from '@/services/auth.service'
@@ -8,6 +8,7 @@ import InputField from '@/components/form/InputField.vue'
 import BasicAlert from '@/components/alerts/BasicAlert.vue'
 
 const route = useRoute()
+const router = useRouter()
 const { initLoaders, setLoader, getLoader } = useLoaders()
 const { getError, setError, clearAllErrors } = useFormErrors()
 
@@ -25,6 +26,14 @@ const verify = async (userId: string, token: string) => {
   try {
     await AuthService.verifyEmail(userId, token)
     state.value = 'success'
+
+    // Check if there's a pending invitation token stored in sessionStorage
+    const pendingInvitationToken = sessionStorage.getItem('pending_invitation_token')
+    if (pendingInvitationToken) {
+      sessionStorage.removeItem('pending_invitation_token')
+      await router.push(`/invitations/accept?token=${pendingInvitationToken}`)
+      return
+    }
   } catch (err: any) {
     const message = err?.response?.data?.message ?? 'Verification failed. The link may be expired.'
     setError('general', message)

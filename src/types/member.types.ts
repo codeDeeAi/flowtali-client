@@ -47,3 +47,14 @@ export interface IAddMemberPayload {
 export interface IUpdateMemberRolesPayload {
   role_ids: string[]
 }
+
+export interface IInvitation {
+  id: string
+  email: string
+  role_ids: string[]
+  status: 'pending' | 'accepted' | 'cancelled' | 'expired'
+  expires_at: string
+  invited_by: { id: string; name: string; email: string } | null
+  organization: { id: string; name: string; logo: string | null } | null
+  created_at: string
+}
