@@ -186,15 +186,12 @@ const navSections = computed<NavSection[]>(() => {
   sections.push({ label: isBusinessOrg.value ? 'Organization' : 'Workspace', items: orgItems })
 
   // ── Account ───────────────────────────────────────────
-  sections.push({
-    label: 'Account',
-    items: [
-      { name: 'Analytics',    icon: 'lucide:bar-chart-2',  to: '/app/analytics' },
-      { name: 'Subscription', icon: 'lucide:credit-card',  to: '/app/subscription' },
-      { name: 'Settings',     icon: 'lucide:settings',     to: '/app/settings' },
-      { name: 'My Profile',   icon: 'lucide:user',         to: '/app/profile' },
-    ],
-  })
+  const accountItems: { name: string; icon: string; to: string }[] = []
+  if (can('analytics.read')) accountItems.push({ name: 'Analytics',    icon: 'lucide:bar-chart-2',  to: '/app/analytics' })
+  accountItems.push({ name: 'Subscription', icon: 'lucide:credit-card',  to: '/app/subscription' })
+  if (can('settings.read'))  accountItems.push({ name: 'Settings',     icon: 'lucide:settings',     to: '/app/settings' })
+  accountItems.push({ name: 'My Profile',   icon: 'lucide:user',         to: '/app/profile' })
+  sections.push({ label: 'Account', items: accountItems })
 
   return sections
 })

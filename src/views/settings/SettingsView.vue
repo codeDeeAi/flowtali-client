@@ -2,11 +2,14 @@
 import { ref, computed, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
+import { usePermissions } from '@/composables/usePermissions'
 import { SettingsService, type IOrgSettings, type INotificationPrefs } from '@/services/settings.service'
 
 const authStore = useAuthStore()
 const orgId     = computed(() => authStore.getCurrentOrganization?.id ?? '')
 const org       = computed(() => authStore.getCurrentOrganization)
+
+const { can } = usePermissions()
 
 type Tab = 'general' | 'notifications' | 'security' | 'api'
 const activeTab = ref<Tab>('general')
@@ -226,6 +229,7 @@ onMounted(async () => {
               <div class="flex items-center gap-2">
                 <input ref="logoInput" type="file" accept="image/*" class="hidden" @change="handleLogoChange" />
                 <button
+                  v-if="can('settings.update')"
                   type="button"
                   :disabled="isUploadingLogo"
                   class="flex items-center gap-1.5 text-xs bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 hover:border-charcoal-500 text-cream-muted hover:text-cream px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
@@ -236,7 +240,7 @@ onMounted(async () => {
                   {{ isUploadingLogo ? 'Uploading…' : 'Upload logo' }}
                 </button>
                 <button
-                  v-if="orgLogoUrl"
+                  v-if="orgLogoUrl && can('settings.update')"
                   type="button"
                   :disabled="isDeletingLogo"
                   class="text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
@@ -315,7 +319,7 @@ onMounted(async () => {
             </div>
           </div>
 
-          <div class="flex items-center gap-3">
+          <div v-if="can('settings.update')" class="flex items-center gap-3">
             <button
               :disabled="isSavingGen"
               @click="saveGeneral"
@@ -395,7 +399,7 @@ onMounted(async () => {
             ></textarea>
           </div>
 
-          <div class="flex items-center gap-3">
+          <div v-if="can('settings.security')" class="flex items-center gap-3">
             <button
               :disabled="isSavingSec"
               @click="saveSecurity"

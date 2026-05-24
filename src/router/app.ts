@@ -37,7 +37,7 @@ export const appRoutes = [
       { path: 'audit-logs',       name: 'audit-logs',       component: () => import('@/views/audit-logs/AuditLogsView.vue'),           meta },
       { path: 'analytics',        name: 'analytics',        component: () => import('@/views/analytics/AnalyticsView.vue'),             meta: p('analytics.read') },
       { path: 'subscription',     name: 'subscription',     component: () => import('@/views/subscription/SubscriptionView.vue'),       meta },
-      { path: 'settings',         name: 'settings',         component: () => import('@/views/settings/SettingsView.vue'),               meta },
+      { path: 'settings',         name: 'settings',         component: () => import('@/views/settings/SettingsView.vue'),               meta: p('settings.read') },
       { path: 'profile',          name: 'profile',          component: () => import('@/views/profile/ProfileView.vue'),                 meta },
     ],
   },
