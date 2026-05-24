@@ -87,9 +87,18 @@ onMounted(async () => {
       </router-link>
     </div>
 
-    <!-- Loading -->
-    <div v-if="isLoading" class="flex items-center justify-center py-10">
-      <Icon icon="lucide:loader-2" class="w-5 h-5 text-cream-faint animate-spin" />
+    <!-- Skeleton -->
+    <div v-if="isLoading" class="animate-pulse divide-y divide-charcoal-700">
+      <div v-for="i in 5" :key="i" class="flex items-center gap-3 px-5 py-3.5">
+        <div class="w-8 h-8 rounded-full bg-charcoal-700 shrink-0" />
+        <div class="flex-1 min-w-0">
+          <div class="w-28 h-3.5 rounded bg-charcoal-700 mb-1.5" />
+          <div class="w-20 h-3 rounded bg-charcoal-600" />
+        </div>
+        <div class="w-16 h-3.5 rounded bg-charcoal-700" />
+        <div class="w-14 h-5 rounded-full bg-charcoal-700" />
+        <div class="w-10 h-3 rounded bg-charcoal-600" />
+      </div>
     </div>
 
     <!-- Empty state -->

@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { useSeo } from '@/composables/useSeo'
+
 const router = useRouter()
+
+useSeo({
+  title: 'About Flowtali',
+  description: 'Flowtali is a document tool built for freelancers and small teams. Create professional invoices and letterheads with real-time preview and one-click PDF export.',
+  canonical: 'https://flowtali.com/about',
+})
 </script>
 
 <template>

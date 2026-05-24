@@ -4,6 +4,13 @@ import { useRouter } from 'vue-router'
 import { useLoaders } from '@/composables/loaders.ts'
 import { signupSchema } from './validation/schema.ts'
 import { useFormErrors } from '@/composables/formErrors'
+import { useSeo } from '@/composables/useSeo'
+
+useSeo({
+  title: 'Create Account',
+  description: 'Get started with Flowtali for free. Create professional invoices and letterheads in minutes — no credit card required.',
+  canonical: 'https://flowtali.com/auth/signup',
+})
 import { useYupForm } from '@/composables/useYupForm.ts'
 import InputField from '@/components/form/InputField.vue'
 import PasswordField from '@/components/form/PasswordField.vue'

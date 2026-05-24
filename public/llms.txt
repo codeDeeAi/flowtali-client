@@ -1,0 +1,41 @@
+# Flowtali
+
+> Flowtali is a professional document tool for freelancers and small teams. Create invoices and branded letterheads with real-time preview, one-click PDF export, and full custom branding.
+
+## What Flowtali does
+
+Flowtali helps freelancers, designers, developers, and small agencies create polished client-facing documents:
+
+- **Invoices**: Line items, taxes (flat or percent), multi-currency, payment links, stamps, PDF export
+- **Letterheads**: 5 professional templates (Classic, Modern, Minimal, Bold, Split Panel) with logo, signature, watermark, and accent colors
+- **Client management**: Store client details, re-use across documents
+- **Team collaboration**: Invite members, assign roles and granular permissions
+- **Organization preferences**: Saved invoice profiles, bank accounts, payment links for quick-fill
+
+## Key features
+
+- Real-time preview — see exactly what the client receives before export
+- One-click PDF export — pixel-perfect, print-ready output
+- Custom branding — logo, signature, accent colors, fonts, watermarks
+- Multi-currency — USD, EUR, GBP, NGN, CAD, AUD, and more
+- Stamps — add PAID, OVERDUE, DRAFT, or custom text stamps to invoices
+- Analytics — revenue, outstanding, collection rate, invoice status breakdown
+- Notifications — in-app bell with real-time updates for invoice status changes and team events
+
+## Pricing
+
+- **Starter**: Free — 5 invoices + 3 letterheads/month, basic templates, Flowtali branding
+- **Pro**: $10/month (annual) — unlimited documents, all templates, custom branding, no Flowtali branding, priority support
+- **Business**: $23/month (annual) — everything in Pro + up to 5 team members, analytics, payment links
+
+## Tech stack
+
+Frontend: Vue 3 + TypeScript, Vite, TailwindCSS, Pinia
+Backend: Laravel 11, PHP, MySQL, Sanctum auth
+
+## Links
+
+- Homepage: https://flowtali.com/
+- Sign up: https://flowtali.com/auth/signup
+- Privacy policy: https://flowtali.com/legal/privacy
+- Terms of service: https://flowtali.com/legal/terms

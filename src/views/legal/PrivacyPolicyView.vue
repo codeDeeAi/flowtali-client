@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { useSeo } from '@/composables/useSeo'
+
 const router = useRouter()
+
+useSeo({
+  title: 'Privacy Policy',
+  description: 'Read the Flowtali Privacy Policy to understand how we collect, use, and protect your data.',
+  canonical: 'https://flowtali.com/legal/privacy',
+})
 </script>
 
 <template>

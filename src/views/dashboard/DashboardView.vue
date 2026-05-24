@@ -118,11 +118,22 @@ onMounted(async () => {
 
     <!-- Stats grid -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <StatCard
-        v-for="stat in stats"
-        :key="stat.title"
-        v-bind="stat"
-      />
+      <template v-if="isLoading">
+        <StatCard
+          v-for="n in 4"
+          :key="n"
+          title="" value="" :change="0" icon="lucide:loader" color="amber" :progress="0"
+          :loading="true"
+        />
+      </template>
+      <template v-else>
+        <StatCard
+          v-for="stat in stats"
+          :key="stat.title"
+          v-bind="stat"
+          :loading="false"
+        />
+      </template>
     </div>
 
     <!-- Main content grid -->
@@ -130,13 +141,21 @@ onMounted(async () => {
 
       <!-- Left column (2/3) -->
       <div class="xl:col-span-2 flex flex-col gap-4">
-        <RevenueChart v-if="can('dashboard.revenue.read')" :trend-data="analytics?.revenue_trend" />
+        <RevenueChart
+          v-if="isLoading || can('dashboard.revenue.read')"
+          :trend-data="analytics?.revenue_trend"
+          :loading="isLoading"
+        />
         <RecentInvoices v-if="can('dashboard.invoices.read')" />
       </div>
 
       <!-- Right column (1/3) -->
       <div class="flex flex-col gap-4">
-        <InvoiceStatusChart v-if="can('dashboard.invoices.read')" :breakdown="analytics?.status_breakdown" />
+        <InvoiceStatusChart
+          v-if="isLoading || can('dashboard.invoices.read')"
+          :breakdown="analytics?.status_breakdown"
+          :loading="isLoading"
+        />
         <QuickActions />
         <PlanUsage />
       </div>

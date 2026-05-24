@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { useSeo } from '@/composables/useSeo'
+
 const router = useRouter()
+
+useSeo({
+  title: 'Terms of Service',
+  description: 'Read the Flowtali Terms of Service — the rules and conditions that govern your use of our platform.',
+  canonical: 'https://flowtali.com/legal/terms',
+})
 </script>
 
 <template>

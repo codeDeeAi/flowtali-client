@@ -11,6 +11,7 @@ export interface IStatusBreakdown {
 
 const props = defineProps<{
   breakdown?: IStatusBreakdown
+  loading?: boolean
 }>()
 
 const segments = computed(() => {
@@ -55,21 +56,45 @@ const arcs = computed(() => {
 
 <template>
   <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
-    <!-- Header -->
-    <div class="flex items-start justify-between mb-4">
-      <div>
-        <h3 class="text-sm font-semibold text-cream">Invoice Status</h3>
-        <p class="text-xs text-cream-faint mt-0.5">This month</p>
+
+    <!-- Skeleton -->
+    <template v-if="loading">
+      <div class="animate-pulse">
+        <div class="flex items-start justify-between mb-4">
+          <div>
+            <div class="w-28 h-4 rounded bg-charcoal-700 mb-2" />
+            <div class="w-16 h-3 rounded bg-charcoal-700" />
+          </div>
+        </div>
+        <div class="flex items-center gap-6">
+          <div class="w-28 h-28 rounded-full bg-charcoal-700 shrink-0" />
+          <div class="flex flex-col gap-3 flex-1">
+            <div v-for="i in 4" :key="i" class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-charcoal-600" />
+                <div class="w-12 h-3 rounded bg-charcoal-700" />
+              </div>
+              <div class="w-6 h-3 rounded bg-charcoal-700" />
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </template>
 
-    <!-- Empty state -->
-    <div v-if="total === 0" class="flex items-center justify-center h-28 text-xs text-cream-faint">
-      No invoices yet
-    </div>
+    <!-- Content -->
+    <template v-else>
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <h3 class="text-sm font-semibold text-cream">Invoice Status</h3>
+          <p class="text-xs text-cream-faint mt-0.5">This month</p>
+        </div>
+      </div>
 
-    <!-- Donut chart + legend -->
-    <div v-else class="flex items-center gap-6">
+      <div v-if="total === 0" class="flex items-center justify-center h-28 text-xs text-cream-faint">
+        No invoices yet
+      </div>
+
+      <div v-else class="flex items-center gap-6">
       <!-- SVG Donut -->
       <div class="relative shrink-0">
         <svg viewBox="0 0 100 100" class="w-28 h-28 -rotate-0">
@@ -108,5 +133,7 @@ const arcs = computed(() => {
         </div>
       </div>
     </div>
+    </template>
+
   </div>
 </template>

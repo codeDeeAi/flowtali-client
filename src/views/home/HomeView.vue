@@ -1,5 +1,57 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useSeo } from '@/composables/useSeo'
+import { useHead } from '@unhead/vue'
+
+useSeo({
+  title: 'Flowtali — Professional Invoices & Letterheads for Freelancers',
+  description: 'Create stunning invoices and branded letterheads in minutes. Real-time preview, one-click PDF export, multi-currency support, and custom branding. Free to start.',
+  canonical: 'https://flowtali.com/',
+})
+
+// JSON-LD structured data for search engines + AI crawlers
+useHead({
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'Flowtali',
+        url: 'https://flowtali.com',
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Web',
+        description: 'Professional invoice and letterhead creation tool for freelancers and small teams.',
+        offers: [
+          { '@type': 'Offer', price: '0', priceCurrency: 'USD', name: 'Starter' },
+          { '@type': 'Offer', price: '10', priceCurrency: 'USD', name: 'Pro', priceSpecification: { billingDuration: 'P1Y' } },
+          { '@type': 'Offer', price: '23', priceCurrency: 'USD', name: 'Business', priceSpecification: { billingDuration: 'P1Y' } },
+        ],
+        featureList: [
+          'Real-time invoice preview',
+          'One-click PDF export',
+          'Custom branding and logo',
+          'Multi-currency support',
+          'Letterhead generator with 5 templates',
+          'Stamp and watermark tools',
+          'Team collaboration',
+          'Client management',
+        ],
+      }),
+    },
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'Flowtali',
+        url: 'https://flowtali.com',
+        logo: 'https://flowtali.com/logo.png',
+        sameAs: ['https://twitter.com/flowtali'],
+      }),
+    },
+  ],
+})
 
 // ── LANDING DATA ──
 const mockItems = [

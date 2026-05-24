@@ -4,6 +4,14 @@ import { useRouter, useRoute } from 'vue-router'
 import { useLoaders } from '@/composables/loaders.ts'
 import { signinSchema } from './validation/schema.ts'
 import { useFormErrors } from '@/composables/formErrors'
+import { useSeo } from '@/composables/useSeo'
+
+useSeo({
+  title: 'Sign In',
+  description: 'Sign in to your Flowtali account to manage your invoices, letterheads, and clients.',
+  canonical: 'https://flowtali.com/auth/signin',
+  noIndex: true,
+})
 import { useYupForm } from '@/composables/useYupForm.ts'
 import InputField from '@/components/form/InputField.vue'
 import BasicAlert from '@/components/alerts/BasicAlert.vue'
