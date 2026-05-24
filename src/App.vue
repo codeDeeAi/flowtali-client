@@ -8,6 +8,8 @@ import DefaultLayout from '@/layout/DefaultLayout.vue';
 import PublicLayout from '@/layout/PublicLayout.vue';
 import { useGlobalLoaderStore } from '@/stores/global-loaders';
 import BasicPageLoader from '@/components/loaders/BasicPageLoader.vue';
+import OfflineBanner from '@/components/layout/OfflineBanner.vue';
+import AppUpdateBanner from '@/components/layout/AppUpdateBanner.vue';
 
 const route = useRoute();
 const loaders = useGlobalLoaderStore();
@@ -17,9 +19,7 @@ const currentLayout = shallowRef<Component>(DefaultLayout);
 watch(
   () => route.meta.layout,
   (layoutMeta) => {
-
     const layoutKey = (layoutMeta || layouts.Default) as TLayout;
-
     switch (layoutKey) {
       case layouts.App:
         currentLayout.value = AppLayout;
@@ -36,10 +36,13 @@ watch(
 </script>
 
 <template>
+  <!-- Global overlays — rendered above all layouts -->
+  <OfflineBanner />
+  <AppUpdateBanner />
+
   <BasicPageLoader v-if="loaders.isAnyLoaderActive" />
 
-  <component :is="currentLayout">
-  </component>
+  <component :is="currentLayout" />
 </template>
 
 <style scoped></style>
