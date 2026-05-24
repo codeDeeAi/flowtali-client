@@ -99,6 +99,11 @@ async function saveSecurity() {
         .filter(Boolean),
     })
     settings.value = res.data.data
+    // Keep the auth store in sync so ProfileView reflects the updated require_mfa immediately
+    const currentOrg = authStore.getCurrentOrganization
+    if (currentOrg) {
+      authStore.updateOrganization({ ...currentOrg, require_mfa: settings.value.require_mfa })
+    }
     secSaved.value = true
     setTimeout(() => { secSaved.value = false }, 2500)
   } catch {} finally { isSavingSec.value = false }

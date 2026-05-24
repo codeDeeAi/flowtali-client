@@ -218,8 +218,9 @@ const zoomOut = () => { zoom.value = Math.max(0.4, parseFloat((zoom.value - 0.1)
 const zoomFit = () => { zoom.value = 0.75 }
 
 // ─── Org quick-fill ───────────────────────────────────────────────────────────
-const orgProfiles = computed(() => draftData.value?.organization?.invoice_profiles ?? [])
-const orgBankAccounts = computed(() => draftData.value?.organization?.bank_accounts ?? [])
+const orgProfiles      = computed(() => draftData.value?.organization?.invoice_profiles ?? [])
+const orgBankAccounts  = computed(() => draftData.value?.organization?.bank_accounts ?? [])
+const orgPaymentLinks  = computed(() => draftData.value?.organization?.payment_links ?? [])
 
 const fillFrom = (p: {
   name: string; tagline?: string | null; email?: string | null; phone?: string | null
@@ -243,6 +244,13 @@ const fillBank = (b: {
   form.value.fromBankAccountNumber = b.account_number ?? ''
   form.value.fromBankSortCode      = b.sort_code      ?? ''
   form.value.fromBankIban          = b.iban            ?? ''
+}
+
+const addSavedPaymentLink = (link: { id: string; label: string; type: string; value: string }) => {
+  const already = form.value.paymentLinks.some(l => l.type === link.type && l.value === link.value)
+  if (!already) {
+    form.value.paymentLinks.push({ id: nextLinkId++, type: link.type, value: link.value })
+  }
 }
 
 // ─── Client quick-fill ────────────────────────────────────────────────────────
@@ -407,8 +415,34 @@ const buildPayload = (overrides?: Record<string, any>) => ({
   ...overrides,
 })
 
+const validateForm = (): { ok: boolean; message: string; goTab?: Tab } => {
+  if (!form.value.number.trim()) {
+    return { ok: false, message: 'Invoice number is required.', goTab: 'Settings' }
+  }
+  if (!form.value.items.length) {
+    return { ok: false, message: 'At least one line item is required.', goTab: 'Items' }
+  }
+  const emptyItem = form.value.items.find(i => !i.description.trim())
+  if (emptyItem) {
+    return { ok: false, message: 'All line items must have a description.', goTab: 'Items' }
+  }
+  const emptyLink = form.value.paymentLinks.find(l => !l.value.trim())
+  if (emptyLink) {
+    return { ok: false, message: 'All payment links must have a value.', goTab: 'From' }
+  }
+  return { ok: true, message: '' }
+}
+
 const handleSave = async (statusOverride?: string) => {
   if (!orgId.value) return
+
+  const validation = validateForm()
+  if (!validation.ok) {
+    notify(validation.message, 'error')
+    if (validation.goTab) tab.value = validation.goTab
+    return
+  }
+
   setLoader('isSaving', true)
   try {
     const payload = buildPayload(statusOverride ? { status: statusOverride } : undefined)
@@ -422,8 +456,9 @@ const handleSave = async (statusOverride?: string) => {
     }
     emit('save', form.value)
     router.push({ name: 'invoices' })
-  } catch {
-    notify('Failed to save invoice', 'error')
+  } catch (err: any) {
+    const apiMessage = err?.response?.data?.message ?? err?.response?.data?.errors?.[0]
+    notify(apiMessage ?? 'Failed to save invoice. Please try again.', 'error')
   } finally {
     setLoader('isSaving', false)
   }
@@ -641,6 +676,18 @@ const handleSaveDraft = () => handleSave('draft')
             <!-- Payment links -->
             <div>
               <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Payment Links</p>
+              <!-- Saved payment link quick-add -->
+              <div v-if="orgPaymentLinks.length" class="mb-2 space-y-1">
+                <p class="text-[10px] text-cream-faint/70">Add from saved:</p>
+                <div class="flex flex-wrap gap-1.5">
+                  <button
+                    v-for="pl in orgPaymentLinks" :key="pl.id"
+                    type="button"
+                    @click="addSavedPaymentLink(pl)"
+                    class="text-xs px-2.5 py-1 rounded border border-charcoal-600 text-cream-faint hover:border-amber/50 hover:text-cream transition-colors"
+                  >{{ pl.label }}</button>
+                </div>
+              </div>
               <div class="space-y-2">
                 <div v-for="link in form.paymentLinks" :key="link.id" class="bg-charcoal-700/40 border border-charcoal-600 rounded-lg p-3 space-y-2">
                   <div class="flex items-center justify-between">

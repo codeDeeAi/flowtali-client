@@ -3,12 +3,14 @@ import { ref, computed, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { ProfileService, type IUserProfile, type ISession } from '@/services/profile.service'
+import { SettingsService } from '@/services/settings.service'
 import { useNotification } from '@/composables/notification'
 
 const authStore   = useAuthStore()
 const { notify }  = useNotification()
 
-const orgRequiresMfa = computed(() => authStore.getCurrentOrganization?.require_mfa === true)
+const liveOrgRequiresMfa = ref(authStore.getCurrentOrganization?.require_mfa === true)
+const orgRequiresMfa     = computed(() => liveOrgRequiresMfa.value)
 
 // ── state ──────────────────────────────────────────────────────────────────────
 const profile     = ref<IUserProfile | null>(null)
@@ -51,6 +53,7 @@ const activeSessions = computed(() => sessions.value.filter(s => {
 // ── load ───────────────────────────────────────────────────────────────────────
 async function load() {
   isLoading.value = true
+  const orgId = authStore.getCurrentOrganization?.id
   try {
     const [profileRes, sessionsRes] = await Promise.all([
       ProfileService.get(),
@@ -68,6 +71,13 @@ async function load() {
     notify('Failed to load profile', 'error')
   } finally {
     isLoading.value = false
+  }
+
+  if (orgId) {
+    try {
+      const settingsRes = await SettingsService.getOrgSettings(orgId)
+      liveOrgRequiresMfa.value = settingsRes.data.data.require_mfa === true
+    } catch {}
   }
 }
 

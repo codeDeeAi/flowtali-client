@@ -56,11 +56,19 @@ export interface IOrgBankAccount {
   notes?: string | null
 }
 
+export interface IOrgPaymentLink {
+  id: string
+  label: string
+  type: string
+  value: string
+}
+
 export interface IOrgPreferences {
   stamps: IOrgStamp[]
   brand_colors: IOrgBrandColor[]
   invoice_profiles: IOrgInvoiceProfile[]
   bank_accounts: IOrgBankAccount[]
+  payment_links: IOrgPaymentLink[]
   signatures: IOrgSignature[]
   logos: IOrgLogo[]
 }

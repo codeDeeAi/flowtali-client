@@ -1,5 +1,5 @@
 import http from './utils/http'
-import type { IOrgBankAccount, IOrgBrandColor, IOrgInvoiceProfile, IOrgPreferences, IOrgStamp } from '@/types/org-preferences.types'
+import type { IOrgBankAccount, IOrgBrandColor, IOrgInvoiceProfile, IOrgPaymentLink, IOrgPreferences, IOrgStamp } from '@/types/org-preferences.types'
 
 export const OrgPreferencesService = {
   get(orgId: string) {
@@ -20,6 +20,10 @@ export const OrgPreferencesService = {
 
   updateBankAccounts(orgId: string, bank_accounts: IOrgBankAccount[]) {
     return http.put<{ data: { bank_accounts: IOrgBankAccount[] } }>(`/api/v1/orgs/${orgId}/preferences/bank-accounts`, { bank_accounts })
+  },
+
+  updatePaymentLinks(orgId: string, payment_links: IOrgPaymentLink[]) {
+    return http.put<{ data: { payment_links: IOrgPaymentLink[] } }>(`/api/v1/orgs/${orgId}/preferences/payment-links`, { payment_links })
   },
 
   attachSignature(orgId: string, payload: { name: string; role: string; media_id: string }) {

@@ -4,7 +4,7 @@ import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { OrgPreferencesService } from '@/services/org-preferences.service'
 import { MediaService } from '@/services/media.service'
-import type { IOrgStamp, IOrgBrandColor, IOrgSignature, IOrgLogo, IOrgInvoiceProfile, IOrgBankAccount } from '@/types/org-preferences.types'
+import type { IOrgStamp, IOrgBrandColor, IOrgSignature, IOrgLogo, IOrgInvoiceProfile, IOrgBankAccount, IOrgPaymentLink } from '@/types/org-preferences.types'
 
 const authStore = useAuthStore()
 const orgId = computed(() => authStore.currentOrganization?.id ?? '')
@@ -18,6 +18,7 @@ const signatures      = ref<IOrgSignature[]>([])
 const orgLogos        = ref<IOrgLogo[]>([])
 const invoiceProfiles = ref<IOrgInvoiceProfile[]>([])
 const bankAccounts    = ref<IOrgBankAccount[]>([])
+const paymentLinks    = ref<IOrgPaymentLink[]>([])
 
 // ── Stamp form ─────────────────────────────────────────────────────────────────
 const showStampForm  = ref(false)
@@ -66,6 +67,7 @@ async function loadPreferences() {
     brandColors.value     = data.data.brand_colors     ?? []
     invoiceProfiles.value = data.data.invoice_profiles ?? []
     bankAccounts.value    = data.data.bank_accounts    ?? []
+    paymentLinks.value    = data.data.payment_links    ?? []
     signatures.value      = data.data.signatures       ?? []
     orgLogos.value        = data.data.logos            ?? []
   } finally {
@@ -449,6 +451,60 @@ async function deleteBank(index: number) {
     bankAccounts.value = data.data.bank_accounts
   } finally {
     bankSaving.value = false
+  }
+}
+
+// ── Payment Links ─────────────────────────────────────────────────────────────
+const showPaymentLinkForm  = ref(false)
+const paymentLinkSaving    = ref(false)
+const editPaymentLinkIndex = ref<number | null>(null)
+const paymentLinkTypes     = ['PayPal', 'Venmo', 'Cash App', 'Stripe', 'Wise', 'Revolut', 'Zelle', 'Custom']
+const paymentLinkForm      = ref<Omit<IOrgPaymentLink, 'id'>>({ label: '', type: 'PayPal', value: '' })
+
+function openAddPaymentLink() {
+  editPaymentLinkIndex.value = null
+  paymentLinkForm.value = { label: '', type: 'PayPal', value: '' }
+  showPaymentLinkForm.value = true
+}
+
+function openEditPaymentLink(index: number) {
+  editPaymentLinkIndex.value = index
+  const p = paymentLinks.value[index]
+  if (!p) return
+  paymentLinkForm.value = { label: p.label, type: p.type, value: p.value }
+  showPaymentLinkForm.value = true
+}
+
+async function savePaymentLink() {
+  if (!paymentLinkForm.value.label.trim() || !paymentLinkForm.value.value.trim()) return
+  const list = [...paymentLinks.value]
+  const entry: IOrgPaymentLink = {
+    id: editPaymentLinkIndex.value !== null ? (list[editPaymentLinkIndex.value]?.id ?? crypto.randomUUID()) : crypto.randomUUID(),
+    label: paymentLinkForm.value.label.trim(),
+    type:  paymentLinkForm.value.type,
+    value: paymentLinkForm.value.value.trim(),
+  }
+  if (editPaymentLinkIndex.value !== null) list[editPaymentLinkIndex.value] = entry
+  else list.push(entry)
+
+  paymentLinkSaving.value = true
+  try {
+    const { data } = await OrgPreferencesService.updatePaymentLinks(orgId.value, list)
+    paymentLinks.value = data.data.payment_links
+    showPaymentLinkForm.value = false
+  } finally {
+    paymentLinkSaving.value = false
+  }
+}
+
+async function deletePaymentLink(index: number) {
+  const list = paymentLinks.value.filter((_, i) => i !== index)
+  paymentLinkSaving.value = true
+  try {
+    const { data } = await OrgPreferencesService.updatePaymentLinks(orgId.value, list)
+    paymentLinks.value = data.data.payment_links
+  } finally {
+    paymentLinkSaving.value = false
   }
 }
 </script>
@@ -1034,6 +1090,91 @@ async function deleteBank(index: number) {
                 :disabled="bankSaving || !bankForm.label.trim()"
                 @click="saveBank"
               >{{ bankSaving ? 'Saving…' : 'Save Account' }}</button>
+            </div>
+          </div>
+        </Transition>
+      </div>
+
+      <!-- ── Payment Links ──────────────────────────────────────────────────── -->
+      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 lg:col-span-2">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-sm font-semibold text-cream">Payment Links</h3>
+            <p class="text-[11px] text-cream-faint mt-0.5">Saved payment links (PayPal, Stripe, etc.) — reuse them on invoices and letterheads.</p>
+          </div>
+          <button
+            class="flex items-center gap-1.5 text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-2.5 py-1.5 rounded-md transition-colors shrink-0"
+            @click="openAddPaymentLink"
+          >
+            <Icon icon="lucide:plus" class="w-3 h-3" /> Add Link
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+          <div
+            v-for="(link, i) in paymentLinks" :key="link.id"
+            class="group relative flex items-center gap-3 p-3.5 border border-charcoal-700 hover:border-charcoal-500 rounded-lg cursor-pointer transition-colors"
+            @click="openEditPaymentLink(i)"
+          >
+            <div class="w-8 h-8 rounded-lg bg-charcoal-700 flex items-center justify-center shrink-0">
+              <Icon icon="lucide:link" class="w-4 h-4 text-amber" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-semibold text-cream truncate">{{ link.label }}</div>
+              <div class="text-[11px] text-cream-faint truncate">
+                <span class="text-amber/80 font-medium">{{ link.type }}</span>
+                <span class="mx-1">·</span>
+                <span class="font-mono">{{ link.value }}</span>
+              </div>
+            </div>
+            <button
+              class="w-5 h-5 hidden group-hover:flex items-center justify-center rounded text-cream-faint hover:text-red-400 hover:bg-red-500/10 transition-colors shrink-0"
+              @click.stop="deletePaymentLink(i)"
+            >
+              <Icon icon="lucide:x" class="w-3 h-3" />
+            </button>
+          </div>
+          <div v-if="!paymentLinks.length" class="col-span-full text-center py-6 text-xs text-cream-faint">
+            No payment links yet.
+          </div>
+        </div>
+
+        <Transition name="slide-down">
+          <div v-if="showPaymentLinkForm" class="mt-4 p-4 bg-charcoal-900 border border-charcoal-600 rounded-lg space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-medium text-cream">{{ editPaymentLinkIndex !== null ? 'Edit' : 'New' }} Payment Link</span>
+              <button class="text-cream-faint hover:text-cream" @click="showPaymentLinkForm = false">
+                <Icon icon="lucide:x" class="w-4 h-4" />
+              </button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs text-cream-faint mb-1 block">Label <span class="text-red-400">*</span></label>
+                <input v-model="paymentLinkForm.label" type="text" placeholder="e.g. PayPal (Business)" class="app-inp w-full text-sm" />
+              </div>
+              <div>
+                <label class="text-xs text-cream-faint mb-1 block">Type <span class="text-red-400">*</span></label>
+                <select v-model="paymentLinkForm.type" class="app-select w-full text-sm">
+                  <option v-for="t in paymentLinkTypes" :key="t">{{ t }}</option>
+                </select>
+              </div>
+              <div class="sm:col-span-2">
+                <label class="text-xs text-cream-faint mb-1 block">Link / Username <span class="text-red-400">*</span></label>
+                <input
+                  v-model="paymentLinkForm.value"
+                  type="text"
+                  :placeholder="paymentLinkForm.type === 'PayPal' ? 'paypal.me/yourusername' : paymentLinkForm.type === 'Venmo' ? '@yourusername' : paymentLinkForm.type === 'Cash App' ? '$yourcashtag' : paymentLinkForm.type === 'Stripe' ? 'https://buy.stripe.com/…' : 'Link or username'"
+                  class="app-inp w-full text-sm"
+                />
+              </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-1">
+              <button class="text-xs text-cream-muted hover:text-cream px-3 py-1.5 rounded-md hover:bg-charcoal-700 transition-colors" @click="showPaymentLinkForm = false">Cancel</button>
+              <button
+                class="text-xs bg-amber hover:bg-amber-light text-charcoal-900 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
+                :disabled="paymentLinkSaving || !paymentLinkForm.label.trim() || !paymentLinkForm.value.trim()"
+                @click="savePaymentLink"
+              >{{ paymentLinkSaving ? 'Saving…' : 'Save Link' }}</button>
             </div>
           </div>
         </Transition>

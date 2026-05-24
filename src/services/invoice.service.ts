@@ -119,6 +119,12 @@ export interface IInvoiceDraftData {
       currency?: string | null
       notes?: string | null
     }>
+    payment_links: Array<{
+      id: string
+      label: string
+      type: string
+      value: string
+    }>
   } | null
   clients: Array<{
     id: string
