@@ -4,8 +4,8 @@ import { useSeo } from '@/composables/useSeo'
 import { useHead } from '@unhead/vue'
 
 useSeo({
-  title: 'Flowtali — Professional Invoices & Letterheads for Freelancers',
-  description: 'Create stunning invoices and branded letterheads in minutes. Real-time preview, one-click PDF export, multi-currency support, and custom branding. Free to start.',
+  title: 'Flowtali — Invoices, Receipts, Projects & Letterheads for Freelancers',
+  description: 'Create professional invoices, payment receipts, and branded letterheads — then organize everything under projects. Multi-currency, real-time preview, PDF export, client management, and team roles. Free to start.',
   canonical: 'https://flowtali.com/',
 })
 
@@ -21,7 +21,7 @@ useHead({
         url: 'https://flowtali.com',
         applicationCategory: 'BusinessApplication',
         operatingSystem: 'Web',
-        description: 'Professional invoice and letterhead creation tool for freelancers and small teams.',
+        description: 'Complete business document platform for freelancers and small teams: invoices, payment receipts, project tracking, branded letterheads, client management, and team roles.',
         offers: [
           { '@type': 'Offer', price: '0', priceCurrency: 'USD', name: 'Starter' },
           { '@type': 'Offer', price: '10', priceCurrency: 'USD', name: 'Pro', priceSpecification: { billingDuration: 'P1Y' } },
@@ -30,12 +30,16 @@ useHead({
         featureList: [
           'Real-time invoice preview',
           'One-click PDF export',
+          'Payment receipt generation',
+          'Project management with linked documents',
           'Custom branding and logo',
           'Multi-currency support',
-          'Letterhead generator with 5 templates',
+          'Letterhead generator with 8 templates',
           'Stamp and watermark tools',
-          'Team collaboration',
           'Client management',
+          'Team roles and permissions',
+          'Activity timeline per project',
+          'File attachments per project',
         ],
       }),
     },
@@ -63,11 +67,14 @@ const brands = ['Notion', 'Figma', 'Stripe', 'Linear', 'Vercel', 'Loom'];
 
 const features = [
   { title: 'Live Preview', isNew: false, desc: 'See invoices and letterheads update in real time as you type. Zero guessing — what you see is exactly what your client receives.', icon: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12s1.5-3 4-3 4 3 4 3-1.5 3-4 3-4-3-4-3z"/><circle cx="12" cy="12" r="1.5"/>' },
-  { title: 'PDF Export', isNew: false, desc: 'Export pixel-perfect PDFs with one click. Print-ready invoices and branded letterheads, ready to send in seconds.', icon: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M16 13H8M16 17H8M10 9H8"/>' },
-  { title: 'Letterhead Generator', isNew: true, desc: '8 elegant templates for formal letters, proposals, and engagements. Full branding — logo, signature, colors, watermark, and footer.', icon: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>' },
+  { title: 'PDF Export', isNew: false, desc: 'Export pixel-perfect PDFs with one click. Print-ready invoices, receipts, and branded letterheads — ready to send in seconds.', icon: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M16 13H8M16 17H8M10 9H8"/>' },
+  { title: 'Receipt Tracking', isNew: true, desc: 'Generate professional payment receipts in seconds. Attach to invoices, link to projects, and keep a clear record of every payment received.', icon: '<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1z"/><path d="M14 8H8M14 12H8M11 16H8"/>' },
+  { title: 'Project Management', isNew: true, desc: 'Group invoices, receipts, letterheads, and files under a single project. Track contract value, payment progress, and client in one place.', icon: '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><path d="M12 11v6M8 13v4M16 9v8"/>' },
+  { title: 'Letterhead Generator', isNew: false, desc: '8 elegant templates for formal letters, proposals, and engagements. Full branding — logo, signature, colors, watermark, and footer.', icon: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>' },
   { title: 'Custom Branding', isNew: false, desc: 'Upload your logo and signature, pick accent colors, choose fonts. Every document looks unmistakably yours.', icon: '<circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/>' },
-  { title: 'Multi-Currency', isNew: false, desc: 'Invoice clients globally in USD, EUR, GBP, NGN, and 7+ currencies. Automatic symbols and formatting per locale.', icon: '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>' },
-  { title: 'Watermarks & Stamps', isNew: true, desc: 'Add custom watermarks to letterheads and status stamps to invoices. CONFIDENTIAL, APPROVED, DRAFT — or any text you need.', icon: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>' },
+  { title: 'Multi-Currency', isNew: false, desc: 'Invoice and receipt clients globally in USD, EUR, GBP, NGN, and 7+ currencies. Automatic symbols and formatting per locale.', icon: '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>' },
+  { title: 'Team Roles & Permissions', isNew: true, desc: 'Invite team members and control exactly what they can access. Granular permissions for invoices, receipts, projects, clients, and more.', icon: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>' },
+  { title: 'Watermarks & Stamps', isNew: false, desc: 'Add custom watermarks to letterheads and status stamps to invoices. CONFIDENTIAL, APPROVED, DRAFT — or any text you need.', icon: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>' },
 ];
 
 const letterheadFeatures = [
@@ -91,34 +98,36 @@ const billing = ref('annual');
 const plans = [
   {
     name: 'Starter', monthlyPrice: 0, annualPrice: 0, desc: 'Perfect for freelancers starting out.', cta: 'Start free', featured: false,
-    features: ['5 invoices + 3 letterheads/month', 'Basic templates', 'PDF export', '3 currencies', 'Flowtali branding']
+    features: ['5 invoices + 3 letterheads/month', '10 receipts/month', '1 active project', 'Basic templates', 'PDF export', '3 currencies', 'Flowtali branding']
   },
   {
     name: 'Pro', monthlyPrice: 12, annualPrice: 10, desc: 'For active freelancers who need full power.', cta: 'Start 14-day trial', featured: true,
-    features: ['Unlimited invoices & letterheads', 'All 5 letterhead templates', 'Custom branding & logo', 'Signature upload', 'All 11 currencies', 'Stamp + watermark', 'Remove Flowtali branding', 'Priority support']
+    features: ['Unlimited invoices, receipts & letterheads', 'Unlimited projects', 'All 8 letterhead templates', 'Custom branding & logo', 'Signature upload', 'All 11 currencies', 'Stamp + watermark', 'Client management', 'Remove Flowtali branding', 'Priority support']
   },
   {
     name: 'Business', monthlyPrice: 29, annualPrice: 23, desc: 'For studios and small teams.', cta: 'Start 14-day trial', featured: false,
-    features: ['Everything in Pro', 'Up to 5 team members', 'Client portal (soon)', 'Invoice analytics', 'Stripe payment links', 'Dedicated support']
+    features: ['Everything in Pro', 'Up to 5 team members', 'Team roles & permissions', 'Project activity timeline', 'Invoice analytics', 'Client portal (soon)', 'Stripe payment links', 'Dedicated support']
   },
 ];
 
 const testimonials = [
-  { name: 'Amara Osei', role: 'UX Designer, Lagos', quote: 'The letterhead feature is exactly what I needed. My proposals now look like they came from a proper agency.', hue: 180 },
+  { name: 'Amara Osei', role: 'UX Designer, Lagos', quote: 'The Projects feature changed everything. I can see every invoice, receipt, and file for a client in one place. No more hunting through folders.', hue: 180 },
   { name: 'Luca Ferretti', role: 'Freelance Developer', quote: 'Real-time preview is genius. I see exactly what my client gets before I export. No more surprise layout issues.', hue: 220 },
-  { name: 'Priya Nair', role: 'Brand Consultant', quote: 'Invoice and letterhead in one place — it saves me so much time. My clients always comment on how polished everything looks.', hue: 260 },
-  { name: 'Kofi Acheampong', role: 'Motion Designer', quote: 'The split-panel letterhead template is stunning. Watermark feature is perfect for draft proposals.', hue: 140 },
+  { name: 'Priya Nair', role: 'Brand Consultant', quote: 'Invoice, receipt, and letterhead in one place — it saves me so much time. My clients always comment on how polished everything looks.', hue: 260 },
+  { name: 'Kofi Acheampong', role: 'Motion Designer', quote: 'The payment receipt feature is so useful. I send a stamped receipt the moment a client pays — looks completely professional.', hue: 140 },
   { name: 'Sofia Martínez', role: 'Copywriter & Strategist', quote: 'Multi-currency support is perfect for my international clients. Flowtali handles all the formatting automatically.', hue: 30 },
-  { name: 'James Thornton', role: 'Photography Studio', quote: 'Clean, fast, and beautiful. Flowtali handles all my document needs so I can focus on shooting.', hue: 200 },
+  { name: 'James Thornton', role: 'Photography Studio', quote: 'Team roles let me give my assistant access to receipts without touching billing. That level of control in a tool this clean is rare.', hue: 200 },
 ];
 
 const openFaq = ref<number | null>(null);
 const faqs = [
-  { q: 'What is the Letterhead Generator?', a: 'The Letterhead Generator lets you create professional branded letterheads for formal letters, proposals, and engagement letters. Choose from 5 templates, upload your logo and signature, set your colors and font, add a watermark, and export a pixel-perfect PDF.' },
-  { q: 'Is Flowtali really free to start?', a: 'Yes — the Starter plan is free forever. You can create up to 5 invoices and 3 letterheads per month, export PDFs, and use core templates at no cost.' },
-  { q: 'Can I use my own logo and signature?', a: 'Absolutely. Pro and Business plans support full branding: upload your logo, signature image, set any accent color, and choose your font style.' },
-  { q: 'What letterhead templates are available?', a: 'Five templates: Classic (traditional header/footer), Modern (bold left sidebar), Minimal (clean typography), Bold Header (full-width colored header), and Split Panel (branded sidebar). All are fully customizable.' },
-  { q: 'What currencies does the invoice tool support?', a: 'USD, EUR, GBP, NGN, CAD, AUD, JPY, INR, ZAR, CHF, and AED — with correct symbols and formatting for each.' },
+  { q: 'What is Project Management in Flowtali?', a: 'Projects let you group all your work for a client under one place — attach invoices, payment receipts, and letterheads, track contract value vs. payments received, upload project files, add notes, and monitor an activity timeline. Everything for a job in one view.' },
+  { q: 'How does Receipt Tracking work?', a: 'After creating an invoice, you can generate a payment receipt for any amount received. Receipts can be linked directly to a project, exported as a PDF, and stamped (e.g. PAID). They appear on both the project overview and the dedicated Receipts section.' },
+  { q: 'How do Team Roles & Permissions work?', a: 'Business plans can invite team members and assign granular permissions — for example, a member can create invoices but not delete projects, or view receipts without editing clients. Roles are managed per organisation from the Members settings page.' },
+  { q: 'What is the Letterhead Generator?', a: 'The Letterhead Generator lets you create professional branded letterheads for formal letters, proposals, and engagement letters. Choose from 8 templates, upload your logo and signature, set your colors and font, add a watermark, and export a pixel-perfect PDF.' },
+  { q: 'Is Flowtali really free to start?', a: 'Yes — the Starter plan is free forever. You get invoices, receipts, 1 active project, and 3 letterheads per month, PDF exports, and core templates at no cost.' },
+  { q: 'Can I use my own logo and signature?', a: 'Absolutely. Pro and Business plans support full branding: upload your logo, signature image, set any accent color, and choose your font style across all documents.' },
+  { q: 'What currencies are supported?', a: 'USD, EUR, GBP, NGN, CAD, AUD, JPY, INR, ZAR, CHF, and AED — with correct symbols and formatting for every invoice and receipt.' },
   { q: 'Can I cancel my subscription anytime?', a: 'Yes. Cancel at any time from account settings. You keep access until the end of your billing period.' },
 ];
 
@@ -143,15 +152,15 @@ const scrollTo = (id: string) => {
         <div class="stagger">
           <div class="badge mb-6 opacity-0 animate-fade-up">
             <span class="w-1.5 h-1.5 rounded-full bg-amber inline-block"></span>
-            Invoices & Letterheads — one platform
+            Invoices · Receipts · Projects · Letterheads
           </div>
           <h1
             class="font-display text-5xl sm:text-6xl lg:text-7xl font-semibold leading-[1.05] text-cream mb-6 opacity-0 animate-fade-up">
-            Professional docs<br />that make you look<br /><em class="shimmer-text not-italic">extraordinary</em>
+            Run your freelance<br />business from one<br /><em class="shimmer-text not-italic">beautiful platform</em>
           </h1>
           <p class="text-cream-muted text-lg leading-relaxed max-w-md mb-10 opacity-0 animate-fade-up">
-            Flowtali gives freelancers and studios everything they need to create stunning invoices and branded
-            letterheads — live preview, instant PDF, zero friction.
+            Flowtali gives freelancers and studios everything they need — stunning invoices, payment receipts, branded
+            letterheads, and project tracking — all with live preview, instant PDF, zero friction.
           </p>
           <div class="flex flex-wrap gap-4 opacity-0 animate-fade-up">
             <router-link :to="{ name: 'signup' }" class="btn-primary text-base px-7 py-3.5">Start for free</router-link>
@@ -272,12 +281,11 @@ const scrollTo = (id: string) => {
       style="background:radial-gradient(ellipse,rgba(232,168,62,1) 0%,transparent 70%)"></div>
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-20">
-        <div class="badge inline-flex mb-5">Two powerful tools</div>
+        <div class="badge inline-flex mb-5">Four tools, one platform</div>
         <h2 class="font-display text-5xl md:text-6xl font-semibold text-cream leading-tight">
-          One platform for all your<br /><em class="text-amber not-italic">professional documents</em>
+          Everything you need to<br /><em class="text-amber not-italic">run your business</em>
         </h2>
-        <p class="text-cream-muted text-lg mt-5 max-w-xl mx-auto">Flowtali combines invoice generation and letterhead
-          creation in a single seamless workspace.</p>
+        <p class="text-cream-muted text-lg mt-5 max-w-xl mx-auto">Invoices, receipts, projects, and letterheads — all in one seamless workspace built for freelancers and small teams.</p>
       </div>
 
       <div class="grid lg:grid-cols-2 gap-8">
@@ -391,6 +399,114 @@ const scrollTo = (id: string) => {
             </svg>
           </div>
         </router-link>
+
+        <!-- Receipt Product Card -->
+        <router-link :to="{ name: 'signup' }"
+          class="bg-charcoal-800/60 border border-charcoal-700/40 rounded-3xl p-8 card-glow transition-all duration-300 hover:border-amber-border hover:-translate-y-1 cursor-pointer group relative overflow-hidden">
+          <div class="absolute top-4 right-4 badge text-xs">New ✦</div>
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-amber-dim border border-amber-border flex items-center justify-center">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8A83E" stroke-width="1.8">
+                <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1z"/>
+                <path d="M14 8H8M14 12H8M11 16H8"/>
+              </svg>
+            </div>
+            <div>
+              <div class="text-cream font-semibold">Receipt Generator</div>
+              <div class="text-cream-faint text-xs">Confirm every payment</div>
+            </div>
+          </div>
+          <!-- Mini receipt preview -->
+          <div class="bg-white rounded-xl p-5 mb-6 shadow-2xl">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <div class="text-xs font-bold text-amber" style="font-family:'DM Sans',sans-serif">PAYMENT RECEIPT</div>
+                <div class="text-gray-400 text-[9px]">REC-0018</div>
+              </div>
+              <div class="text-right">
+                <div class="text-[9px] text-gray-400">Received from</div>
+                <div class="text-xs font-semibold text-gray-700">Johnson Corp</div>
+              </div>
+            </div>
+            <div class="h-0.5 bg-green-100 mb-3 rounded"></div>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-[9px] text-gray-500">Amount Received</span>
+              <span class="text-sm font-bold text-green-600" style="font-family:'Cormorant Garamond',serif">$4,200.00</span>
+            </div>
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-[9px] text-gray-500">Payment Method</span>
+              <span class="text-[9px] text-gray-700 font-medium">Bank Transfer</span>
+            </div>
+            <div class="flex items-center justify-center py-1 rounded bg-green-50">
+              <span class="text-[9px] font-bold text-green-600 tracking-wider">✓ PAYMENT CONFIRMED</span>
+            </div>
+          </div>
+          <h3 class="font-display text-2xl font-semibold text-cream mb-3">Receipts clients can trust</h3>
+          <p class="text-cream-muted text-sm leading-relaxed mb-5">Generate professional payment receipts, attach them to invoices, link them to projects, and export stamped PDFs — all with the same live preview experience.</p>
+          <div class="flex flex-wrap gap-2">
+            <span v-for="tag in ['Linked to Invoices', 'Project Tracking', 'PDF Export', 'Payment Stamps', 'Multi-Currency']"
+              :key="tag"
+              class="text-xs px-2.5 py-1 rounded-full bg-charcoal-700/80 border border-charcoal-600/50 text-cream-muted">{{ tag }}</span>
+          </div>
+          <div class="mt-6 flex items-center gap-2 text-amber text-sm font-medium group-hover:gap-3 transition-all">
+            Try Receipt Generator <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </div>
+        </router-link>
+
+        <!-- Projects Product Card -->
+        <router-link :to="{ name: 'signup' }"
+          class="bg-charcoal-800/60 border border-charcoal-700/40 rounded-3xl p-8 card-glow transition-all duration-300 hover:border-amber-border hover:-translate-y-1 cursor-pointer group relative overflow-hidden">
+          <div class="absolute top-4 right-4 badge text-xs">New ✦</div>
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-amber-dim border border-amber-border flex items-center justify-center">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8A83E" stroke-width="1.8">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                <path d="M12 11v6M8 13v4M16 9v8"/>
+              </svg>
+            </div>
+            <div>
+              <div class="text-cream font-semibold">Project Management</div>
+              <div class="text-cream-faint text-xs">Track every engagement</div>
+            </div>
+          </div>
+          <!-- Mini project preview -->
+          <div class="bg-white rounded-xl p-5 mb-6 shadow-2xl">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <div class="text-[9px] text-gray-400 mb-0.5">PRJ-004</div>
+                <div class="text-xs font-bold text-gray-800">Brand Identity — Acme Corp</div>
+              </div>
+              <span class="text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-green-50 text-green-600 border border-green-100">Active</span>
+            </div>
+            <div class="h-0.5 bg-gray-100 mb-3 rounded"></div>
+            <div class="flex justify-between text-[9px] text-gray-500 mb-2">
+              <span>Contract</span><span class="text-gray-800 font-semibold">$12,000</span>
+            </div>
+            <div class="mb-2">
+              <div class="flex justify-between text-[8px] text-gray-400 mb-1"><span>Received</span><span>$8,400 (70%)</span></div>
+              <div class="h-1.5 bg-gray-100 rounded-full"><div class="h-1.5 bg-amber rounded-full" style="width:70%"></div></div>
+            </div>
+            <div class="flex gap-2 mt-3">
+              <span class="text-[8px] px-1.5 py-0.5 bg-gray-50 rounded border border-gray-100 text-gray-500">3 Invoices</span>
+              <span class="text-[8px] px-1.5 py-0.5 bg-gray-50 rounded border border-gray-100 text-gray-500">2 Receipts</span>
+              <span class="text-[8px] px-1.5 py-0.5 bg-gray-50 rounded border border-gray-100 text-gray-500">1 Letterhead</span>
+            </div>
+          </div>
+          <h3 class="font-display text-2xl font-semibold text-cream mb-3">Every project, fully in view</h3>
+          <p class="text-cream-muted text-sm leading-relaxed mb-5">Link invoices, receipts, and letterheads to a project. Track contract value, payment progress, upload files, log notes, and see a full activity timeline per engagement.</p>
+          <div class="flex flex-wrap gap-2">
+            <span v-for="tag in ['Linked Documents', 'Payment Progress', 'Activity Timeline', 'File Uploads', 'Client Tracking']"
+              :key="tag"
+              class="text-xs px-2.5 py-1 rounded-full bg-charcoal-700/80 border border-charcoal-600/50 text-cream-muted">{{ tag }}</span>
+          </div>
+          <div class="mt-6 flex items-center gap-2 text-amber text-sm font-medium group-hover:gap-3 transition-all">
+            Try Project Management <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </div>
+        </router-link>
       </div>
     </div>
   </section>
@@ -405,8 +521,7 @@ const scrollTo = (id: string) => {
         <h2 class="font-display text-5xl md:text-6xl font-semibold text-cream leading-tight">
           Everything you need to<br /><em class="text-amber not-italic">look like a pro</em>
         </h2>
-        <p class="text-cream-muted text-lg mt-5 max-w-xl mx-auto">Invoices, letterheads, branding — built for
-          freelancers who want results without complexity.</p>
+        <p class="text-cream-muted text-lg mt-5 max-w-xl mx-auto">Invoices, receipts, projects, letterheads, branding, team roles — built for freelancers who want results without complexity.</p>
       </div>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div v-for="feature in features" :key="feature.title"
@@ -535,8 +650,7 @@ const scrollTo = (id: string) => {
           </div>
         </div>
       </div>
-      <p class="text-center text-cream-faint text-sm mt-8">All plans include both Invoice Generator and Letterhead
-        Generator. 14-day free trial, cancel anytime.</p>
+      <p class="text-center text-cream-faint text-sm mt-8">All plans include Invoice Generator, Receipt Generator, Project Management, and Letterhead Generator. 14-day free trial, cancel anytime.</p>
     </div>
   </section>
 
@@ -600,15 +714,13 @@ const scrollTo = (id: string) => {
     <div class="absolute inset-0"
       style="background:radial-gradient(ellipse at 50% 50%,rgba(232,168,62,0.12) 0%,transparent 70%)"></div>
     <div class="relative max-w-4xl mx-auto px-6 text-center">
-      <h2 class="font-display text-5xl md:text-6xl font-semibold text-cream mb-5 leading-tight">Ready to look<em
-          class="shimmer-text not-italic"> extraordinary?</em></h2>
-      <p class="text-cream-muted text-lg mb-10">Join 4,200+ freelancers who trust Flowtali for invoices and letterheads.
-      </p>
+      <h2 class="font-display text-5xl md:text-6xl font-semibold text-cream mb-5 leading-tight">Ready to run your<em
+          class="shimmer-text not-italic"> business better?</em></h2>
+      <p class="text-cream-muted text-lg mb-10">Join 4,200+ freelancers who trust Flowtali for invoices, receipts, projects, and letterheads.</p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <router-link :to="{ name: 'signup' }" class="btn-primary text-base px-8 py-4">Start free — no credit
           card</router-link>
-        <router-link :to="{ name: 'signup' }" class="btn-ghost text-base px-8 py-4">Try Letterhead Generator
-          →</router-link>
+        <router-link :to="{ name: 'signup' }" class="btn-ghost text-base px-8 py-4">Explore all features →</router-link>
       </div>
     </div>
   </section>
