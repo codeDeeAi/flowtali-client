@@ -171,6 +171,32 @@ const volumeBars = computed(() => {
 })
 
 const barGridLines = [26, 52, 78, 104, 130]
+
+// ─── Monthly receipt volume bar chart ────────────────────────────────────────
+
+const receiptVolumeMax = computed(() => {
+  const counts = (data.value?.monthly_receipt_volume ?? []).map(d => d.count)
+  return Math.max(...counts, 0)
+})
+
+const receiptVolumeBars = computed(() => {
+  const vol = data.value?.monthly_receipt_volume ?? []
+  const n   = vol.length
+  if (n === 0) return []
+  const spacing = barChartW / n
+  const bw      = Math.min(38, spacing * 0.6)
+  const max     = Math.max(receiptVolumeMax.value, 1)
+  const skip    = Math.ceil(n / 12)
+  return vol.map((d, i) => ({
+    x:         Math.round(i * spacing + (spacing - bw) / 2),
+    y:         Math.round(barChartH - (d.count / max) * (barChartH - 10)),
+    w:         bw,
+    h:         Math.round((d.count / max) * (barChartH - 10)),
+    label:     d.month,
+    lx:        Math.round(i * spacing + spacing / 2),
+    showLabel: i % skip === 0,
+  }))
+})
 </script>
 
 <template>
@@ -288,7 +314,7 @@ const barGridLines = [26, 52, 78, 104, 130]
         </svg>
       </div>
 
-      <!-- Status breakdown row -->
+      <!-- Invoice status breakdown row -->
       <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
         <div
           v-for="[status, meta] in Object.entries(data.status_breakdown)"
@@ -298,6 +324,68 @@ const barGridLines = [26, 52, 78, 104, 130]
           <div class="text-[10px] font-semibold uppercase tracking-wider text-cream-faint mb-2">{{ status }}</div>
           <div class="text-xl font-semibold text-cream font-display">{{ meta.count }}</div>
           <div v-if="meta.amount > 0" class="text-xs text-cream-faint mt-0.5">{{ fmtCurrency(meta.amount) }}</div>
+        </div>
+      </div>
+
+      <!-- ─── Receipts Section ───────────────────────────────────────────────── -->
+      <div class="border-t border-charcoal-700/50 pt-5">
+        <h2 class="text-sm font-semibold text-cream mb-1">Receipts</h2>
+        <p class="text-xs text-cream-faint mb-4">Receipts issued in this period</p>
+
+        <!-- Receipt stat cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+            <div class="w-8 h-8 rounded-lg bg-amber/10 flex items-center justify-center mb-3">
+              <svg class="w-4 h-4 text-amber" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8M16 12H8M11 16H8"/></svg>
+            </div>
+            <div class="font-display text-2xl font-semibold text-cream">{{ data.receipt_stats.total }}</div>
+            <div class="text-xs text-cream-faint mt-1">Total Receipts</div>
+          </div>
+          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+            <div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center mb-3">
+              <svg class="w-4 h-4 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="font-display text-2xl font-semibold text-cream">{{ data.receipt_stats.breakdown.finalized.count }}</div>
+            <div class="text-xs text-cream-faint mt-1">Finalized</div>
+          </div>
+          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+            <div class="w-8 h-8 rounded-lg bg-charcoal-600/50 flex items-center justify-center mb-3">
+              <svg class="w-4 h-4 text-cream-faint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div class="font-display text-2xl font-semibold text-cream">{{ data.receipt_stats.breakdown.draft.count }}</div>
+            <div class="text-xs text-cream-faint mt-1">Drafts</div>
+          </div>
+          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+            <div class="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center mb-3">
+              <svg class="w-4 h-4 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </div>
+            <div class="font-display text-2xl font-semibold text-cream">{{ data.receipt_stats.breakdown.void.count }}</div>
+            <div class="text-xs text-cream-faint mt-1">Void</div>
+          </div>
+        </div>
+
+        <!-- Monthly receipt volume bar chart -->
+        <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+          <h3 class="text-sm font-semibold text-cream mb-1">Monthly Receipt Volume</h3>
+          <p class="text-xs text-cream-faint mb-4">Number of receipts issued per month</p>
+          <template v-if="receiptVolumeMax > 0">
+            <svg :viewBox="`0 0 ${barChartW} ${barChartH + 14}`" class="w-full" style="height: 140px;">
+              <defs>
+                <linearGradient id="recBar" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#34d399" stop-opacity="0.9"/>
+                  <stop offset="100%" stop-color="#34d399" stop-opacity="0.2"/>
+                </linearGradient>
+              </defs>
+              <line v-for="y in barGridLines" :key="y" x1="0" :y1="y" :x2="barChartW" :y2="y" stroke="#222228" stroke-width="1"/>
+              <rect
+                v-for="bar in receiptVolumeBars" :key="bar.lx"
+                :x="bar.x" :y="bar.y" :width="bar.w" :height="bar.h"
+                rx="4" fill="url(#recBar)"
+              />
+              <text v-for="bar in receiptVolumeBars" :key="`rl-${bar.lx}`" v-show="bar.showLabel" :x="bar.lx" :y="barChartH + 12" text-anchor="middle" fill="#6b6560" font-size="9" font-family="DM Sans">{{ bar.label }}</text>
+            </svg>
+          </template>
+          <p v-else class="text-xs text-cream-faint/60 py-8 text-center">No receipts issued this period</p>
         </div>
       </div>
 

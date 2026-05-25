@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useNotification } from '@/composables/notification.ts'
 import { useAuthStore } from '@/stores/auth'
 import { InvoiceService, InvoiceSharedLinksService, type IInvoice, type IInvoiceSharedLink } from '@/services/invoice.service'
+import { ReceiptService, type IReceipt } from '@/services/receipt.service'
 import ShareLinkModal from '@/components/modals/ShareLinkModal.vue'
 
 const router     = useRouter()
@@ -16,22 +17,38 @@ const showShareModal = ref(false)
 
 const invoice  = ref<IInvoice | null>(null)
 const links    = ref<IInvoiceSharedLink[]>([])
+const receipts = ref<IReceipt[]>([])
 const loading  = ref(true)
 const notFound = ref(false)
-const showDeleteConfirm = ref(false)
-const isDeleting        = ref(false)
-const isMarkingPaid     = ref(false)
+const showDeleteConfirm        = ref(false)
+const isDeleting               = ref(false)
+const isMarkingPaid            = ref(false)
+const showGenerateReceiptModal = ref(false)
+const isGeneratingReceipt      = ref(false)
+
+const receiptForm = reactive({
+  number:          '',
+  paidAt:          new Date().toISOString().slice(0, 10),
+  paymentMethod:   '',
+  referenceNumber: '',
+  stamp:           'PAID' as 'PAID' | 'PARTIALLY PAID' | 'UNPAID' | '',
+  balanceDue:      0,
+})
+
+const showsBalanceDue = computed(() => receiptForm.stamp === 'PARTIALLY PAID' || receiptForm.stamp === 'UNPAID')
 
 onMounted(async () => {
   if (!orgId.value) return
   const id = route.params.id as string
   try {
-    const [invRes, linksRes] = await Promise.all([
+    const [invRes, linksRes, receiptsRes] = await Promise.all([
       InvoiceService.get(orgId.value, id),
       InvoiceSharedLinksService.list(orgId.value, id),
+      ReceiptService.listByInvoice(orgId.value, id),
     ])
-    invoice.value = invRes.data.data
-    links.value   = linksRes.data.data
+    invoice.value  = invRes.data.data
+    links.value    = linksRes.data.data
+    receipts.value = receiptsRes.data.data.data
   } catch {
     notFound.value = true
   } finally {
@@ -44,6 +61,14 @@ async function refreshLinks() {
   try {
     const res = await InvoiceSharedLinksService.list(orgId.value, invoice.value.id)
     links.value = res.data.data
+  } catch {}
+}
+
+async function refreshReceipts() {
+  if (!invoice.value) return
+  try {
+    const res = await ReceiptService.listByInvoice(orgId.value, invoice.value.id)
+    receipts.value = res.data.data.data
   } catch {}
 }
 
@@ -94,6 +119,94 @@ function fmtDateTime(iso: string | null) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
+const stampColor: Record<string, string> = { 'PAID': '#22c55e', 'PARTIALLY PAID': '#f97316', 'UNPAID': '#ef4444' }
+
+const receiptStampOpts = [
+  { value: 'PAID',           label: 'Paid',           color: '#22c55e' },
+  { value: 'PARTIALLY PAID', label: 'Partially Paid', color: '#f97316' },
+  { value: 'UNPAID',         label: 'Unpaid',         color: '#ef4444' },
+  { value: '',               label: 'None',           color: '#9ca3af' },
+]
+
+function openGenerateReceiptModal() {
+  if (!invoice.value) return
+  const inv = invoice.value
+  receiptForm.number          = inv.number.replace(/^INV-?/i, 'REC-')
+  receiptForm.paidAt          = new Date().toISOString().slice(0, 10)
+  receiptForm.paymentMethod   = ''
+  receiptForm.referenceNumber = ''
+  receiptForm.stamp           = 'PAID'
+  receiptForm.balanceDue      = 0
+  showGenerateReceiptModal.value = true
+}
+
+async function submitGenerateReceipt() {
+  if (!invoice.value) return
+  const inv = invoice.value
+  isGeneratingReceipt.value = true
+  try {
+    const payload: Record<string, any> = {
+      invoice_id:       inv.id,
+      number:           receiptForm.number,
+      issue_date:       new Date().toISOString().slice(0, 10),
+      paid_at:          receiptForm.paidAt || null,
+      payment_method:   receiptForm.paymentMethod || null,
+      reference_number: receiptForm.referenceNumber || null,
+      currency:         inv.currency,
+      from_name:                inv.from_name,
+      from_tagline:             inv.from_tagline,
+      from_email:               inv.from_email,
+      from_phone:               inv.from_phone,
+      from_website:             inv.from_website,
+      from_address:             inv.from_address,
+      from_bank_name:           inv.from_bank_name,
+      from_bank_account_name:   inv.from_bank_account_name,
+      from_bank_account_number: inv.from_bank_account_number,
+      from_bank_sort_code:      inv.from_bank_sort_code,
+      from_bank_iban:           inv.from_bank_iban,
+      logo_url:                 inv.logo_url,
+      payment_links:            (inv.payment_links ?? []).map(({ id: _id, ...l }) => l),
+      to_name:                  inv.to_name,
+      to_company:               inv.to_company,
+      to_email:                 inv.to_email,
+      to_phone:                 inv.to_phone,
+      to_address:               inv.to_address,
+      items:                    (inv.items ?? []).map(({ id: _id, ...item }) => item),
+      taxes:                    (inv.taxes ?? []).map(({ id: _id, ...t }) => t),
+      discount_type:            inv.discount_type,
+      discount:                 inv.discount,
+      theme:                    inv.theme,
+      accent_color:             inv.accent_color,
+      font_family:              inv.font_family,
+      signature_url:            inv.signature_url,
+      stamp:                    receiptForm.stamp || null,
+      stamp_custom_text:        (receiptForm.stamp === 'PARTIALLY PAID' || receiptForm.stamp === 'UNPAID') && receiptForm.balanceDue > 0
+                                  ? String(receiptForm.balanceDue)
+                                  : null,
+      show_top_bar:             inv.show_top_bar,
+      show_logo:                inv.show_logo,
+      show_footer_line:         inv.show_footer_line,
+      show_notes:               false,
+      show_bank_details:        inv.show_bank_details,
+      show_flowtali_tag:        inv.show_flowtali_tag,
+      notes:                    '',
+      footer_text:              inv.footer_text,
+      status:                   'draft',
+    }
+
+    const res = await ReceiptService.create(orgId.value, payload)
+    const created = res.data.data
+    showGenerateReceiptModal.value = false
+    notify(`Receipt ${created.number} created`, 'success')
+    await refreshReceipts()
+    router.push({ name: 'receipts.edit', params: { id: created.id } })
+  } catch {
+    notify('Failed to create receipt', 'error')
+  } finally {
+    isGeneratingReceipt.value = false
+  }
+}
+
 const handlePrint = () => window.print()
 
 async function markPaid() {
@@ -108,53 +221,6 @@ async function markPaid() {
   } finally {
     isMarkingPaid.value = false
   }
-}
-
-function generateReceipt() {
-  if (!invoice.value) return
-  const inv = invoice.value
-  const prefill = {
-    number:               inv.number.replace(/^INV-?/i, 'REC-'),
-    issueDate:            new Date().toISOString().slice(0, 10),
-    paidAt:               new Date().toISOString().slice(0, 10),
-    currency:             inv.currency,
-    fromName:             inv.from_name ?? '',
-    fromTagline:          inv.from_tagline ?? '',
-    fromEmail:            inv.from_email ?? '',
-    fromPhone:            inv.from_phone ?? '',
-    fromWebsite:          inv.from_website ?? '',
-    fromAddress:          inv.from_address ?? '',
-    fromBankName:         inv.from_bank_name ?? '',
-    fromBankAccountName:  inv.from_bank_account_name ?? '',
-    fromBankAccountNumber:inv.from_bank_account_number ?? '',
-    fromBankSortCode:     inv.from_bank_sort_code ?? '',
-    fromBankIban:         inv.from_bank_iban ?? '',
-    logoUrl:              inv.logo_url ?? '',
-    toName:               inv.to_name ?? '',
-    toCompany:            inv.to_company ?? '',
-    toEmail:              inv.to_email ?? '',
-    toPhone:              inv.to_phone ?? '',
-    toAddress:            inv.to_address ?? '',
-    items:                (inv.items ?? []).map((item, i) => ({ id: i + 1, ...item })),
-    taxes:                (inv.taxes ?? []).map((t, i) => ({ id: i + 1, type: 'percent' as const, ...t })),
-    discountType:         inv.discount_type,
-    discount:             inv.discount,
-    theme:                inv.theme,
-    accentColor:          inv.accent_color,
-    fontFamily:           inv.font_family ?? "'DM Sans', sans-serif",
-    signatureUrl:         inv.signature_url ?? '',
-    stamp:                'PAID',
-    showTopBar:           inv.show_top_bar,
-    showLogo:             inv.show_logo,
-    showFooterLine:       inv.show_footer_line,
-    showNotes:            false,
-    showBankDetails:      inv.show_bank_details,
-    showFlowtaliTag:      inv.show_flowtali_tag,
-    notes:                '',
-    footerText:           inv.footer_text ?? '',
-  }
-  sessionStorage.setItem('receipt_prefill', JSON.stringify(prefill))
-  router.push({ name: 'receipts.create' })
 }
 
 async function handleDelete() {
@@ -212,10 +278,11 @@ async function handleDelete() {
             <span v-if="activeLinks > 0" class="ml-0.5 px-1.5 py-0.5 bg-amber/20 text-amber text-[9px] font-bold rounded-full">{{ activeLinks }}</span>
           </button>
           <button
-            @click="generateReceipt"
+            @click="openGenerateReceiptModal"
             class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream rounded-lg transition-colors"
           >
             <Icon icon="lucide:receipt" class="w-3.5 h-3.5" /> Generate Receipt
+            <span v-if="receipts.length > 0" class="ml-0.5 px-1.5 py-0.5 bg-amber/20 text-amber text-[9px] font-bold rounded-full">{{ receipts.length }}</span>
           </button>
           <button
             v-if="invoice.status !== 'paid'"
@@ -236,7 +303,7 @@ async function handleDelete() {
         </div>
       </div>
 
-      <!-- Two-column: invoice preview + links analytics -->
+      <!-- Two-column: invoice preview + right panel -->
       <div class="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-5">
 
         <!-- Invoice document preview (classic style) -->
@@ -343,10 +410,61 @@ async function handleDelete() {
           </div>
         </div>
 
-        <!-- Right: links analytics -->
+        <!-- Right column: receipts + shared links -->
         <div class="space-y-4">
 
-          <!-- Stats -->
+          <!-- Receipts panel -->
+          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <p class="text-xs font-semibold text-cream-muted uppercase tracking-wider">Receipts</p>
+              <button
+                @click="openGenerateReceiptModal"
+                class="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-amber hover:text-amber/80 bg-amber/10 hover:bg-amber/15 rounded-md transition-colors"
+              >
+                <Icon icon="lucide:plus" class="w-3 h-3" /> Generate
+              </button>
+            </div>
+
+            <!-- Receipt list -->
+            <div v-if="receipts.length > 0" class="space-y-2">
+              <button
+                v-for="rec in receipts"
+                :key="rec.id"
+                @click="router.push({ name: 'receipts.view', params: { id: rec.id } })"
+                class="w-full text-left bg-charcoal-900/50 hover:bg-charcoal-700/50 border border-charcoal-700 hover:border-charcoal-600 rounded-lg p-2.5 transition-colors group"
+              >
+                <div class="flex items-center justify-between gap-2">
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-1.5">
+                      <span class="text-xs font-semibold text-cream font-mono group-hover:text-amber transition-colors truncate">{{ rec.number }}</span>
+                      <span
+                        v-if="rec.stamp"
+                        class="shrink-0 text-[9px] font-bold px-1.5 py-0.5 rounded border"
+                        :style="{ color: stampColor[rec.stamp] ?? '#9ca3af', borderColor: (stampColor[rec.stamp] ?? '#9ca3af') + '40', backgroundColor: (stampColor[rec.stamp] ?? '#9ca3af') + '15' }"
+                      >{{ rec.stamp }}</span>
+                    </div>
+                    <p class="text-[10px] text-cream-faint mt-0.5">{{ fmtDate(rec.issue_date) }}</p>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <div class="text-xs font-semibold text-cream">{{ sym }}{{ rec.totals.total.toLocaleString('en', { minimumFractionDigits: 2 }) }}</div>
+                    <div class="text-[9px] text-cream-faint capitalize">{{ rec.status }}</div>
+                  </div>
+                </div>
+              </button>
+            </div>
+
+            <!-- Empty state -->
+            <div v-else class="py-4 text-center">
+              <Icon icon="lucide:receipt" class="w-7 h-7 text-cream-faint mx-auto mb-2" />
+              <p class="text-[11px] text-cream-faint">No receipts yet</p>
+              <button
+                @click="openGenerateReceiptModal"
+                class="mt-2 text-[11px] text-amber hover:underline"
+              >Generate from this invoice</button>
+            </div>
+          </div>
+
+          <!-- Shared Links -->
           <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4 space-y-3">
             <div class="flex items-center justify-between">
               <p class="text-xs font-semibold text-cream-muted uppercase tracking-wider">Shared Links</p>
@@ -427,7 +545,7 @@ async function handleDelete() {
             </div>
           </div>
 
-          <!-- Empty state -->
+          <!-- Links empty state -->
           <div v-else class="bg-charcoal-800 border border-dashed border-charcoal-600 rounded-xl p-6 flex flex-col items-center text-center gap-2">
             <Icon icon="lucide:share-2" class="w-8 h-8 text-cream-faint" />
             <p class="text-xs font-medium text-cream-muted">No shared links yet</p>
@@ -452,6 +570,137 @@ async function handleDelete() {
       :resource-name="invoice.number"
       @close="showShareModal = false; refreshLinks()"
     />
+
+    <!-- Generate Receipt Modal -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div
+          v-if="showGenerateReceiptModal && invoice"
+          class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          @click.self="showGenerateReceiptModal = false"
+        >
+          <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-5">
+
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-amber/10 flex items-center justify-center shrink-0">
+                  <Icon icon="lucide:receipt" class="w-4 h-4 text-amber" />
+                </div>
+                <div>
+                  <h3 class="text-sm font-semibold text-cream">Generate Receipt</h3>
+                  <p class="text-[11px] text-cream-faint">From {{ invoice.number }}</p>
+                </div>
+              </div>
+              <button @click="showGenerateReceiptModal = false" class="p-1 rounded hover:bg-charcoal-700 text-cream-faint transition-colors">
+                <Icon icon="lucide:x" class="w-4 h-4" />
+              </button>
+            </div>
+
+            <div class="space-y-3">
+
+              <!-- Receipt number -->
+              <div>
+                <label class="block text-[10px] uppercase tracking-wider text-cream-faint mb-1.5">Receipt Number</label>
+                <input
+                  v-model="receiptForm.number"
+                  type="text"
+                  class="w-full bg-charcoal-900/60 border border-charcoal-600 rounded-lg px-3 py-2 text-xs text-cream placeholder-cream-faint focus:outline-none focus:border-amber/50 transition-colors"
+                  placeholder="REC-001"
+                />
+              </div>
+
+              <!-- Payment date -->
+              <div>
+                <label class="block text-[10px] uppercase tracking-wider text-cream-faint mb-1.5">Payment Date</label>
+                <input
+                  v-model="receiptForm.paidAt"
+                  type="date"
+                  class="w-full bg-charcoal-900/60 border border-charcoal-600 rounded-lg px-3 py-2 text-xs text-cream focus:outline-none focus:border-amber/50 transition-colors"
+                />
+              </div>
+
+              <!-- Payment method + Reference in two cols -->
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[10px] uppercase tracking-wider text-cream-faint mb-1.5">Payment Method</label>
+                  <input
+                    v-model="receiptForm.paymentMethod"
+                    type="text"
+                    class="w-full bg-charcoal-900/60 border border-charcoal-600 rounded-lg px-3 py-2 text-xs text-cream placeholder-cream-faint focus:outline-none focus:border-amber/50 transition-colors"
+                    placeholder="Bank Transfer"
+                  />
+                </div>
+                <div>
+                  <label class="block text-[10px] uppercase tracking-wider text-cream-faint mb-1.5">Reference</label>
+                  <input
+                    v-model="receiptForm.referenceNumber"
+                    type="text"
+                    class="w-full bg-charcoal-900/60 border border-charcoal-600 rounded-lg px-3 py-2 text-xs text-cream placeholder-cream-faint focus:outline-none focus:border-amber/50 transition-colors"
+                    placeholder="TXN-12345"
+                  />
+                </div>
+              </div>
+
+              <!-- Stamp -->
+              <div>
+                <label class="block text-[10px] uppercase tracking-wider text-cream-faint mb-1.5">Status Stamp</label>
+                <div class="grid grid-cols-4 gap-1.5">
+                  <button
+                    v-for="opt in receiptStampOpts"
+                    :key="opt.value"
+                    @click="receiptForm.stamp = opt.value as any"
+                    :class="[
+                      'px-2 py-1.5 rounded-lg border text-[10px] font-semibold transition-colors text-center',
+                      receiptForm.stamp === opt.value
+                        ? 'border-amber/50 bg-amber/10 text-amber'
+                        : 'border-charcoal-600 bg-charcoal-900/50 text-cream-faint hover:border-charcoal-500 hover:text-cream'
+                    ]"
+                  >
+                    <span v-if="opt.value" class="block w-1.5 h-1.5 rounded-full mx-auto mb-1" :style="{ backgroundColor: opt.color }"></span>
+                    {{ opt.label }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Balance due (shown for PARTIALLY PAID / UNPAID) -->
+              <Transition name="slide-down">
+                <div v-if="showsBalanceDue">
+                  <label class="block text-[10px] uppercase tracking-wider text-cream-faint mb-1.5">Balance Due ({{ invoice.currency }})</label>
+                  <input
+                    v-model.number="receiptForm.balanceDue"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    class="w-full bg-charcoal-900/60 border border-charcoal-600 rounded-lg px-3 py-2 text-xs text-cream placeholder-cream-faint focus:outline-none focus:border-amber/50 transition-colors"
+                    placeholder="0.00"
+                  />
+                </div>
+              </Transition>
+
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-end gap-2 pt-1">
+              <button
+                @click="showGenerateReceiptModal = false"
+                :disabled="isGeneratingReceipt"
+                class="px-4 py-2 text-xs font-medium text-cream-faint hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 rounded-lg transition-colors disabled:opacity-50"
+              >Cancel</button>
+              <button
+                @click="submitGenerateReceipt"
+                :disabled="isGeneratingReceipt || !receiptForm.number"
+                class="px-4 py-2 text-xs font-semibold bg-amber hover:bg-amber-light text-charcoal-900 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-1.5"
+              >
+                <Icon v-if="isGeneratingReceipt" icon="lucide:loader-2" class="w-3 h-3 animate-spin" />
+                <Icon v-else icon="lucide:receipt" class="w-3 h-3" />
+                Generate Receipt
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
 
     <!-- Delete confirm -->
     <Teleport to="body">
@@ -478,12 +727,16 @@ async function handleDelete() {
         </div>
       </Transition>
     </Teleport>
+
   </div>
 </template>
 
 <style scoped>
 .modal-enter-active, .modal-leave-active { transition: opacity 0.2s ease; }
 .modal-enter-from, .modal-leave-to { opacity: 0; }
+
+.slide-down-enter-active, .slide-down-leave-active { transition: all 0.2s ease; }
+.slide-down-enter-from, .slide-down-leave-to { opacity: 0; transform: translateY(-6px); }
 </style>
 
 <style>

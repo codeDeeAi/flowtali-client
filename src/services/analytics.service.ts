@@ -33,6 +33,15 @@ export interface IMonthlyVolume {
   count: number
 }
 
+export interface IReceiptStats {
+  total: number
+  breakdown: {
+    finalized: { count: number }
+    draft:     { count: number }
+    void:      { count: number }
+  }
+}
+
 export interface IAnalyticsData {
   period:    string
   date_from: string | null
@@ -45,10 +54,12 @@ export interface IAnalyticsData {
     avg_invoice_value: IAnalyticsKpi
     avg_days_to_pay:   IAnalyticsKpi
   }
-  revenue_trend:    IRevenueTrend[]
-  top_clients:      ITopClient[]
-  status_breakdown: IStatusBreakdown
-  monthly_volume:   IMonthlyVolume[]
+  revenue_trend:           IRevenueTrend[]
+  top_clients:             ITopClient[]
+  status_breakdown:        IStatusBreakdown
+  monthly_volume:          IMonthlyVolume[]
+  receipt_stats:           IReceiptStats
+  monthly_receipt_volume:  IMonthlyVolume[]
 }
 
 export const AnalyticsService = {

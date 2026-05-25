@@ -29,6 +29,7 @@ export interface IReceiptTotals {
 
 export interface IReceipt {
   id: string
+  invoice_id: string | null
   number: string
   status: string
   issue_date: string | null
@@ -153,10 +154,16 @@ export interface IReceiptSharedLink {
 }
 
 export const ReceiptService = {
-  list(orgId: string, params?: { search?: string; status?: string; page?: number; per_page?: number }) {
+  list(orgId: string, params?: { search?: string; status?: string; page?: number; per_page?: number; invoice_id?: string }) {
     return http.get<{ data: { data: IReceipt[]; current_page: number; last_page: number; total: number } }>(
       `/api/v1/orgs/${orgId}/receipts`,
       { params },
+    )
+  },
+  listByInvoice(orgId: string, invoiceId: string) {
+    return http.get<{ data: { data: IReceipt[]; current_page: number; last_page: number; total: number } }>(
+      `/api/v1/orgs/${orgId}/receipts`,
+      { params: { invoice_id: invoiceId, per_page: 100 } },
     )
   },
   draftData(orgId: string) {

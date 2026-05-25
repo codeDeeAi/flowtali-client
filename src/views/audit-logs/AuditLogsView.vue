@@ -23,6 +23,8 @@ const eventFilters = [
   { key: '',                         label: 'All events' },
   { key: 'invoice',                  label: 'Invoices' },
   { key: 'invoice.share_link',       label: 'Invoice Share Links' },
+  { key: 'receipt',                  label: 'Receipts' },
+  { key: 'receipt.share_link',       label: 'Receipt Share Links' },
   { key: 'letterhead',               label: 'Letterheads' },
   { key: 'letterhead.share_link',    label: 'Letterhead Share Links' },
   { key: 'member',                   label: 'Members' },
@@ -68,6 +70,7 @@ function eventMeta(event: string, status: string) {
   const prefix = event.split('.')[0] ?? ''
   const map: Record<string, { icon: string; color: string }> = {
     invoice:    { icon: 'lucide:file-text',  color: '#4ade80' },
+    receipt:    { icon: 'lucide:receipt',    color: '#34d399' },
     letterhead: { icon: 'lucide:scroll',     color: '#60a5fa' },
     member:     { icon: 'lucide:users',      color: '#a78bfa' },
     auth:       { icon: 'lucide:shield',     color: '#e8a83e' },

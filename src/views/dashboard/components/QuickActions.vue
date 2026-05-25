@@ -6,6 +6,7 @@ const router = useRouter()
 
 const actions = [
   { label: 'Create Invoice',    icon: 'lucide:file-plus',      route: 'invoices.create'     },
+  { label: 'Create Receipt',    icon: 'lucide:receipt',        route: 'receipts.create'     },
   { label: 'Create Letterhead', icon: 'lucide:file-text',      route: 'letterheads.create'  },
   { label: 'Add Client',        icon: 'lucide:user-plus',      route: 'clients.create'      },
   { label: 'Invite Member',     icon: 'lucide:user-round-plus', route: 'members'             },

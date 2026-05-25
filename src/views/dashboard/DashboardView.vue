@@ -8,6 +8,7 @@ import { AnalyticsService, type IAnalyticsData } from '@/services/analytics.serv
 import StatCard from './components/StatCard.vue';
 import RevenueChart from './components/RevenueChart.vue';
 import RecentInvoices from './components/RecentInvoices.vue';
+import RecentReceipts from './components/RecentReceipts.vue';
 import InvoiceStatusChart from './components/InvoiceStatusChart.vue';
 import QuickActions from './components/QuickActions.vue';
 import PlanUsage from './components/PlanUsage.vue';
@@ -73,6 +74,15 @@ const stats = computed(() => {
       progress: k ? Math.min(Math.round(k.collection_rate.value), 100) : 0,
       permission: 'dashboard.revenue.read',
     },
+    {
+      title: 'Receipts Issued',
+      value: analytics.value ? String(analytics.value.receipt_stats.total) : '—',
+      change: 0,
+      icon: 'lucide:receipt',
+      color: 'blue' as const,
+      progress: analytics.value ? Math.min(analytics.value.receipt_stats.total, 100) : 0,
+      permission: 'dashboard.invoices.read',
+    },
   ]
 
   return all.filter(s => can(s.permission))
@@ -117,10 +127,10 @@ onMounted(async () => {
     </div>
 
     <!-- Stats grid -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
       <template v-if="isLoading">
         <StatCard
-          v-for="n in 4"
+          v-for="n in 5"
           :key="n"
           title="" value="" :change="0" icon="lucide:loader" color="amber" :progress="0"
           :loading="true"
@@ -147,6 +157,7 @@ onMounted(async () => {
           :loading="isLoading"
         />
         <RecentInvoices v-if="can('dashboard.invoices.read')" />
+        <RecentReceipts v-if="can('dashboard.invoices.read')" />
       </div>
 
       <!-- Right column (1/3) -->
