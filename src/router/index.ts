@@ -19,6 +19,12 @@ const publicShareRoutes = [
     meta: { layout: layouts.Public },
   },
   {
+    path: '/share/r/:token',
+    name: 'share.receipt',
+    component: () => import('@/views/public/PublicReceiptView.vue'),
+    meta: { layout: layouts.Public },
+  },
+  {
     path: '/privacy',
     name: 'privacy',
     component: () => import('@/views/legal/PrivacyPolicyView.vue'),

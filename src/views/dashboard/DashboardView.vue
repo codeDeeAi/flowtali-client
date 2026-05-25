@@ -76,11 +76,11 @@ const stats = computed(() => {
     },
     {
       title: 'Receipts Issued',
-      value: analytics.value ? String(analytics.value.receipt_stats.total) : '—',
+      value: analytics.value ? String(analytics.value.receipt_stats?.total ?? 0) : '—',
       change: 0,
       icon: 'lucide:receipt',
       color: 'blue' as const,
-      progress: analytics.value ? Math.min(analytics.value.receipt_stats.total, 100) : 0,
+      progress: analytics.value ? Math.min(analytics.value.receipt_stats?.total ?? 0, 100) : 0,
       permission: 'dashboard.invoices.read',
     },
   ]
