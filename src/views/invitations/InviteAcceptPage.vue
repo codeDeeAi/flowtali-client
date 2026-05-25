@@ -67,11 +67,7 @@ const goToSignIn = () => {
 }
 
 const goToSignUp = () => {
-  if (token.value) {
-    sessionStorage.setItem('pending_invitation_token', token.value)
-  }
-  const redirect = `/invitations/accept?token=${token.value}`
-  router.push({ name: 'signup', query: { redirect } })
+  router.push({ name: 'signup', query: { invitation_token: token.value } })
 }
 
 onMounted(() => {

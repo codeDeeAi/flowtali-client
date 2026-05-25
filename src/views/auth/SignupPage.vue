@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useLoaders } from '@/composables/loaders.ts'
 import { signupSchema } from './validation/schema.ts'
 import { useFormErrors } from '@/composables/formErrors'
@@ -31,6 +31,9 @@ const { initLoaders, setLoader, getLoader } = useLoaders()
 const { notify } = useNotification()
 const { validate } = useYupForm()
 const router = useRouter()
+const route = useRoute()
+
+const invitationToken = computed(() => route.query.invitation_token as string | undefined)
 
 initLoaders({ isRegistering: false, isGoogleLoading: false })
 
@@ -64,6 +67,7 @@ const handleSignup = async () => {
       email: signupForm.value.email,
       password: signupForm.value.password,
       terms_and_privacy_consent_given: true,
+      ...(invitationToken.value ? { invitation_token: invitationToken.value } : {}),
     })
 
     notify('Account created! Please check your email to verify your account.', 'success')

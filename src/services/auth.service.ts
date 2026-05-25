@@ -14,6 +14,7 @@ export const AuthService = {
     email: string
     password: string
     terms_and_privacy_consent_given: boolean
+    invitation_token?: string
   }) {
     return http.post('/api/v1/auth/register', data)
   },

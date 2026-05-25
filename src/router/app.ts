@@ -18,6 +18,11 @@ export const appRoutes = [
       { path: 'invoices/:id',          name: 'invoices.view',   component: () => import('@/views/invoices/InvoiceViewPage.vue'),     meta: p('invoices.read') },
       { path: 'invoices/:id/edit',     name: 'invoices.edit',   component: () => import('@/views/invoices/InvoiceEditPage.vue'),     meta: p('invoices.update') },
 
+      { path: 'receipts',              name: 'receipts',        component: () => import('@/views/receipts/ReceiptsView.vue'),       meta: p('receipts.read') },
+      { path: 'receipts/create',       name: 'receipts.create', component: () => import('@/views/receipts/ReceiptCreatePage.vue'),  meta: p('receipts.create') },
+      { path: 'receipts/:id',          name: 'receipts.view',   component: () => import('@/views/receipts/ReceiptViewPage.vue'),    meta: p('receipts.read') },
+      { path: 'receipts/:id/edit',     name: 'receipts.edit',   component: () => import('@/views/receipts/ReceiptEditPage.vue'),    meta: p('receipts.update') },
+
       { path: 'letterheads',           name: 'letterheads',        component: () => import('@/views/letterheads/LetterheadsView.vue'),       meta: p('letterheads.read') },
       { path: 'letterheads/create',    name: 'letterheads.create', component: () => import('@/views/letterheads/LetterheadCreatePage.vue'),  meta: p('letterheads.create') },
       { path: 'letterheads/:id',       name: 'letterheads.view',   component: () => import('@/views/letterheads/LetterheadViewPage.vue'),    meta: p('letterheads.read') },

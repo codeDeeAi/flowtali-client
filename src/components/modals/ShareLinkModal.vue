@@ -4,11 +4,12 @@ import { Icon } from '@iconify/vue'
 import { useNotification } from '@/composables/notification'
 import { SharedLinksService, type ISharedLink } from '@/services/shared-links.service'
 import { InvoiceSharedLinksService, type IInvoiceSharedLink } from '@/services/invoice.service'
+import { ReceiptSharedLinksService, type IReceiptSharedLink } from '@/services/receipt.service'
 
 const props = defineProps<{
-  resourceType: 'invoice' | 'letterhead'
+  resourceType: 'invoice' | 'letterhead' | 'receipt'
   resourceId: string
-  resourceName: string
+  resourceName?: string
   orgId: string
 }>()
 
@@ -16,7 +17,7 @@ const emit = defineEmits<{ close: [] }>()
 
 const { notify } = useNotification()
 
-const links       = ref<ISharedLink[] | IInvoiceSharedLink[]>([])
+const links       = ref<ISharedLink[] | IInvoiceSharedLink[] | IReceiptSharedLink[]>([])
 const loadingLinks = ref(false)
 const showCreate  = ref(false)
 const isCreating  = ref(false)
@@ -43,7 +44,9 @@ async function loadLinks() {
   try {
     const res = props.resourceType === 'invoice'
       ? await InvoiceSharedLinksService.list(props.orgId, props.resourceId)
-      : await SharedLinksService.list(props.orgId, props.resourceId)
+      : props.resourceType === 'receipt'
+        ? await ReceiptSharedLinksService.list(props.orgId, props.resourceId)
+        : await SharedLinksService.list(props.orgId, props.resourceId)
     links.value = res.data.data as any
     showCreate.value = links.value.length === 0
   } catch {
@@ -67,7 +70,9 @@ async function handleCreate() {
     }
     const res = props.resourceType === 'invoice'
       ? await InvoiceSharedLinksService.create(props.orgId, props.resourceId, payload)
-      : await SharedLinksService.create(props.orgId, props.resourceId, payload)
+      : props.resourceType === 'receipt'
+        ? await ReceiptSharedLinksService.create(props.orgId, props.resourceId, payload)
+        : await SharedLinksService.create(props.orgId, props.resourceId, payload)
     const newLink = res.data.data
     ;(links.value as any[]).unshift(newLink)
     copyToClipboard(newLink)
@@ -84,7 +89,7 @@ async function handleCreate() {
 // ── helpers ───────────────────────────────────────────────────────────────────
 function linkUrl(token: string): string {
   const base = window.location.origin
-  const path = props.resourceType === 'invoice' ? 'i' : 'l'
+  const path = props.resourceType === 'invoice' ? 'i' : props.resourceType === 'receipt' ? 'r' : 'l'
   return `${base}/share/${path}/${token}`
 }
 
@@ -103,7 +108,9 @@ async function revokeLink(id: string) {
   try {
     props.resourceType === 'invoice'
       ? await InvoiceSharedLinksService.revoke(props.orgId, props.resourceId, id)
-      : await SharedLinksService.revoke(props.orgId, props.resourceId, id)
+      : props.resourceType === 'receipt'
+        ? await ReceiptSharedLinksService.revoke(props.orgId, props.resourceId, id)
+        : await SharedLinksService.revoke(props.orgId, props.resourceId, id)
     const link = links.value.find(l => l.id === id)
     if (link) link.is_active = false
     notify('Link revoked', 'success')
@@ -117,7 +124,9 @@ async function deleteLink(id: string) {
   try {
     props.resourceType === 'invoice'
       ? await InvoiceSharedLinksService.delete(props.orgId, props.resourceId, id)
-      : await SharedLinksService.delete(props.orgId, props.resourceId, id)
+      : props.resourceType === 'receipt'
+        ? await ReceiptSharedLinksService.delete(props.orgId, props.resourceId, id)
+        : await SharedLinksService.delete(props.orgId, props.resourceId, id)
     links.value = (links.value as any[]).filter((l: any) => l.id !== id)
     notify('Link deleted', 'success')
   } catch {
