@@ -174,6 +174,25 @@ function txTypeLabel(type: string) {
 function formatDate(dt: string) {
   return new Date(dt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
+
+function featureLabel(key: string, val: boolean | number | null): string {
+  const labels: Record<string, string> = {
+    invoices_per_month:       val === null ? 'Unlimited invoices'    : `${val} invoices/month`,
+    receipts_per_month:       val === null ? 'Unlimited receipts'    : `${val} receipts/month`,
+    letterheads_per_month:    val === null ? 'Unlimited letterheads' : `${val} letterheads/month`,
+    projects_limit:           val === null ? 'Unlimited projects'    : `${val} active project`,
+    team_members:             typeof val === 'number' && val > 1 ? `Up to ${val} team members` : 'Solo (1 member)',
+    custom_branding:          'Custom branding & logo',
+    remove_flowtali_branding: 'Remove Flowtali branding',
+    all_currencies:           'All 11 currencies',
+    all_letterhead_templates: 'All 8 letterhead templates',
+    stamp_watermark:          'Stamps & watermarks',
+    priority_support:         'Priority support',
+    team_roles:               'Team roles & permissions',
+    invoice_analytics:        'Invoice analytics',
+  }
+  return labels[key] ?? key.replace(/_/g, ' ')
+}
 </script>
 
 <template>
@@ -477,25 +496,3 @@ function formatDate(dt: string) {
   </div>
 </template>
 
-<script lang="ts">
-// Feature label helper — not inside setup to keep it clean
-function featureLabel(key: string, val: boolean | number | null): string {
-  const labels: Record<string, string> = {
-    invoices_per_month:       val === null ? 'Unlimited invoices' : `${val} invoices/month`,
-    receipts_per_month:       val === null ? 'Unlimited receipts' : `${val} receipts/month`,
-    letterheads_per_month:    val === null ? 'Unlimited letterheads' : `${val} letterheads/month`,
-    projects_limit:           val === null ? 'Unlimited projects' : `${val} active project`,
-    team_members:             typeof val === 'number' && val > 1 ? `Up to ${val} team members` : 'Solo (1 member)',
-    custom_branding:          'Custom branding & logo',
-    remove_flowtali_branding: 'Remove Flowtali branding',
-    all_currencies:           'All 11 currencies',
-    all_letterhead_templates: 'All 8 letterhead templates',
-    stamp_watermark:          'Stamps & watermarks',
-    priority_support:         'Priority support',
-    team_roles:               'Team roles & permissions',
-    invoice_analytics:        'Invoice analytics',
-  }
-  return labels[key] ?? key.replace(/_/g, ' ')
-}
-export { featureLabel }
-</script>
