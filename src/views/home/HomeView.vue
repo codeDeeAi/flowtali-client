@@ -612,7 +612,7 @@ const scrollTo = (id: string) => {
           <button class="relative w-12 h-6 rounded-full transition-colors duration-300"
             :class="billing === 'annual' ? 'bg-amber' : 'bg-charcoal-600'"
             @click="billing = billing === 'monthly' ? 'annual' : 'monthly'">
-            <span class="absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform duration-300 shadow"
+            <span class="absolute top-0.5 left-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 shadow"
               :class="billing === 'annual' ? 'translate-x-6' : 'translate-x-0.5'"></span>
           </button>
           <span class="text-sm" :class="billing === 'annual' ? 'text-cream' : 'text-cream-faint'">Annual <span
