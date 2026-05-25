@@ -175,9 +175,6 @@ async function deleteSelected() {
         <p class="page-subtitle">Manage and track all your invoices</p>
       </div>
       <div class="flex items-center gap-2">
-        <button class="flex items-center gap-2 bg-charcoal-800 border border-charcoal-700 hover:border-charcoal-500 text-cream-muted hover:text-cream text-xs px-3 py-2 rounded-lg transition-colors">
-          <Icon icon="lucide:download" class="w-3.5 h-3.5" /> Export CSV
-        </button>
         <button @click="router.push({ name: 'invoices.create' })" class="flex items-center gap-2 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs px-3 py-2 rounded-lg transition-colors">
           <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> New Invoice
         </button>
