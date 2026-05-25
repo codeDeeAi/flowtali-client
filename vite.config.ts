@@ -14,7 +14,13 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'prompt',
-      includeAssets: ['favicon.ico', 'robots.txt', 'llms.txt'],
+      includeAssets: [
+        'favicon.ico',
+        'flowtali-icon.svg',
+        'apple-touch-icon-180x180.png',
+        'robots.txt',
+        'llms.txt',
+      ],
 
       manifest: {
         name: 'Flowtali',
@@ -29,17 +35,22 @@ export default defineConfig({
         categories: ['business', 'productivity', 'finance'],
         icons: [
           {
-            src: '/icons/icon-192.png',
+            src: 'pwa-64x64.png',
+            sizes: '64x64',
+            type: 'image/png',
+          },
+          {
+            src: 'pwa-192x192.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: '/icons/icon-512.png',
+            src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
           },
           {
-            src: '/icons/icon-512.png',
+            src: 'maskable-icon-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',

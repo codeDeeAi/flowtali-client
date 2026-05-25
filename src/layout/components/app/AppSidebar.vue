@@ -166,6 +166,7 @@ const navSections = computed<NavSection[]>(() => {
   // ── Documents ─────────────────────────────────────────
   const docItems: NavItem[] = []
   if (can('invoices.read'))    docItems.push({ name: 'Invoices',    icon: 'lucide:file-text', to: '/app/invoices' })
+  if (can('receipts.read'))    docItems.push({ name: 'Receipts',    icon: 'lucide:receipt',   to: '/app/receipts' })
   if (can('letterheads.read')) docItems.push({ name: 'Letterheads', icon: 'lucide:file',      to: '/app/letterheads' })
   if (can('clients.read'))     docItems.push({ name: 'Clients',     icon: 'lucide:users',     to: '/app/clients' })
   if (docItems.length) sections.push({ label: 'Documents', items: docItems })

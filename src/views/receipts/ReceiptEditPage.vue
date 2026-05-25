@@ -55,7 +55,9 @@ onMounted(async () => {
       signatureUrl:             rec.signature_url ?? '',
       stampUrl:                 rec.stamp_url ?? '',
       stamp:                    rec.stamp ?? '',
-      stampCustomText:          rec.stamp_custom_text ?? '',
+      balanceDue:               (rec.stamp === 'UNPAID' || rec.stamp === 'PARTIALLY PAID') && rec.stamp_custom_text && isFinite(Number(rec.stamp_custom_text))
+                                  ? Number(rec.stamp_custom_text)
+                                  : 0,
       showWatermark:            rec.show_watermark,
       watermarkText:            rec.watermark_text ?? '',
       showTopBar:               rec.show_top_bar,

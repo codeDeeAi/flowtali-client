@@ -110,6 +110,53 @@ async function markPaid() {
   }
 }
 
+function generateReceipt() {
+  if (!invoice.value) return
+  const inv = invoice.value
+  const prefill = {
+    number:               inv.number.replace(/^INV-?/i, 'REC-'),
+    issueDate:            new Date().toISOString().slice(0, 10),
+    paidAt:               new Date().toISOString().slice(0, 10),
+    currency:             inv.currency,
+    fromName:             inv.from_name ?? '',
+    fromTagline:          inv.from_tagline ?? '',
+    fromEmail:            inv.from_email ?? '',
+    fromPhone:            inv.from_phone ?? '',
+    fromWebsite:          inv.from_website ?? '',
+    fromAddress:          inv.from_address ?? '',
+    fromBankName:         inv.from_bank_name ?? '',
+    fromBankAccountName:  inv.from_bank_account_name ?? '',
+    fromBankAccountNumber:inv.from_bank_account_number ?? '',
+    fromBankSortCode:     inv.from_bank_sort_code ?? '',
+    fromBankIban:         inv.from_bank_iban ?? '',
+    logoUrl:              inv.logo_url ?? '',
+    toName:               inv.to_name ?? '',
+    toCompany:            inv.to_company ?? '',
+    toEmail:              inv.to_email ?? '',
+    toPhone:              inv.to_phone ?? '',
+    toAddress:            inv.to_address ?? '',
+    items:                (inv.items ?? []).map((item, i) => ({ id: i + 1, ...item })),
+    taxes:                (inv.taxes ?? []).map((t, i) => ({ id: i + 1, type: 'percent' as const, ...t })),
+    discountType:         inv.discount_type,
+    discount:             inv.discount,
+    theme:                inv.theme,
+    accentColor:          inv.accent_color,
+    fontFamily:           inv.font_family ?? "'DM Sans', sans-serif",
+    signatureUrl:         inv.signature_url ?? '',
+    stamp:                'PAID',
+    showTopBar:           inv.show_top_bar,
+    showLogo:             inv.show_logo,
+    showFooterLine:       inv.show_footer_line,
+    showNotes:            false,
+    showBankDetails:      inv.show_bank_details,
+    showFlowtaliTag:      inv.show_flowtali_tag,
+    notes:                '',
+    footerText:           inv.footer_text ?? '',
+  }
+  sessionStorage.setItem('receipt_prefill', JSON.stringify(prefill))
+  router.push({ name: 'receipts.create' })
+}
+
 async function handleDelete() {
   if (!invoice.value) return
   isDeleting.value = true
@@ -163,6 +210,12 @@ async function handleDelete() {
           >
             <Icon icon="lucide:share-2" class="w-3.5 h-3.5" /> Share
             <span v-if="activeLinks > 0" class="ml-0.5 px-1.5 py-0.5 bg-amber/20 text-amber text-[9px] font-bold rounded-full">{{ activeLinks }}</span>
+          </button>
+          <button
+            @click="generateReceipt"
+            class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream rounded-lg transition-colors"
+          >
+            <Icon icon="lucide:receipt" class="w-3.5 h-3.5" /> Generate Receipt
           </button>
           <button
             v-if="invoice.status !== 'paid'"

@@ -68,8 +68,8 @@ const form = ref({
   fontFamily:      "'DM Sans', sans-serif",
   signatureUrl:    '',
   stampUrl:        '',
-  stamp:           '' as string,
-  stampCustomText: '',
+  stamp:           'PAID' as string,
+  balanceDue:      0,
   showWatermark:   false,
   watermarkText:   'PAID',
   showTopBar:      true,
@@ -95,7 +95,6 @@ const orgStamps       = computed(() => draftData.value?.organization?.stamps ?? 
 const orgBrandColors  = computed(() => draftData.value?.organization?.brand_colors ?? [])
 const orgProfiles     = computed(() => draftData.value?.organization?.invoice_profiles ?? [])
 const orgBankAccounts = computed(() => draftData.value?.organization?.bank_accounts ?? [])
-const stampColorFor   = (label: string) => orgStamps.value.find(s => s.text === label)?.color ?? '#9ca3af'
 
 // ── Share ──────────────────────────────────────────────────────────────────────
 const showShareModal = ref(false)
@@ -278,6 +277,20 @@ const toggleFields = [
   { key: 'showFlowtaliTag', label: 'Flowtali branding' },
 ] as const
 
+// ── Built-in stamps ────────────────────────────────────────────────────────────
+const builtInStamps = [
+  { text: 'PAID',            color: '#22c55e' },
+  { text: 'PARTIALLY PAID',  color: '#f97316' },
+  { text: 'UNPAID',          color: '#ef4444' },
+]
+const showsBalanceDue = computed(() => form.value.stamp === 'UNPAID' || form.value.stamp === 'PARTIALLY PAID')
+const isUnpaid        = computed(() => form.value.stamp === 'UNPAID')
+const balanceDueAmt   = computed(() =>
+  showsBalanceDue.value && form.value.balanceDue > 0 ? form.value.balanceDue : 0
+)
+const stampColorFor = (label: string) =>
+  builtInStamps.find(s => s.text === label)?.color ?? '#9ca3af'
+
 // ── Print / Save ───────────────────────────────────────────────────────────────
 const handlePrint = () => window.print()
 
@@ -316,7 +329,9 @@ const buildPayload = (overrides?: Record<string, any>) => ({
   signature_url:            form.value.signatureUrl || null,
   stamp_url:                form.value.stampUrl || null,
   stamp:                    form.value.stamp || null,
-  stamp_custom_text:        form.value.stampCustomText || null,
+  stamp_custom_text:        showsBalanceDue.value && form.value.balanceDue > 0
+                              ? String(form.value.balanceDue)
+                              : null,
   show_watermark:           form.value.showWatermark,
   watermark_text:           form.value.watermarkText || null,
   show_top_bar:             form.value.showTopBar,
@@ -680,7 +695,16 @@ const handleFinalize     = () => handleSave('finalized')
                 </div>
               </template>
               <div class="h-px bg-charcoal-600"></div>
-              <div class="flex justify-between font-semibold text-cream"><span>Total Received</span><span class="font-mono text-amber">{{ fmtMoney(total) }}</span></div>
+              <div class="flex justify-between font-semibold text-cream">
+                <span>{{ showsBalanceDue ? 'Amount Paid' : 'Total Received' }}</span>
+                <span class="font-mono text-amber">{{ fmtMoney(total) }}</span>
+              </div>
+              <template v-if="showsBalanceDue && form.balanceDue > 0">
+                <div class="flex justify-between text-sm font-semibold" style="color: #f97316">
+                  <span>Balance Due</span>
+                  <span class="font-mono">{{ fmtMoney(form.balanceDue) }}</span>
+                </div>
+              </template>
             </div>
           </template>
 
@@ -840,15 +864,31 @@ const handleFinalize     = () => handleSave('finalized')
 
             <!-- Stamp -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Stamp</p>
-              <div class="grid grid-cols-3 gap-1.5">
+              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Payment Stamp</p>
+              <div class="grid grid-cols-2 gap-1.5">
                 <button type="button" @click="form.stamp = ''"
-                  :class="['py-1.5 rounded border text-xs font-semibold transition-colors', form.stamp === '' ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500']">None</button>
-                <button v-for="s in orgStamps" :key="s.text" type="button" @click="form.stamp = s.text"
-                  :class="['py-1.5 rounded border text-xs font-semibold transition-colors', form.stamp === s.text ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500']"
-                  :style="form.stamp !== s.text ? { color: s.color + 'cc', borderColor: s.color + '40' } : {}">{{ s.text }}</button>
+                  :class="['py-2 rounded border text-xs font-semibold transition-colors', form.stamp === '' ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500']">
+                  None
+                </button>
+                <button v-for="s in builtInStamps" :key="s.text" type="button" @click="form.stamp = s.text"
+                  :class="['py-2 rounded border text-xs font-bold transition-colors', form.stamp === s.text ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 hover:border-charcoal-500']"
+                  :style="form.stamp !== s.text ? { color: s.color + 'cc', borderColor: s.color + '40' } : {}">
+                  {{ s.text }}
+                </button>
               </div>
             </div>
+
+            <!-- Balance due (partially paid / unpaid) -->
+            <Transition name="fade">
+              <div v-if="showsBalanceDue" class="space-y-1 p-3 rounded-lg border border-orange-500/20 bg-orange-500/5">
+                <label class="text-[10px] uppercase tracking-wider text-orange-300">Balance Due (remaining amount owed)</label>
+                <div class="flex items-center gap-2">
+                  <span class="text-cream-faint text-sm">{{ sym }}</span>
+                  <input v-model.number="form.balanceDue" type="number" min="0" class="app-inp text-sm flex-1" placeholder="0.00" />
+                </div>
+                <p class="text-[10px] text-orange-300/70">Shown on the receipt document below the total</p>
+              </div>
+            </Transition>
 
             <!-- Watermark -->
             <div class="space-y-2">
@@ -1060,9 +1100,16 @@ const handleFinalize     = () => handleSave('finalized')
                     </template>
                     <div style="height: 1px; background: #e5e7eb; margin: 8px 0"></div>
                     <div class="flex justify-between font-bold text-base">
-                      <span class="text-gray-800">Total Received</span>
+                      <span class="text-gray-800">{{ balanceDueAmt > 0 ? 'Amount Paid' : 'Total Received' }}</span>
                       <span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span>
                     </div>
+                    <template v-if="balanceDueAmt > 0">
+                      <div style="height: 1px; background: #fecaca; margin: 6px 0"></div>
+                      <div class="flex justify-between font-bold text-base">
+                        <span style="color: #dc2626">Balance Due</span>
+                        <span class="font-mono" style="color: #dc2626">{{ fmtMoney(balanceDueAmt) }}</span>
+                      </div>
+                    </template>
                   </div>
                 </div>
 
@@ -1183,7 +1230,11 @@ const handleFinalize     = () => handleSave('finalized')
                       <div v-if="tax.rate > 0" class="flex justify-between text-gray-500"><span>{{ tax.label }}{{ tax.type !== 'flat' ? ` (${tax.rate}%)` : '' }}</span><span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span></div>
                     </template>
                     <div style="height: 1px; background: #e5e7eb; margin: 8px 0"></div>
-                    <div class="flex justify-between font-bold text-base"><span class="text-gray-800">Total Received</span><span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span></div>
+                    <div class="flex justify-between font-bold text-base"><span class="text-gray-800">{{ balanceDueAmt > 0 ? 'Amount Paid' : 'Total Received' }}</span><span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span></div>
+                    <template v-if="balanceDueAmt > 0">
+                      <div style="height: 1px; background: #fecaca; margin: 6px 0"></div>
+                      <div class="flex justify-between font-bold text-base"><span style="color: #dc2626">Balance Due</span><span class="font-mono" style="color: #dc2626">{{ fmtMoney(balanceDueAmt) }}</span></div>
+                    </template>
                   </div>
                 </div>
                 <div v-if="form.signatureUrl" class="mb-4 flex flex-col items-end">
@@ -1264,7 +1315,11 @@ const handleFinalize     = () => handleSave('finalized')
                       <div v-if="tax.rate > 0" class="flex justify-between text-gray-500"><span>{{ tax.label }}{{ tax.type !== 'flat' ? ` (${tax.rate}%)` : '' }}</span><span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span></div>
                     </template>
                     <div style="height: 1px; background: #111827; margin: 8px 0"></div>
-                    <div class="flex justify-between font-bold text-base"><span>Total Received</span><span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span></div>
+                    <div class="flex justify-between font-bold text-base"><span>{{ balanceDueAmt > 0 ? 'Amount Paid' : 'Total Received' }}</span><span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span></div>
+                    <template v-if="balanceDueAmt > 0">
+                      <div style="height: 1px; background: #fecaca; margin: 6px 0"></div>
+                      <div class="flex justify-between font-bold text-base"><span style="color: #dc2626">Balance Due</span><span class="font-mono" style="color: #dc2626">{{ fmtMoney(balanceDueAmt) }}</span></div>
+                    </template>
                   </div>
                 </div>
                 <div v-if="form.signatureUrl" class="mb-6 flex flex-col items-end">
@@ -1357,9 +1412,15 @@ const handleFinalize     = () => handleSave('finalized')
                     </template>
                     <div class="h-px" :style="{ background: form.accentColor + '40' }"></div>
                     <div class="flex justify-between font-bold text-base p-3 rounded" :style="{ backgroundColor: form.accentColor + '15' }">
-                      <span class="text-gray-800">Total Received</span>
+                      <span class="text-gray-800">{{ balanceDueAmt > 0 ? 'Amount Paid' : 'Total Received' }}</span>
                       <span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span>
                     </div>
+                    <template v-if="balanceDueAmt > 0">
+                      <div class="flex justify-between font-bold text-base p-3 rounded mt-1" style="background: #fef2f2">
+                        <span style="color: #dc2626">Balance Due</span>
+                        <span class="font-mono" style="color: #dc2626">{{ fmtMoney(balanceDueAmt) }}</span>
+                      </div>
+                    </template>
                   </div>
                 </div>
                 <div v-if="form.signatureUrl" class="mb-6 flex flex-col items-end">
@@ -1445,7 +1506,11 @@ const handleFinalize     = () => handleSave('finalized')
                         <div v-if="tax.rate > 0" class="flex justify-between text-gray-500"><span>{{ tax.label }}{{ tax.type !== 'flat' ? ` (${tax.rate}%)` : '' }}</span><span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span></div>
                       </template>
                       <div style="height: 1px; background: #e5e7eb; margin: 8px 0"></div>
-                      <div class="flex justify-between font-bold text-base"><span class="text-gray-800">Total Received</span><span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span></div>
+                      <div class="flex justify-between font-bold text-base"><span class="text-gray-800">{{ balanceDueAmt > 0 ? 'Amount Paid' : 'Total Received' }}</span><span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span></div>
+                      <template v-if="balanceDueAmt > 0">
+                        <div style="height: 1px; background: #fecaca; margin: 6px 0"></div>
+                        <div class="flex justify-between font-bold text-base"><span style="color: #dc2626">Balance Due</span><span class="font-mono" style="color: #dc2626">{{ fmtMoney(balanceDueAmt) }}</span></div>
+                      </template>
                     </div>
                   </div>
                 </div>
@@ -1481,3 +1546,8 @@ const handleFinalize     = () => handleSave('finalized')
     @close="showShareModal = false"
   />
 </template>
+
+<style scoped>
+.fade-enter-active, .fade-leave-active { transition: opacity 0.2s, transform 0.2s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(-4px); }
+</style>

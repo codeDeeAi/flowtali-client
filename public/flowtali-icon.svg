@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Charcoal background with rounded corners -->
+  <rect width="512" height="512" rx="108" fill="#0f0f10"/>
+
+  <!-- Amber logomark background square -->
+  <rect x="96" y="96" width="320" height="320" rx="56" fill="#E8A83E"/>
+
+  <!-- Document outer border (dark, matching the app's inline logo) -->
+  <rect x="158" y="150" width="196" height="212" rx="14" fill="none" stroke="#0f0f10" stroke-width="20"/>
+
+  <!-- Document lines (invoice content) -->
+  <line x1="196" y1="212" x2="318" y2="212" stroke="#0f0f10" stroke-width="18" stroke-linecap="round"/>
+  <line x1="196" y1="256" x2="290" y2="256" stroke="#0f0f10" stroke-width="18" stroke-linecap="round"/>
+  <line x1="196" y1="300" x2="262" y2="300" stroke="#0f0f10" stroke-width="18" stroke-linecap="round"/>
+</svg>

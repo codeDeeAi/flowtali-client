@@ -16,7 +16,8 @@
     "lint": "run-s lint:*",
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
-    "format": "prettier --write --experimental-cli src/"
+    "format": "prettier --write --experimental-cli src/",
+    "pwa-icons": "pwa-assets-generator"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
@@ -32,9 +33,11 @@
     "yup": "^1.7.1"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@tsconfig/node24": "^24.0.4",
     "@types/jsdom": "^28.0.1",
     "@types/node": "^24.12.0",
+    "@vite-pwa/assets-generator": "^1.0.2",
     "@vitejs/plugin-vue": "^6.0.5",
     "@vitest/eslint-plugin": "^1.6.13",
     "@vue/eslint-config-typescript": "^14.7.0",

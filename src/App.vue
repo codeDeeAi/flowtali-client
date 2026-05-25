@@ -10,6 +10,7 @@ import { useGlobalLoaderStore } from '@/stores/global-loaders';
 import BasicPageLoader from '@/components/loaders/BasicPageLoader.vue';
 import OfflineBanner from '@/components/layout/OfflineBanner.vue';
 import AppUpdateBanner from '@/components/layout/AppUpdateBanner.vue';
+import PwaInstallBanner from '@/components/layout/PwaInstallBanner.vue';
 
 const route = useRoute();
 const loaders = useGlobalLoaderStore();
@@ -39,6 +40,7 @@ watch(
   <!-- Global overlays — rendered above all layouts -->
   <OfflineBanner />
   <AppUpdateBanner />
+  <PwaInstallBanner />
 
   <BasicPageLoader v-if="loaders.isAnyLoaderActive" />
 
