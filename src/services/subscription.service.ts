@@ -63,8 +63,8 @@ export const SubscriptionService = {
     return http.get<{ data: ISubscription }>(`/api/v1/orgs/${orgId}/subscription`)
   },
 
-  initialize(orgId: string, payload: { plan: string; interval: 'monthly' | 'annual'; currency: 'NGN' | 'USD' }) {
-    return http.post<{ data: { payment_url: string; reference: string; amount: number; currency: string } }>(
+  initialize(orgId: string, payload: { plan: string; interval: 'monthly' | 'annual'; currency: 'NGN' | 'USD', redirect_url?: string }) {
+    return http.post<{ data: { payment_url: string; reference: string; amount: number; currency: string, redirect_url?: string } }>(
       `/api/v1/orgs/${orgId}/subscription/initialize`,
       payload,
     )

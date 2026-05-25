@@ -95,6 +95,7 @@ async function upgrade(planSlug: string) {
       plan:     planSlug,
       interval: billingInterval.value,
       currency: selectedCurrency.value,
+      redirect_url: window.location.origin + '/app/billing',
     })
     window.location.href = res.data.data.payment_url
   } catch (err: any) {
