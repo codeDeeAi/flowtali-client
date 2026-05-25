@@ -9,10 +9,10 @@ import { OrgService } from '@/services/org.service'
 import AppHeader from './components/app/AppHeader.vue'
 import AppSidebar from './components/app/AppSidebar.vue'
 
-const authStore  = useAuthStore()
-const subStore   = useSubscriptionStore()
+const authStore = useAuthStore()
+const subStore = useSubscriptionStore()
 const mobileOpen = ref(false)
-const collapsed  = ref(false)
+const collapsed = ref(false)
 
 // On every mount (including post-org-switch reload) refresh profile and org permissions
 // so the app never operates on stale cached data.
@@ -39,34 +39,21 @@ onMounted(async () => {
     <main class="flex flex-row h-full overflow-hidden relative">
       <!-- Mobile overlay backdrop -->
       <Transition name="fade">
-        <div
-          v-if="mobileOpen"
-          class="md:hidden fixed inset-0 bg-black/60 z-20"
-          @click="mobileOpen = false"
-        />
+        <div v-if="mobileOpen" class="md:hidden fixed inset-0 bg-black/60 z-20" @click="mobileOpen = false" />
       </Transition>
 
-      <AppSidebar
-        :mobile-open="mobileOpen"
-        :collapsed="collapsed"
-        @close="mobileOpen = false"
-        @toggle-collapse="collapsed = !collapsed"
-      />
+      <AppSidebar :mobile-open="mobileOpen" :collapsed="collapsed" @close="mobileOpen = false"
+        @toggle-collapse="collapsed = !collapsed" />
 
       <!-- Floating collapse toggle (desktop only) -->
       <button
         class="hidden md:flex absolute top-5 z-40 w-5 h-5 rounded-full bg-charcoal-800 border border-charcoal-600 items-center justify-center text-cream-faint hover:text-cream hover:border-charcoal-500 transition-all duration-300 shadow-lg"
         :style="{ left: collapsed ? 'calc(60px - 10px)' : 'calc(256px - 10px)' }"
-        :aria-label="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
-        @click="collapsed = !collapsed"
-      >
-        <Icon
-          :icon="collapsed ? 'lucide:chevron-right' : 'lucide:chevron-left'"
-          class="w-3 h-3"
-        />
+        :aria-label="collapsed ? 'Expand sidebar' : 'Collapse sidebar'" @click="collapsed = !collapsed">
+        <Icon :icon="collapsed ? 'lucide:chevron-right' : 'lucide:chevron-left'" class="w-3 h-3" />
       </button>
 
-      <div class="flex-1 bg-charcoal-900 overflow-auto">
+      <div class=" bg-charcoal-900 overflow-auto" :class="{ hidden: mobileOpen, 'flex-1': !mobileOpen }">
         <RouterView />
       </div>
     </main>
@@ -78,6 +65,7 @@ onMounted(async () => {
 .fade-leave-active {
   transition: opacity 0.2s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;

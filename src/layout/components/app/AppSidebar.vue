@@ -171,7 +171,7 @@ function isActive(to: string) {
     :class="[
       'flex flex-col bg-dark-light border-r border-charcoal-700 shrink-0 transition-all duration-300 h-full relative',
       'fixed md:static inset-y-0 left-0 z-30',
-      mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
+      mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0 hidden md:block',
       collapsed ? 'w-[60px]' : 'w-64',
     ]"
   >
@@ -393,7 +393,7 @@ function isActive(to: string) {
           <Icon :icon="item.icon" class="w-4 h-4 shrink-0" />
 
           <span
-            :class="['flex-1 truncate overflow-hidden transition-all duration-300', collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100']"
+            :class="['flex-1 truncate overflow-hidden transition-all duration-300', collapsed ? 'hidden' : 'w-auto opacity-100']"
           >
             {{ item.name }}
           </span>
