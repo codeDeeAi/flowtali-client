@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useSeo } from '@/composables/useSeo'
 import { useHead } from '@unhead/vue'
+import { SubscriptionService, type ISubscriptionPlan } from '@/services/subscription.service'
 
 useSeo({
   title: 'Flowtali — Invoices, Receipts, Projects & Letterheads for Freelancers',
@@ -94,21 +95,63 @@ const lhTemplatePreviews = [
   { name: 'Bold', color: '#e05a5a', font: "'Montserrat',sans-serif", tagline: 'Strong & impactful', preview: 'Dear Client, We write to formally confirm the commencement of the brand refresh initiative scheduled to begin…' },
 ];
 
-const billing = ref('annual');
-const plans = [
-  {
-    name: 'Starter', monthlyPrice: 0, annualPrice: 0, desc: 'Perfect for freelancers starting out.', cta: 'Start free', featured: false,
-    features: ['5 invoices + 3 letterheads/month', '10 receipts/month', '1 active project', 'Basic templates', 'PDF export', '3 currencies', 'Flowtali branding']
+const billing = ref<'monthly' | 'annual'>('annual');
+const currency = ref<'NGN' | 'USD'>('USD');
+const apiPlans = ref<ISubscriptionPlan[]>([]);
+const plansLoading = ref(false);
+
+const staticPlanData: Record<string, { desc: string; cta: string; featured: boolean; features: string[] }> = {
+  starter: {
+    desc: 'Perfect for freelancers starting out.',
+    cta: 'Start free',
+    featured: false,
+    features: ['5 invoices + 3 letterheads/month', '10 receipts/month', '1 active project', 'Basic templates', 'PDF export', 'Flowtali branding'],
   },
-  {
-    name: 'Pro', monthlyPrice: 12, annualPrice: 10, desc: 'For active freelancers who need full power.', cta: 'Start 14-day trial', featured: true,
-    features: ['Unlimited invoices, receipts & letterheads', 'Unlimited projects', 'All 8 letterhead templates', 'Custom branding & logo', 'Signature upload', 'All 11 currencies', 'Stamp + watermark', 'Client management', 'Remove Flowtali branding', 'Priority support']
+  pro: {
+    desc: 'For active freelancers who need full power.',
+    cta: 'Get started',
+    featured: true,
+    features: ['Unlimited invoices, receipts & letterheads', 'Unlimited projects', 'All 8 letterhead templates', 'Custom branding & logo', 'All currencies', 'Stamp + watermark', 'Remove Flowtali branding', 'Priority support'],
   },
-  {
-    name: 'Business', monthlyPrice: 29, annualPrice: 23, desc: 'For studios and small teams.', cta: 'Start 14-day trial', featured: false,
-    features: ['Everything in Pro', 'Up to 5 team members', 'Team roles & permissions', 'Project activity timeline', 'Invoice analytics', 'Client portal (soon)', 'Stripe payment links', 'Dedicated support']
+  business: {
+    desc: 'For studios and small teams.',
+    cta: 'Get started',
+    featured: false,
+    features: ['Everything in Pro', 'Up to 5 team members', 'Team roles & permissions', 'Project activity timeline', 'Invoice analytics', 'Dedicated support'],
   },
-];
+};
+
+const annualDiscount = computed(() => {
+  const pro = apiPlans.value.find(p => p.slug === 'pro');
+  if (!pro) return 20;
+  const prices = pro.prices[currency.value];
+  if (!prices.monthly) return 0;
+  return Math.round((1 - (prices.annual / 12) / prices.monthly) * 100);
+});
+
+const displayPlans = computed(() => {
+  if (!apiPlans.value.length) return [];
+  return apiPlans.value.map(plan => {
+    const meta = staticPlanData[plan.slug] ?? { desc: plan.description, cta: 'Get started', featured: false, features: [] };
+    const prices = plan.prices[currency.value];
+    const priceDisplay = billing.value === 'annual' && !plan.is_free ? prices.annual_per_month : prices.monthly_display;
+    const billedNote = billing.value === 'annual' && !plan.is_free ? `Billed ${prices.annual_display}/year` : null;
+    return { name: plan.name, slug: plan.slug, priceDisplay, billedNote, isFree: plan.is_free, ...meta };
+  });
+});
+
+onMounted(async () => {
+  plansLoading.value = true;
+  try {
+    const res = await SubscriptionService.getPlans();
+    apiPlans.value = res.data.data.plans;
+    currency.value = res.data.data.recommended_currency;
+  } catch {
+    // leave empty — section stays hidden
+  } finally {
+    plansLoading.value = false;
+  }
+});
 
 const testimonials = [
   { name: 'Amara Osei', role: 'UX Designer, Lagos', quote: 'The Projects feature changed everything. I can see every invoice, receipt, and file for a client in one place. No more hunting through folders.', hue: 180 },
@@ -606,38 +649,64 @@ const scrollTo = (id: string) => {
       <div class="text-center mb-16">
         <div class="badge inline-flex mb-5">Pricing</div>
         <h2 class="font-display text-5xl md:text-6xl font-semibold text-cream mb-4">Simple, honest pricing</h2>
-        <p class="text-cream-muted text-lg">Both tools included in every plan. No hidden fees.</p>
-        <div class="flex items-center justify-center gap-4 mt-8">
-          <span class="text-sm" :class="billing === 'monthly' ? 'text-cream' : 'text-cream-faint'">Monthly</span>
-          <button class="relative w-12 h-6 rounded-full transition-colors duration-300"
-            :class="billing === 'annual' ? 'bg-amber' : 'bg-charcoal-600'"
-            @click="billing = billing === 'monthly' ? 'annual' : 'monthly'">
-            <span class="absolute top-0.5 left-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 shadow"
-              :class="billing === 'annual' ? 'translate-x-6' : 'translate-x-0.5'"></span>
-          </button>
-          <span class="text-sm" :class="billing === 'annual' ? 'text-cream' : 'text-cream-faint'">Annual <span
-              class="text-amber text-xs font-semibold ml-1">-20%</span></span>
+        <p class="text-cream-muted text-lg">All tools included in every plan. No hidden fees.</p>
+        <div class="flex flex-wrap items-center justify-center gap-6 mt-8">
+          <!-- Billing interval toggle -->
+          <div class="flex items-center gap-4">
+            <span class="text-sm" :class="billing === 'monthly' ? 'text-cream' : 'text-cream-faint'">Monthly</span>
+            <button class="relative w-12 h-6 rounded-full transition-colors duration-300"
+              :class="billing === 'annual' ? 'bg-amber' : 'bg-charcoal-600'"
+              @click="billing = billing === 'monthly' ? 'annual' : 'monthly'">
+              <span class="absolute top-0.5 left-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 shadow"
+                :class="billing === 'annual' ? 'translate-x-6' : 'translate-x-0.5'"></span>
+            </button>
+            <span class="text-sm" :class="billing === 'annual' ? 'text-cream' : 'text-cream-faint'">
+              Annual
+              <span v-if="annualDiscount > 0" class="text-amber text-xs font-semibold ml-1">-{{ annualDiscount }}%</span>
+            </span>
+          </div>
+          <!-- Currency toggle -->
+          <div class="flex items-center gap-1 bg-charcoal-800/60 border border-charcoal-700/40 rounded-full px-1 py-1">
+            <button v-for="c in (['USD', 'NGN'] as const)" :key="c"
+              class="px-4 py-1 rounded-full text-sm font-medium transition-all duration-200"
+              :class="currency === c ? 'bg-amber text-charcoal-900' : 'text-cream-faint hover:text-cream'"
+              @click="currency = c">
+              {{ c === 'USD' ? '$ USD' : '₦ NGN' }}
+            </button>
+          </div>
         </div>
       </div>
-      <div class="grid md:grid-cols-3 gap-6 items-start">
-        <div v-for="plan in plans" :key="plan.name"
+      <!-- Loading skeleton -->
+      <div v-if="plansLoading" class="grid md:grid-cols-3 gap-6">
+        <div v-for="i in 3" :key="i" class="rounded-2xl p-7 bg-charcoal-800/60 border border-charcoal-700/40 animate-pulse">
+          <div class="h-3 bg-charcoal-700 rounded mb-3 w-16"></div>
+          <div class="h-9 bg-charcoal-700 rounded mb-2 w-28"></div>
+          <div class="h-3 bg-charcoal-700 rounded mb-6 w-full"></div>
+          <div class="h-10 bg-charcoal-700 rounded mb-6"></div>
+          <div class="space-y-2.5">
+            <div v-for="j in 5" :key="j" class="h-3 bg-charcoal-700 rounded w-full"></div>
+          </div>
+        </div>
+      </div>
+      <div v-else class="grid md:grid-cols-3 gap-6 items-start">
+        <div v-for="plan in displayPlans" :key="plan.name"
           class="rounded-2xl p-7 transition-all duration-300 hover:-translate-y-1"
           :class="plan.featured ? 'pricing-featured amber-glow' : 'bg-charcoal-800/60 border border-charcoal-700/40 card-glow'">
           <div class="flex items-start justify-between mb-6">
             <div>
               <div class="text-cream-faint text-sm font-medium mb-1">{{ plan.name }}</div>
               <div class="font-display text-4xl font-semibold text-cream">
-                ${{ billing === 'annual' ? plan.annualPrice : plan.monthlyPrice }}<span
-                  class="text-lg text-cream-faint font-normal font-sans">/mo</span></div>
-              <div v-if="billing === 'annual'" class="text-amber text-xs mt-1">Billed ${{ plan.annualPrice * 12 }}/year
+                {{ plan.priceDisplay }}<span class="text-lg text-cream-faint font-normal font-sans">/mo</span>
               </div>
+              <div v-if="plan.billedNote" class="text-amber text-xs mt-1">{{ plan.billedNote }}</div>
             </div>
             <div v-if="plan.featured" class="badge text-xs">Most popular</div>
           </div>
           <p class="text-cream-muted text-sm mb-6 leading-relaxed">{{ plan.desc }}</p>
           <router-link :to="{ name: 'signup' }"
-            :class="plan.featured ? 'btn-primary w-full text-sm py-3' : 'btn-ghost w-full text-sm py-3'">{{ plan.cta
-            }}</router-link>
+            :class="plan.featured ? 'btn-primary w-full text-sm py-3' : 'btn-ghost w-full text-sm py-3'">
+            {{ plan.cta }}
+          </router-link>
           <div class="section-divider my-6"></div>
           <div class="flex flex-col gap-3">
             <div v-for="item in plan.features" :key="item" class="check-item">
@@ -650,7 +719,7 @@ const scrollTo = (id: string) => {
           </div>
         </div>
       </div>
-      <p class="text-center text-cream-faint text-sm mt-8">All plans include Invoice Generator, Receipt Generator, Project Management, and Letterhead Generator. 14-day free trial, cancel anytime.</p>
+      <p class="text-center text-cream-faint text-sm mt-8">All plans include Invoice Generator, Receipt Generator, Project Management, and Letterhead Generator. Cancel anytime.</p>
     </div>
   </section>
 

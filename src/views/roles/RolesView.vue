@@ -1,15 +1,20 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
+import { useRouter } from 'vue-router'
 import { useNotification } from '@/composables/notification.ts'
 import { useAuthStore } from '@/stores/auth.ts'
+import { useSubscriptionStore } from '@/stores/subscription'
 import Pagination from '@/components/ui/Pagination.vue'
 import { RoleService } from '@/services/role.service.ts'
 import type { IRole, IPermissionGroup } from '@/types/role.types'
 
+const router    = useRouter()
 const { notify } = useNotification()
 const authStore = useAuthStore()
-const orgId = computed(() => authStore.currentOrganization?.id ?? '')
+const subStore  = useSubscriptionStore()
+const orgId     = computed(() => authStore.currentOrganization?.id ?? '')
+const canAccess = computed(() => subStore.isBusiness)
 
 const ALL_TAGS = ['read', 'create', 'update', 'delete', 'manage'] as const
 type Tag = (typeof ALL_TAGS)[number]
@@ -196,14 +201,27 @@ const handleDelete = async () => {
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div>
         <h1 class="page-title">Roles & Permissions</h1>
-        <p class="page-subtitle">{{ total }} role{{ total !== 1 ? 's' : '' }} · manage access control</p>
+        <p class="page-subtitle">{{ canAccess ? `${total} role${total !== 1 ? 's' : ''} · manage access control` : 'Business plan required' }}</p>
       </div>
-      <button @click="openCreate" class="flex items-center gap-2 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs px-3 py-2 rounded-lg transition-colors self-start sm:self-auto">
+      <button v-if="canAccess" @click="openCreate" class="flex items-center gap-2 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs px-3 py-2 rounded-lg transition-colors self-start sm:self-auto">
         <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Create Role
       </button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- Upgrade wall -->
+    <div v-if="!canAccess" class="flex flex-col items-center justify-center py-24 text-center">
+      <div class="w-14 h-14 rounded-2xl bg-amber/10 border border-amber/20 flex items-center justify-center mb-5">
+        <Icon icon="lucide:shield-check" class="w-7 h-7 text-amber" />
+      </div>
+      <h2 class="text-xl font-semibold text-cream mb-2">Roles & Permissions requires Business</h2>
+      <p class="text-cream-muted text-sm max-w-sm mb-6">Create custom roles, assign granular permissions, and control exactly what each team member can access — available on the Business plan.</p>
+      <button @click="router.push({ name: 'billing' })"
+        class="px-6 py-2.5 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 text-sm font-semibold transition-colors">
+        Upgrade to Business
+      </button>
+    </div>
+
+    <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
       <!-- Role list -->
       <div class="flex flex-col gap-3">

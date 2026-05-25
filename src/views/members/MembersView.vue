@@ -5,15 +5,18 @@ import { Icon } from '@iconify/vue'
 import { useLoaders } from '@/composables/loaders.ts'
 import { useNotification } from '@/composables/notification.ts'
 import { useAuthStore } from '@/stores/auth.ts'
+import { useSubscriptionStore } from '@/stores/subscription'
 import Pagination from '@/components/ui/Pagination.vue'
 import { MemberService } from '@/services/member.service.ts'
 import type { IMember, IMemberRole, IInvitation } from '@/types/member.types'
 
-const router = useRouter()
+const router    = useRouter()
 const { notify } = useNotification()
 const { initLoaders, setLoader, getLoader } = useLoaders()
 const authStore = useAuthStore()
-const orgId = computed(() => authStore.currentOrganization?.id ?? '')
+const subStore  = useSubscriptionStore()
+const orgId     = computed(() => authStore.currentOrganization?.id ?? '')
+const canInvite = computed(() => subStore.isBusiness)
 
 initLoaders({ isSending: false })
 
@@ -230,8 +233,11 @@ const handleRemove = async () => {
           <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint" />
           <input v-model="searchQuery" @input="onSearch" placeholder="Search members…" class="app-inp pl-8 text-xs py-2 w-44" />
         </div>
-        <button @click="openAdd" class="flex items-center gap-2 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs px-3 py-2 rounded-lg transition-colors whitespace-nowrap">
+        <button v-if="canInvite" @click="openAdd" class="flex items-center gap-2 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs px-3 py-2 rounded-lg transition-colors whitespace-nowrap">
           <Icon icon="lucide:user-round-plus" class="w-3.5 h-3.5" /> Add Member
+        </button>
+        <button v-else @click="router.push({ name: 'billing' })" class="flex items-center gap-1.5 border border-amber/40 text-amber text-xs px-3 py-2 rounded-lg transition-colors hover:bg-amber/10 whitespace-nowrap">
+          <Icon icon="lucide:lock" class="w-3.5 h-3.5" /> Upgrade to invite
         </button>
       </div>
     </div>

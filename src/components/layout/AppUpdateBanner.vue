@@ -4,8 +4,12 @@ import { useRegisterSW } from 'virtual:pwa-register/vue'
 import { Icon } from '@iconify/vue'
 
 const { needRefresh, updateServiceWorker } = useRegisterSW({
+  // Suppress Workbox's own reload inside the 'controlling' event handler.
+  // Without this, both Workbox's handler AND our controllerchange listener
+  // would call window.location.reload(), creating a double-reload loop.
+  onNeedReload() {},
+
   onRegistered(r) {
-    // Check for updates every 60 minutes
     if (r) setInterval(() => r.update(), 60 * 60 * 1000)
   },
 })
@@ -16,14 +20,17 @@ async function doUpdate() {
   if (isUpdating.value) return
   isUpdating.value = true
 
-  // Reload only after the new SW has genuinely taken control.
-  // Using updateServiceWorker(true) can reload before controllerchange fires,
-  // leaving the old SW still active so needRefresh triggers again → infinite loop.
+  // Single { once: true } listener — fires exactly when the new SW takes control.
+  let fallback: ReturnType<typeof setTimeout>
   navigator.serviceWorker.addEventListener(
     'controllerchange',
-    () => window.location.reload(),
+    () => { clearTimeout(fallback); window.location.reload() },
     { once: true },
   )
+
+  // If the SW never fires controllerchange (e.g. skipWaiting silently fails),
+  // reload anyway so the user isn't stuck on a spinning button forever.
+  fallback = setTimeout(() => window.location.reload(), 10_000)
 
   await updateServiceWorker(false)
 }

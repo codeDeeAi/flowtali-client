@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useSubscriptionStore } from '@/stores/subscription'
 import { AnalyticsService, type IAnalyticsData } from '@/services/analytics.service'
 
+const router    = useRouter()
 const authStore = useAuthStore()
+const subStore  = useSubscriptionStore()
 const orgId     = computed(() => authStore.getCurrentOrganization?.id ?? '')
+const canAccess = computed(() => subStore.isBusiness)
 
 const periods = [
   { label: 'Last 30 days',   value: '30d'  },
@@ -208,13 +213,26 @@ const receiptVolumeBars = computed(() => {
         <h1 class="page-title">Analytics</h1>
         <p class="page-subtitle">Revenue insights and performance metrics</p>
       </div>
-      <select v-model="period" class="app-select text-xs py-2 w-44 self-start sm:self-auto">
+      <select v-model="period" class="app-select text-xs py-2 w-44 self-start sm:self-auto" :disabled="!canAccess">
         <option v-for="p in periods" :key="p.value" :value="p.value">{{ p.label }}</option>
       </select>
     </div>
 
+    <!-- Upgrade wall -->
+    <div v-if="!canAccess" class="flex flex-col items-center justify-center py-24 text-center">
+      <div class="w-14 h-14 rounded-2xl bg-amber/10 border border-amber/20 flex items-center justify-center mb-5">
+        <Icon icon="lucide:bar-chart-2" class="w-7 h-7 text-amber" />
+      </div>
+      <h2 class="text-xl font-semibold text-cream mb-2">Analytics requires Business</h2>
+      <p class="text-cream-muted text-sm max-w-sm mb-6">Revenue charts, client breakdowns, invoice analytics, and performance metrics are available on the Business plan.</p>
+      <button @click="router.push({ name: 'billing' })"
+        class="px-6 py-2.5 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 text-sm font-semibold transition-colors">
+        Upgrade to Business
+      </button>
+    </div>
+
     <!-- Loading -->
-    <div v-if="isLoading" class="flex items-center justify-center py-20">
+    <div v-else-if="isLoading" class="flex items-center justify-center py-20">
       <Icon icon="lucide:loader-2" class="w-7 h-7 text-amber animate-spin" />
     </div>
 
