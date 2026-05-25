@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
-import { AuditLogService, type IAuditLog, type IAuditLogUser } from '@/services/audit-log.service'
+import { AuditLogService, type IAuditLog, type IAuditLogUser, type IAuditLogEventType } from '@/services/audit-log.service'
 import Pagination from '@/components/ui/Pagination.vue'
 
 const authStore = useAuthStore()
@@ -15,23 +15,30 @@ const dateTo      = ref('')
 const currentPage = ref(1)
 const perPage     = 20
 
-const logs       = ref<IAuditLog[]>([])
-const total      = ref(0)
-const isLoading  = ref(false)
+const logs            = ref<IAuditLog[]>([])
+const total           = ref(0)
+const isLoading       = ref(false)
+const isExporting     = ref(false)
+const eventTypes      = ref<IAuditLogEventType[]>([])
+const typesLoading    = ref(false)
 
-const eventFilters = [
-  { key: '',                         label: 'All events' },
-  { key: 'invoice',                  label: 'Invoices' },
-  { key: 'invoice.share_link',       label: 'Invoice Share Links' },
-  { key: 'receipt',                  label: 'Receipts' },
-  { key: 'receipt.share_link',       label: 'Receipt Share Links' },
-  { key: 'letterhead',               label: 'Letterheads' },
-  { key: 'letterhead.share_link',    label: 'Letterhead Share Links' },
-  { key: 'member',                   label: 'Members' },
-  { key: 'auth',                     label: 'Auth' },
-  { key: 'org',                      label: 'Org' },
-  { key: 'client',                   label: 'Clients' },
-]
+const eventFilters = computed(() => [
+  { key: '', label: 'All events', icon: 'lucide:list', color: '#9ca3af' },
+  ...eventTypes.value,
+])
+
+async function loadEventTypes() {
+  if (!orgId.value) return
+  typesLoading.value = true
+  try {
+    const res = await AuditLogService.eventTypes(orgId.value)
+    eventTypes.value = res.data.data.types
+  } catch {
+    // non-critical — filter dropdown falls back to "All events" only
+  } finally {
+    typesLoading.value = false
+  }
+}
 
 async function loadLogs() {
   if (!orgId.value) return
@@ -60,15 +67,41 @@ watch(searchQuery, () => {
   searchTimer = setTimeout(() => { currentPage.value = 1; loadLogs() }, 400)
 })
 watch([eventFilter, dateFrom, dateTo, currentPage], () => loadLogs())
-onMounted(() => loadLogs())
+onMounted(() => { loadLogs(); loadEventTypes() })
 
 const onFilter = () => { currentPage.value = 1 }
 
-// Event icon / color based on event prefix
+async function exportCsv() {
+  if (!orgId.value || isExporting.value) return
+  isExporting.value = true
+  try {
+    const res = await AuditLogService.export(orgId.value, {
+      search:    searchQuery.value || undefined,
+      event:     eventFilter.value || undefined,
+      date_from: dateFrom.value || undefined,
+      date_to:   dateTo.value || undefined,
+    })
+    const url      = URL.createObjectURL(new Blob([res.data], { type: 'text/csv' }))
+    const link     = document.createElement('a')
+    const today    = new Date().toISOString().slice(0, 10)
+    link.href      = url
+    link.download  = `audit-logs-${today}.csv`
+    link.click()
+    URL.revokeObjectURL(url)
+  } catch {
+    // non-critical
+  } finally {
+    isExporting.value = false
+  }
+}
+
+// Event icon / color — uses server-driven metadata when available
 function eventMeta(event: string, status: string) {
   if (status === 'failed') return { icon: 'lucide:shield-x', color: '#f87171' }
   const prefix = event.split('.')[0] ?? ''
-  const map: Record<string, { icon: string; color: string }> = {
+  const fromServer = eventTypes.value.find(t => t.key === prefix)
+  if (fromServer) return { icon: fromServer.icon, color: fromServer.color }
+  const fallback: Record<string, { icon: string; color: string }> = {
     invoice:    { icon: 'lucide:file-text',  color: '#4ade80' },
     receipt:    { icon: 'lucide:receipt',    color: '#34d399' },
     letterhead: { icon: 'lucide:scroll',     color: '#60a5fa' },
@@ -76,8 +109,11 @@ function eventMeta(event: string, status: string) {
     auth:       { icon: 'lucide:shield',     color: '#e8a83e' },
     org:        { icon: 'lucide:building-2', color: '#38bdf8' },
     client:     { icon: 'lucide:user',       color: '#fb923c' },
+    preferences: { icon: 'lucide:settings',       color: '#94a3b8' },
+    role:        { icon: 'lucide:shield-check',   color: '#c084fc' },
+    audit_log:   { icon: 'lucide:clipboard-list', color: '#64748b' },
   }
-  return map[prefix] ?? { icon: 'lucide:activity', color: '#9ca3af' }
+  return fallback[prefix] ?? { icon: 'lucide:activity', color: '#9ca3af' }
 }
 
 function fmtDateTime(iso: string) {
@@ -114,12 +150,20 @@ function userInitials(user: IAuditLogUser | null | undefined) {
         <p class="page-subtitle">Full activity trail for your organization</p>
       </div>
       <div class="flex items-center gap-2">
-        <button class="flex items-center gap-2 bg-charcoal-800 border border-charcoal-700 hover:border-charcoal-500 text-cream-muted hover:text-cream text-xs px-3 py-2 rounded-lg transition-colors">
-          <Icon icon="lucide:download" class="w-3.5 h-3.5" /> Export Logs
+        <button
+          @click="exportCsv"
+          :disabled="isExporting"
+          class="flex items-center gap-2 bg-charcoal-800 border border-charcoal-700 hover:border-charcoal-500 text-cream-muted hover:text-cream text-xs px-3 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Icon :icon="isExporting ? 'lucide:loader-2' : 'lucide:download'" class="w-3.5 h-3.5" :class="{ 'animate-spin': isExporting }" />
+          {{ isExporting ? 'Exporting…' : 'Export CSV' }}
         </button>
-        <select v-model="eventFilter" @change="onFilter" class="app-select text-xs py-2 w-36">
-          <option v-for="f in eventFilters" :key="f.key" :value="f.key">{{ f.label }}</option>
-        </select>
+        <div class="relative">
+          <select v-model="eventFilter" @change="onFilter" class="app-select text-xs py-2 w-40" :disabled="typesLoading">
+            <option v-for="f in eventFilters" :key="f.key" :value="f.key">{{ f.label }}</option>
+          </select>
+          <Icon v-if="typesLoading" icon="lucide:loader-2" class="absolute right-7 top-1/2 -translate-y-1/2 w-3 h-3 text-amber animate-spin pointer-events-none" />
+        </div>
       </div>
     </div>
 
