@@ -321,6 +321,12 @@ function formatBytes(bytes: number) {
   return `${(bytes / 1048576).toFixed(1)} MB`;
 }
 
+function normalizeUrl(url: string): string {
+  if (!url) return url;
+  if (/^https?:\/\//i.test(url)) return url;
+  return `https://${url}`;
+}
+
 const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0);
 </script>
 
@@ -713,21 +719,28 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
 
         <div v-if="files.length === 0" class="text-center py-10 text-cream-faint text-sm">No files yet.</div>
         <div v-else class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden">
-          <div
+          <a
             v-for="(file, i) in files" :key="file.id"
-            :class="['flex items-center gap-3 px-4 py-3 group', i < files.length - 1 ? 'border-b border-charcoal-700/60' : '']"
+            :href="normalizeUrl(file.url)"
+            target="_blank"
+            rel="noopener noreferrer"
+            :class="['flex items-center gap-3 px-4 py-3 group hover:bg-charcoal-700/40 transition-colors', i < files.length - 1 ? 'border-b border-charcoal-700/60' : '']"
           >
             <Icon :icon="file.type === 'upload' ? 'lucide:file-up' : 'lucide:link'" class="w-4 h-4 text-cream-faint shrink-0" />
             <div class="flex-1 min-w-0">
-              <a :href="file.url" target="_blank" rel="noopener noreferrer" class="text-xs font-medium text-cream hover:text-amber transition-colors truncate block">{{ file.name }}</a>
+              <div class="text-xs font-medium text-cream group-hover:text-amber transition-colors truncate">{{ file.name }}</div>
               <div class="text-[11px] text-cream-faint">
                 {{ file.mime_type ?? file.type }}{{ file.file_size ? ` · ${formatBytes(file.file_size)}` : '' }}
               </div>
             </div>
-            <button v-if="can('projects.update')" @click="handleDeleteFile(file.id)" class="opacity-0 group-hover:opacity-100 p-1.5 rounded hover:bg-red-900/30 text-cream-faint hover:text-red-400 transition-all">
+            <button
+              v-if="can('projects.update')"
+              @click.prevent.stop="handleDeleteFile(file.id)"
+              class="opacity-0 group-hover:opacity-100 p-1.5 rounded hover:bg-red-900/30 text-cream-faint hover:text-red-400 transition-all"
+            >
               <Icon icon="lucide:trash-2" class="w-3.5 h-3.5" />
             </button>
-          </div>
+          </a>
         </div>
       </div>
 
