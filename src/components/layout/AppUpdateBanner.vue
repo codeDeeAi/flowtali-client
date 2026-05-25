@@ -13,8 +13,19 @@ const { needRefresh, updateServiceWorker } = useRegisterSW({
 const isUpdating = ref(false)
 
 async function doUpdate() {
+  if (isUpdating.value) return
   isUpdating.value = true
-  await updateServiceWorker(true)
+
+  // Reload only after the new SW has genuinely taken control.
+  // Using updateServiceWorker(true) can reload before controllerchange fires,
+  // leaving the old SW still active so needRefresh triggers again → infinite loop.
+  navigator.serviceWorker.addEventListener(
+    'controllerchange',
+    () => window.location.reload(),
+    { once: true },
+  )
+
+  await updateServiceWorker(false)
 }
 </script>
 
