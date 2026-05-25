@@ -15,20 +15,13 @@ const props = defineProps<{
 }>()
 
 const segments = computed(() => {
-  if (props.breakdown) {
-    return [
-      { label: 'Paid',    value: props.breakdown.paid.count,    color: '#4ade80' },
-      { label: 'Sent',    value: props.breakdown.sent.count,    color: '#38bdf8' },
-      { label: 'Overdue', value: props.breakdown.overdue.count, color: '#f87171' },
-      { label: 'Draft',   value: props.breakdown.draft.count,   color: '#6b7280' },
-    ].filter(s => s.value > 0)
-  }
+  if (!props.breakdown) return []
   return [
-    { label: 'Paid',    value: 28, color: '#4ade80' },
-    { label: 'Due',     value: 11, color: '#e8a83e' },
-    { label: 'Overdue', value: 5,  color: '#f87171' },
-    { label: 'Draft',   value: 3,  color: '#6b7280' },
-  ]
+    { label: 'Paid',    value: props.breakdown.paid.count,    color: '#4ade80' },
+    { label: 'Sent',    value: props.breakdown.sent.count,    color: '#38bdf8' },
+    { label: 'Overdue', value: props.breakdown.overdue.count, color: '#f87171' },
+    { label: 'Draft',   value: props.breakdown.draft.count,   color: '#6b7280' },
+  ].filter(s => s.value > 0)
 })
 
 const total = computed(() => segments.value.reduce((sum, s) => sum + s.value, 0))
@@ -90,7 +83,7 @@ const arcs = computed(() => {
         </div>
       </div>
 
-      <div v-if="total === 0" class="flex items-center justify-center h-28 text-xs text-cream-faint">
+      <div v-if="!breakdown || total === 0" class="flex items-center justify-center h-28 text-xs text-cream-faint">
         No invoices yet
       </div>
 

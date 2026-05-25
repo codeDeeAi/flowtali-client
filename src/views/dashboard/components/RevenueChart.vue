@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 
 export interface IRevenueTrendItem {
   month: string
@@ -13,23 +13,11 @@ const props = defineProps<{
   loading?: boolean
 }>()
 
-type Period = '7D' | '1M' | '3M' | '1Y';
-
-const activePeriod = ref<Period>('1M');
-const periods: Period[] = ['7D', '1M', '3M', '1Y'];
-
-const allData: Record<Period, number[]> = {
-  '7D': [62, 75, 55, 88, 70, 95, 80],
-  '1M': [30, 42, 38, 50, 45, 55, 48, 62, 58, 70, 75, 82, 88, 95],
-  '3M': [28, 35, 40, 38, 50, 55, 48, 60, 58, 70, 65, 78],
-  '1Y': [30, 38, 45, 42, 55, 48, 52, 62, 58, 68, 72, 95],
-};
+const hasData = computed(() => props.trendData && props.trendData.length > 0)
 
 const data = computed(() => {
-  if (props.trendData && props.trendData.length > 0) {
-    return props.trendData.map(d => d.collected)
-  }
-  return allData[activePeriod.value]
+  if (!hasData.value) return []
+  return props.trendData!.map(d => d.collected)
 })
 
 const chartW = 300;
@@ -85,24 +73,14 @@ const bars = computed(() => {
           <h3 class="text-sm font-semibold text-cream">Revenue Overview</h3>
           <p class="text-xs text-cream-faint mt-0.5">Invoice payments received</p>
         </div>
-        <div v-if="!trendData" class="flex items-center gap-0.5 bg-charcoal-700 rounded-lg p-0.5">
-          <button
-            v-for="p in periods"
-            :key="p"
-            :class="[
-              'text-xs font-medium px-2.5 py-1 rounded-md transition-colors',
-              activePeriod === p
-                ? 'bg-amber text-charcoal-900'
-                : 'text-cream-muted hover:text-cream',
-            ]"
-            @click="activePeriod = p"
-          >
-            {{ p }}
-          </button>
-        </div>
+      </div>
+
+      <div v-if="!hasData" class="flex items-center justify-center h-[140px] text-xs text-cream-faint">
+        No revenue data yet
       </div>
 
       <svg
+        v-else
         :viewBox="`0 0 ${chartW} ${chartH}`"
         class="w-full"
         :style="{ height: '140px' }"
