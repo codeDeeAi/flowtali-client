@@ -4,6 +4,7 @@ import { RouterView } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { ProfileService } from '@/services/profile.service'
+import { OrgService } from '@/services/org.service'
 import AppHeader from './components/app/AppHeader.vue'
 import AppSidebar from './components/app/AppSidebar.vue'
 
@@ -11,13 +12,20 @@ const authStore  = useAuthStore()
 const mobileOpen = ref(false)
 const collapsed  = ref(false)
 
-// Sync avatar from API on every mount so the sidebar always shows the latest photo
-// even for sessions that pre-date the avatar field being added to the login response.
+// On every mount (including post-org-switch reload) refresh profile and org permissions
+// so the app never operates on stale cached data.
 onMounted(async () => {
-  try {
-    const res = await ProfileService.get()
-    authStore.updateUserInfo({ avatar: res.data.data.avatar })
-  } catch {}
+  const orgId = authStore.getCurrentOrganization?.id
+  await Promise.allSettled([
+    ProfileService.get().then(res => {
+      const p = res.data.data
+      authStore.updateUserInfo({ first_name: p.first_name, last_name: p.last_name, avatar: p.avatar })
+      authStore.updateMfaEnabled(p.mfa_enabled)
+    }),
+    orgId
+      ? OrgService.getMyMembership(orgId).then(res => authStore.updateOrganization(res.data.data))
+      : Promise.resolve(),
+  ])
 })
 </script>
 
