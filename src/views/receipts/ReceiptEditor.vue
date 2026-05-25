@@ -13,6 +13,7 @@ interface Props {
   mode: 'create' | 'edit'
   receiptId?: string
   initialData?: Record<string, any>
+  projectId?: string
 }
 const props = withDefaults(defineProps<Props>(), { mode: 'create' })
 
@@ -361,14 +362,18 @@ const handleSave = async (statusOverride?: string) => {
   try {
     const payload = buildPayload(statusOverride ? { status: statusOverride } : undefined)
     if (props.mode === 'create') {
-      const res = await ReceiptService.create(orgId.value, payload)
+      const res = await ReceiptService.create(orgId.value, { ...payload, ...(props.projectId ? { project_id: props.projectId } : {}) })
       savedReceiptId.value = res.data.data.id
       notify('Receipt created!', 'success')
     } else {
       await ReceiptService.update(orgId.value, props.receiptId!, payload)
       notify('Receipt saved!', 'success')
     }
-    router.push({ name: 'receipts' })
+    if (props.projectId && props.mode === 'create') {
+      router.push({ name: 'projects.view', params: { id: props.projectId } })
+    } else {
+      router.push({ name: 'receipts' })
+    }
   } catch (err: any) {
     const msg = err?.response?.data?.message ?? err?.response?.data?.errors?.[0]
     notify(msg ?? 'Failed to save receipt.', 'error')

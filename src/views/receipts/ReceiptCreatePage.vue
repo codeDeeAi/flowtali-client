@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import ReceiptEditor from './ReceiptEditor.vue'
 
+const route = useRoute()
+const projectId = route.query.project_id as string | undefined
 const initialData = ref<Record<string, any> | undefined>(undefined)
 
 onMounted(() => {
@@ -14,5 +17,5 @@ onMounted(() => {
 </script>
 
 <template>
-  <ReceiptEditor mode="create" :initial-data="initialData" />
+  <ReceiptEditor mode="create" :initial-data="initialData" :project-id="projectId" />
 </template>

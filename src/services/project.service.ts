@@ -99,9 +99,14 @@ export const ProjectService = {
   },
 
   draftData(orgId: string) {
-    return http.get<{ data: { statuses: string[]; tracking_options: string[] } }>(
-      `/api/v1/orgs/${orgId}/projects/draft-data`,
-    )
+    return http.get<{
+      data: {
+        statuses: string[]
+        tracking_options: string[]
+        clients: { id: string; name: string; company: string | null }[]
+        currencies: string[]
+      }
+    }>(`/api/v1/orgs/${orgId}/projects/draft-data`)
   },
 
   get(orgId: string, projectId: string) {

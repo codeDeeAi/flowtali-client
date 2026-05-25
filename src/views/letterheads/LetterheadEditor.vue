@@ -12,6 +12,7 @@ import { MediaService } from '@/services/media.service'
 interface Props {
   mode: 'create' | 'edit'
   initialData?: Record<string, any>
+  projectId?: string
 }
 const props = withDefaults(defineProps<Props>(), { mode: 'create' })
 
@@ -281,7 +282,7 @@ const handleSave = async () => {
     }
 
     if (props.mode === 'create') {
-      const res = await LetterheadService.create(orgId.value, payload as any)
+      const res = await LetterheadService.create(orgId.value, { ...payload, ...(props.projectId ? { project_id: props.projectId } : {}) } as any)
       savedLetterheadId.value = res.data.data.id
     } else {
       const id = String(route.params.id)
@@ -290,7 +291,11 @@ const handleSave = async () => {
     }
 
     notify(props.mode === 'create' ? 'Letterhead created!' : 'Letterhead saved!', 'success')
-    router.push({ name: 'letterheads' })
+    if (props.projectId && props.mode === 'create') {
+      router.push({ name: 'projects.view', params: { id: props.projectId } })
+    } else {
+      router.push({ name: 'letterheads' })
+    }
   } catch {
     notify('Failed to save letterhead. Please try again.', 'error')
   } finally {

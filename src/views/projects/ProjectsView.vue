@@ -100,7 +100,7 @@ const goToView   = (id: string) => router.push({ name: 'projects.view', params: 
         <h1 class="page-title">Projects</h1>
         <p class="page-subtitle">{{ total }} project{{ total === 1 ? '' : 's' }}</p>
       </div>
-      <div class="flex items-center gap-2 flex-wrap">
+      <div class="flex items-center gap-2 shrink-0">
         <!-- Search -->
         <div class="relative">
           <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint" />
@@ -109,12 +109,12 @@ const goToView   = (id: string) => router.push({ name: 'projects.view', params: 
             @keyup.enter="onSearch"
             @input="!searchInput && onSearch()"
             placeholder="Search projects…"
-            class="app-inp pl-8 text-xs py-2 w-48"
+            class="w-52 bg-[#1c1c21] border border-[#2e2e37] rounded-lg text-cream text-xs px-3 pl-8 py-2 outline-none placeholder-[#6b6560] focus:border-amber/40 focus:ring-2 focus:ring-amber/10 transition-colors font-['DM_Sans']"
           />
         </div>
 
         <!-- Status filter -->
-        <select v-model="statusFilter" class="app-inp text-xs py-2 pr-8 w-36">
+        <select v-model="statusFilter" class="app-inp text-xs py-2 w-28">
           <option v-for="opt in STATUS_OPTIONS" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
         </select>
 
@@ -128,7 +128,7 @@ const goToView   = (id: string) => router.push({ name: 'projects.view', params: 
     </div>
 
     <!-- Stats bar -->
-    <div v-if="stats" class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+    <div v-if="stats" class="grid grid-cols-3 md:grid-cols-5 gap-3 w-full">
       <div
         v-for="opt in STATUS_OPTIONS.filter(o => o.value)"
         :key="opt.value"

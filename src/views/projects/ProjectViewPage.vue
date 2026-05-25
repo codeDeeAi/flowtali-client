@@ -8,6 +8,8 @@ import { ProjectService } from '@/services/project.service';
 import { InvoiceService } from '@/services/invoice.service';
 import { ReceiptService } from '@/services/receipt.service';
 import { LetterheadService } from '@/services/letterhead.service';
+import { ClientService } from '@/services/client.service';
+import type { IClient } from '@/types/client.types';
 import { useNotification } from '@/composables/notification';
 import type {
   IProject, IProjectFile, IProjectActivity, IProjectDocSummary,
@@ -22,7 +24,7 @@ const { notify } = useNotification();
 const orgId    = computed(() => authStore.getCurrentOrganization?.id ?? '');
 const projectId = route.params.id as string;
 
-type Tab = 'overview' | 'invoices' | 'receipts' | 'letterheads' | 'files' | 'activity';
+type Tab = 'overview' | 'client' | 'invoices' | 'receipts' | 'letterheads' | 'files' | 'activity';
 const activeTab = ref<Tab>('overview');
 
 const project    = ref<IProject | null>(null);
@@ -57,6 +59,13 @@ const isSavingFile   = ref(false);
 // Note
 const noteText   = ref('');
 const isSavingNote = ref(false);
+
+// Client
+const showAssignClient  = ref(false);
+const clientSearch      = ref('');
+const clientResults     = ref<IClient[]>([]);
+const clientSearching   = ref(false);
+const isAssigningClient = ref(false);
 
 onMounted(async () => {
   await loadProject();
@@ -229,6 +238,40 @@ async function handleAddNote() {
   }
 }
 
+// ── Client ───────────────────────────────────────────────────
+async function openAssignClient() {
+  clientSearch.value = '';
+  clientResults.value = [];
+  showAssignClient.value = true;
+  await searchClients();
+}
+
+async function searchClients() {
+  clientSearching.value = true;
+  try {
+    const res = await ClientService.list(orgId.value, {
+      search: clientSearch.value || undefined,
+      per_page: 20,
+    });
+    clientResults.value = res.data.data.data;
+  } catch { /* non-critical */ }
+  finally { clientSearching.value = false; }
+}
+
+async function assignClient(clientId: string | null) {
+  isAssigningClient.value = true;
+  try {
+    const res = await ProjectService.update(orgId.value, projectId, { client_id: clientId });
+    project.value = res.data.data;
+    showAssignClient.value = false;
+    notify(clientId ? 'Client assigned.' : 'Client removed.', 'success');
+  } catch {
+    notify('Failed to update client.', 'error');
+  } finally {
+    isAssigningClient.value = false;
+  }
+}
+
 // ── Helpers ─────────────────────────────────────────────────
 const statusBadge = (status: string) => {
   const map: Record<string, string> = {
@@ -313,27 +356,57 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
             <p class="page-subtitle">{{ project.number }}{{ project.client ? ` · ${project.client.name}` : '' }}</p>
           </div>
         </div>
-        <div class="flex items-center gap-2 shrink-0" v-if="can('projects.update')">
-          <button
-            @click="router.push({ name: 'projects.edit', params: { id: projectId } })"
-            class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors"
-          >
-            <Icon icon="lucide:pencil" class="w-3.5 h-3.5" /> Edit
-          </button>
-          <button
-            v-if="can('projects.delete')"
-            @click="showDeleteConfirm = true"
-            class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-red-900/20 hover:bg-red-900/40 text-red-400 text-xs transition-colors"
-          >
-            <Icon icon="lucide:trash-2" class="w-3.5 h-3.5" /> Delete
-          </button>
+        <div class="flex items-center gap-2 shrink-0 flex-wrap">
+          <!-- Create document shortcuts -->
+          <div class="flex items-center gap-1.5" v-if="can('invoices.create') || can('receipts.create') || can('letterheads.create')">
+            <button
+              v-if="can('invoices.create')"
+              @click="router.push({ name: 'invoices.create', query: { project_id: projectId } })"
+              class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors"
+              title="New Invoice for this project"
+            >
+              <Icon icon="lucide:file-plus" class="w-3.5 h-3.5" /> Invoice
+            </button>
+            <button
+              v-if="can('receipts.create')"
+              @click="router.push({ name: 'receipts.create', query: { project_id: projectId } })"
+              class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors"
+              title="New Receipt for this project"
+            >
+              <Icon icon="lucide:receipt" class="w-3.5 h-3.5" /> Receipt
+            </button>
+            <button
+              v-if="can('letterheads.create')"
+              @click="router.push({ name: 'letterheads.create', query: { project_id: projectId } })"
+              class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors"
+              title="New Letterhead for this project"
+            >
+              <Icon icon="lucide:file" class="w-3.5 h-3.5" /> Letterhead
+            </button>
+          </div>
+
+          <div v-if="can('projects.update')" class="flex items-center gap-1.5">
+            <button
+              @click="router.push({ name: 'projects.edit', params: { id: projectId } })"
+              class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber/10 hover:bg-amber/20 text-amber text-xs transition-colors"
+            >
+              <Icon icon="lucide:pencil" class="w-3.5 h-3.5" /> Edit
+            </button>
+            <button
+              v-if="can('projects.delete')"
+              @click="showDeleteConfirm = true"
+              class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-red-900/20 hover:bg-red-900/40 text-red-400 text-xs transition-colors"
+            >
+              <Icon icon="lucide:trash-2" class="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Tabs -->
       <div class="flex items-center gap-1 border-b border-charcoal-700 overflow-x-auto">
         <button
-          v-for="tab in (['overview', 'invoices', 'receipts', 'letterheads', 'files', 'activity'] as Tab[])"
+          v-for="tab in (['overview', 'client', 'invoices', 'receipts', 'letterheads', 'files', 'activity'] as Tab[])"
           :key="tab"
           @click="activeTab = tab"
           :class="[
@@ -343,7 +416,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
               : 'border-transparent text-cream-faint hover:text-cream',
           ]"
         >
-          {{ tab === 'activity' ? 'Activity' : tab.charAt(0).toUpperCase() + tab.slice(1) }}
+          {{ { overview: 'Overview', client: 'Client', invoices: 'Invoices', receipts: 'Receipts', letterheads: 'Letterheads', files: 'Files', activity: 'Activity' }[tab] }}
         </button>
       </div>
 
@@ -418,13 +491,99 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
 
       </div>
 
+      <!-- ── Client tab ───────────────────────────────── -->
+      <div v-if="activeTab === 'client'" class="space-y-4 max-w-lg">
+
+        <!-- No client assigned -->
+        <div v-if="!project.client" class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-8 flex flex-col items-center text-center gap-3">
+          <div class="w-12 h-12 rounded-full bg-charcoal-700 flex items-center justify-center">
+            <Icon icon="lucide:user" class="w-5 h-5 text-cream-faint" />
+          </div>
+          <div>
+            <p class="text-sm font-medium text-cream">No client assigned</p>
+            <p class="text-xs text-cream-faint mt-0.5">Assign a client to track who this project is for</p>
+          </div>
+          <button
+            v-if="can('projects.update')"
+            @click="openAssignClient"
+            class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs transition-colors"
+          >
+            <Icon icon="lucide:user-plus" class="w-3.5 h-3.5" /> Assign Client
+          </button>
+        </div>
+
+        <!-- Client card -->
+        <div v-else class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden">
+          <!-- Card header -->
+          <div class="flex items-center justify-between px-5 py-4 border-b border-charcoal-700">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-amber/15 flex items-center justify-center shrink-0">
+                <span class="text-sm font-bold text-amber">
+                  {{ project.client.name.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase() }}
+                </span>
+              </div>
+              <div>
+                <div class="text-sm font-semibold text-cream">{{ project.client.name }}</div>
+                <div v-if="project.client.company" class="text-xs text-cream-faint">{{ project.client.company }}</div>
+              </div>
+            </div>
+            <button
+              @click="router.push({ name: 'clients.view', params: { id: project.client.id } })"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors"
+            >
+              <Icon icon="lucide:external-link" class="w-3.5 h-3.5" /> View Client
+            </button>
+          </div>
+
+          <!-- Contact info -->
+          <div class="px-5 py-4 space-y-3">
+            <div v-if="project.client.email" class="flex items-center gap-2.5 text-xs">
+              <Icon icon="lucide:mail" class="w-3.5 h-3.5 text-cream-faint shrink-0" />
+              <span class="text-cream-muted">{{ project.client.email }}</span>
+            </div>
+            <div v-if="!project.client.email" class="text-xs text-cream-faint italic">No email on record</div>
+          </div>
+
+          <!-- Actions -->
+          <div v-if="can('projects.update')" class="px-5 py-3 border-t border-charcoal-700 flex items-center gap-2">
+            <button
+              @click="openAssignClient"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors"
+            >
+              <Icon icon="lucide:refresh-cw" class="w-3.5 h-3.5" /> Change Client
+            </button>
+            <button
+              @click="assignClient(null)"
+              :disabled="isAssigningClient"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-red-900/30 text-cream-faint hover:text-red-400 text-xs transition-colors disabled:opacity-40"
+            >
+              <Icon icon="lucide:user-x" class="w-3.5 h-3.5" /> Remove Client
+            </button>
+          </div>
+        </div>
+
+      </div>
+
       <!-- ── Invoices tab ──────────────────────────────── -->
       <div v-if="activeTab === 'invoices'" class="space-y-3">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between gap-2">
           <span class="text-sm font-medium text-cream">Invoices ({{ invoices.length }})</span>
-          <button v-if="can('projects.update')" @click="openAttach('invoice')" class="flex items-center gap-1.5 text-xs text-amber hover:text-amber-light transition-colors">
-            <Icon icon="lucide:link" class="w-3.5 h-3.5" /> Link Invoice
-          </button>
+          <div class="flex items-center gap-2">
+            <button
+              v-if="can('invoices.create')"
+              @click="router.push({ name: 'invoices.create', query: { project_id: projectId } })"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs transition-colors"
+            >
+              <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Create Invoice
+            </button>
+            <button
+              v-if="can('projects.update')"
+              @click="openAttach('invoice')"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors"
+            >
+              <Icon icon="lucide:link" class="w-3.5 h-3.5" /> Link Existing
+            </button>
+          </div>
         </div>
 
         <div v-if="invoices.length === 0" class="text-center py-10 text-cream-faint text-sm">No invoices linked.</div>
@@ -453,11 +612,24 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
 
       <!-- ── Receipts tab ──────────────────────────────── -->
       <div v-if="activeTab === 'receipts'" class="space-y-3">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between gap-2">
           <span class="text-sm font-medium text-cream">Receipts ({{ receipts.length }})</span>
-          <button v-if="can('projects.update')" @click="openAttach('receipt')" class="flex items-center gap-1.5 text-xs text-amber hover:text-amber-light transition-colors">
-            <Icon icon="lucide:link" class="w-3.5 h-3.5" /> Link Receipt
-          </button>
+          <div class="flex items-center gap-2">
+            <button
+              v-if="can('receipts.create')"
+              @click="router.push({ name: 'receipts.create', query: { project_id: projectId } })"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs transition-colors"
+            >
+              <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Create Receipt
+            </button>
+            <button
+              v-if="can('projects.update')"
+              @click="openAttach('receipt')"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors"
+            >
+              <Icon icon="lucide:link" class="w-3.5 h-3.5" /> Link Existing
+            </button>
+          </div>
         </div>
 
         <div v-if="receipts.length === 0" class="text-center py-10 text-cream-faint text-sm">No receipts linked.</div>
@@ -486,11 +658,24 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
 
       <!-- ── Letterheads tab ──────────────────────────── -->
       <div v-if="activeTab === 'letterheads'" class="space-y-3">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between gap-2">
           <span class="text-sm font-medium text-cream">Letterheads ({{ letterheads.length }})</span>
-          <button v-if="can('projects.update')" @click="openAttach('letterhead')" class="flex items-center gap-1.5 text-xs text-amber hover:text-amber-light transition-colors">
-            <Icon icon="lucide:link" class="w-3.5 h-3.5" /> Link Letterhead
-          </button>
+          <div class="flex items-center gap-2">
+            <button
+              v-if="can('letterheads.create')"
+              @click="router.push({ name: 'letterheads.create', query: { project_id: projectId } })"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs transition-colors"
+            >
+              <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Create Letterhead
+            </button>
+            <button
+              v-if="can('projects.update')"
+              @click="openAttach('letterhead')"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors"
+            >
+              <Icon icon="lucide:link" class="w-3.5 h-3.5" /> Link Existing
+            </button>
+          </div>
         </div>
 
         <div v-if="letterheads.length === 0" class="text-center py-10 text-cream-faint text-sm">No letterheads linked.</div>
@@ -730,6 +915,54 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
                 {{ isSavingFile ? 'Adding…' : 'Add File' }}
               </button>
             </div>
+          </div>
+        </div>
+      </Transition>
+
+      <!-- Assign Client modal -->
+      <Transition name="modal">
+        <div v-if="showAssignClient" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-200 flex items-center justify-center p-4" @click.self="showAssignClient = false">
+          <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-5 w-full max-w-md shadow-2xl">
+            <h2 class="text-base font-semibold text-cream mb-4">{{ project?.client ? 'Change Client' : 'Assign Client' }}</h2>
+            <div class="relative mb-3">
+              <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint" />
+              <input
+                v-model="clientSearch"
+                @input="searchClients"
+                class="w-full bg-charcoal-700 border border-charcoal-600 rounded-lg text-cream text-xs pl-8 pr-3 py-2 outline-none placeholder-[#6b6560] focus:border-amber/40 transition-colors"
+                placeholder="Search clients…"
+                autofocus
+              />
+            </div>
+            <div v-if="clientSearching" class="flex justify-center py-6">
+              <Icon icon="lucide:loader-2" class="w-5 h-5 animate-spin text-cream-faint" />
+            </div>
+            <div v-else class="space-y-1 max-h-72 overflow-y-auto">
+              <button
+                v-for="c in clientResults" :key="c.id"
+                @click="assignClient(c.id)"
+                :disabled="isAssigningClient"
+                :class="[
+                  'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-left disabled:opacity-50',
+                  project?.client?.id === c.id ? 'bg-amber/8 border border-amber/20' : 'hover:bg-charcoal-700',
+                ]"
+              >
+                <div class="w-8 h-8 rounded-full bg-charcoal-600 flex items-center justify-center shrink-0">
+                  <span class="text-xs font-bold text-cream-muted">
+                    {{ c.full_name.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase() }}
+                  </span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-xs font-medium text-cream truncate">{{ c.full_name }}</div>
+                  <div v-if="c.company" class="text-[11px] text-cream-faint truncate">{{ c.company }}</div>
+                </div>
+                <Icon v-if="project?.client?.id === c.id" icon="lucide:check" class="w-3.5 h-3.5 text-amber shrink-0" />
+              </button>
+              <div v-if="clientResults.length === 0" class="text-center py-6 text-cream-faint text-xs">No clients found</div>
+            </div>
+            <button @click="showAssignClient = false" class="mt-4 w-full py-2 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted text-xs transition-colors">
+              Cancel
+            </button>
           </div>
         </div>
       </Transition>

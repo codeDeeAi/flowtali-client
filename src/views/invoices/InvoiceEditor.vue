@@ -14,6 +14,7 @@ interface Props {
   mode: 'create' | 'edit'
   invoiceId?: string
   initialData?: Partial<typeof form.value>
+  projectId?: string
 }
 const props = withDefaults(defineProps<Props>(), { mode: 'create' })
 
@@ -447,7 +448,7 @@ const handleSave = async (statusOverride?: string) => {
   try {
     const payload = buildPayload(statusOverride ? { status: statusOverride } : undefined)
     if (props.mode === 'create') {
-      const res = await InvoiceService.create(orgId.value, payload)
+      const res = await InvoiceService.create(orgId.value, { ...payload, ...(props.projectId ? { project_id: props.projectId } : {}) })
       savedInvoiceId.value = res.data.data.id
       notify('Invoice created successfully!', 'success')
     } else {
@@ -455,7 +456,11 @@ const handleSave = async (statusOverride?: string) => {
       notify('Invoice saved successfully!', 'success')
     }
     emit('save', form.value)
-    router.push({ name: 'invoices' })
+    if (props.projectId && props.mode === 'create') {
+      router.push({ name: 'projects.view', params: { id: props.projectId } })
+    } else {
+      router.push({ name: 'invoices' })
+    }
   } catch (err: any) {
     const apiMessage = err?.response?.data?.message ?? err?.response?.data?.errors?.[0]
     notify(apiMessage ?? 'Failed to save invoice. Please try again.', 'error')
