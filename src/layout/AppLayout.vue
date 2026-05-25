@@ -3,12 +3,14 @@ import { ref, onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
+import { useSubscriptionStore } from '@/stores/subscription'
 import { ProfileService } from '@/services/profile.service'
 import { OrgService } from '@/services/org.service'
 import AppHeader from './components/app/AppHeader.vue'
 import AppSidebar from './components/app/AppSidebar.vue'
 
 const authStore  = useAuthStore()
+const subStore   = useSubscriptionStore()
 const mobileOpen = ref(false)
 const collapsed  = ref(false)
 
@@ -25,6 +27,7 @@ onMounted(async () => {
     orgId
       ? OrgService.getMyMembership(orgId).then(res => authStore.updateOrganization(res.data.data))
       : Promise.resolve(),
+    subStore.load(),
   ])
 })
 </script>

@@ -152,7 +152,7 @@ const navSections = computed<NavSection[]>(() => {
   // ── Account ───────────────────────────────────────────
   const accountItems: { name: string; icon: string; to: string }[] = []
   if (can('analytics.read')) accountItems.push({ name: 'Analytics',    icon: 'lucide:bar-chart-2',  to: '/app/analytics' })
-  accountItems.push({ name: 'Subscription', icon: 'lucide:credit-card',  to: '/app/subscription' })
+  accountItems.push({ name: 'Billing', icon: 'lucide:credit-card', to: '/app/billing' })
   if (can('settings.read'))  accountItems.push({ name: 'Settings',     icon: 'lucide:settings',     to: '/app/settings' })
   accountItems.push({ name: 'My Profile',   icon: 'lucide:user',         to: '/app/profile' })
   sections.push({ label: 'Account', items: accountItems })
