@@ -1,20 +1,30 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Icon } from '@iconify/vue';
 import { useRouter } from 'vue-router';
+import { usePermissions } from '@/composables/usePermissions';
 
 const router = useRouter()
+const { can, isBusinessOrg } = usePermissions()
 
-const actions = [
-  { label: 'Create Invoice',    icon: 'lucide:file-plus',      route: 'invoices.create'     },
-  { label: 'Create Receipt',    icon: 'lucide:receipt',        route: 'receipts.create'     },
-  { label: 'Create Letterhead', icon: 'lucide:file-text',      route: 'letterheads.create'  },
-  { label: 'Add Client',        icon: 'lucide:user-plus',      route: 'clients.create'      },
-  { label: 'Invite Member',     icon: 'lucide:user-round-plus', route: 'members'             },
-];
+const allActions = [
+  { label: 'Create Invoice',    icon: 'lucide:file-plus',       route: 'invoices.create',    permission: 'invoices.read'    },
+  { label: 'Create Receipt',    icon: 'lucide:receipt',         route: 'receipts.create',    permission: 'receipts.read'    },
+  { label: 'Create Letterhead', icon: 'lucide:file-text',       route: 'letterheads.create', permission: 'letterheads.read' },
+  { label: 'Add Client',        icon: 'lucide:user-plus',       route: 'clients.create',     permission: 'clients.read'     },
+  { label: 'Invite Member',     icon: 'lucide:user-round-plus', route: 'members',            permission: 'members.read',    businessOnly: true },
+]
+
+const actions = computed(() =>
+  allActions.filter(a => {
+    if (a.businessOnly && !isBusinessOrg.value) return false
+    return can(a.permission)
+  })
+)
 </script>
 
 <template>
-  <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+  <div v-if="actions.length" class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
     <h3 class="text-sm font-semibold text-cream mb-3">Quick Actions</h3>
     <div class="flex flex-col gap-1">
       <button

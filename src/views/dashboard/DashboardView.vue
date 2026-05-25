@@ -88,6 +88,14 @@ const stats = computed(() => {
   return all.filter(s => can(s.permission))
 })
 
+// Count visible stats before data loads so the skeleton shows the right number of cards.
+const visibleStatCount = computed(() => {
+  let n = 0
+  if (can('dashboard.revenue.read'))  n += 3  // Total Revenue, Outstanding, Collection Rate
+  if (can('dashboard.invoices.read')) n += 2  // Invoices Sent, Receipts Issued
+  return n
+})
+
 onMounted(async () => {
   const orgId = authStore.getCurrentOrganization?.id
   if (!orgId) { isLoading.value = false; return }
@@ -115,7 +123,7 @@ onMounted(async () => {
           Here's what's happening with {{ orgName }} today
         </p>
       </div>
-      <div class="flex items-center gap-2 shrink-0">
+      <div v-if="can('invoices.read')" class="flex items-center gap-2 shrink-0">
         <button
           class="flex items-center gap-1.5 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
           @click="router.push({ name: 'invoices.create' })"
@@ -127,10 +135,10 @@ onMounted(async () => {
     </div>
 
     <!-- Stats grid -->
-    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+    <div v-if="visibleStatCount > 0" class="grid grid-cols-2 lg:grid-cols-5 gap-4">
       <template v-if="isLoading">
         <StatCard
-          v-for="n in 5"
+          v-for="n in visibleStatCount"
           :key="n"
           title="" value="" :change="0" icon="lucide:loader" color="amber" :progress="0"
           :loading="true"
@@ -152,7 +160,7 @@ onMounted(async () => {
       <!-- Left column (2/3) -->
       <div class="xl:col-span-2 flex flex-col gap-4">
         <RevenueChart
-          v-if="isLoading || can('dashboard.revenue.read')"
+          v-if="can('dashboard.revenue.read')"
           :trend-data="analytics?.revenue_trend"
           :loading="isLoading"
         />
@@ -163,7 +171,7 @@ onMounted(async () => {
       <!-- Right column (1/3) -->
       <div class="flex flex-col gap-4">
         <InvoiceStatusChart
-          v-if="isLoading || can('dashboard.invoices.read')"
+          v-if="can('dashboard.invoices.read')"
           :breakdown="analytics?.status_breakdown"
           :loading="isLoading"
         />

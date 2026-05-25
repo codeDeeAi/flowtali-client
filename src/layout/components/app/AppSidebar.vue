@@ -64,47 +64,9 @@ function orgRole(org: IOrganization): string {
   return org.roles[0]?.name ?? 'Member';
 }
 
-async function switchOrg(org: IOrganization) {
+function switchOrg(org: IOrganization) {
   authStore.setCurrentOrganization(org);
-  orgDropOpen.value = false;
-
-  // Refetch fresh permissions for this org in the background
-  try {
-    const res = await OrgService.getMyMembership(org.id)
-    const fresh = res.data.data
-    authStore.updateOrganization(fresh)
-
-    // Re-validate route against the freshly-fetched permissions
-    const meta = route.meta
-    if (meta.requiresBusinessOrg && fresh.type !== 'business') {
-      router.push({ name: 'dashboard' })
-      return
-    }
-    if (meta.permission && !(fresh.permissions ?? []).includes(meta.permission as string)) {
-      router.push({ name: 'dashboard' })
-      return
-    }
-
-    // Warn if this org requires MFA and the user hasn't set it up
-    if (fresh.require_mfa && !authStore.getUser?.mfa_enabled) {
-      router.push({ name: 'profile' })
-    }
-  } catch {
-    // Fall back to cached data — route guard already ran with stale permissions
-    const meta = route.meta
-    if (meta.requiresBusinessOrg && org.type !== 'business') {
-      router.push({ name: 'dashboard' })
-      return
-    }
-    if (meta.permission && !(org.permissions ?? []).includes(meta.permission as string)) {
-      router.push({ name: 'dashboard' })
-      return
-    }
-
-    if (org.require_mfa && !authStore.getUser?.mfa_enabled) {
-      router.push({ name: 'profile' })
-    }
-  }
+  window.location.reload();
 }
 
 async function createOrg() {
@@ -165,6 +127,7 @@ const navSections = computed<NavSection[]>(() => {
 
   // ── Documents ─────────────────────────────────────────
   const docItems: NavItem[] = []
+  if (isBusinessOrg.value && can('projects.read')) docItems.push({ name: 'Projects', icon: 'lucide:folder-kanban', to: '/app/projects' })
   if (can('invoices.read'))    docItems.push({ name: 'Invoices',    icon: 'lucide:file-text', to: '/app/invoices' })
   if (can('receipts.read'))    docItems.push({ name: 'Receipts',    icon: 'lucide:receipt',   to: '/app/receipts' })
   if (can('letterheads.read')) docItems.push({ name: 'Letterheads', icon: 'lucide:file',      to: '/app/letterheads' })

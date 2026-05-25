@@ -13,6 +13,11 @@ export const appRoutes = [
     children: [
       { path: 'dashboard',        name: 'dashboard',        component: () => import('@/views/dashboard/DashboardView.vue'),             meta },
 
+      { path: 'projects',              name: 'projects',        component: () => import('@/views/projects/ProjectsView.vue'),        meta: bo('projects.read') },
+      { path: 'projects/create',       name: 'projects.create', component: () => import('@/views/projects/ProjectCreatePage.vue'),   meta: bo('projects.create') },
+      { path: 'projects/:id',          name: 'projects.view',   component: () => import('@/views/projects/ProjectViewPage.vue'),     meta: bo('projects.read') },
+      { path: 'projects/:id/edit',     name: 'projects.edit',   component: () => import('@/views/projects/ProjectEditPage.vue'),     meta: bo('projects.update') },
+
       { path: 'invoices',              name: 'invoices',        component: () => import('@/views/invoices/InvoicesView.vue'),        meta: p('invoices.read') },
       { path: 'invoices/create',       name: 'invoices.create', component: () => import('@/views/invoices/InvoiceCreatePage.vue'),   meta: p('invoices.create') },
       { path: 'invoices/:id',          name: 'invoices.view',   component: () => import('@/views/invoices/InvoiceViewPage.vue'),     meta: p('invoices.read') },

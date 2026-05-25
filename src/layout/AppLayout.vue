@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
@@ -10,10 +10,6 @@ import AppSidebar from './components/app/AppSidebar.vue'
 const authStore  = useAuthStore()
 const mobileOpen = ref(false)
 const collapsed  = ref(false)
-
-// Changing this key destroys and remounts the active page, re-running all
-// onMounted data fetches against the newly selected organisation.
-const orgViewKey = computed(() => authStore.getCurrentOrganization?.id ?? 'no-org')
 
 // Sync avatar from API on every mount so the sidebar always shows the latest photo
 // even for sessions that pre-date the avatar field being added to the login response.
@@ -60,7 +56,7 @@ onMounted(async () => {
       </button>
 
       <div class="flex-1 bg-charcoal-900 overflow-auto">
-        <RouterView :key="orgViewKey" />
+        <RouterView />
       </div>
     </main>
   </div>
