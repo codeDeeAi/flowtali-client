@@ -48,6 +48,12 @@ const publicShareRoutes = [
     component: () => import('@/views/legal/ContactView.vue'),
     meta: { layout: layouts.Public },
   },
+  {
+    path: '/changelog',
+    name: 'changelog',
+    component: () => import('@/views/legal/ChangelogView.vue'),
+    meta: { layout: layouts.Public },
+  },
 ]
 
 declare module 'vue-router' {

@@ -27,8 +27,9 @@
             <router-link :to="{ name: 'signup' }"
               class="text-cream-faint text-sm hover:text-cream cursor-pointer transition-colors">Letterhead
               Generator</router-link>
-            <span v-for="l in ['Pricing', 'Changelog']" :key="l"
-              class="text-cream-faint text-sm hover:text-cream cursor-pointer transition-colors">{{ l }}</span>
+            <span class="text-cream-faint text-sm cursor-not-allowed opacity-50">Pricing</span>
+            <router-link :to="{ name: 'changelog' }"
+              class="text-cream-faint text-sm hover:text-cream transition-colors">Changelog</router-link>
           </div>
         </div>
         <div>
