@@ -6,6 +6,7 @@ import AppLayout from '@/layout/AppLayout.vue';
 import { layouts, type TLayout } from './types/layout';
 import DefaultLayout from '@/layout/DefaultLayout.vue';
 import PublicLayout from '@/layout/PublicLayout.vue';
+import EmbedLayout from '@/layout/EmbedLayout.vue';
 import { useGlobalLoaderStore } from '@/stores/global-loaders';
 import BasicPageLoader from '@/components/loaders/BasicPageLoader.vue';
 import OfflineBanner from '@/components/layout/OfflineBanner.vue';
@@ -27,6 +28,9 @@ watch(
         break;
       case layouts.Public:
         currentLayout.value = PublicLayout;
+        break;
+      case layouts.Embed:
+        currentLayout.value = EmbedLayout;
         break;
       default:
         currentLayout.value = DefaultLayout;

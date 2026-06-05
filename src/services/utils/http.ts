@@ -1,5 +1,6 @@
 import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
+import { useEmbedAuthStore } from '@/stores/embedAuth'
 import { httpStatus } from '@/types/httpstatus'
 import axios, { type AxiosInstance } from 'axios'
 
@@ -15,10 +16,19 @@ const http: AxiosInstance = axios.create({
 
 http.interceptors.request.use(
   (config) => {
+    const embedStore = useEmbedAuthStore()
+
+    // In embed mode: inject the embed token and rewrite org API URLs to the embed prefix.
+    if (embedStore.isAuthenticated && embedStore.token) {
+      config.headers['X-Embed-Token'] = embedStore.token
+      if (config.url) {
+        config.url = config.url.replace(/^(\/api\/v\d+\/)(orgs\/)/, '$1embed/$2')
+      }
+      return config
+    }
+
     const authStore = useAuthStore()
-
     const token = authStore.getToken
-
     if (token && token !== null) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -39,6 +49,14 @@ http.interceptors.response.use(
       error.response?.status === httpStatus.UNAUTHORIZED &&
       window.location.pathname !== '/signin'
     ) {
+      // In embed mode, don't redirect — show the embed error view instead.
+      const embedStore = useEmbedAuthStore()
+      if (embedStore.isAuthenticated) {
+        embedStore.clear()
+        router.push({ name: 'embed.error', query: { message: 'Your session has expired.' } })
+        return
+      }
+
       console.warn('Unauthorized request - redirecting to login')
 
       const authStore = useAuthStore()

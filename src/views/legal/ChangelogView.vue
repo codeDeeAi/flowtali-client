@@ -21,9 +21,22 @@ interface Release {
 
 const releases: Release[] = [
   {
+    version: 'v1.5',
+    date: 'June 2026',
+    badge: 'Latest',
+    changes: [
+      { type: 'new', text: 'Embed SDK — embed any Flowtali view (invoices, projects, receipts, preferences and more) directly in your own product or website using a lightweight JavaScript SDK.' },
+      { type: 'new', text: 'API key management — generate publishable and secret key pairs per organization to authenticate embedded sessions.' },
+      { type: 'new', text: 'Embed token generation — issue short-lived, permission-scoped JWTs for your users so the embedded view auto-authenticates without a separate login.' },
+      { type: 'new', text: 'Runtime theming — customize the embed appearance (primary color, background, font, border radius) by passing an appearance object to the SDK.' },
+      { type: 'new', text: 'Embed event callbacks — listen for invoice.created, project.created, receipt.created and more from the parent page via ft.on().' },
+      { type: 'fix', text: 'Fixed search icon overlapping placeholder text in all search bar instances across the app.' },
+    ],
+  },
+  {
     version: 'v1.4',
     date: 'May 2026',
-    badge: 'Latest',
+    badge: null,
     changes: [
       { type: 'new', text: 'Multi-role assignment — members can now hold more than one role per organization.' },
       { type: 'new', text: 'Tax type configuration — choose between percentage or flat-amount tax on invoices.' },

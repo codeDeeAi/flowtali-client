@@ -1,9 +1,12 @@
 import { appRoutes } from './app'
+import { embedRoutes } from './embed'
 import { authRoutes } from '@/router/auth'
 import Homepage from '@/views/home/HomeView.vue'
 import { layouts, type TLayout } from '@/types/layout'
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useEmbedAuthStore } from '@/stores/embedAuth'
+import embedHttp from '@/services/utils/embedHttp'
 
 const publicShareRoutes = [
   {
@@ -49,6 +52,12 @@ const publicShareRoutes = [
     meta: { layout: layouts.Public },
   },
   {
+    path: '/docs/embed',
+    name: 'docs.embed',
+    component: () => import('@/views/docs/EmbedDocsView.vue'),
+    meta: { layout: layouts.Public },
+  },
+  {
     path: '/changelog',
     name: 'changelog',
     component: () => import('@/views/legal/ChangelogView.vue'),
@@ -62,6 +71,7 @@ declare module 'vue-router' {
     requiresAuth?: boolean
     permission?: string          // must have this permission in current org
     requiresBusinessOrg?: boolean // must be a business org
+    embed?: boolean               // running inside the embed SDK
   }
 }
 
@@ -76,6 +86,7 @@ const router = createRouter({
     },
     ...authRoutes,
     ...appRoutes,
+    ...embedRoutes,
     ...publicShareRoutes,
     {
       path: '/invitations/accept',
@@ -89,6 +100,34 @@ const router = createRouter({
       component: () => import('@/views/errors/NotFoundView.vue'),
     },
   ],
+})
+
+// Embed guard — runs before the regular auth guard
+router.beforeEach(async (to) => {
+  if (!to.meta.embed) return // skip for non-embed routes
+
+  const embedStore = useEmbedAuthStore()
+
+  // Already initialised in this session — let through
+  if (embedStore.isAuthenticated) return
+
+  const rawToken = to.query.token as string | undefined
+
+  if (!rawToken) {
+    return { name: 'embed.error', query: { message: 'No embed token provided.' } }
+  }
+
+  try {
+    const res = await embedHttp.post(
+      '/api/v1/embed/verify',
+      {},
+      { headers: { 'X-Embed-Token': rawToken } },
+    )
+    const session = res.data.data
+    embedStore.init({ token: rawToken, ...session })
+  } catch {
+    return { name: 'embed.error', query: { message: 'Invalid or expired embed token.' } }
+  }
 })
 
 const guestOnlyRoutes = new Set([
