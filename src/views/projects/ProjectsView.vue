@@ -109,7 +109,7 @@ const goToView   = (id: string) => router.push({ name: 'projects.view', params: 
             @keyup.enter="onSearch"
             @input="!searchInput && onSearch()"
             placeholder="Search projects…"
-            class="w-52 bg-[#1c1c21] border border-[#2e2e37] rounded-lg text-cream text-xs px-3 pl-8 py-2 outline-none placeholder-[#6b6560] focus:border-amber/40 focus:ring-2 focus:ring-amber/10 transition-colors font-['DM_Sans']"
+            class="w-52 bg-[#1c1c21] border border-[#2e2e37] rounded-lg text-cream text-xs pr-3 pl-8 py-2 outline-none placeholder-[#6b6560] focus:border-amber/40 focus:ring-2 focus:ring-amber/10 transition-colors font-['DM_Sans']"
           />
         </div>
 
