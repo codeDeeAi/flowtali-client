@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/auth';
 import { usePermissions } from '@/composables/usePermissions';
 import { OrgService } from '@/services/org.service';
 import { AuthService } from '@/services/auth.service';
+import { useFeedbackStore } from '@/stores/feedback';
 import type { IOrganization } from '@/types/auth.types';
 
 defineProps<{
@@ -19,7 +20,8 @@ defineEmits<{
 }>();
 const route = useRoute();
 const router = useRouter();
-const authStore    = useAuthStore();
+const authStore      = useAuthStore();
+const feedbackStore  = useFeedbackStore();
 const { can, isBusinessOrg } = usePermissions();
 
 // ── User menu ────────────────────────────────────────────────
@@ -408,6 +410,21 @@ function isActive(to: string) {
         </RouterLink>
       </div>
     </nav>
+
+    <!-- Feedback button -->
+    <div class="px-2 pb-2 shrink-0">
+      <button
+        @click="feedbackStore.open()"
+        :class="[
+          'w-full flex items-center gap-2.5 rounded-lg px-2 py-2 transition-colors text-cream-faint hover:text-cream hover:bg-charcoal-700',
+          collapsed ? 'justify-center' : '',
+        ]"
+        :title="collapsed ? 'Share feedback' : undefined"
+      >
+        <Icon icon="lucide:message-square-plus" class="w-4 h-4 shrink-0" />
+        <span :class="['text-xs font-medium transition-all duration-300', collapsed ? 'hidden' : '']">Feedback</span>
+      </button>
+    </div>
 
     <!-- User profile (bottom) -->
     <div

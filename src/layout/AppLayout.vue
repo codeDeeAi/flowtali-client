@@ -8,6 +8,7 @@ import { ProfileService } from '@/services/profile.service'
 import { OrgService } from '@/services/org.service'
 import AppHeader from './components/app/AppHeader.vue'
 import AppSidebar from './components/app/AppSidebar.vue'
+import FeedbackModal from '@/components/modals/FeedbackModal.vue'
 
 const authStore = useAuthStore()
 const subStore = useSubscriptionStore()
@@ -58,6 +59,8 @@ onMounted(async () => {
       </div>
     </main>
   </div>
+
+  <FeedbackModal />
 </template>
 
 <style scoped>
