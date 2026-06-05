@@ -112,7 +112,7 @@ function scrollTo(id: string) {
               <p class="text-cream-muted text-sm ml-9 mb-3">When a user logs into your product, your server calls the Flowtali API to get a short-lived token for them:</p>
               <div class="code-block ml-9">
                 <div class="code-lang">Node.js / Express</div>
-                <pre class="code-pre"><code>// Your backend — keep sk_live_ server-side only
+                <pre v-pre class="code-pre"><code>// Your backend — keep sk_live_ server-side only
 const res = await fetch('https://flowtali.com/api/v1/orgs/ORG_ID/embed/token', {
   method: 'POST',
   headers: {
@@ -139,7 +139,7 @@ const embedToken = data.token             // pass this to your frontend</code></
               </div>
               <div class="code-block ml-9">
                 <div class="code-lang">HTML</div>
-                <pre class="code-pre"><code>&lt;!-- Add the SDK --&gt;
+                <pre v-pre class="code-pre"><code>&lt;!-- Add the SDK --&gt;
 &lt;script src="https://flowtali.com/sdk/flowtali.js"&gt;&lt;/script&gt;
 
 &lt;!-- A container div --&gt;
@@ -236,7 +236,7 @@ const embedToken = data.token             // pass this to your frontend</code></
           <p class="text-cream-muted text-sm mb-6">Pass an <code class="code-inline">appearance</code> object to <code class="code-inline">Flowtali.init()</code> to match your brand. All properties are optional.</p>
           <div class="code-block">
             <div class="code-lang">JavaScript</div>
-            <pre class="code-pre"><code>const ft = Flowtali.init('pk_live_...', {
+            <pre v-pre class="code-pre"><code>const ft = Flowtali.init('pk_live_...', {
   appearance: {
     primaryColor:    '#6366f1',    // buttons, links, active states (default: #e8a83e)
     backgroundColor: '#ffffff',    // iframe background (default: #111113)
@@ -248,7 +248,7 @@ const embedToken = data.token             // pass this to your frontend</code></
           </div>
           <p class="text-cream-muted text-sm mt-4">You can also override the appearance per-mount call:</p>
           <div class="code-block mt-3">
-            <pre class="code-pre"><code>ft.mount('#container', {
+            <pre v-pre class="code-pre"><code>ft.mount('#container', {
   view: 'invoices',
   token: embedToken,
   appearance: { primaryColor: '#10b981' },  // overrides the init appearance
@@ -262,7 +262,7 @@ const embedToken = data.token             // pass this to your frontend</code></
           <p class="text-cream-muted text-sm mb-6">Listen for actions happening inside the embed using <code class="code-inline">ft.on()</code>. Events are emitted after successful mutations.</p>
           <div class="code-block mb-6">
             <div class="code-lang">JavaScript</div>
-            <pre class="code-pre"><code>ft.on('invoice.created', (invoice) => {
+            <pre v-pre class="code-pre"><code>ft.on('invoice.created', (invoice) => {
   console.log('New invoice:', invoice.id)
   // sync to your own system, show a toast, etc.
 })
