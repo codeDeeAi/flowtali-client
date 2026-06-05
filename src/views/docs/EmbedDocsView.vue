@@ -10,6 +10,11 @@ useSeo({
 
 const activeSection = ref('overview')
 
+// Tab state for multi-language code blocks
+const backendTab  = ref('node')
+const frontendTab = ref('html')
+const eventsTab   = ref('js')
+
 const sections = [
   { id: 'overview',     label: 'Overview' },
   { id: 'quickstart',   label: 'Quick start' },
@@ -88,6 +93,17 @@ const allEvents = [
   { event: 'client.updated',      desc: 'A client record was edited and saved',             payload: '{ id, name, email, updated_at }' },
   { event: 'client.deleted',      desc: 'A client record was deleted',                      payload: '{ id }' },
 ]
+
+const copiedBlock = ref<string | null>(null)
+
+function copyCode(blockId: string) {
+  const block = document.getElementById(blockId)
+  const pre = block?.querySelector('pre')
+  if (!pre) return
+  navigator.clipboard.writeText(pre.textContent?.trim() ?? '')
+  copiedBlock.value = blockId
+  setTimeout(() => (copiedBlock.value = null), 2000)
+}
 
 function scrollTo(id: string) {
   activeSection.value = id
@@ -180,9 +196,25 @@ function scrollTo(id: string) {
             </div>
             <p class="text-cream-muted text-sm ml-9 mb-4">When one of your users logs in, your server calls the Flowtali API to mint a short-lived token for them. The <code class="ci">sk_live_</code> key must never leave your server.</p>
 
-            <div class="ml-9 flex flex-col gap-4">
-              <div class="code-block">
-                <div class="code-lang">Node.js / Express</div>
+            <div class="ml-9">
+              <div id="cb-backend" class="code-block">
+                <!-- Tabs -->
+                <div class="flex items-center justify-between px-3 pt-2 pb-0 border-b border-charcoal-700/60">
+                  <div class="flex items-center gap-1">
+                    <button v-for="t in ([['node','Node.js'],['php','PHP / Laravel'],['go','Go']] as [string,string][])" :key="t[0]"
+                      @click="backendTab = t[0]"
+                      class="px-3 py-1.5 text-xs rounded-t transition-colors -mb-px border-b-2"
+                      :class="backendTab === t[0] ? 'text-amber border-amber' : 'text-cream-faint hover:text-cream border-transparent'">
+                      {{ t[1] }}
+                    </button>
+                  </div>
+                  <button @click="copyCode('cb-backend')" class="copy-btn" title="Copy">
+                    <svg v-if="copiedBlock !== 'cb-backend'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    <svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                </div>
+                <!-- Node -->
+                <template v-if="backendTab === 'node'">
                 <pre v-pre class="code-pre"><code>const res = await fetch(
   'https://flowtali.com/api/v1/orgs/YOUR_ORG_ID/embed/token',
   {
@@ -200,10 +232,9 @@ function scrollTo(id: string) {
 )
 const { data } = await res.json()
 const embedToken = data.token               // send this to your frontend</code></pre>
-              </div>
-
-              <div class="code-block">
-                <div class="code-lang">PHP / Laravel</div>
+                </template>
+                <!-- PHP -->
+                <template v-if="backendTab === 'php'">
                 <pre v-pre class="code-pre"><code>use Illuminate\Support\Facades\Http;
 
 $response = Http::withToken(config('services.flowtali.secret_key'))
@@ -215,10 +246,9 @@ $response = Http::withToken(config('services.flowtali.secret_key'))
 
 $embedToken = $response->json('data.token');
 // Return $embedToken to your frontend (e.g. via a JSON API response)</code></pre>
-              </div>
-
-              <div class="code-block">
-                <div class="code-lang">Go</div>
+                </template>
+                <!-- Go -->
+                <template v-if="backendTab === 'go'">
                 <pre v-pre class="code-pre"><code>import (
     "bytes"
     "encoding/json"
@@ -242,6 +272,7 @@ req.Header.Set("Content-Type", "application/json")
 
 resp, _ := http.DefaultClient.Do(req)
 // decode resp.Body → data.token</code></pre>
+                </template>
               </div>
             </div>
           </div>
@@ -254,9 +285,23 @@ resp, _ := http.DefaultClient.Do(req)
             </div>
             <p class="text-cream-muted text-sm ml-9 mb-4">Pass the token from Step 2 to the SDK. Pick whichever framework you're using below.</p>
 
-            <div class="ml-9 flex flex-col gap-4">
-              <div class="code-block">
-                <div class="code-lang">HTML / Vanilla JS</div>
+            <div class="ml-9">
+              <div id="cb-frontend" class="code-block">
+                <div class="flex items-center justify-between px-3 pt-2 pb-0 border-b border-charcoal-700/60">
+                  <div class="flex items-center gap-1">
+                    <button v-for="t in ([['html','HTML / JS'],['react','React'],['vue','Vue 3'],['next','Next.js'],['nuxt','Nuxt 3']] as [string,string][])" :key="t[0]"
+                      @click="frontendTab = t[0]"
+                      class="px-3 py-1.5 text-xs rounded-t transition-colors -mb-px border-b-2"
+                      :class="frontendTab === t[0] ? 'text-amber border-amber' : 'text-cream-faint hover:text-cream border-transparent'">
+                      {{ t[1] }}
+                    </button>
+                  </div>
+                  <button @click="copyCode('cb-frontend')" class="copy-btn" title="Copy">
+                    <svg v-if="copiedBlock !== 'cb-frontend'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    <svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                </div>
+                <template v-if="frontendTab === 'html'">
                 <pre v-pre class="code-pre"><code>&lt;script src="https://flowtali.com/sdk/flowtali.js"&gt;&lt;/script&gt;
 
 &lt;div id="flowtali-embed" style="height:600px"&gt;&lt;/div&gt;
@@ -269,10 +314,8 @@ resp, _ := http.DefaultClient.Do(req)
     token: EMBED_TOKEN_FROM_YOUR_SERVER,
   })
 &lt;/script&gt;</code></pre>
-              </div>
-
-              <div class="code-block">
-                <div class="code-lang">React</div>
+                </template>
+                <template v-if="frontendTab === 'react'">
                 <pre v-pre class="code-pre"><code>import { useEffect, useRef } from 'react'
 
 export default function FlowtaliPanel({ embedToken }) {
@@ -290,16 +333,13 @@ export default function FlowtaliPanel({ embedToken }) {
       })
     }
     document.head.appendChild(script)
-
     return () => ftRef.current?.destroy()
   }, [embedToken])
 
   return &lt;div ref={containerRef} style={{ height: 600 }} /&gt;
 }</code></pre>
-              </div>
-
-              <div class="code-block">
-                <div class="code-lang">Vue 3</div>
+                </template>
+                <template v-if="frontendTab === 'vue'">
                 <pre v-pre class="code-pre"><code>&lt;script setup&gt;
 import { ref, onMounted, onUnmounted } from 'vue'
 
@@ -323,10 +363,8 @@ onUnmounted(() => ft?.destroy())
 &lt;template&gt;
   &lt;div ref="container" style="height: 600px" /&gt;
 &lt;/template&gt;</code></pre>
-              </div>
-
-              <div class="code-block">
-                <div class="code-lang">Next.js (App Router)</div>
+                </template>
+                <template v-if="frontendTab === 'next'">
                 <pre v-pre class="code-pre"><code>'use client'
 import { useEffect, useRef } from 'react'
 import Script from 'next/script'
@@ -347,29 +385,25 @@ export default function FlowtaliPanel({ embedToken }) {
 
   return (
     &lt;&gt;
-      &lt;Script
-        src="https://flowtali.com/sdk/flowtali.js"
-        onLoad={onSDKLoad}
-      /&gt;
+      &lt;Script src="https://flowtali.com/sdk/flowtali.js" onLoad={onSDKLoad} /&gt;
       &lt;div ref={containerRef} style={{ height: 600 }} /&gt;
     &lt;/&gt;
   )
 }</code></pre>
-              </div>
-
-              <div class="code-block">
-                <div class="code-lang">Nuxt 3</div>
+                </template>
+                <template v-if="frontendTab === 'nuxt'">
                 <pre v-pre class="code-pre"><code>&lt;script setup&gt;
 const props = defineProps(['embedToken'])
 const container = ref(null)
 let ft = null
 
 onMounted(async () => {
-  await useHead({
-    script: [{ src: 'https://flowtali.com/sdk/flowtali.js' }],
+  await new Promise((resolve) => {
+    const s = document.createElement('script')
+    s.src = 'https://flowtali.com/sdk/flowtali.js'
+    s.onload = resolve
+    document.head.appendChild(s)
   })
-  // Wait for script to load
-  await new Promise(r => setTimeout(r, 100))
   ft = window.Flowtali.init('pk_live_YOUR_PUBLISHABLE_KEY')
   ft.mount(container.value, { view: 'invoices', token: props.embedToken })
 })
@@ -380,6 +414,7 @@ onUnmounted(() => ft?.destroy())
 &lt;template&gt;
   &lt;div ref="container" style="height: 600px" /&gt;
 &lt;/template&gt;</code></pre>
+                </template>
               </div>
             </div>
           </div>
@@ -437,7 +472,8 @@ onUnmounted(() => ft?.destroy())
           <h2 class="font-display text-3xl font-semibold text-cream mb-2">Available views</h2>
           <p class="text-cream-muted text-sm mb-4">Pass any of these as the <code class="ci">view</code> param to <code class="ci">ft.mount()</code> or <code class="ci">ft.open()</code>. For views with a dynamic ID, pass the ID via <code class="ci">params</code>.</p>
 
-          <div class="code-block mb-5">
+          <div id="cb-views" class="code-block mb-5">
+            <div class="code-lang-row"><span>Example</span><button @click="copyCode('cb-views')" class="copy-btn" title="Copy"><svg v-if="copiedBlock !== 'cb-views'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button></div>
             <pre v-pre class="code-pre"><code>// Static view
 ft.mount('#container', { view: 'invoices', token })
 
@@ -471,8 +507,8 @@ ft.mount('#container', { view: 'projects/PROJ_ID/edit', token })</code></pre>
           <h2 class="font-display text-3xl font-semibold text-cream mb-2">Appearance / theming</h2>
           <p class="text-cream-muted text-sm mb-6">Pass an <code class="ci">appearance</code> object to <code class="ci">Flowtali.init()</code> to apply your brand globally, or override per-mount call.</p>
 
-          <div class="code-block mb-4">
-            <div class="code-lang">Global (all mounts from this instance)</div>
+          <div id="cb-appear-global" class="code-block mb-4">
+            <div class="code-lang-row"><span>Global (all mounts from this instance)</span><button @click="copyCode('cb-appear-global')" class="copy-btn" title="Copy"><svg v-if="copiedBlock !== 'cb-appear-global'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button></div>
             <pre v-pre class="code-pre"><code>const ft = Flowtali.init('pk_live_...', {
   appearance: {
     primaryColor:    '#6366f1',       // buttons, links, focus rings (default: #e8a83e)
@@ -484,8 +520,8 @@ ft.mount('#container', { view: 'projects/PROJ_ID/edit', token })</code></pre>
 })</code></pre>
           </div>
 
-          <div class="code-block">
-            <div class="code-lang">Per-mount override</div>
+          <div id="cb-appear-mount" class="code-block">
+            <div class="code-lang-row"><span>Per-mount override</span><button @click="copyCode('cb-appear-mount')" class="copy-btn" title="Copy"><svg v-if="copiedBlock !== 'cb-appear-mount'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button></div>
             <pre v-pre class="code-pre"><code>ft.mount('#container', {
   view: 'invoices',
   token: embedToken,
@@ -524,11 +560,23 @@ ft.mount('#container', { view: 'projects/PROJ_ID/edit', token })</code></pre>
 
           <!-- Framework examples -->
           <h3 class="text-cream font-medium text-sm mb-4">Framework examples</h3>
-          <div class="flex flex-col gap-4">
-
-            <div class="code-block">
-              <div class="code-lang">Vanilla JS / HTML</div>
-              <pre v-pre class="code-pre"><code>const ft = Flowtali.init('pk_live_...')
+          <div id="cb-events" class="code-block">
+            <div class="flex items-center justify-between px-3 pt-2 pb-0 border-b border-charcoal-700/60">
+              <div class="flex items-center gap-1">
+                <button v-for="t in ([['js','JS / HTML'],['react','React'],['vue','Vue 3'],['next','Next.js'],['nuxt','Nuxt 3']] as [string,string][])" :key="t[0]"
+                  @click="eventsTab = t[0]"
+                  class="px-3 py-1.5 text-xs rounded-t transition-colors -mb-px border-b-2"
+                  :class="eventsTab === t[0] ? 'text-amber border-amber' : 'text-cream-faint hover:text-cream border-transparent'">
+                  {{ t[1] }}
+                </button>
+              </div>
+              <button @click="copyCode('cb-events')" class="copy-btn" title="Copy">
+                <svg v-if="copiedBlock !== 'cb-events'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+            </div>
+            <template v-if="eventsTab === 'js'">
+                <pre v-pre class="code-pre"><code>const ft = Flowtali.init('pk_live_...')
 ft.mount('#container', { view: 'invoices', token })
 
 ft.on('invoice.created', (invoice) => {
@@ -544,11 +592,9 @@ ft.on('invoice.deleted', ({ id }) => {
 ft.on('*', (eventName, data) => {
   console.log('[flowtali]', eventName, data)
 })</code></pre>
-            </div>
-
-            <div class="code-block">
-              <div class="code-lang">React</div>
-              <pre v-pre class="code-pre"><code>import { useEffect, useRef } from 'react'
+                </template>
+            <template v-if="eventsTab === 'react'">
+                <pre v-pre class="code-pre"><code>import { useEffect, useRef } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 
 export default function FlowtaliPanel({ embedToken }) {
@@ -561,20 +607,14 @@ export default function FlowtaliPanel({ embedToken }) {
     script.src = 'https://flowtali.com/sdk/flowtali.js'
     script.onload = () => {
       ftRef.current = window.Flowtali.init('pk_live_...')
-      ftRef.current.mount(containerRef.current, {
-        view: 'invoices',
-        token: embedToken,
-      })
+      ftRef.current.mount(containerRef.current, { view: 'invoices', token: embedToken })
 
       ftRef.current.on('invoice.created', () => {
-        // Invalidate your local invoice cache
         queryClient.invalidateQueries({ queryKey: ['invoices'] })
       })
-
       ftRef.current.on('invoice.updated', (invoice) => {
         queryClient.setQueryData(['invoices', invoice.id], invoice)
       })
-
       ftRef.current.on('invoice.deleted', ({ id }) => {
         queryClient.removeQueries({ queryKey: ['invoices', id] })
       })
@@ -585,13 +625,9 @@ export default function FlowtaliPanel({ embedToken }) {
 
   return &lt;div ref={containerRef} style={{ height: 600 }} /&gt;
 }</code></pre>
-            </div>
-
-            <div class="code-block">
-              <div class="code-lang">Vue 3 (Composition API)</div>
-              <pre v-pre class="code-pre"><code>&lt;script setup&gt;
-import { ref, onMounted, onUnmounted } from 'vue'
-
+                </template>
+            <template v-if="eventsTab === 'vue'">
+                <pre v-pre class="code-pre"><code>&lt;script setup&gt;
 const props = defineProps(['embedToken'])
 const emit = defineEmits(['invoiceCreated', 'invoiceDeleted'])
 const container = ref(null)
@@ -604,32 +640,19 @@ onMounted(() => {
     ft = window.Flowtali.init('pk_live_...')
     ft.mount(container.value, { view: 'invoices', token: props.embedToken })
 
-    ft.on('invoice.created', (invoice) => {
-      emit('invoiceCreated', invoice)
-    })
-
-    ft.on('invoice.deleted', ({ id }) => {
-      emit('invoiceDeleted', id)
-    })
-
-    ft.on('receipt.created', (receipt) => {
-      // update local state
-    })
+    ft.on('invoice.created', (invoice) => emit('invoiceCreated', invoice))
+    ft.on('invoice.deleted', ({ id }) => emit('invoiceDeleted', id))
+    ft.on('receipt.created', (receipt) => { /* update local state */ })
   }
   document.head.appendChild(script)
 })
-
 onUnmounted(() => ft?.destroy())
 &lt;/script&gt;
 
-&lt;template&gt;
-  &lt;div ref="container" style="height: 600px" /&gt;
-&lt;/template&gt;</code></pre>
-            </div>
-
-            <div class="code-block">
-              <div class="code-lang">Next.js (App Router)</div>
-              <pre v-pre class="code-pre"><code>'use client'
+&lt;template&gt;&lt;div ref="container" style="height:600px"/&gt;&lt;/template&gt;</code></pre>
+                </template>
+            <template v-if="eventsTab === 'next'">
+                <pre v-pre class="code-pre"><code>'use client'
 import { useEffect, useRef } from 'react'
 import Script from 'next/script'
 import { useRouter } from 'next/navigation'
@@ -641,19 +664,13 @@ export default function FlowtaliPanel({ embedToken }) {
 
   function onSDKLoad() {
     ftRef.current = window.Flowtali.init('pk_live_...')
-    ftRef.current.mount(containerRef.current, {
-      view: 'invoices',
-      token: embedToken,
-    })
+    ftRef.current.mount(containerRef.current, { view: 'invoices', token: embedToken })
 
-    ftRef.current.on('invoice.created', (invoice) => {
-      // Refresh server components after a mutation
-      router.refresh()
-    })
-
-    ftRef.current.on('project.created', (project) => {
-      router.refresh()
-    })
+    // Refresh server components after any mutation
+    ftRef.current.on('invoice.created', () => router.refresh())
+    ftRef.current.on('invoice.updated', () => router.refresh())
+    ftRef.current.on('project.created', () => router.refresh())
+    ftRef.current.on('receipt.created', () => router.refresh())
   }
 
   useEffect(() => () => ftRef.current?.destroy(), [])
@@ -665,16 +682,13 @@ export default function FlowtaliPanel({ embedToken }) {
     &lt;/&gt;
   )
 }</code></pre>
-            </div>
-
-            <div class="code-block">
-              <div class="code-lang">Nuxt 3</div>
-              <pre v-pre class="code-pre"><code>&lt;script setup&gt;
+                </template>
+            <template v-if="eventsTab === 'nuxt'">
+                <pre v-pre class="code-pre"><code>&lt;script setup&gt;
 const props = defineProps(['embedToken'])
 const container = ref(null)
 let ft = null
 
-// Load the SDK only on the client
 onMounted(async () => {
   await new Promise((resolve) => {
     const s = document.createElement('script')
@@ -686,24 +700,16 @@ onMounted(async () => {
   ft = window.Flowtali.init('pk_live_...')
   ft.mount(container.value, { view: 'invoices', token: props.embedToken })
 
-  ft.on('invoice.created', async (invoice) => {
-    // Refresh Nuxt data
-    await refreshNuxtData('invoices')
-  })
-
-  ft.on('client.created', async (client) => {
-    await refreshNuxtData('clients')
-  })
+  ft.on('invoice.created', async () => await refreshNuxtData('invoices'))
+  ft.on('client.created',  async () => await refreshNuxtData('clients'))
+  ft.on('project.created', async () => await refreshNuxtData('projects'))
 })
 
 onUnmounted(() => ft?.destroy())
 &lt;/script&gt;
 
-&lt;template&gt;
-  &lt;div ref="container" style="height: 600px" /&gt;
-&lt;/template&gt;</code></pre>
-            </div>
-
+&lt;template&gt;&lt;div ref="container" style="height:600px"/&gt;&lt;/template&gt;</code></pre>
+                </template>
           </div>
         </section>
 
@@ -757,6 +763,15 @@ onUnmounted(() => ft?.destroy())
 
       </main>
     </div>
+
+    <!-- Copy toast -->
+    <Transition name="toast">
+      <div v-if="copiedBlock" class="copy-toast">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Copied to clipboard
+      </div>
+    </Transition>
+
   </div>
 </template>
 
@@ -776,6 +791,62 @@ onUnmounted(() => ft?.destroy())
   color: #6b6560;
   text-transform: uppercase;
   letter-spacing: 0.06em;
+}
+.code-lang-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #18181c;
+  border-bottom: 1px solid #2e2e37;
+  padding: 5px 10px 5px 14px;
+  font-size: 11px;
+  color: #6b6560;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.copy-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 6px;
+  border-radius: 5px;
+  color: #6b6560;
+  transition: background 0.15s, color 0.15s;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.copy-btn:hover {
+  background: rgba(255,255,255,0.06);
+  color: #f5f0e8;
+}
+.copy-toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #222228;
+  border: 1px solid #2e2e37;
+  color: #f5f0e8;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  padding: 10px 16px;
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+  pointer-events: none;
+}
+.toast-enter-active,
+.toast-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
 }
 .code-pre {
   margin: 0;
