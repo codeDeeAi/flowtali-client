@@ -11,13 +11,82 @@ useSeo({
 const activeSection = ref('overview')
 
 const sections = [
-  { id: 'overview',      label: 'Overview' },
-  { id: 'quickstart',    label: 'Quick start' },
-  { id: 'auth',          label: 'Authentication' },
-  { id: 'views',         label: 'Available views' },
-  { id: 'appearance',    label: 'Appearance / theming' },
-  { id: 'events',        label: 'Events' },
-  { id: 'reference',     label: 'SDK reference' },
+  { id: 'overview',     label: 'Overview' },
+  { id: 'quickstart',   label: 'Quick start' },
+  { id: 'auth',         label: 'Authentication' },
+  { id: 'permissions',  label: 'Permissions' },
+  { id: 'views',        label: 'Available views' },
+  { id: 'appearance',   label: 'Appearance' },
+  { id: 'events',       label: 'Events' },
+  { id: 'reference',    label: 'SDK reference' },
+]
+
+const allPermissions = [
+  { perm: 'invoices.read',        desc: 'View invoice list and individual invoices' },
+  { perm: 'invoices.create',      desc: 'Create new invoices' },
+  { perm: 'invoices.update',      desc: 'Edit existing invoices' },
+  { perm: 'invoices.delete',      desc: 'Delete invoices' },
+  { perm: 'projects.read',        desc: 'View project list and individual projects' },
+  { perm: 'projects.create',      desc: 'Create new projects' },
+  { perm: 'projects.update',      desc: 'Edit existing projects' },
+  { perm: 'projects.delete',      desc: 'Delete projects' },
+  { perm: 'receipts.read',        desc: 'View receipt list and individual receipts' },
+  { perm: 'receipts.create',      desc: 'Create new receipts' },
+  { perm: 'receipts.update',      desc: 'Edit existing receipts' },
+  { perm: 'receipts.delete',      desc: 'Delete receipts' },
+  { perm: 'clients.read',         desc: 'View client list and individual client records' },
+  { perm: 'clients.create',       desc: 'Create new clients' },
+  { perm: 'clients.update',       desc: 'Edit existing clients' },
+  { perm: 'clients.delete',       desc: 'Delete clients' },
+  { perm: 'letterheads.read',     desc: 'View letterhead list and individual letterheads' },
+  { perm: 'letterheads.create',   desc: 'Create new letterheads' },
+  { perm: 'letterheads.update',   desc: 'Edit existing letterheads' },
+  { perm: 'letterheads.delete',   desc: 'Delete letterheads' },
+  { perm: 'members.read',         desc: 'View organization members list' },
+  { perm: 'analytics.read',       desc: 'View analytics dashboard' },
+  { perm: 'settings.manage',      desc: 'Access and edit organization preferences' },
+]
+
+const allViews = [
+  { view: 'invoices',             path: '/embed/invoices',                  perm: 'invoices.read',     desc: 'Invoice list with search and filters' },
+  { view: 'invoices/create',      path: '/embed/invoices/create',           perm: 'invoices.create',   desc: 'New invoice form' },
+  { view: 'invoices/:id',         path: '/embed/invoices/INV_ID',           perm: 'invoices.read',     desc: 'Single invoice view' },
+  { view: 'invoices/:id/edit',    path: '/embed/invoices/INV_ID/edit',      perm: 'invoices.update',   desc: 'Invoice editor' },
+  { view: 'projects',             path: '/embed/projects',                  perm: 'projects.read',     desc: 'Project list' },
+  { view: 'projects/create',      path: '/embed/projects/create',           perm: 'projects.create',   desc: 'New project form' },
+  { view: 'projects/:id',         path: '/embed/projects/PROJ_ID',          perm: 'projects.read',     desc: 'Project detail with linked documents' },
+  { view: 'projects/:id/edit',    path: '/embed/projects/PROJ_ID/edit',     perm: 'projects.update',   desc: 'Project editor' },
+  { view: 'receipts',             path: '/embed/receipts',                  perm: 'receipts.read',     desc: 'Receipt list' },
+  { view: 'receipts/create',      path: '/embed/receipts/create',           perm: 'receipts.create',   desc: 'New receipt form' },
+  { view: 'receipts/:id',         path: '/embed/receipts/REC_ID',           perm: 'receipts.read',     desc: 'Single receipt view' },
+  { view: 'receipts/:id/edit',    path: '/embed/receipts/REC_ID/edit',      perm: 'receipts.update',   desc: 'Receipt editor' },
+  { view: 'clients',              path: '/embed/clients',                   perm: 'clients.read',      desc: 'Client list' },
+  { view: 'clients/create',       path: '/embed/clients/create',            perm: 'clients.create',    desc: 'New client form' },
+  { view: 'clients/:id',          path: '/embed/clients/CLIENT_ID',         perm: 'clients.read',      desc: 'Client detail' },
+  { view: 'clients/:id/edit',     path: '/embed/clients/CLIENT_ID/edit',    perm: 'clients.update',    desc: 'Client editor' },
+  { view: 'letterheads',          path: '/embed/letterheads',               perm: 'letterheads.read',  desc: 'Letterhead list' },
+  { view: 'letterheads/create',   path: '/embed/letterheads/create',        perm: 'letterheads.create',desc: 'New letterhead form' },
+  { view: 'letterheads/:id',      path: '/embed/letterheads/LH_ID',         perm: 'letterheads.read',  desc: 'Letterhead view' },
+  { view: 'letterheads/:id/edit', path: '/embed/letterheads/LH_ID/edit',    perm: 'letterheads.update',desc: 'Letterhead editor' },
+  { view: 'members',              path: '/embed/members',                   perm: 'members.read',      desc: 'Organization members list' },
+  { view: 'analytics',            path: '/embed/analytics',                 perm: 'analytics.read',    desc: 'Analytics dashboard' },
+  { view: 'dashboard',            path: '/embed/dashboard',                 perm: '—',                 desc: 'Overview dashboard with recent activity' },
+  { view: 'preferences',          path: '/embed/preferences',               perm: 'settings.manage',   desc: 'Organization preferences and settings' },
+]
+
+const allEvents = [
+  { event: 'invoice.created',     desc: 'A new invoice was successfully created',           payload: '{ id, number, status, to_name, total, currency, created_at }' },
+  { event: 'invoice.updated',     desc: 'An invoice was edited and saved',                  payload: '{ id, number, status, to_name, total, currency, updated_at }' },
+  { event: 'invoice.deleted',     desc: 'An invoice was deleted',                           payload: '{ id }' },
+  { event: 'project.created',     desc: 'A new project was successfully created',           payload: '{ id, name, status, created_at }' },
+  { event: 'project.updated',     desc: 'A project was edited and saved',                   payload: '{ id, name, status, updated_at }' },
+  { event: 'project.deleted',     desc: 'A project was deleted',                            payload: '{ id }' },
+  { event: 'receipt.created',     desc: 'A new receipt was successfully created',           payload: '{ id, number, amount, currency, created_at }' },
+  { event: 'receipt.updated',     desc: 'A receipt was edited and saved',                   payload: '{ id, number, amount, currency, updated_at }' },
+  { event: 'receipt.deleted',     desc: 'A receipt was deleted',                            payload: '{ id }' },
+  { event: 'client.created',      desc: 'A new client was successfully created',            payload: '{ id, name, email, created_at }' },
+  { event: 'client.updated',      desc: 'A client record was edited and saved',             payload: '{ id, name, email, updated_at }' },
+  { event: 'client.deleted',      desc: 'A client record was deleted',                      payload: '{ id }' },
 ]
 
 function scrollTo(id: string) {
@@ -28,6 +97,7 @@ function scrollTo(id: string) {
 
 <template>
   <div class="min-h-screen bg-charcoal-900 text-cream">
+
     <!-- Header -->
     <header class="border-b border-charcoal-700/40 bg-charcoal-900/95 backdrop-blur sticky top-0 z-30">
       <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
@@ -46,28 +116,28 @@ function scrollTo(id: string) {
     </header>
 
     <div class="max-w-7xl mx-auto px-6 flex gap-12 py-12">
-      <!-- Sidebar nav -->
+
+      <!-- Sidebar -->
       <aside class="hidden lg:block w-52 flex-shrink-0 sticky top-24 h-fit">
         <p class="text-cream-faint text-xs font-semibold uppercase tracking-widest mb-4">On this page</p>
         <nav class="flex flex-col gap-1">
-          <button
-            v-for="s in sections" :key="s.id"
-            @click="scrollTo(s.id)"
+          <button v-for="s in sections" :key="s.id" @click="scrollTo(s.id)"
             class="text-left text-sm px-3 py-1.5 rounded-lg transition-colors"
-            :class="activeSection === s.id ? 'text-amber bg-amber/8' : 'text-cream-muted hover:text-cream'"
-          >{{ s.label }}</button>
+            :class="activeSection === s.id ? 'text-amber bg-amber/8' : 'text-cream-muted hover:text-cream'">
+            {{ s.label }}
+          </button>
         </nav>
       </aside>
 
       <!-- Content -->
       <main class="flex-1 min-w-0 max-w-3xl">
 
-        <!-- Overview -->
+        <!-- ── Overview ─────────────────────────────────────────────────────── -->
         <section id="overview" class="mb-16 scroll-mt-24">
           <div class="inline-flex items-center gap-2 bg-amber/10 border border-amber/20 text-amber text-xs font-medium px-3 py-1 rounded-full mb-5">New in v1.5</div>
           <h1 class="font-display text-4xl md:text-5xl font-semibold text-cream mb-4">Embed SDK</h1>
           <p class="text-cream-muted text-lg leading-relaxed mb-6">
-            The Flowtali Embed SDK lets you embed any Flowtali view — invoices, projects, receipts, preferences, and more — directly in your own website or SaaS product. Your users get the full Flowtali experience without leaving your platform.
+            The Flowtali Embed SDK lets you embed any Flowtali view — invoices, projects, receipts, clients, letterheads, preferences, and more — directly in your own website or SaaS product. Your users get the full Flowtali experience without leaving your platform.
           </p>
           <div class="grid sm:grid-cols-3 gap-4 mt-8">
             <div class="bg-charcoal-800/60 border border-charcoal-700/40 rounded-xl p-4">
@@ -88,166 +158,334 @@ function scrollTo(id: string) {
           </div>
         </section>
 
-        <!-- Quick start -->
+        <!-- ── Quick start ──────────────────────────────────────────────────── -->
         <section id="quickstart" class="mb-16 scroll-mt-24">
           <h2 class="font-display text-3xl font-semibold text-cream mb-2">Quick start</h2>
-          <p class="text-cream-muted text-sm mb-6">Get an invoice list embedded in 5 minutes.</p>
+          <p class="text-cream-muted text-sm mb-8">Get an invoice list embedded in under 10 minutes.</p>
 
-          <div class="flex flex-col gap-6">
-            <!-- Step 1 -->
-            <div>
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-6 h-6 rounded-full bg-amber/20 text-amber text-xs font-bold flex items-center justify-center flex-shrink-0">1</div>
-                <h3 class="text-cream font-medium">Generate an API key in Flowtali</h3>
-              </div>
-              <p class="text-cream-muted text-sm ml-9 mb-3">Go to <strong class="text-cream">Settings → API Keys</strong> in your organization and create a new key. You'll receive a <code class="code-inline">pk_live_</code> (publishable) and a <code class="code-inline">sk_live_</code> (secret) key. Store the secret key securely on your backend.</p>
+          <!-- Step 1 -->
+          <div class="mb-8">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-6 h-6 rounded-full bg-amber/20 text-amber text-xs font-bold flex items-center justify-center flex-shrink-0">1</div>
+              <h3 class="text-cream font-medium">Generate an API key in Flowtali</h3>
             </div>
+            <p class="text-cream-muted text-sm ml-9">Go to <strong class="text-cream">Org Settings → API Keys</strong> and create a new key. You'll receive a <code class="ci">pk_live_</code> (publishable) and a <code class="ci">sk_live_</code> (secret) key. Store the secret key securely — it is shown only once.</p>
+          </div>
 
-            <!-- Step 2 -->
-            <div>
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-6 h-6 rounded-full bg-amber/20 text-amber text-xs font-bold flex items-center justify-center flex-shrink-0">2</div>
-                <h3 class="text-cream font-medium">Generate an embed token from your backend</h3>
-              </div>
-              <p class="text-cream-muted text-sm ml-9 mb-3">When a user logs into your product, your server calls the Flowtali API to get a short-lived token for them:</p>
-              <div class="code-block ml-9">
+          <!-- Step 2 -->
+          <div class="mb-8">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-6 h-6 rounded-full bg-amber/20 text-amber text-xs font-bold flex items-center justify-center flex-shrink-0">2</div>
+              <h3 class="text-cream font-medium">Generate an embed token from your backend</h3>
+            </div>
+            <p class="text-cream-muted text-sm ml-9 mb-4">When one of your users logs in, your server calls the Flowtali API to mint a short-lived token for them. The <code class="ci">sk_live_</code> key must never leave your server.</p>
+
+            <div class="ml-9 flex flex-col gap-4">
+              <div class="code-block">
                 <div class="code-lang">Node.js / Express</div>
-                <pre v-pre class="code-pre"><code>// Your backend — keep sk_live_ server-side only
-const res = await fetch('https://flowtali.com/api/v1/orgs/ORG_ID/embed/token', {
-  method: 'POST',
-  headers: {
-    'Authorization': 'Bearer sk_live_your_secret_key',
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    user_reference: req.user.id,           // your own user ID
-    permissions: ['invoices.read', 'invoices.create'],
-    expires_in: 3600,                      // seconds (max 86400)
-  }),
+                <pre v-pre class="code-pre"><code>const res = await fetch(
+  'https://flowtali.com/api/v1/orgs/YOUR_ORG_ID/embed/token',
+  {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer sk_live_YOUR_SECRET_KEY',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      user_reference: req.user.id,           // your own user ID (any string)
+      permissions: ['invoices.read', 'invoices.create'],
+      expires_in: 3600,                      // seconds — max 86400
+    }),
+  }
+)
+const { data } = await res.json()
+const embedToken = data.token               // send this to your frontend</code></pre>
+              </div>
+
+              <div class="code-block">
+                <div class="code-lang">PHP / Laravel</div>
+                <pre v-pre class="code-pre"><code>use Illuminate\Support\Facades\Http;
+
+$response = Http::withToken(config('services.flowtali.secret_key'))
+    ->post("https://flowtali.com/api/v1/orgs/{$orgId}/embed/token", [
+        'user_reference' => auth()->id(),
+        'permissions'    => ['invoices.read', 'invoices.create'],
+        'expires_in'     => 3600,
+    ]);
+
+$embedToken = $response->json('data.token');
+// Return $embedToken to your frontend (e.g. via a JSON API response)</code></pre>
+              </div>
+
+              <div class="code-block">
+                <div class="code-lang">Go</div>
+                <pre v-pre class="code-pre"><code>import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+body, _ := json.Marshal(map[string]any{
+    "user_reference": userID,
+    "permissions":    []string{"invoices.read", "invoices.create"},
+    "expires_in":     3600,
 })
 
-const { data } = await res.json()
-const embedToken = data.token             // pass this to your frontend</code></pre>
+req, _ := http.NewRequest(
+    "POST",
+    fmt.Sprintf("https://flowtali.com/api/v1/orgs/%s/embed/token", orgID),
+    bytes.NewBuffer(body),
+)
+req.Header.Set("Authorization", "Bearer "+os.Getenv("FLOWTALI_SECRET_KEY"))
+req.Header.Set("Content-Type", "application/json")
+
+resp, _ := http.DefaultClient.Do(req)
+// decode resp.Body → data.token</code></pre>
               </div>
             </div>
+          </div>
 
-            <!-- Step 3 -->
-            <div>
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-6 h-6 rounded-full bg-amber/20 text-amber text-xs font-bold flex items-center justify-center flex-shrink-0">3</div>
-                <h3 class="text-cream font-medium">Add the SDK and mount the embed</h3>
-              </div>
-              <div class="code-block ml-9">
-                <div class="code-lang">HTML</div>
-                <pre v-pre class="code-pre"><code>&lt;!-- Add the SDK --&gt;
-&lt;script src="https://flowtali.com/sdk/flowtali.js"&gt;&lt;/script&gt;
+          <!-- Step 3 -->
+          <div class="mb-8">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-6 h-6 rounded-full bg-amber/20 text-amber text-xs font-bold flex items-center justify-center flex-shrink-0">3</div>
+              <h3 class="text-cream font-medium">Add the SDK and mount the embed</h3>
+            </div>
+            <p class="text-cream-muted text-sm ml-9 mb-4">Pass the token from Step 2 to the SDK. Pick whichever framework you're using below.</p>
 
-&lt;!-- A container div --&gt;
-&lt;div id="flowtali-embed" style="height: 600px;"&gt;&lt;/div&gt;
+            <div class="ml-9 flex flex-col gap-4">
+              <div class="code-block">
+                <div class="code-lang">HTML / Vanilla JS</div>
+                <pre v-pre class="code-pre"><code>&lt;script src="https://flowtali.com/sdk/flowtali.js"&gt;&lt;/script&gt;
+
+&lt;div id="flowtali-embed" style="height:600px"&gt;&lt;/div&gt;
 
 &lt;script&gt;
-  const ft = Flowtali.init('pk_live_your_publishable_key')
+  const ft = Flowtali.init('pk_live_YOUR_PUBLISHABLE_KEY')
 
   ft.mount('#flowtali-embed', {
     view: 'invoices',
-    token: '{{ embedToken }}',   // token from your backend
+    token: EMBED_TOKEN_FROM_YOUR_SERVER,
   })
 &lt;/script&gt;</code></pre>
+              </div>
+
+              <div class="code-block">
+                <div class="code-lang">React</div>
+                <pre v-pre class="code-pre"><code>import { useEffect, useRef } from 'react'
+
+export default function FlowtaliPanel({ embedToken }) {
+  const containerRef = useRef(null)
+  const ftRef = useRef(null)
+
+  useEffect(() => {
+    const script = document.createElement('script')
+    script.src = 'https://flowtali.com/sdk/flowtali.js'
+    script.onload = () => {
+      ftRef.current = window.Flowtali.init('pk_live_YOUR_PUBLISHABLE_KEY')
+      ftRef.current.mount(containerRef.current, {
+        view: 'invoices',
+        token: embedToken,
+      })
+    }
+    document.head.appendChild(script)
+
+    return () => ftRef.current?.destroy()
+  }, [embedToken])
+
+  return &lt;div ref={containerRef} style={{ height: 600 }} /&gt;
+}</code></pre>
+              </div>
+
+              <div class="code-block">
+                <div class="code-lang">Vue 3</div>
+                <pre v-pre class="code-pre"><code>&lt;script setup&gt;
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const props = defineProps(['embedToken'])
+const container = ref(null)
+let ft = null
+
+onMounted(() => {
+  const script = document.createElement('script')
+  script.src = 'https://flowtali.com/sdk/flowtali.js'
+  script.onload = () => {
+    ft = window.Flowtali.init('pk_live_YOUR_PUBLISHABLE_KEY')
+    ft.mount(container.value, { view: 'invoices', token: props.embedToken })
+  }
+  document.head.appendChild(script)
+})
+
+onUnmounted(() => ft?.destroy())
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div ref="container" style="height: 600px" /&gt;
+&lt;/template&gt;</code></pre>
+              </div>
+
+              <div class="code-block">
+                <div class="code-lang">Next.js (App Router)</div>
+                <pre v-pre class="code-pre"><code>'use client'
+import { useEffect, useRef } from 'react'
+import Script from 'next/script'
+
+export default function FlowtaliPanel({ embedToken }) {
+  const containerRef = useRef(null)
+  const ftRef = useRef(null)
+
+  function onSDKLoad() {
+    ftRef.current = window.Flowtali.init('pk_live_YOUR_PUBLISHABLE_KEY')
+    ftRef.current.mount(containerRef.current, {
+      view: 'invoices',
+      token: embedToken,
+    })
+  }
+
+  useEffect(() => () => ftRef.current?.destroy(), [])
+
+  return (
+    &lt;&gt;
+      &lt;Script
+        src="https://flowtali.com/sdk/flowtali.js"
+        onLoad={onSDKLoad}
+      /&gt;
+      &lt;div ref={containerRef} style={{ height: 600 }} /&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+              </div>
+
+              <div class="code-block">
+                <div class="code-lang">Nuxt 3</div>
+                <pre v-pre class="code-pre"><code>&lt;script setup&gt;
+const props = defineProps(['embedToken'])
+const container = ref(null)
+let ft = null
+
+onMounted(async () => {
+  await useHead({
+    script: [{ src: 'https://flowtali.com/sdk/flowtali.js' }],
+  })
+  // Wait for script to load
+  await new Promise(r => setTimeout(r, 100))
+  ft = window.Flowtali.init('pk_live_YOUR_PUBLISHABLE_KEY')
+  ft.mount(container.value, { view: 'invoices', token: props.embedToken })
+})
+
+onUnmounted(() => ft?.destroy())
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div ref="container" style="height: 600px" /&gt;
+&lt;/template&gt;</code></pre>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Auth -->
+        <!-- ── Authentication ───────────────────────────────────────────────── -->
         <section id="auth" class="mb-16 scroll-mt-24">
           <h2 class="font-display text-3xl font-semibold text-cream mb-2">Authentication</h2>
-          <p class="text-cream-muted text-sm mb-6">The embed uses a two-key system, similar to Stripe.</p>
+          <p class="text-cream-muted text-sm mb-6">The embed uses a two-key system, the same model as Stripe.</p>
 
           <div class="bg-charcoal-800/50 border border-charcoal-700/40 rounded-xl p-5 mb-6">
             <div class="grid sm:grid-cols-2 gap-6">
               <div>
-                <div class="text-xs font-semibold text-amber uppercase tracking-wider mb-2">Publishable key <code class="code-inline">pk_live_</code></div>
-                <p class="text-cream-muted text-sm leading-relaxed">Safe to use in your frontend / browser. Passed to <code class="code-inline">Flowtali.init()</code>. Identifies your organization but cannot generate tokens.</p>
+                <div class="text-xs font-semibold text-amber uppercase tracking-wider mb-2">Publishable key <code class="ci">pk_live_</code></div>
+                <p class="text-cream-muted text-sm leading-relaxed">Safe for frontend / browser code. Passed to <code class="ci">Flowtali.init()</code>. Identifies your organization but cannot generate tokens or access data directly.</p>
               </div>
               <div>
-                <div class="text-xs font-semibold text-cream-muted uppercase tracking-wider mb-2">Secret key <code class="code-inline">sk_live_</code></div>
-                <p class="text-cream-muted text-sm leading-relaxed">Server-side only. Never expose in frontend code. Used to call <code class="code-inline">POST /embed/token</code> to generate short-lived embed tokens for your users.</p>
+                <div class="text-xs font-semibold text-red-400/80 uppercase tracking-wider mb-2">Secret key <code class="ci">sk_live_</code></div>
+                <p class="text-cream-muted text-sm leading-relaxed">Server-side only. Never ship this in frontend code or commit it to git. Used to call <code class="ci">POST /orgs/{'{org}'}/embed/token</code> and generate per-user embed tokens.</p>
               </div>
             </div>
           </div>
 
-          <h3 class="text-cream font-medium mb-3">Token permissions</h3>
-          <p class="text-cream-muted text-sm mb-4">Each token carries a <code class="code-inline">permissions</code> array. The embed will only allow actions the token explicitly grants. Available permissions:</p>
+          <div class="bg-amber/5 border border-amber/20 rounded-xl px-4 py-3 flex gap-3 text-sm">
+            <svg class="w-4 h-4 text-amber flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z"/></svg>
+            <span class="text-cream-muted">Embed tokens are rate-limited to <strong class="text-cream">30 generations per minute</strong> per IP and expire after a maximum of 24 hours (<code class="ci">expires_in</code> max is <code class="ci">86400</code>).</span>
+          </div>
+        </section>
+
+        <!-- ── Permissions ──────────────────────────────────────────────────── -->
+        <section id="permissions" class="mb-16 scroll-mt-24">
+          <h2 class="font-display text-3xl font-semibold text-cream mb-2">Permissions</h2>
+          <p class="text-cream-muted text-sm mb-4">Each embed token carries a <code class="ci">permissions</code> array. The embed blocks any action not explicitly granted — even if the UI renders the option. Grant only what each user actually needs.</p>
+
           <div class="bg-charcoal-800/50 border border-charcoal-700/40 rounded-xl overflow-hidden">
             <table class="w-full text-sm">
-              <thead><tr class="border-b border-charcoal-700/40"><th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider">Permission</th><th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider">What it allows</th></tr></thead>
+              <thead>
+                <tr class="border-b border-charcoal-700/40">
+                  <th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider w-56">Permission</th>
+                  <th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider">What it allows</th>
+                </tr>
+              </thead>
               <tbody class="divide-y divide-charcoal-700/20">
-                <tr v-for="row in [
-                  ['invoices.read', 'View invoice list and individual invoices'],
-                  ['invoices.create', 'Create new invoices'],
-                  ['invoices.update', 'Edit existing invoices'],
-                  ['invoices.delete', 'Delete invoices'],
-                  ['projects.read', 'View projects'],
-                  ['projects.create / update / delete', 'Manage projects'],
-                  ['receipts.read / create / update / delete', 'Manage receipts'],
-                  ['clients.read / create / update / delete', 'Manage clients'],
-                  ['letterheads.read / create / update / delete', 'Manage letterheads'],
-                ]" :key="row[0]">
-                  <td class="px-4 py-2.5"><code class="code-inline">{{ row[0] }}</code></td>
-                  <td class="px-4 py-2.5 text-cream-muted">{{ row[1] }}</td>
+                <tr v-for="p in allPermissions" :key="p.perm">
+                  <td class="px-4 py-2.5"><code class="ci">{{ p.perm }}</code></td>
+                  <td class="px-4 py-2.5 text-cream-muted">{{ p.desc }}</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </section>
 
-        <!-- Views -->
+        <!-- ── Available views ─────────────────────────────────────────────── -->
         <section id="views" class="mb-16 scroll-mt-24">
           <h2 class="font-display text-3xl font-semibold text-cream mb-2">Available views</h2>
-          <p class="text-cream-muted text-sm mb-6">Pass any of these as the <code class="code-inline">view</code> parameter to <code class="code-inline">ft.mount()</code> or <code class="code-inline">ft.open()</code>.</p>
+          <p class="text-cream-muted text-sm mb-4">Pass any of these as the <code class="ci">view</code> param to <code class="ci">ft.mount()</code> or <code class="ci">ft.open()</code>. For views with a dynamic ID, pass the ID via <code class="ci">params</code>.</p>
+
+          <div class="code-block mb-5">
+            <pre v-pre class="code-pre"><code>// Static view
+ft.mount('#container', { view: 'invoices', token })
+
+// View with an ID — pass the id as a param or embed the path directly
+ft.mount('#container', { view: 'invoices/INV_ID', token })
+ft.mount('#container', { view: 'projects/PROJ_ID/edit', token })</code></pre>
+          </div>
+
           <div class="bg-charcoal-800/50 border border-charcoal-700/40 rounded-xl overflow-hidden">
             <table class="w-full text-sm">
-              <thead><tr class="border-b border-charcoal-700/40"><th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider">view</th><th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider">URL path</th><th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider">Permission needed</th></tr></thead>
+              <thead>
+                <tr class="border-b border-charcoal-700/40">
+                  <th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider">view</th>
+                  <th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider hidden sm:table-cell">Permission</th>
+                  <th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider hidden md:table-cell">Description</th>
+                </tr>
+              </thead>
               <tbody class="divide-y divide-charcoal-700/20">
-                <tr v-for="row in [
-                  ['invoices', '/embed/invoices', 'invoices.read'],
-                  ['invoices/create', '/embed/invoices/create', 'invoices.create'],
-                  ['invoices/:id', '/embed/invoices/INV_ID', 'invoices.read'],
-                  ['projects', '/embed/projects', 'projects.read'],
-                  ['receipts', '/embed/receipts', 'receipts.read'],
-                  ['clients', '/embed/clients', 'clients.read'],
-                  ['letterheads', '/embed/letterheads', 'letterheads.read'],
-                  ['preferences', '/embed/preferences', 'settings.manage'],
-                  ['dashboard', '/embed/dashboard', '—'],
-                  ['analytics', '/embed/analytics', 'analytics.read'],
-                ]" :key="row[0]">
-                  <td class="px-4 py-2.5"><code class="code-inline">{{ row[0] }}</code></td>
-                  <td class="px-4 py-2.5 text-cream-muted text-xs">{{ row[1] }}</td>
-                  <td class="px-4 py-2.5"><code class="code-inline text-xs">{{ row[2] }}</code></td>
+                <tr v-for="v in allViews" :key="v.view">
+                  <td class="px-4 py-2.5"><code class="ci text-xs">{{ v.view }}</code></td>
+                  <td class="px-4 py-2.5 hidden sm:table-cell"><code class="ci text-xs">{{ v.perm }}</code></td>
+                  <td class="px-4 py-2.5 text-cream-muted text-xs hidden md:table-cell">{{ v.desc }}</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </section>
 
-        <!-- Appearance -->
+        <!-- ── Appearance ──────────────────────────────────────────────────── -->
         <section id="appearance" class="mb-16 scroll-mt-24">
           <h2 class="font-display text-3xl font-semibold text-cream mb-2">Appearance / theming</h2>
-          <p class="text-cream-muted text-sm mb-6">Pass an <code class="code-inline">appearance</code> object to <code class="code-inline">Flowtali.init()</code> to match your brand. All properties are optional.</p>
-          <div class="code-block">
-            <div class="code-lang">JavaScript</div>
+          <p class="text-cream-muted text-sm mb-6">Pass an <code class="ci">appearance</code> object to <code class="ci">Flowtali.init()</code> to apply your brand globally, or override per-mount call.</p>
+
+          <div class="code-block mb-4">
+            <div class="code-lang">Global (all mounts from this instance)</div>
             <pre v-pre class="code-pre"><code>const ft = Flowtali.init('pk_live_...', {
   appearance: {
-    primaryColor:    '#6366f1',    // buttons, links, active states (default: #e8a83e)
-    backgroundColor: '#ffffff',    // iframe background (default: #111113)
-    textColor:       '#111827',    // body text (default: #f5f0e8)
-    fontFamily:      'Inter, sans-serif', // (default: DM Sans)
-    borderRadius:    '8px',        // input / card radius (default: 7px)
+    primaryColor:    '#6366f1',       // buttons, links, focus rings (default: #e8a83e)
+    backgroundColor: '#ffffff',       // iframe background          (default: #111113)
+    textColor:       '#111827',       // primary body text           (default: #f5f0e8)
+    fontFamily:      'Inter, sans-serif', //                        (default: DM Sans)
+    borderRadius:    '8px',           // inputs and cards            (default: 7px)
   },
 })</code></pre>
           </div>
-          <p class="text-cream-muted text-sm mt-4">You can also override the appearance per-mount call:</p>
-          <div class="code-block mt-3">
+
+          <div class="code-block">
+            <div class="code-lang">Per-mount override</div>
             <pre v-pre class="code-pre"><code>ft.mount('#container', {
   view: 'invoices',
   token: embedToken,
@@ -256,93 +494,263 @@ const embedToken = data.token             // pass this to your frontend</code></
           </div>
         </section>
 
-        <!-- Events -->
+        <!-- ── Events ──────────────────────────────────────────────────────── -->
         <section id="events" class="mb-16 scroll-mt-24">
           <h2 class="font-display text-3xl font-semibold text-cream mb-2">Events</h2>
-          <p class="text-cream-muted text-sm mb-6">Listen for actions happening inside the embed using <code class="code-inline">ft.on()</code>. Events are emitted after successful mutations.</p>
-          <div class="code-block mb-6">
-            <div class="code-lang">JavaScript</div>
-            <pre v-pre class="code-pre"><code>ft.on('invoice.created', (invoice) => {
-  console.log('New invoice:', invoice.id)
-  // sync to your own system, show a toast, etc.
-})
+          <p class="text-cream-muted text-sm mb-6">
+            Listen for actions inside the embed with <code class="ci">ft.on()</code>. Events fire after successful mutations — not on validation errors or cancelled actions. Use them to sync your own system, show toasts, or update UI state.
+          </p>
 
-ft.on('project.updated', (project) => { ... })
-ft.on('receipt.created', (receipt) => { ... })
-
-// Catch all events
-ft.on('*', (eventName, data) => {
-  console.log(eventName, data)
-})</code></pre>
-          </div>
-          <div class="bg-charcoal-800/50 border border-charcoal-700/40 rounded-xl overflow-hidden">
+          <!-- Full event reference -->
+          <h3 class="text-cream font-medium text-sm mb-3">All events</h3>
+          <div class="bg-charcoal-800/50 border border-charcoal-700/40 rounded-xl overflow-hidden mb-8">
             <table class="w-full text-sm">
-              <thead><tr class="border-b border-charcoal-700/40"><th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider">Event</th><th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider">Fired when</th></tr></thead>
+              <thead>
+                <tr class="border-b border-charcoal-700/40">
+                  <th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider w-48">Event</th>
+                  <th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider hidden sm:table-cell">Fired when</th>
+                  <th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider hidden lg:table-cell">Payload shape</th>
+                </tr>
+              </thead>
               <tbody class="divide-y divide-charcoal-700/20">
-                <tr v-for="row in [
-                  ['invoice.created', 'A new invoice is successfully created'],
-                  ['invoice.updated', 'An invoice is edited and saved'],
-                  ['invoice.deleted', 'An invoice is deleted'],
-                  ['project.created / updated / deleted', 'Project mutations'],
-                  ['receipt.created / updated / deleted', 'Receipt mutations'],
-                  ['client.created / updated / deleted', 'Client mutations'],
-                ]" :key="row[0]">
-                  <td class="px-4 py-2.5"><code class="code-inline">{{ row[0] }}</code></td>
-                  <td class="px-4 py-2.5 text-cream-muted">{{ row[1] }}</td>
+                <tr v-for="e in allEvents" :key="e.event">
+                  <td class="px-4 py-2.5"><code class="ci text-xs">{{ e.event }}</code></td>
+                  <td class="px-4 py-2.5 text-cream-muted text-xs hidden sm:table-cell">{{ e.desc }}</td>
+                  <td class="px-4 py-2.5 hidden lg:table-cell"><code class="ci text-xs">{{ e.payload }}</code></td>
                 </tr>
               </tbody>
             </table>
           </div>
+
+          <!-- Framework examples -->
+          <h3 class="text-cream font-medium text-sm mb-4">Framework examples</h3>
+          <div class="flex flex-col gap-4">
+
+            <div class="code-block">
+              <div class="code-lang">Vanilla JS / HTML</div>
+              <pre v-pre class="code-pre"><code>const ft = Flowtali.init('pk_live_...')
+ft.mount('#container', { view: 'invoices', token })
+
+ft.on('invoice.created', (invoice) => {
+  console.log('Invoice created:', invoice.id)
+  showToast('Invoice created!')
+})
+
+ft.on('invoice.deleted', ({ id }) => {
+  removeFromLocalList(id)
+})
+
+// Catch every event from this embed
+ft.on('*', (eventName, data) => {
+  console.log('[flowtali]', eventName, data)
+})</code></pre>
+            </div>
+
+            <div class="code-block">
+              <div class="code-lang">React</div>
+              <pre v-pre class="code-pre"><code>import { useEffect, useRef } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+
+export default function FlowtaliPanel({ embedToken }) {
+  const containerRef = useRef(null)
+  const ftRef = useRef(null)
+  const queryClient = useQueryClient()
+
+  useEffect(() => {
+    const script = document.createElement('script')
+    script.src = 'https://flowtali.com/sdk/flowtali.js'
+    script.onload = () => {
+      ftRef.current = window.Flowtali.init('pk_live_...')
+      ftRef.current.mount(containerRef.current, {
+        view: 'invoices',
+        token: embedToken,
+      })
+
+      ftRef.current.on('invoice.created', () => {
+        // Invalidate your local invoice cache
+        queryClient.invalidateQueries({ queryKey: ['invoices'] })
+      })
+
+      ftRef.current.on('invoice.updated', (invoice) => {
+        queryClient.setQueryData(['invoices', invoice.id], invoice)
+      })
+
+      ftRef.current.on('invoice.deleted', ({ id }) => {
+        queryClient.removeQueries({ queryKey: ['invoices', id] })
+      })
+    }
+    document.head.appendChild(script)
+    return () => ftRef.current?.destroy()
+  }, [embedToken])
+
+  return &lt;div ref={containerRef} style={{ height: 600 }} /&gt;
+}</code></pre>
+            </div>
+
+            <div class="code-block">
+              <div class="code-lang">Vue 3 (Composition API)</div>
+              <pre v-pre class="code-pre"><code>&lt;script setup&gt;
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const props = defineProps(['embedToken'])
+const emit = defineEmits(['invoiceCreated', 'invoiceDeleted'])
+const container = ref(null)
+let ft = null
+
+onMounted(() => {
+  const script = document.createElement('script')
+  script.src = 'https://flowtali.com/sdk/flowtali.js'
+  script.onload = () => {
+    ft = window.Flowtali.init('pk_live_...')
+    ft.mount(container.value, { view: 'invoices', token: props.embedToken })
+
+    ft.on('invoice.created', (invoice) => {
+      emit('invoiceCreated', invoice)
+    })
+
+    ft.on('invoice.deleted', ({ id }) => {
+      emit('invoiceDeleted', id)
+    })
+
+    ft.on('receipt.created', (receipt) => {
+      // update local state
+    })
+  }
+  document.head.appendChild(script)
+})
+
+onUnmounted(() => ft?.destroy())
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div ref="container" style="height: 600px" /&gt;
+&lt;/template&gt;</code></pre>
+            </div>
+
+            <div class="code-block">
+              <div class="code-lang">Next.js (App Router)</div>
+              <pre v-pre class="code-pre"><code>'use client'
+import { useEffect, useRef } from 'react'
+import Script from 'next/script'
+import { useRouter } from 'next/navigation'
+
+export default function FlowtaliPanel({ embedToken }) {
+  const containerRef = useRef(null)
+  const ftRef = useRef(null)
+  const router = useRouter()
+
+  function onSDKLoad() {
+    ftRef.current = window.Flowtali.init('pk_live_...')
+    ftRef.current.mount(containerRef.current, {
+      view: 'invoices',
+      token: embedToken,
+    })
+
+    ftRef.current.on('invoice.created', (invoice) => {
+      // Refresh server components after a mutation
+      router.refresh()
+    })
+
+    ftRef.current.on('project.created', (project) => {
+      router.refresh()
+    })
+  }
+
+  useEffect(() => () => ftRef.current?.destroy(), [])
+
+  return (
+    &lt;&gt;
+      &lt;Script src="https://flowtali.com/sdk/flowtali.js" onLoad={onSDKLoad} /&gt;
+      &lt;div ref={containerRef} style={{ height: 600 }} /&gt;
+    &lt;/&gt;
+  )
+}</code></pre>
+            </div>
+
+            <div class="code-block">
+              <div class="code-lang">Nuxt 3</div>
+              <pre v-pre class="code-pre"><code>&lt;script setup&gt;
+const props = defineProps(['embedToken'])
+const container = ref(null)
+let ft = null
+
+// Load the SDK only on the client
+onMounted(async () => {
+  await new Promise((resolve) => {
+    const s = document.createElement('script')
+    s.src = 'https://flowtali.com/sdk/flowtali.js'
+    s.onload = resolve
+    document.head.appendChild(s)
+  })
+
+  ft = window.Flowtali.init('pk_live_...')
+  ft.mount(container.value, { view: 'invoices', token: props.embedToken })
+
+  ft.on('invoice.created', async (invoice) => {
+    // Refresh Nuxt data
+    await refreshNuxtData('invoices')
+  })
+
+  ft.on('client.created', async (client) => {
+    await refreshNuxtData('clients')
+  })
+})
+
+onUnmounted(() => ft?.destroy())
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div ref="container" style="height: 600px" /&gt;
+&lt;/template&gt;</code></pre>
+            </div>
+
+          </div>
         </section>
 
-        <!-- Reference -->
+        <!-- ── SDK reference ───────────────────────────────────────────────── -->
         <section id="reference" class="mb-16 scroll-mt-24">
-          <h2 class="font-display text-3xl font-semibold text-cream mb-2">SDK reference</h2>
+          <h2 class="font-display text-3xl font-semibold text-cream mb-6">SDK reference</h2>
 
-          <div class="flex flex-col gap-8 mt-6">
-            <div>
-              <h3 class="text-cream font-semibold font-mono text-sm mb-2">Flowtali.init(publishableKey, options?)</h3>
-              <p class="text-cream-muted text-sm mb-3">Initializes the SDK. Returns a <code class="code-inline">FlowtaliInstance</code>.</p>
-              <div class="bg-charcoal-800/50 border border-charcoal-700/40 rounded-xl overflow-hidden">
-                <table class="w-full text-sm"><thead><tr class="border-b border-charcoal-700/40"><th class="text-left px-4 py-2 text-cream-faint text-xs uppercase tracking-wider">Option</th><th class="text-left px-4 py-2 text-cream-faint text-xs uppercase tracking-wider">Type</th><th class="text-left px-4 py-2 text-cream-faint text-xs uppercase tracking-wider">Description</th></tr></thead>
-                <tbody class="divide-y divide-charcoal-700/20">
-                  <tr><td class="px-4 py-2"><code class="code-inline">appearance</code></td><td class="px-4 py-2 text-cream-muted">object</td><td class="px-4 py-2 text-cream-muted">Default theme for all mounts from this instance.</td></tr>
-                </tbody></table>
-              </div>
+          <div class="flex flex-col gap-7">
+            <div class="border border-charcoal-700/40 rounded-xl p-5">
+              <h3 class="font-mono text-sm text-cream font-semibold mb-1">Flowtali.init(publishableKey, options?)</h3>
+              <p class="text-cream-muted text-xs mb-3">Initializes the SDK. Returns a <code class="ci">FlowtaliInstance</code>.</p>
+              <table class="w-full text-xs"><thead><tr class="border-b border-charcoal-700/30"><th class="text-left py-1.5 pr-3 text-cream-faint uppercase tracking-wider">Option</th><th class="text-left py-1.5 pr-3 text-cream-faint uppercase tracking-wider">Type</th><th class="text-left py-1.5 text-cream-faint uppercase tracking-wider">Description</th></tr></thead>
+              <tbody class="divide-y divide-charcoal-700/20">
+                <tr><td class="py-1.5 pr-3"><code class="ci">appearance</code></td><td class="py-1.5 pr-3 text-cream-muted">object</td><td class="py-1.5 text-cream-muted">Default theme applied to all mounts from this instance.</td></tr>
+              </tbody></table>
             </div>
 
-            <div>
-              <h3 class="text-cream font-semibold font-mono text-sm mb-2">ft.mount(selector, options)</h3>
-              <p class="text-cream-muted text-sm mb-3">Mounts the embed inside a container element.</p>
-              <div class="bg-charcoal-800/50 border border-charcoal-700/40 rounded-xl overflow-hidden">
-                <table class="w-full text-sm"><thead><tr class="border-b border-charcoal-700/40"><th class="text-left px-4 py-2 text-cream-faint text-xs uppercase tracking-wider">Option</th><th class="text-left px-4 py-2 text-cream-faint text-xs uppercase tracking-wider">Type</th><th class="text-left px-4 py-2 text-cream-faint text-xs uppercase tracking-wider">Description</th></tr></thead>
-                <tbody class="divide-y divide-charcoal-700/20">
-                  <tr><td class="px-4 py-2"><code class="code-inline">view</code></td><td class="px-4 py-2 text-cream-muted">string</td><td class="px-4 py-2 text-cream-muted">Which view to render. See Available views.</td></tr>
-                  <tr><td class="px-4 py-2"><code class="code-inline">token</code></td><td class="px-4 py-2 text-cream-muted">string</td><td class="px-4 py-2 text-cream-muted">Embed JWT from your backend.</td></tr>
-                  <tr><td class="px-4 py-2"><code class="code-inline">params</code></td><td class="px-4 py-2 text-cream-muted">object</td><td class="px-4 py-2 text-cream-muted">Optional query params passed to the view (e.g. <code class="code-inline">{ filter: 'unpaid' }</code>).</td></tr>
-                  <tr><td class="px-4 py-2"><code class="code-inline">appearance</code></td><td class="px-4 py-2 text-cream-muted">object</td><td class="px-4 py-2 text-cream-muted">Per-mount theme override.</td></tr>
-                </tbody></table>
-              </div>
+            <div class="border border-charcoal-700/40 rounded-xl p-5">
+              <h3 class="font-mono text-sm text-cream font-semibold mb-1">ft.mount(selector, options)</h3>
+              <p class="text-cream-muted text-xs mb-3">Mounts the embed inside a container. <code class="ci">selector</code> can be a CSS string or a DOM element.</p>
+              <table class="w-full text-xs"><thead><tr class="border-b border-charcoal-700/30"><th class="text-left py-1.5 pr-3 text-cream-faint uppercase tracking-wider">Option</th><th class="text-left py-1.5 pr-3 text-cream-faint uppercase tracking-wider">Type</th><th class="text-left py-1.5 text-cream-faint uppercase tracking-wider">Description</th></tr></thead>
+              <tbody class="divide-y divide-charcoal-700/20">
+                <tr><td class="py-1.5 pr-3"><code class="ci">view</code></td><td class="py-1.5 pr-3 text-cream-muted">string</td><td class="py-1.5 text-cream-muted">Which view to render. See Available views.</td></tr>
+                <tr><td class="py-1.5 pr-3"><code class="ci">token</code></td><td class="py-1.5 pr-3 text-cream-muted">string</td><td class="py-1.5 text-cream-muted">Short-lived embed JWT from your backend.</td></tr>
+                <tr><td class="py-1.5 pr-3"><code class="ci">params</code></td><td class="py-1.5 pr-3 text-cream-muted">object</td><td class="py-1.5 text-cream-muted">Optional query params forwarded to the view (e.g. <code class="ci">{ filter: 'unpaid' }</code>).</td></tr>
+                <tr><td class="py-1.5 pr-3"><code class="ci">appearance</code></td><td class="py-1.5 pr-3 text-cream-muted">object</td><td class="py-1.5 text-cream-muted">Per-mount theme override, merged over init appearance.</td></tr>
+              </tbody></table>
             </div>
 
-            <div>
-              <h3 class="text-cream font-semibold font-mono text-sm mb-2">ft.open(options)</h3>
-              <p class="text-cream-muted text-sm">Same as <code class="code-inline">mount()</code> but renders the view in a centered modal overlay with a close button. Accepts the same options.</p>
+            <div class="border border-charcoal-700/40 rounded-xl p-5">
+              <h3 class="font-mono text-sm text-cream font-semibold mb-1">ft.open(options)</h3>
+              <p class="text-cream-muted text-xs">Same as <code class="ci">mount()</code> but renders inside a centered overlay modal with a backdrop and close button. Accepts the same options.</p>
             </div>
 
-            <div>
-              <h3 class="text-cream font-semibold font-mono text-sm mb-2">ft.on(event, handler) / ft.off(event, handler)</h3>
-              <p class="text-cream-muted text-sm">Subscribe / unsubscribe from embed events. Use <code class="code-inline">'*'</code> to listen to all events.</p>
+            <div class="border border-charcoal-700/40 rounded-xl p-5">
+              <h3 class="font-mono text-sm text-cream font-semibold mb-1">ft.on(event, handler) / ft.off(event, handler)</h3>
+              <p class="text-cream-muted text-xs">Subscribe / unsubscribe to embed events. Use <code class="ci">'*'</code> to catch all events — handler receives <code class="ci">(eventName, data)</code>.</p>
             </div>
 
-            <div>
-              <h3 class="text-cream font-semibold font-mono text-sm mb-2">ft.destroy()</h3>
-              <p class="text-cream-muted text-sm">Removes the iframe / modal and clears all internal state. Call this when navigating away from the page that hosts the embed.</p>
+            <div class="border border-charcoal-700/40 rounded-xl p-5">
+              <h3 class="font-mono text-sm text-cream font-semibold mb-1">ft.destroy()</h3>
+              <p class="text-cream-muted text-xs">Removes the iframe or modal and clears all state. Call this in your component's unmount / cleanup hook to avoid memory leaks.</p>
             </div>
 
-            <div>
-              <h3 class="text-cream font-semibold font-mono text-sm mb-2">Flowtali.config({ baseUrl })</h3>
-              <p class="text-cream-muted text-sm">Override the Flowtali base URL. Useful for self-hosted deployments or testing against a staging environment.</p>
+            <div class="border border-charcoal-700/40 rounded-xl p-5">
+              <h3 class="font-mono text-sm text-cream font-semibold mb-1">Flowtali.config({ baseUrl })</h3>
+              <p class="text-cream-muted text-xs">Override the Flowtali base URL before calling <code class="ci">init()</code>. Useful for staging environments or self-hosted deployments.</p>
             </div>
           </div>
         </section>
@@ -377,7 +785,7 @@ ft.on('*', (eventName, data) => {
   line-height: 1.7;
   color: #d4cfc8;
 }
-.code-inline {
+.ci {
   background: rgba(232,168,62,0.1);
   border: 1px solid rgba(232,168,62,0.15);
   color: #e8a83e;
