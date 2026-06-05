@@ -82,6 +82,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
       </router-link>
       <div class="hidden md:flex items-center gap-8">
         <span v-for="page in pages" :key="page.id" class="nav-link" @click="scrollTo(page.id)">{{ page.name }}</span>
+        <router-link :to="{ name: 'docs.embed' }" class="nav-link">Developers</router-link>
       </div>
       <div class="hidden md:flex items-center gap-3">
         <template v-if="isLoggedIn">
@@ -117,7 +118,8 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
       <span v-for="page in pages" :key="page.id"
         class="text-cream-muted text-xl font-light cursor-pointer hover:text-cream"
         @click="scrollTo(page.id); mobileMenuOpen = false">{{ page.name }}</span>
-
+      <router-link :to="{ name: 'docs.embed' }" @click="mobileMenuOpen = false"
+        class="text-cream-muted text-xl font-light hover:text-cream transition-colors">Developers</router-link>
     </div>
     <div class="mt-auto flex flex-col gap-3">
       <template v-if="isLoggedIn">

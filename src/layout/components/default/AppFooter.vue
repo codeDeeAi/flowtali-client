@@ -3,7 +3,7 @@
 <template>
   <footer class="border-t border-charcoal-700/30 py-12 bg-charcoal-950">
     <div class="max-w-7xl mx-auto px-6">
-      <div class="grid md:grid-cols-4 gap-10 mb-12">
+      <div class="grid md:grid-cols-5 gap-10 mb-12">
         <div class="md:col-span-2">
           <router-link :to="{ name: 'home' }" class="flex items-center gap-2.5 mb-4 cursor-pointer">
             <div
@@ -28,6 +28,19 @@
               class="text-cream-faint text-sm hover:text-cream cursor-pointer transition-colors">Letterhead
               Generator</router-link>
             <span class="text-cream-faint text-sm cursor-not-allowed opacity-50">Pricing</span>
+            <router-link :to="{ name: 'changelog' }"
+              class="text-cream-faint text-sm hover:text-cream transition-colors">Changelog</router-link>
+          </div>
+        </div>
+        <div>
+          <div class="text-cream text-sm font-semibold mb-4">Developers</div>
+          <div class="flex flex-col gap-2.5">
+            <router-link :to="{ name: 'docs.embed' }"
+              class="text-cream-faint text-sm hover:text-cream transition-colors">Embed SDK</router-link>
+            <router-link :to="{ name: 'docs.embed', hash: '#auth' }"
+              class="text-cream-faint text-sm hover:text-cream transition-colors">API Keys</router-link>
+            <router-link :to="{ name: 'docs.embed', hash: '#events' }"
+              class="text-cream-faint text-sm hover:text-cream transition-colors">Events</router-link>
             <router-link :to="{ name: 'changelog' }"
               class="text-cream-faint text-sm hover:text-cream transition-colors">Changelog</router-link>
           </div>

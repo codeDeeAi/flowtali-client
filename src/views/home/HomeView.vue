@@ -153,6 +153,13 @@ onMounted(async () => {
   }
 });
 
+const embedFeatures = [
+  { title: 'All views, one SDK', desc: 'Embed invoices, projects, receipts, clients, preferences, analytics, and more. Pass a single view param to switch.', icon: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>' },
+  { title: 'Permission-scoped tokens', desc: 'Issue short-lived JWTs for each user with exactly the permissions they need — invoices.read, invoices.create, and more.', icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>' },
+  { title: 'Runtime theming', desc: 'Match your brand with primaryColor, fontFamily, borderRadius, and more — passed as a plain JS object.', icon: '<circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>' },
+  { title: 'Event callbacks', desc: 'React to actions inside the embed with ft.on("invoice.created", cb) — perfect for syncing with your own system.', icon: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>' },
+]
+
 const testimonials = [
   { name: 'Amara Osei', role: 'UX Designer, Lagos', quote: 'The Projects feature changed everything. I can see every invoice, receipt, and file for a client in one place. No more hunting through folders.', hue: 180 },
   { name: 'Luca Ferretti', role: 'Freelance Developer', quote: 'Real-time preview is genius. I see exactly what my client gets before I export. No more surprise layout issues.', hue: 220 },
@@ -746,6 +753,83 @@ const scrollTo = (id: string) => {
               <div class="text-cream-faint text-xs">{{ t.role }}</div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-5xl mx-auto"></div>
+
+  <!-- EMBED SDK -->
+  <section id="embed-sdk" class="py-28 relative overflow-hidden">
+    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-96 h-96 rounded-full opacity-10 pointer-events-none"
+      style="background:radial-gradient(circle,rgba(232,168,62,0.5) 0%,transparent 70%)"></div>
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-16">
+        <div class="badge inline-flex mb-5 items-center gap-1.5">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Embed SDK
+        </div>
+        <h2 class="font-display text-5xl md:text-6xl font-semibold text-cream leading-tight">
+          Flowtali in <em class="text-amber not-italic">your</em> product
+        </h2>
+        <p class="text-cream-muted text-lg mt-5 max-w-2xl mx-auto">Embed invoices, projects, receipts, and more directly in your own SaaS — with one script tag, a permission-scoped token, and a fully brandable iframe.</p>
+        <router-link :to="{ name: 'docs.embed' }" class="inline-flex items-center gap-2 mt-6 text-sm text-amber hover:underline">
+          Read the docs
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </router-link>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <!-- Code snippet -->
+        <div class="relative">
+          <div class="bg-charcoal-950 border border-charcoal-700/50 rounded-2xl overflow-hidden shadow-2xl">
+            <div class="bg-charcoal-800/60 border-b border-charcoal-700/40 px-5 py-3 flex items-center gap-2">
+              <div class="w-3 h-3 rounded-full bg-red-500/40"></div>
+              <div class="w-3 h-3 rounded-full bg-yellow-500/40"></div>
+              <div class="w-3 h-3 rounded-full bg-green-500/40"></div>
+              <span class="ml-3 text-cream-faint text-xs font-mono">app.js</span>
+            </div>
+            <pre class="p-5 text-xs font-mono leading-relaxed overflow-x-auto"><code class="text-cream-muted"><span class="text-cream-faint">// 1. Add the script</span>
+&lt;script src="flowtali.com/sdk/flowtali.js"&gt;&lt;/script&gt;
+
+<span class="text-cream-faint">// 2. Init with your publishable key + branding</span>
+<span class="text-cream">const ft = Flowtali.init(<span class="text-amber">'pk_live_...'</span>, {
+  appearance: { primaryColor: <span class="text-amber">'#6366f1'</span> }
+})</span>
+
+<span class="text-cream-faint">// 3. Mount any view with a user token</span>
+<span class="text-cream">ft.mount(<span class="text-amber">'#container'</span>, {
+  view: <span class="text-amber">'invoices'</span>,
+  token: userEmbedToken,
+})
+
+ft.on(<span class="text-amber">'invoice.created'</span>, (inv) =&gt; {
+  syncToYourSystem(inv.id)
+})</span></code></pre>
+          </div>
+          <div class="absolute -bottom-6 -right-6 w-48 h-48 rounded-full pointer-events-none"
+            style="background:radial-gradient(circle,rgba(232,168,62,0.12) 0%,transparent 70%)"></div>
+        </div>
+
+        <!-- Feature list -->
+        <div class="flex flex-col gap-5">
+          <div v-for="item in embedFeatures" :key="item.title"
+            class="bg-charcoal-800/50 border border-charcoal-700/40 rounded-xl p-5 flex items-start gap-4 hover:border-amber-border transition-colors">
+            <div class="w-9 h-9 rounded-lg bg-amber/10 border border-amber/15 flex items-center justify-center flex-shrink-0">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E8A83E" stroke-width="1.8" v-html="item.icon"></svg>
+            </div>
+            <div>
+              <div class="text-cream text-sm font-medium mb-0.5">{{ item.title }}</div>
+              <div class="text-cream-muted text-xs leading-relaxed">{{ item.desc }}</div>
+            </div>
+          </div>
+
+          <router-link :to="{ name: 'docs.embed' }"
+            class="mt-2 inline-flex items-center justify-center gap-2 bg-amber text-charcoal-900 font-semibold text-sm px-6 py-3 rounded-lg hover:bg-amber-light transition-colors self-start">
+            View full docs
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </router-link>
         </div>
       </div>
     </div>
