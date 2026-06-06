@@ -2,12 +2,14 @@
 import { ref, computed, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
+import { usePermissions } from '@/composables/usePermissions'
 import { OrgPreferencesService } from '@/services/org-preferences.service'
 import { MediaService } from '@/services/media.service'
 import { ApiKeyService, type IOrgApiKey } from '@/services/api-key.service'
 import type { IOrgStamp, IOrgBrandColor, IOrgSignature, IOrgLogo, IOrgInvoiceProfile, IOrgBankAccount, IOrgPaymentLink } from '@/types/org-preferences.types'
 
 const authStore = useAuthStore()
+const { isBusinessOrg } = usePermissions()
 const orgId = computed(() => authStore.currentOrganization?.id ?? '')
 const orgName = computed(() => authStore.currentOrganization?.name ?? 'your organization')
 
@@ -1264,7 +1266,7 @@ onMounted(loadApiKeys)
       </div>
 
       <!-- ── API Keys ──────────────────────────────────────────────────────── -->
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 lg:col-span-2">
+      <div v-if="isBusinessOrg" class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 lg:col-span-2">
         <div class="flex items-center justify-between mb-4">
           <div>
             <h3 class="text-sm font-semibold text-cream">API Keys</h3>
