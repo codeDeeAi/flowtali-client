@@ -21,9 +21,20 @@ interface Release {
 
 const releases: Release[] = [
   {
-    version: 'v1.5',
+    version: 'v1.6',
     date: 'June 2026',
     badge: 'Latest',
+    changes: [
+      { type: 'fix', text: 'API Keys section in Organization Preferences is now hidden for personal accounts — it is only relevant to organization accounts.' },
+      { type: 'fix', text: 'Stamp selector buttons in the invoice and letterhead editors no longer appear empty — resolved a data normalization issue where stamps saved in a legacy format were not converted before being sent to the frontend.' },
+      { type: 'fix', text: 'Google sign-up profile picture is now correctly downloaded and stored in our own storage on account creation — previously the Google-hosted URL was stored directly, causing broken avatar images.' },
+      { type: 'improved', text: 'Feedback panel now anchors to the bottom-right corner on desktop instead of the centre-right.' },
+    ],
+  },
+  {
+    version: 'v1.5',
+    date: 'June 2026',
+    badge: null,
     changes: [
       { type: 'new', text: 'Embed SDK — embed any Flowtali view (invoices, projects, receipts, preferences and more) directly in your own product or website using a lightweight JavaScript SDK.' },
       { type: 'new', text: 'API key management — generate publishable and secret key pairs per organization to authenticate embedded sessions.' },
