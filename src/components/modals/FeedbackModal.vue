@@ -76,7 +76,7 @@ function close() {
     <Transition name="feedback-fade">
       <div
         v-if="feedbackStore.isOpen"
-        class="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:justify-end p-0 sm:p-6"
+        class="fixed inset-0 z-50 flex items-end justify-center sm:justify-end p-0 sm:p-6 sm:pb-8"
         @click.self="close"
       >
         <!-- Backdrop -->
