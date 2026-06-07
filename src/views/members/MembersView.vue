@@ -223,22 +223,26 @@ const handleRemove = async () => {
   <div class="p-4 md:p-6 space-y-5 min-h-full">
 
     <!-- Page header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-      <div>
-        <h1 class="page-title">Team Members</h1>
-        <p class="page-subtitle">{{ total }} member{{ total !== 1 ? 's' : '' }}</p>
-      </div>
-      <div class="flex items-center gap-2">
-        <div class="relative">
-          <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint" />
-          <input v-model="searchQuery" @input="onSearch" placeholder="Search members…" class="app-inp pl-8 text-xs py-2 w-44" />
+    <div class="flex flex-col gap-3">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="page-title">Team Members</h1>
+          <p class="page-subtitle">{{ total }} member{{ total !== 1 ? 's' : '' }}</p>
         </div>
-        <button v-if="canInvite" @click="openAdd" class="flex items-center gap-2 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs px-3 py-2 rounded-lg transition-colors whitespace-nowrap">
-          <Icon icon="lucide:user-round-plus" class="w-3.5 h-3.5" /> Add Member
+        <button v-if="canInvite" @click="openAdd" class="flex items-center gap-2 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs px-3 py-2 rounded-lg transition-colors">
+          <Icon icon="lucide:user-round-plus" class="w-3.5 h-3.5" />
+          <span class="hidden sm:inline">Add Member</span>
+          <span class="sm:hidden">Add</span>
         </button>
-        <button v-else @click="router.push({ name: 'billing' })" class="flex items-center gap-1.5 border border-amber/40 text-amber text-xs px-3 py-2 rounded-lg transition-colors hover:bg-amber/10 whitespace-nowrap">
-          <Icon icon="lucide:lock" class="w-3.5 h-3.5" /> Upgrade to invite
+        <button v-else @click="router.push({ name: 'billing' })" class="flex items-center gap-1.5 border border-amber/40 text-amber text-xs px-3 py-2 rounded-lg transition-colors hover:bg-amber/10">
+          <Icon icon="lucide:lock" class="w-3.5 h-3.5" />
+          <span class="hidden sm:inline">Upgrade to invite</span>
+          <span class="sm:hidden">Upgrade</span>
         </button>
+      </div>
+      <div class="relative">
+        <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint" />
+        <input v-model="searchQuery" type="search" @input="onSearch" placeholder="Search members…" class="app-inp pl-8 text-xs py-2 w-full" />
       </div>
     </div>
 

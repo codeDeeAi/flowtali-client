@@ -96,48 +96,51 @@ const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params:
   <div class="p-4 md:p-6 space-y-5 min-h-full">
 
     <!-- Page header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-      <div>
-        <h1 class="page-title">Clients</h1>
-        <p class="page-subtitle">{{ total }} client{{ total === 1 ? '' : 's' }} in your address book</p>
+    <div class="flex flex-col gap-3">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="page-title">Clients</h1>
+          <p class="page-subtitle">{{ total }} client{{ total === 1 ? '' : 's' }} in your address book</p>
+        </div>
+        <button
+          @click="goToCreate"
+          class="flex items-center gap-2 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs px-3 py-2 rounded-lg transition-colors"
+        >
+          <Icon icon="lucide:user-plus" class="w-3.5 h-3.5" />
+          <span class="hidden sm:inline">Add Client</span>
+          <span class="sm:hidden">Add</span>
+        </button>
       </div>
       <div class="flex items-center gap-2">
         <!-- Search -->
-        <div class="relative">
+        <div class="relative flex-1">
           <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint" />
           <input
             v-model="searchInput"
+            type="search"
             @keyup.enter="onSearch"
             @input="!searchInput && onSearch()"
             placeholder="Search clients…"
-            class="app-inp pl-8 text-xs py-2 w-48"
+            class="app-inp pl-8 text-xs py-2 w-full"
           />
         </div>
-
         <!-- View toggle -->
-        <div class="flex items-center bg-charcoal-800 border border-charcoal-700 rounded-lg p-0.5">
+        <div class="flex items-center bg-charcoal-800 border border-charcoal-700 rounded-lg p-0.5 shrink-0">
           <button
             @click="viewMode = 'grid'"
-            :class="['p-1.5 rounded-md transition-colors', viewMode === 'grid' ? 'bg-charcoal-600 text-cream' : 'text-cream-faint hover:text-cream']"
+            :class="['p-2 rounded-md transition-colors', viewMode === 'grid' ? 'bg-charcoal-600 text-cream' : 'text-cream-faint hover:text-cream']"
             title="Grid view"
           >
-            <Icon icon="lucide:layout-grid" class="w-3.5 h-3.5" />
+            <Icon icon="lucide:layout-grid" class="w-4 h-4" />
           </button>
           <button
             @click="viewMode = 'list'"
-            :class="['p-1.5 rounded-md transition-colors', viewMode === 'list' ? 'bg-charcoal-600 text-cream' : 'text-cream-faint hover:text-cream']"
+            :class="['p-2 rounded-md transition-colors', viewMode === 'list' ? 'bg-charcoal-600 text-cream' : 'text-cream-faint hover:text-cream']"
             title="List view"
           >
-            <Icon icon="lucide:list" class="w-3.5 h-3.5" />
+            <Icon icon="lucide:list" class="w-4 h-4" />
           </button>
         </div>
-
-        <button
-          @click="goToCreate"
-          class="flex items-center gap-2 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs px-3 py-2 rounded-lg transition-colors whitespace-nowrap"
-        >
-          <Icon icon="lucide:user-plus" class="w-3.5 h-3.5" /> Add Client
-        </button>
       </div>
     </div>
 

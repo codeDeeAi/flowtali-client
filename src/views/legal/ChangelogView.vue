@@ -21,9 +21,23 @@ interface Release {
 
 const releases: Release[] = [
   {
-    version: 'v1.6',
+    version: 'v1.7',
     date: 'June 2026',
     badge: 'Latest',
+    changes: [
+      { type: 'new', text: 'First-login welcome modal — new users are greeted with a "Take a tour" prompt on their first sign-in, with the option to skip.' },
+      { type: 'new', text: 'Interactive tour guide — a step-by-step spotlight walkthrough covers key features; steps are automatically tailored to personal vs. organisation accounts.' },
+      { type: 'new', text: 'Mobile bottom navigation — a persistent bottom nav bar on mobile with quick access to Home, Invoices, Clients, and a FAB shortcut to create a new invoice. A slide-up "More" sheet provides access to all other sections.' },
+      { type: 'improved', text: 'Invoices, receipts, clients, and members list views now render mobile-optimised card layouts with inline quick-actions instead of desktop-only tables.' },
+      { type: 'improved', text: 'Invoice, receipt, and letterhead editors now adapt to mobile: the form panel expands to full width, and a new eye-icon "Preview" tab lets you switch to the live document preview without leaving the editor.' },
+      { type: 'improved', text: 'Action button rows on invoice, receipt, and letterhead view pages collapse to icon-only buttons on mobile to prevent overflow, with tooltips preserving discoverability.' },
+      { type: 'fix', text: 'Invoice and receipt document previews on view pages are now horizontally scrollable on mobile — previously the right-hand columns (Rate, Amount) were clipped with no way to reach them.' },
+    ],
+  },
+  {
+    version: 'v1.6',
+    date: 'June 2026',
+    badge: null,
     changes: [
       { type: 'fix', text: 'API Keys section in Organization Preferences is now hidden for personal accounts — it is only relevant to organization accounts.' },
       { type: 'fix', text: 'Stamp selector buttons in the invoice and letterhead editors no longer appear empty — resolved a data normalization issue where stamps saved in a legacy format were not converted before being sent to the frontend.' },

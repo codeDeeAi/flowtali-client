@@ -208,9 +208,9 @@ const removeTax = (id: number) => {
 }
 
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
-type Tab = 'From' | 'To' | 'Items' | 'Design' | 'Settings'
+type Tab = 'From' | 'To' | 'Items' | 'Design' | 'Settings' | 'Preview'
 const tab = ref<Tab>('From')
-const tabs: Tab[] = ['From', 'To', 'Items', 'Design', 'Settings']
+const tabs: Tab[] = ['From', 'To', 'Items', 'Design', 'Settings', 'Preview']
 
 // ─── Zoom ─────────────────────────────────────────────────────────────────────
 const zoom = ref(0.75)
@@ -500,34 +500,37 @@ const handleSaveDraft = () => handleSave('draft')
       <div class="flex items-center gap-2">
         <button
           @click="handlePrint"
-          class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream rounded-lg transition-colors"
+          class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream rounded-lg transition-colors"
+          title="Print / PDF"
         >
           <Icon icon="lucide:printer" class="w-3.5 h-3.5" />
-          Print / PDF
+          <span class="hidden sm:inline">Print / PDF</span>
         </button>
         <button
           @click="showShareModal = true"
-          class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream rounded-lg transition-colors"
+          class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream rounded-lg transition-colors"
+          title="Share"
         >
           <Icon icon="lucide:share-2" class="w-3.5 h-3.5" />
-          Share
+          <span class="hidden sm:inline">Share</span>
         </button>
         <button
           @click="handleSaveDraft"
           :disabled="getLoader('isSaving')"
-          class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream rounded-lg transition-colors disabled:opacity-50"
+          class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream rounded-lg transition-colors disabled:opacity-50"
+          title="Save Draft"
         >
           <Icon icon="lucide:save" class="w-3.5 h-3.5" />
-          Save Draft
+          <span class="hidden sm:inline">Save Draft</span>
         </button>
         <button
           @click="() => handleSave()"
           :disabled="getLoader('isSaving')"
-          class="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg transition-colors bg-amber hover:bg-amber/90 text-charcoal-900 disabled:opacity-60 disabled:cursor-not-allowed"
+          class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-semibold rounded-lg transition-colors bg-amber hover:bg-amber/90 text-charcoal-900 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <Icon v-if="getLoader('isSaving')" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
           <Icon v-else icon="lucide:send" class="w-3.5 h-3.5" />
-          {{ getLoader('isSaving') ? 'Saving…' : (mode === 'create' ? 'Create Invoice' : 'Save Changes') }}
+          <span class="hidden sm:inline">{{ getLoader('isSaving') ? 'Saving…' : (mode === 'create' ? 'Create Invoice' : 'Save Changes') }}</span>
         </button>
       </div>
     </div>
@@ -536,7 +539,7 @@ const handleSaveDraft = () => handleSave('draft')
     <div class="flex flex-1 overflow-hidden">
 
       <!-- ── Left sidebar ──────────────────────────────────────────────────── -->
-      <aside class="shrink-0 border-r border-charcoal-700 bg-charcoal-800/60 flex flex-col overflow-hidden" style="width: 380px">
+      <aside :class="['md:w-[380px] md:shrink-0 border-r border-charcoal-700 bg-charcoal-800/60 flex flex-col overflow-hidden', tab === 'Preview' ? 'hidden md:flex' : 'w-full']">
 
         <!-- Tab bar -->
         <div class="flex border-b border-charcoal-700 shrink-0">
@@ -545,9 +548,15 @@ const handleSaveDraft = () => handleSave('draft')
             @click="tab = t"
             :class="[
               'flex-1 py-2.5 text-xs font-medium transition-colors border-b-2',
+              t === 'Preview' ? 'md:hidden' : '',
               tab === t ? 'border-amber text-amber' : 'border-transparent text-cream-faint hover:text-cream'
             ]"
-          >{{ t }}</button>
+          >
+            <template v-if="t === 'Preview'">
+              <Icon icon="lucide:eye" class="w-3.5 h-3.5 mx-auto" />
+            </template>
+            <template v-else>{{ t }}</template>
+          </button>
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 space-y-4">
@@ -1241,7 +1250,7 @@ const handleSaveDraft = () => handleSave('draft')
       </aside>
 
       <!-- ── Preview panel ──────────────────────────────────────────────────── -->
-      <main class="flex-1 bg-charcoal-900/50 overflow-y-auto flex flex-col items-center">
+      <main :class="['flex-col flex-1 bg-charcoal-900/50 overflow-y-auto items-center', tab === 'Preview' ? 'flex' : 'hidden md:flex']">
 
         <!-- Zoom controls -->
         <div class="sticky top-0 z-10 w-full flex items-center justify-end gap-2 px-6 py-2 bg-charcoal-900/80 backdrop-blur-sm border-b border-charcoal-800">

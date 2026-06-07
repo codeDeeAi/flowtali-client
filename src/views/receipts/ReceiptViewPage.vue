@@ -153,31 +153,33 @@ async function handleDelete() {
             <p class="page-subtitle">{{ receipt.to_name || '—' }} · {{ receipt.paid_at ? `Paid ${formatDate(receipt.paid_at)}` : 'Payment date not set' }}</p>
           </div>
         </div>
-        <div class="flex items-center gap-2 ml-9 sm:ml-0">
-          <button @click="handlePrint" class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream rounded-lg transition-colors">
-            <Icon icon="lucide:printer" class="w-3.5 h-3.5" /> Print / PDF
+        <div class="flex items-center flex-wrap gap-2 ml-9 sm:ml-0">
+          <button @click="handlePrint" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream rounded-lg transition-colors" title="Print / PDF">
+            <Icon icon="lucide:printer" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> Print / PDF</span>
           </button>
           <button
             @click="showShareModal = true"
-            class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream rounded-lg transition-colors"
+            class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream rounded-lg transition-colors"
+            title="Share"
           >
-            <Icon icon="lucide:share-2" class="w-3.5 h-3.5" /> Share
+            <Icon icon="lucide:share-2" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> Share</span>
             <span v-if="activeLinks > 0" class="ml-0.5 px-1.5 py-0.5 bg-amber/20 text-amber text-[9px] font-bold rounded-full">{{ activeLinks }}</span>
           </button>
           <button
             v-if="receipt.status !== 'finalized'"
             @click="finalizeReceipt"
             :disabled="isFinalizing"
-            class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 text-green-400 rounded-lg transition-colors disabled:opacity-50"
+            class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 text-green-400 rounded-lg transition-colors disabled:opacity-50"
+            title="Finalize"
           >
             <Icon v-if="isFinalizing" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
             <Icon v-else icon="lucide:check-circle" class="w-3.5 h-3.5" />
-            Finalize
+            <span class="hidden sm:inline">Finalize</span>
           </button>
-          <button @click="router.push({ name: 'receipts.edit', params: { id: receipt.id } })" class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-amber hover:bg-amber-light text-charcoal-900 font-semibold rounded-lg transition-colors">
+          <button @click="router.push({ name: 'receipts.edit', params: { id: receipt.id } })" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-amber hover:bg-amber-light text-charcoal-900 font-semibold rounded-lg transition-colors">
             <Icon icon="lucide:pencil" class="w-3.5 h-3.5" /> Edit
           </button>
-          <button @click="showDeleteConfirm = true" class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-lg transition-colors">
+          <button @click="showDeleteConfirm = true" class="flex items-center gap-1.5 px-2 py-2 text-xs font-medium bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-lg transition-colors" title="Delete">
             <Icon icon="lucide:trash-2" class="w-3.5 h-3.5" />
           </button>
         </div>
@@ -187,9 +189,9 @@ async function handleDelete() {
       <div class="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-5">
 
         <!-- Receipt document preview -->
-        <div class="bg-charcoal-700/30 rounded-xl p-6 flex justify-center">
+        <div class="bg-charcoal-700/30 rounded-xl p-3 sm:p-6 overflow-x-auto">
           <div
-            class="print-document w-full max-w-2xl bg-white rounded-lg shadow-2xl overflow-hidden text-gray-800 relative"
+            class="print-document min-w-[560px] w-full max-w-2xl mx-auto bg-white rounded-lg shadow-2xl overflow-hidden text-gray-800 relative"
             :style="{ fontFamily: receipt.font_family || '\'DM Sans\', sans-serif', fontSize: '13px' }"
           >
             <div class="h-1.5 w-full" :style="{ backgroundColor: receipt.accent_color }"></div>

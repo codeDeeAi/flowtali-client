@@ -182,42 +182,44 @@ async function deleteSelected() {
     </div>
 
     <!-- Summary cards -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-3 sm:p-4">
         <div class="text-xs text-cream-faint mb-1">Total Invoices</div>
         <div class="text-xl font-bold text-cream font-mono">{{ stats?.total ?? '—' }}</div>
       </div>
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4">
+      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-3 sm:p-4">
         <div class="text-xs text-cream-faint mb-1">Paid</div>
         <div class="text-xl font-bold text-green-400 font-mono">{{ stats?.paid ?? '—' }}</div>
       </div>
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4">
+      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-3 sm:p-4">
         <div class="text-xs text-cream-faint mb-1">Overdue</div>
         <div class="text-xl font-bold text-red-400 font-mono">{{ stats?.overdue ?? '—' }}</div>
       </div>
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4">
+      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-3 sm:p-4">
         <div class="text-xs text-cream-faint mb-1">Draft</div>
         <div class="text-xl font-bold text-cream-muted">{{ stats?.draft ?? '—' }}</div>
       </div>
     </div>
 
-    <!-- Filter tabs -->
-    <div class="flex items-center gap-1 bg-charcoal-800 border border-charcoal-700 rounded-lg p-1 w-fit">
-      <button
-        v-for="f in filters" :key="f.key"
-        :class="['text-xs font-medium px-3 py-1.5 rounded-md transition-colors', filterTab === f.key ? 'bg-amber/10 text-amber' : 'text-cream-faint hover:text-cream-muted']"
-        @click="onFilter(f.key)"
-      >{{ f.label }}</button>
+    <!-- Filter tabs (horizontally scrollable on mobile) -->
+    <div class="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+      <div class="flex items-center gap-1 bg-charcoal-800 border border-charcoal-700 rounded-lg p-1 w-max sm:w-fit">
+        <button
+          v-for="f in filters" :key="f.key"
+          :class="['text-xs font-medium px-3 py-1.5 rounded-md transition-colors whitespace-nowrap', filterTab === f.key ? 'bg-amber/10 text-amber' : 'text-cream-faint hover:text-cream-muted']"
+          @click="onFilter(f.key)"
+        >{{ f.label }}</button>
+      </div>
     </div>
 
     <!-- Table card -->
     <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden">
       <!-- Search + bulk actions -->
-      <div class="flex items-center justify-between px-4 py-3 border-b border-charcoal-700 gap-3 flex-wrap">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-b border-charcoal-700 gap-2">
         <div class="flex items-center gap-3">
-          <div class="relative">
+          <div class="relative flex-1 sm:flex-initial">
             <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint" />
-            <input v-model="searchQuery" placeholder="Search invoices…" class="app-inp pl-8 w-48 text-xs py-2" />
+            <input v-model="searchQuery" placeholder="Search invoices…" class="app-inp pl-8 w-full sm:w-48 text-xs py-2" />
           </div>
           <Transition name="fade">
             <button
@@ -230,7 +232,7 @@ async function deleteSelected() {
             </button>
           </Transition>
         </div>
-        <span class="text-xs text-cream-faint shrink-0">{{ totalInvoices }} invoice{{ totalInvoices !== 1 ? 's' : '' }}</span>
+        <span class="text-xs text-cream-faint shrink-0 hidden sm:block">{{ totalInvoices }} invoice{{ totalInvoices !== 1 ? 's' : '' }}</span>
       </div>
 
       <!-- Loading -->
@@ -309,25 +311,49 @@ async function deleteSelected() {
         </table>
       </div>
 
-      <!-- Mobile list -->
+      <!-- Mobile cards -->
       <div v-if="!isLoading" class="sm:hidden divide-y divide-charcoal-700">
         <div
           v-for="inv in invoices" :key="inv.id"
-          class="flex items-center justify-between px-4 py-3.5 cursor-pointer hover:bg-charcoal-700/30 transition-colors"
+          class="px-4 py-3.5 cursor-pointer hover:bg-charcoal-700/30 transition-colors"
           @click="router.push({ name: 'invoices.view', params: { id: inv.id } })"
         >
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-charcoal-900 shrink-0" :style="{ backgroundColor: clientColor(inv.id) }">
-              {{ initials(inv.to_name) }}
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-charcoal-900 shrink-0" :style="{ backgroundColor: clientColor(inv.id) }">
+                {{ initials(inv.to_name) }}
+              </div>
+              <div class="min-w-0">
+                <div class="text-sm font-medium text-cream truncate">{{ inv.to_name || '—' }}</div>
+                <div class="text-xs text-cream-faint">{{ inv.number }} · {{ fmtDate(inv.issue_date) }}</div>
+              </div>
             </div>
-            <div>
-              <div class="text-sm font-medium text-cream">{{ inv.to_name || '—' }}</div>
-              <div class="text-xs text-cream-faint">{{ inv.number }} · {{ fmtDate(inv.issue_date) }}</div>
+            <div class="flex flex-col items-end gap-1.5 shrink-0">
+              <span class="text-sm font-semibold font-mono text-cream">{{ fmtAmount(inv) }}</span>
+              <span :class="['status-badge', statusClass[inv.status] ?? 'status-draft']">{{ statusLabel[inv.status] ?? inv.status }}</span>
             </div>
           </div>
-          <div class="flex flex-col items-end gap-1.5">
-            <span class="text-sm font-semibold font-mono text-cream">{{ fmtAmount(inv) }}</span>
-            <span :class="['status-badge', statusClass[inv.status] ?? 'status-draft']">{{ statusLabel[inv.status] ?? inv.status }}</span>
+          <!-- Quick actions row -->
+          <div class="flex items-center gap-2 mt-2.5 pt-2.5 border-t border-charcoal-700/50" @click.stop>
+            <button
+              @click="router.push({ name: 'invoices.edit', params: { id: inv.id } })"
+              class="flex items-center gap-1.5 text-xs text-cream-muted hover:text-cream bg-charcoal-700/60 hover:bg-charcoal-700 px-3 py-1.5 rounded-lg transition-colors flex-1 justify-center"
+            >
+              <Icon icon="lucide:pencil" class="w-3.5 h-3.5" /> Edit
+            </button>
+            <button
+              v-if="inv.status !== 'paid'"
+              @click="markPaid(inv)"
+              class="flex items-center gap-1.5 text-xs text-green-400 hover:text-green-300 bg-green-500/10 hover:bg-green-500/15 px-3 py-1.5 rounded-lg transition-colors flex-1 justify-center"
+            >
+              <Icon icon="lucide:check-circle" class="w-3.5 h-3.5" /> Mark Paid
+            </button>
+            <button
+              @click="openDelete(inv)"
+              class="flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              <Icon icon="lucide:trash-2" class="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
         <div v-if="invoices.length === 0" class="text-center py-12 text-cream-faint text-sm">No invoices match your filters</div>

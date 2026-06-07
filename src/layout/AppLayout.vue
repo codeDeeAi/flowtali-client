@@ -12,6 +12,7 @@ import AppSidebar from './components/app/AppSidebar.vue'
 import FeedbackModal from '@/components/modals/FeedbackModal.vue'
 import WelcomeTourModal from '@/components/modals/WelcomeTourModal.vue'
 import TourGuide from '@/components/tour/TourGuide.vue'
+import AppBottomNav from './components/app/AppBottomNav.vue'
 
 const authStore = useAuthStore()
 const subStore = useSubscriptionStore()
@@ -76,12 +77,13 @@ function handleSkipTour() {
         <Icon :icon="collapsed ? 'lucide:chevron-right' : 'lucide:chevron-left'" class="w-3 h-3" />
       </button>
 
-      <div class=" bg-charcoal-900 overflow-auto" :class="{ hidden: mobileOpen, 'flex-1': !mobileOpen }">
+      <div class="bg-charcoal-900 overflow-auto pb-16 md:pb-0" :class="{ hidden: mobileOpen, 'flex-1': !mobileOpen }">
         <RouterView />
       </div>
     </main>
   </div>
 
+  <AppBottomNav />
   <FeedbackModal />
   <WelcomeTourModal v-if="showWelcomeModal" @start-tour="handleStartTour" @skip="handleSkipTour" />
   <TourGuide />

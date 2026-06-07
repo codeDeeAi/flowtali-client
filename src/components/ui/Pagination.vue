@@ -54,7 +54,7 @@ const go = (page: number) => {
       <button
         @click="go(modelValue - 1)"
         :disabled="modelValue === 1"
-        class="flex items-center justify-center w-7 h-7 rounded-lg border border-charcoal-600 bg-charcoal-800 text-cream-faint transition-colors disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:border-charcoal-500 hover:enabled:text-cream"
+        class="flex items-center justify-center w-9 h-9 md:w-7 md:h-7 rounded-lg border border-charcoal-600 bg-charcoal-800 text-cream-faint transition-colors disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:border-charcoal-500 hover:enabled:text-cream"
       >
         <Icon icon="lucide:chevron-left" class="w-3.5 h-3.5" />
       </button>
@@ -63,13 +63,13 @@ const go = (page: number) => {
       <template v-for="(p, i) in pages" :key="i">
         <span
           v-if="p === '...'"
-          class="flex items-center justify-center w-7 h-7 text-xs text-cream-faint select-none"
+          class="flex items-center justify-center w-9 h-9 md:w-7 md:h-7 text-xs text-cream-faint select-none"
         >…</span>
         <button
           v-else
           @click="go(p)"
           :class="[
-            'flex items-center justify-center w-7 h-7 rounded-lg border text-xs font-medium transition-colors',
+            'flex items-center justify-center w-9 h-9 md:w-7 md:h-7 rounded-lg border text-xs font-medium transition-colors',
             p === modelValue
               ? 'border-amber bg-amber text-charcoal-900 font-semibold'
               : 'border-charcoal-600 bg-charcoal-800 text-cream-faint hover:border-charcoal-500 hover:text-cream',
@@ -81,7 +81,7 @@ const go = (page: number) => {
       <button
         @click="go(modelValue + 1)"
         :disabled="modelValue === totalPages"
-        class="flex items-center justify-center w-7 h-7 rounded-lg border border-charcoal-600 bg-charcoal-800 text-cream-faint transition-colors disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:border-charcoal-500 hover:enabled:text-cream"
+        class="flex items-center justify-center w-9 h-9 md:w-7 md:h-7 rounded-lg border border-charcoal-600 bg-charcoal-800 text-cream-faint transition-colors disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:border-charcoal-500 hover:enabled:text-cream"
       >
         <Icon icon="lucide:chevron-right" class="w-3.5 h-3.5" />
       </button>

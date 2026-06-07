@@ -64,6 +64,9 @@ const pageTitle = computed(() => PAGE_TITLES[String(route.name)] ?? '')
         </span>
       </RouterLink>
 
+      <!-- Page title (mobile only) -->
+      <span v-if="pageTitle" class="md:hidden text-sm font-semibold text-cream">{{ pageTitle }}</span>
+
       <!-- Breadcrumb (desktop only) -->
       <div v-if="orgName && pageTitle" class="hidden md:flex items-center gap-1.5 text-sm">
         <div class="w-px h-4 bg-charcoal-700 mx-0.5"></div>
