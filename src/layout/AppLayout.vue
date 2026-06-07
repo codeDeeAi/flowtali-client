@@ -4,16 +4,22 @@ import { RouterView } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { useSubscriptionStore } from '@/stores/subscription'
+import { useTourStore } from '@/stores/tour'
 import { ProfileService } from '@/services/profile.service'
 import { OrgService } from '@/services/org.service'
 import AppHeader from './components/app/AppHeader.vue'
 import AppSidebar from './components/app/AppSidebar.vue'
 import FeedbackModal from '@/components/modals/FeedbackModal.vue'
+import WelcomeTourModal from '@/components/modals/WelcomeTourModal.vue'
+import TourGuide from '@/components/tour/TourGuide.vue'
 
 const authStore = useAuthStore()
 const subStore = useSubscriptionStore()
+const tourStore = useTourStore()
 const mobileOpen = ref(false)
 const collapsed = ref(false)
+const showWelcomeModal = ref(false)
+const currentUserEmail = ref('')
 
 // On every mount (including post-org-switch reload) refresh profile and org permissions
 // so the app never operates on stale cached data.
@@ -22,6 +28,7 @@ onMounted(async () => {
   await Promise.allSettled([
     ProfileService.get().then(res => {
       const p = res.data.data
+      currentUserEmail.value = p.email
       authStore.updateUserInfo({ first_name: p.first_name, last_name: p.last_name, avatar: p.avatar })
       authStore.updateMfaEnabled(p.mfa_enabled)
     }),
@@ -30,7 +37,22 @@ onMounted(async () => {
       : Promise.resolve(),
     subStore.load(),
   ])
+
+  if (currentUserEmail.value && !tourStore.hasSeenWelcome(currentUserEmail.value)) {
+    showWelcomeModal.value = true
+  }
 })
+
+function handleStartTour() {
+  if (currentUserEmail.value) tourStore.markWelcomeSeen(currentUserEmail.value)
+  showWelcomeModal.value = false
+  tourStore.startTour()
+}
+
+function handleSkipTour() {
+  if (currentUserEmail.value) tourStore.markWelcomeSeen(currentUserEmail.value)
+  showWelcomeModal.value = false
+}
 </script>
 
 <template>
@@ -61,6 +83,8 @@ onMounted(async () => {
   </div>
 
   <FeedbackModal />
+  <WelcomeTourModal v-if="showWelcomeModal" @start-tour="handleStartTour" @skip="handleSkipTour" />
+  <TourGuide />
 </template>
 
 <style scoped>

@@ -110,6 +110,7 @@ interface NavItem {
   icon: string;
   to: string;
   badge?: string;
+  dataTour?: string;
 }
 
 interface NavSection {
@@ -123,37 +124,37 @@ const navSections = computed<NavSection[]>(() => {
   // ── Always visible ────────────────────────────────────
   sections.push({
     items: [
-      { name: 'Dashboard', icon: 'lucide:layout-dashboard', to: '/app/dashboard' },
+      { name: 'Dashboard', icon: 'lucide:layout-dashboard', to: '/app/dashboard', dataTour: 'nav-dashboard' },
     ],
   })
 
   // ── Documents ─────────────────────────────────────────
   const docItems: NavItem[] = []
-  if (isBusinessOrg.value && can('projects.read')) docItems.push({ name: 'Projects', icon: 'lucide:folder-kanban', to: '/app/projects' })
-  if (can('invoices.read'))    docItems.push({ name: 'Invoices',    icon: 'lucide:file-text', to: '/app/invoices' })
+  if (isBusinessOrg.value && can('projects.read')) docItems.push({ name: 'Projects', icon: 'lucide:folder-kanban', to: '/app/projects', dataTour: 'nav-projects' })
+  if (can('invoices.read'))    docItems.push({ name: 'Invoices',    icon: 'lucide:file-text', to: '/app/invoices',    dataTour: 'nav-invoices' })
   if (can('receipts.read'))    docItems.push({ name: 'Receipts',    icon: 'lucide:receipt',   to: '/app/receipts' })
   if (can('letterheads.read')) docItems.push({ name: 'Letterheads', icon: 'lucide:file',      to: '/app/letterheads' })
-  if (can('clients.read'))     docItems.push({ name: 'Clients',     icon: 'lucide:users',     to: '/app/clients' })
+  if (can('clients.read'))     docItems.push({ name: 'Clients',     icon: 'lucide:users',     to: '/app/clients',     dataTour: 'nav-clients' })
   if (docItems.length) sections.push({ label: 'Documents', items: docItems })
 
   // ── Organization (business only) ─────────────────────
   const orgItems: NavItem[] = []
   if (isBusinessOrg.value) {
     if (can('members.read')) {
-      orgItems.push({ name: 'Members', icon: 'lucide:users-2', to: '/app/members' })
+      orgItems.push({ name: 'Members', icon: 'lucide:users-2', to: '/app/members', dataTour: 'nav-members' })
     }
     if (can('roles.read')) {
-      orgItems.push({ name: 'Roles & Permissions', icon: 'lucide:shield', to: '/app/roles' })
+      orgItems.push({ name: 'Roles & Permissions', icon: 'lucide:shield', to: '/app/roles', dataTour: 'nav-roles' })
     }
   }
-  orgItems.push({ name: 'Org Preferences', icon: 'lucide:building-2', to: '/app/org-preferences' })
+  orgItems.push({ name: 'Org Preferences', icon: 'lucide:building-2', to: '/app/org-preferences', dataTour: 'nav-org-preferences' })
   orgItems.push({ name: 'Audit Logs', icon: 'lucide:scroll-text', to: '/app/audit-logs' })
 
   sections.push({ label: isBusinessOrg.value ? 'Organization' : 'Workspace', items: orgItems })
 
   // ── Account ───────────────────────────────────────────
-  const accountItems: { name: string; icon: string; to: string }[] = []
-  if (can('analytics.read')) accountItems.push({ name: 'Analytics',    icon: 'lucide:bar-chart-2',  to: '/app/analytics' })
+  const accountItems: NavItem[] = []
+  if (can('analytics.read')) accountItems.push({ name: 'Analytics', icon: 'lucide:bar-chart-2', to: '/app/analytics', dataTour: 'nav-analytics' })
   accountItems.push({ name: 'Billing', icon: 'lucide:credit-card', to: '/app/billing' })
   if (can('settings.read'))  accountItems.push({ name: 'Settings',     icon: 'lucide:settings',     to: '/app/settings' })
   accountItems.push({ name: 'My Profile',   icon: 'lucide:user',         to: '/app/profile' })
@@ -376,6 +377,7 @@ function isActive(to: string) {
           v-for="item in section.items"
           :key="item.name"
           :to="item.to"
+          :data-tour="item.dataTour"
           :class="[
             'flex items-center gap-2.5 rounded-lg px-2 py-2 text-sm transition-colors group relative',
             isActive(item.to)
