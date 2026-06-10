@@ -1,6 +1,7 @@
 import http from './utils/http'
 
 export interface IOrgSettings {
+  name?:            string
   industry:         string | null
   company_size:     string | null
   address:          string | null
@@ -29,7 +30,7 @@ export const SettingsService = {
     return http.get<{ data: IOrgSettings }>(`/api/v1/orgs/${orgId}/settings`)
   },
 
-  updateGeneralSettings(orgId: string, data: Partial<IOrgSettings>) {
+  updateGeneralSettings(orgId: string, data: Partial<IOrgSettings> & { name?: string }) {
     return http.put<{ data: IOrgSettings }>(`/api/v1/orgs/${orgId}/settings/general`, data)
   },
 

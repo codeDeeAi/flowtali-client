@@ -76,6 +76,7 @@ async function saveGeneral() {
   genSaved.value    = false
   try {
     const res = await SettingsService.updateGeneralSettings(orgId.value, {
+      name:             orgName.value,
       industry:         settings.value.industry,
       company_size:     settings.value.company_size,
       address:          settings.value.address,
@@ -84,6 +85,9 @@ async function saveGeneral() {
       default_tax_rate: settings.value.default_tax_rate,
     })
     settings.value = res.data.data
+    if (res.data.data.name) orgName.value = res.data.data.name
+    const currentOrg = authStore.getCurrentOrganization
+    if (currentOrg) authStore.updateOrganization({ ...currentOrg, name: orgName.value })
     genSaved.value = true
     setTimeout(() => { genSaved.value = false }, 2500)
   } catch {} finally { isSavingGen.value = false }
@@ -256,7 +260,7 @@ onMounted(async () => {
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="app-label">Organization Name</label>
-              <input class="app-inp" :value="orgName" disabled title="Change from the organization page" />
+              <input class="app-inp" v-model="orgName" placeholder="Organization name" />
             </div>
             <div>
               <label class="app-label">Industry</label>
