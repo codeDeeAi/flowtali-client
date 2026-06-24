@@ -47,14 +47,14 @@ async function doUpdate() {
   >
     <div
       v-if="needRefresh"
-      class="fixed bottom-4 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 px-4 py-3 bg-charcoal-800 border border-charcoal-600 rounded-xl shadow-2xl text-sm"
+      class="fixed bottom-4 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 px-4 py-3 bg-gray-200 border border-gray-500 rounded-xl shadow-2xl text-sm"
       role="alert"
     >
-      <Icon icon="lucide:refresh-cw" class="w-4 h-4 text-amber shrink-0" />
-      <span class="text-cream-muted">A new version is available.</span>
+      <Icon icon="lucide:refresh-cw" class="w-4 h-4 text-green-700 shrink-0" />
+      <span class="text-gray-900">A new version is available.</span>
       <button
         :disabled="isUpdating"
-        class="flex items-center gap-1.5 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors disabled:opacity-60"
+        class="flex items-center gap-1.5 bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors disabled:opacity-60"
         @click="doUpdate"
       >
         <Icon v-if="isUpdating" icon="lucide:loader-2" class="w-3 h-3 animate-spin" />

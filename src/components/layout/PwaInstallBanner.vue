@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import { usePwaInstall } from '@/composables/usePwaInstall'
+import FlowtaliLogo from '@/components/ui/FlowtaliLogo.vue'
 
 const { canInstall, install, dismiss } = usePwaInstall()
 
@@ -21,34 +22,29 @@ onMounted(() => setTimeout(() => { ready.value = true }, 3000))
   >
     <div
       v-if="canInstall && ready"
-      class="fixed bottom-4 left-4 right-4 z-[9998] max-w-sm mx-auto flex items-center gap-3 px-4 py-3 bg-charcoal-800 border border-charcoal-600 rounded-xl shadow-2xl"
+      class="fixed bottom-4 left-4 right-4 z-[9998] max-w-sm mx-auto flex items-center gap-3 px-4 py-3 bg-gray-200 border border-gray-500 rounded-xl shadow-2xl"
       role="complementary"
       aria-label="Install Flowtali app"
     >
       <!-- Flowtali logomark -->
-      <div class="w-10 h-10 rounded-xl bg-amber flex items-center justify-center shrink-0">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a0a0b" stroke-width="2.5">
-          <rect x="3" y="3" width="18" height="18" rx="2" />
-          <path d="M7 8h10M7 12h6M7 16h4" />
-        </svg>
-      </div>
+      <FlowtaliLogo variant="icon" :size="40" />
 
       <!-- Copy -->
       <div class="flex-1 min-w-0">
-        <p class="text-cream font-semibold text-sm leading-tight">Install Flowtali</p>
-        <p class="text-cream-faint text-xs mt-0.5">Add to your home screen</p>
+        <p class="text-gray-1000 font-semibold text-sm leading-tight">Install Flowtali</p>
+        <p class="text-gray-700 text-xs mt-0.5">Add to your home screen</p>
       </div>
 
       <!-- Actions -->
       <div class="flex items-center gap-3 shrink-0">
         <button
-          class="text-amber font-semibold text-sm hover:text-amber-light transition-colors"
+          class="text-green-700 font-semibold text-sm hover:text-green-800 transition-colors"
           @click="install"
         >
           Install
         </button>
         <button
-          class="text-cream-faint hover:text-cream transition-colors"
+          class="text-gray-700 hover:text-gray-1000 transition-colors"
           aria-label="Dismiss"
           @click="dismiss"
         >

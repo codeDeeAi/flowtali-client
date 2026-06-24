@@ -275,9 +275,9 @@ async function assignClient(clientId: string | null) {
 // ── Helpers ─────────────────────────────────────────────────
 const statusBadge = (status: string) => {
   const map: Record<string, string> = {
-    draft:     'bg-charcoal-600 text-cream-muted border-charcoal-500',
+    draft:     'bg-gray-500 text-gray-900 border-gray-500',
     active:    'bg-green-500/10 text-green-400 border-green-500/20',
-    on_hold:   'bg-amber/10 text-amber border-amber/20',
+    on_hold:   'bg-green-700/10 text-green-700 border-green-700/20',
     completed: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
     cancelled: 'bg-red-500/10 text-red-400 border-red-500/20',
   };
@@ -335,14 +335,14 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
 
     <!-- Loading -->
     <div v-if="loading" class="flex items-center justify-center py-20">
-      <Icon icon="lucide:loader-2" class="w-6 h-6 text-cream-faint animate-spin" />
+      <Icon icon="lucide:loader-2" class="w-6 h-6 text-gray-700 animate-spin" />
     </div>
 
     <!-- Not found -->
     <div v-else-if="notFound" class="flex flex-col items-center justify-center py-20 text-center">
-      <Icon icon="lucide:folder-x" class="w-10 h-10 text-cream-faint mb-4" />
-      <p class="text-cream-faint text-sm">Project not found</p>
-      <button @click="router.push({ name: 'projects' })" class="mt-3 text-xs text-amber hover:underline">Back to projects</button>
+      <Icon icon="lucide:folder-x" class="w-10 h-10 text-gray-700 mb-4" />
+      <p class="text-gray-700 text-sm">Project not found</p>
+      <button @click="router.push({ name: 'projects' })" class="mt-3 text-xs text-green-700 hover:underline">Back to projects</button>
     </div>
 
     <template v-else-if="project">
@@ -350,14 +350,14 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <!-- Page header -->
       <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <div class="flex items-start gap-3">
-          <button @click="router.push({ name: 'projects' })" class="mt-0.5 p-1.5 rounded-md hover:bg-charcoal-700 text-cream-faint hover:text-cream transition-colors shrink-0">
+          <button @click="router.push({ name: 'projects' })" class="mt-0.5 p-1.5 rounded-md hover:bg-gray-400 text-gray-700 hover:text-gray-1000 transition-colors shrink-0">
             <Icon icon="lucide:arrow-left" class="w-4 h-4" />
           </button>
           <div>
             <div class="flex items-center gap-2 flex-wrap">
               <h1 class="page-title">{{ project.title }}</h1>
               <span :class="statusBadge(project.status)">{{ statusLabel(project.status) }}</span>
-              <span v-if="project.status_tracking === 'auto'" class="text-[10px] text-amber border border-amber/30 bg-amber/8 px-1.5 py-0.5 rounded-full font-semibold">Auto</span>
+              <span v-if="project.status_tracking === 'auto'" class="text-[10px] text-green-700 border border-green-700/30 bg-green-700/8 px-1.5 py-0.5 rounded-full font-semibold">Auto</span>
             </div>
             <p class="page-subtitle">{{ project.number }}{{ project.client ? ` · ${project.client.name}` : '' }}</p>
           </div>
@@ -368,7 +368,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
             <button
               v-if="can('invoices.create')"
               @click="router.push({ name: 'invoices.create', query: { project_id: projectId } })"
-              class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors"
+              class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-xs transition-colors"
               title="New Invoice for this project"
             >
               <Icon icon="lucide:file-plus" class="w-3.5 h-3.5" /> Invoice
@@ -376,7 +376,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
             <button
               v-if="can('receipts.create')"
               @click="router.push({ name: 'receipts.create', query: { project_id: projectId } })"
-              class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors"
+              class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-xs transition-colors"
               title="New Receipt for this project"
             >
               <Icon icon="lucide:receipt" class="w-3.5 h-3.5" /> Receipt
@@ -384,7 +384,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
             <button
               v-if="can('letterheads.create')"
               @click="router.push({ name: 'letterheads.create', query: { project_id: projectId } })"
-              class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors"
+              class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-xs transition-colors"
               title="New Letterhead for this project"
             >
               <Icon icon="lucide:file" class="w-3.5 h-3.5" /> Letterhead
@@ -394,7 +394,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
           <div v-if="can('projects.update')" class="flex items-center gap-1.5">
             <button
               @click="router.push({ name: 'projects.edit', params: { id: projectId } })"
-              class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber/10 hover:bg-amber/20 text-amber text-xs transition-colors"
+              class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-green-700/10 hover:bg-green-700/20 text-green-700 text-xs transition-colors"
             >
               <Icon icon="lucide:pencil" class="w-3.5 h-3.5" /> Edit
             </button>
@@ -410,7 +410,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       </div>
 
       <!-- Tabs -->
-      <div class="flex items-center gap-1 border-b border-charcoal-700 overflow-x-auto">
+      <div class="flex items-center gap-1 border-b border-gray-400 overflow-x-auto">
         <button
           v-for="tab in (['overview', 'client', 'invoices', 'receipts', 'letterheads', 'files', 'activity'] as Tab[])"
           :key="tab"
@@ -418,8 +418,8 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
           :class="[
             'px-3 py-2 text-xs font-medium capitalize transition-colors whitespace-nowrap border-b-2 -mb-px',
             activeTab === tab
-              ? 'border-amber text-amber'
-              : 'border-transparent text-cream-faint hover:text-cream',
+              ? 'border-green-700 text-green-700'
+              : 'border-transparent text-gray-700 hover:text-gray-1000',
           ]"
         >
           {{ { overview: 'Overview', client: 'Client', invoices: 'Invoices', receipts: 'Receipts', letterheads: 'Letterheads', files: 'Files', activity: 'Activity' }[tab] }}
@@ -430,66 +430,66 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <div v-if="activeTab === 'overview'" class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
         <!-- Details -->
-        <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 space-y-4">
-          <h2 class="text-sm font-semibold text-cream">Details</h2>
+        <div class="bg-gray-200 border border-gray-400 rounded-xl p-5 space-y-4">
+          <h2 class="text-sm font-semibold text-gray-1000">Details</h2>
           <dl class="space-y-2.5">
             <div class="flex justify-between text-xs">
-              <dt class="text-cream-faint">Number</dt>
-              <dd class="text-cream font-medium">{{ project.number }}</dd>
+              <dt class="text-gray-700">Number</dt>
+              <dd class="text-gray-1000 font-medium">{{ project.number }}</dd>
             </div>
             <div v-if="project.client" class="flex justify-between text-xs">
-              <dt class="text-cream-faint">Client</dt>
-              <dd class="text-cream">{{ project.client.name }}</dd>
+              <dt class="text-gray-700">Client</dt>
+              <dd class="text-gray-1000">{{ project.client.name }}</dd>
             </div>
             <div class="flex justify-between text-xs">
-              <dt class="text-cream-faint">Status Tracking</dt>
-              <dd class="text-cream capitalize">{{ project.status_tracking }}</dd>
+              <dt class="text-gray-700">Status Tracking</dt>
+              <dd class="text-gray-1000 capitalize">{{ project.status_tracking }}</dd>
             </div>
             <div v-if="project.start_date" class="flex justify-between text-xs">
-              <dt class="text-cream-faint">Start Date</dt>
-              <dd class="text-cream">{{ formatDate(project.start_date) }}</dd>
+              <dt class="text-gray-700">Start Date</dt>
+              <dd class="text-gray-1000">{{ formatDate(project.start_date) }}</dd>
             </div>
             <div v-if="project.end_date" class="flex justify-between text-xs">
-              <dt class="text-cream-faint">End Date</dt>
-              <dd class="text-cream">{{ formatDate(project.end_date) }}</dd>
+              <dt class="text-gray-700">End Date</dt>
+              <dd class="text-gray-1000">{{ formatDate(project.end_date) }}</dd>
             </div>
             <div v-if="project.description" class="pt-1">
-              <dt class="text-cream-faint text-xs mb-1">Description</dt>
-              <dd class="text-cream-muted text-xs leading-relaxed">{{ project.description }}</dd>
+              <dt class="text-gray-700 text-xs mb-1">Description</dt>
+              <dd class="text-gray-900 text-xs leading-relaxed">{{ project.description }}</dd>
             </div>
           </dl>
         </div>
 
         <!-- Financials -->
-        <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 space-y-4">
-          <h2 class="text-sm font-semibold text-cream">Financials</h2>
+        <div class="bg-gray-200 border border-gray-400 rounded-xl p-5 space-y-4">
+          <h2 class="text-sm font-semibold text-gray-1000">Financials</h2>
           <dl class="space-y-2.5">
             <div v-if="project.financials?.contract_value" class="flex justify-between text-xs">
-              <dt class="text-cream-faint">Contract Value</dt>
-              <dd class="text-cream font-medium">{{ project.currency }} {{ project.financials.contract_value.toLocaleString() }}</dd>
+              <dt class="text-gray-700">Contract Value</dt>
+              <dd class="text-gray-1000 font-medium">{{ project.currency }} {{ project.financials.contract_value.toLocaleString() }}</dd>
             </div>
             <div class="flex justify-between text-xs">
-              <dt class="text-cream-faint">Total Invoiced</dt>
-              <dd class="text-cream">{{ project.currency }} {{ (project.financials?.total_invoiced ?? 0).toLocaleString() }}</dd>
+              <dt class="text-gray-700">Total Invoiced</dt>
+              <dd class="text-gray-1000">{{ project.currency }} {{ (project.financials?.total_invoiced ?? 0).toLocaleString() }}</dd>
             </div>
             <div class="flex justify-between text-xs">
-              <dt class="text-cream-faint">Total Received</dt>
+              <dt class="text-gray-700">Total Received</dt>
               <dd class="text-green-400 font-medium">{{ project.currency }} {{ (project.financials?.total_received ?? 0).toLocaleString() }}</dd>
             </div>
             <div class="flex justify-between text-xs">
-              <dt class="text-cream-faint">Balance</dt>
-              <dd :class="(project.financials?.balance ?? 0) > 0 ? 'text-amber font-medium' : 'text-cream'">
+              <dt class="text-gray-700">Balance</dt>
+              <dd :class="(project.financials?.balance ?? 0) > 0 ? 'text-green-700 font-medium' : 'text-gray-1000'">
                 {{ project.currency }} {{ (project.financials?.balance ?? 0).toLocaleString() }}
               </dd>
             </div>
           </dl>
           <!-- Progress bar -->
           <div v-if="(project.financials?.total_invoiced ?? 0) > 0">
-            <div class="flex justify-between text-[10px] text-cream-faint mb-1">
+            <div class="flex justify-between text-[10px] text-gray-700 mb-1">
               <span>Payment progress</span>
               <span>{{ paidPercent }}%</span>
             </div>
-            <div class="h-1.5 bg-charcoal-700 rounded-full overflow-hidden">
+            <div class="h-1.5 bg-gray-400 rounded-full overflow-hidden">
               <div class="h-full bg-green-500 rounded-full transition-all duration-500" :style="{ width: `${paidPercent}%` }" />
             </div>
           </div>
@@ -501,41 +501,41 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <div v-if="activeTab === 'client'" class="space-y-4 max-w-lg">
 
         <!-- No client assigned -->
-        <div v-if="!project.client" class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-8 flex flex-col items-center text-center gap-3">
-          <div class="w-12 h-12 rounded-full bg-charcoal-700 flex items-center justify-center">
-            <Icon icon="lucide:user" class="w-5 h-5 text-cream-faint" />
+        <div v-if="!project.client" class="bg-gray-200 border border-gray-400 rounded-xl p-8 flex flex-col items-center text-center gap-3">
+          <div class="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center">
+            <Icon icon="lucide:user" class="w-5 h-5 text-gray-700" />
           </div>
           <div>
-            <p class="text-sm font-medium text-cream">No client assigned</p>
-            <p class="text-xs text-cream-faint mt-0.5">Assign a client to track who this project is for</p>
+            <p class="text-sm font-medium text-gray-1000">No client assigned</p>
+            <p class="text-xs text-gray-700 mt-0.5">Assign a client to track who this project is for</p>
           </div>
           <button
             v-if="can('projects.update')"
             @click="openAssignClient"
-            class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs transition-colors"
+            class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs transition-colors"
           >
             <Icon icon="lucide:user-plus" class="w-3.5 h-3.5" /> Assign Client
           </button>
         </div>
 
         <!-- Client card -->
-        <div v-else class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden">
+        <div v-else class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden">
           <!-- Card header -->
-          <div class="flex items-center justify-between px-5 py-4 border-b border-charcoal-700">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-gray-400">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-amber/15 flex items-center justify-center shrink-0">
-                <span class="text-sm font-bold text-amber">
+              <div class="w-10 h-10 rounded-full bg-green-700/15 flex items-center justify-center shrink-0">
+                <span class="text-sm font-bold text-green-700">
                   {{ project.client.name.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase() }}
                 </span>
               </div>
               <div>
-                <div class="text-sm font-semibold text-cream">{{ project.client.name }}</div>
-                <div v-if="project.client.company" class="text-xs text-cream-faint">{{ project.client.company }}</div>
+                <div class="text-sm font-semibold text-gray-1000">{{ project.client.name }}</div>
+                <div v-if="project.client.company" class="text-xs text-gray-700">{{ project.client.company }}</div>
               </div>
             </div>
             <button
               @click="router.push({ name: 'clients.view', params: { id: project.client.id } })"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-xs transition-colors"
             >
               <Icon icon="lucide:external-link" class="w-3.5 h-3.5" /> View Client
             </button>
@@ -544,24 +544,24 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
           <!-- Contact info -->
           <div class="px-5 py-4 space-y-3">
             <div v-if="project.client.email" class="flex items-center gap-2.5 text-xs">
-              <Icon icon="lucide:mail" class="w-3.5 h-3.5 text-cream-faint shrink-0" />
-              <span class="text-cream-muted">{{ project.client.email }}</span>
+              <Icon icon="lucide:mail" class="w-3.5 h-3.5 text-gray-700 shrink-0" />
+              <span class="text-gray-900">{{ project.client.email }}</span>
             </div>
-            <div v-if="!project.client.email" class="text-xs text-cream-faint italic">No email on record</div>
+            <div v-if="!project.client.email" class="text-xs text-gray-700 italic">No email on record</div>
           </div>
 
           <!-- Actions -->
-          <div v-if="can('projects.update')" class="px-5 py-3 border-t border-charcoal-700 flex items-center gap-2">
+          <div v-if="can('projects.update')" class="px-5 py-3 border-t border-gray-400 flex items-center gap-2">
             <button
               @click="openAssignClient"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-xs transition-colors"
             >
               <Icon icon="lucide:refresh-cw" class="w-3.5 h-3.5" /> Change Client
             </button>
             <button
               @click="assignClient(null)"
               :disabled="isAssigningClient"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-red-900/30 text-cream-faint hover:text-red-400 text-xs transition-colors disabled:opacity-40"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-red-900/30 text-gray-700 hover:text-red-400 text-xs transition-colors disabled:opacity-40"
             >
               <Icon icon="lucide:user-x" class="w-3.5 h-3.5" /> Remove Client
             </button>
@@ -573,42 +573,42 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <!-- ── Invoices tab ──────────────────────────────── -->
       <div v-if="activeTab === 'invoices'" class="space-y-3">
         <div class="flex items-center justify-between gap-2">
-          <span class="text-sm font-medium text-cream">Invoices ({{ invoices.length }})</span>
+          <span class="text-sm font-medium text-gray-1000">Invoices ({{ invoices.length }})</span>
           <div class="flex items-center gap-2">
             <button
               v-if="can('invoices.create')"
               @click="router.push({ name: 'invoices.create', query: { project_id: projectId } })"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs transition-colors"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs transition-colors"
             >
               <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Create Invoice
             </button>
             <button
               v-if="can('projects.update')"
               @click="openAttach('invoice')"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-xs transition-colors"
             >
               <Icon icon="lucide:link" class="w-3.5 h-3.5" /> Link Existing
             </button>
           </div>
         </div>
 
-        <div v-if="invoices.length === 0" class="text-center py-10 text-cream-faint text-sm">No invoices linked.</div>
-        <div v-else class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden">
+        <div v-if="invoices.length === 0" class="text-center py-10 text-gray-700 text-sm">No invoices linked.</div>
+        <div v-else class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden">
           <div
             v-for="(inv, i) in invoices" :key="inv.id"
-            :class="['flex items-center gap-3 px-4 py-3 hover:bg-charcoal-700/40 transition-colors group', i < invoices.length - 1 ? 'border-b border-charcoal-700/60' : '']"
+            :class="['flex items-center gap-3 px-4 py-3 hover:bg-gray-400/40 transition-colors group', i < invoices.length - 1 ? 'border-b border-gray-400/60' : '']"
           >
-            <Icon icon="lucide:file-text" class="w-4 h-4 text-cream-faint shrink-0" />
+            <Icon icon="lucide:file-text" class="w-4 h-4 text-gray-700 shrink-0" />
             <div class="flex-1 min-w-0">
-              <div class="text-xs font-medium text-cream">{{ inv.number }}</div>
-              <div class="text-[11px] text-cream-faint">{{ inv.to_name ?? '—' }} · {{ inv.issue_date ?? '—' }}</div>
+              <div class="text-xs font-medium text-gray-1000">{{ inv.number }}</div>
+              <div class="text-[11px] text-gray-700">{{ inv.to_name ?? '—' }} · {{ inv.issue_date ?? '—' }}</div>
             </div>
             <span :class="statusBadge(inv.status)">{{ statusLabel(inv.status) }}</span>
             <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button @click="router.push({ name: 'invoices.view', params: { id: inv.id } })" class="p-1.5 rounded hover:bg-charcoal-600 text-cream-faint hover:text-cream transition-colors">
+              <button @click="router.push({ name: 'invoices.view', params: { id: inv.id } })" class="p-1.5 rounded hover:bg-gray-500 text-gray-700 hover:text-gray-1000 transition-colors">
                 <Icon icon="lucide:external-link" class="w-3.5 h-3.5" />
               </button>
-              <button v-if="can('projects.update')" @click="doDetach('invoice', inv.id)" class="p-1.5 rounded hover:bg-red-900/30 text-cream-faint hover:text-red-400 transition-colors">
+              <button v-if="can('projects.update')" @click="doDetach('invoice', inv.id)" class="p-1.5 rounded hover:bg-red-900/30 text-gray-700 hover:text-red-400 transition-colors">
                 <Icon icon="lucide:unlink" class="w-3.5 h-3.5" />
               </button>
             </div>
@@ -619,42 +619,42 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <!-- ── Receipts tab ──────────────────────────────── -->
       <div v-if="activeTab === 'receipts'" class="space-y-3">
         <div class="flex items-center justify-between gap-2">
-          <span class="text-sm font-medium text-cream">Receipts ({{ receipts.length }})</span>
+          <span class="text-sm font-medium text-gray-1000">Receipts ({{ receipts.length }})</span>
           <div class="flex items-center gap-2">
             <button
               v-if="can('receipts.create')"
               @click="router.push({ name: 'receipts.create', query: { project_id: projectId } })"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs transition-colors"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs transition-colors"
             >
               <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Create Receipt
             </button>
             <button
               v-if="can('projects.update')"
               @click="openAttach('receipt')"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-xs transition-colors"
             >
               <Icon icon="lucide:link" class="w-3.5 h-3.5" /> Link Existing
             </button>
           </div>
         </div>
 
-        <div v-if="receipts.length === 0" class="text-center py-10 text-cream-faint text-sm">No receipts linked.</div>
-        <div v-else class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden">
+        <div v-if="receipts.length === 0" class="text-center py-10 text-gray-700 text-sm">No receipts linked.</div>
+        <div v-else class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden">
           <div
             v-for="(rec, i) in receipts" :key="rec.id"
-            :class="['flex items-center gap-3 px-4 py-3 hover:bg-charcoal-700/40 transition-colors group', i < receipts.length - 1 ? 'border-b border-charcoal-700/60' : '']"
+            :class="['flex items-center gap-3 px-4 py-3 hover:bg-gray-400/40 transition-colors group', i < receipts.length - 1 ? 'border-b border-gray-400/60' : '']"
           >
-            <Icon icon="lucide:receipt" class="w-4 h-4 text-cream-faint shrink-0" />
+            <Icon icon="lucide:receipt" class="w-4 h-4 text-gray-700 shrink-0" />
             <div class="flex-1 min-w-0">
-              <div class="text-xs font-medium text-cream">{{ rec.number }}</div>
-              <div class="text-[11px] text-cream-faint">{{ rec.to_name ?? '—' }} · {{ rec.paid_at ?? '—' }}</div>
+              <div class="text-xs font-medium text-gray-1000">{{ rec.number }}</div>
+              <div class="text-[11px] text-gray-700">{{ rec.to_name ?? '—' }} · {{ rec.paid_at ?? '—' }}</div>
             </div>
-            <span v-if="rec.stamp" class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full border border-charcoal-500 bg-charcoal-600 text-cream-muted">{{ rec.stamp }}</span>
+            <span v-if="rec.stamp" class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full border border-gray-500 bg-gray-500 text-gray-900">{{ rec.stamp }}</span>
             <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button @click="router.push({ name: 'receipts.view', params: { id: rec.id } })" class="p-1.5 rounded hover:bg-charcoal-600 text-cream-faint hover:text-cream transition-colors">
+              <button @click="router.push({ name: 'receipts.view', params: { id: rec.id } })" class="p-1.5 rounded hover:bg-gray-500 text-gray-700 hover:text-gray-1000 transition-colors">
                 <Icon icon="lucide:external-link" class="w-3.5 h-3.5" />
               </button>
-              <button v-if="can('projects.update')" @click="doDetach('receipt', rec.id)" class="p-1.5 rounded hover:bg-red-900/30 text-cream-faint hover:text-red-400 transition-colors">
+              <button v-if="can('projects.update')" @click="doDetach('receipt', rec.id)" class="p-1.5 rounded hover:bg-red-900/30 text-gray-700 hover:text-red-400 transition-colors">
                 <Icon icon="lucide:unlink" class="w-3.5 h-3.5" />
               </button>
             </div>
@@ -665,42 +665,42 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <!-- ── Letterheads tab ──────────────────────────── -->
       <div v-if="activeTab === 'letterheads'" class="space-y-3">
         <div class="flex items-center justify-between gap-2">
-          <span class="text-sm font-medium text-cream">Letterheads ({{ letterheads.length }})</span>
+          <span class="text-sm font-medium text-gray-1000">Letterheads ({{ letterheads.length }})</span>
           <div class="flex items-center gap-2">
             <button
               v-if="can('letterheads.create')"
               @click="router.push({ name: 'letterheads.create', query: { project_id: projectId } })"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs transition-colors"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs transition-colors"
             >
               <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Create Letterhead
             </button>
             <button
               v-if="can('projects.update')"
               @click="openAttach('letterhead')"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-xs transition-colors"
             >
               <Icon icon="lucide:link" class="w-3.5 h-3.5" /> Link Existing
             </button>
           </div>
         </div>
 
-        <div v-if="letterheads.length === 0" class="text-center py-10 text-cream-faint text-sm">No letterheads linked.</div>
-        <div v-else class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden">
+        <div v-if="letterheads.length === 0" class="text-center py-10 text-gray-700 text-sm">No letterheads linked.</div>
+        <div v-else class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden">
           <div
             v-for="(lh, i) in letterheads" :key="lh.id"
-            :class="['flex items-center gap-3 px-4 py-3 hover:bg-charcoal-700/40 transition-colors group', i < letterheads.length - 1 ? 'border-b border-charcoal-700/60' : '']"
+            :class="['flex items-center gap-3 px-4 py-3 hover:bg-gray-400/40 transition-colors group', i < letterheads.length - 1 ? 'border-b border-gray-400/60' : '']"
           >
-            <Icon icon="lucide:file" class="w-4 h-4 text-cream-faint shrink-0" />
+            <Icon icon="lucide:file" class="w-4 h-4 text-gray-700 shrink-0" />
             <div class="flex-1 min-w-0">
-              <div class="text-xs font-medium text-cream">{{ lh.name }}</div>
-              <div class="text-[11px] text-cream-faint">{{ formatDate(lh.created_at) }}</div>
+              <div class="text-xs font-medium text-gray-1000">{{ lh.name }}</div>
+              <div class="text-[11px] text-gray-700">{{ formatDate(lh.created_at) }}</div>
             </div>
             <span :class="statusBadge(lh.status)">{{ statusLabel(lh.status) }}</span>
             <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button @click="router.push({ name: 'letterheads.view', params: { id: lh.id } })" class="p-1.5 rounded hover:bg-charcoal-600 text-cream-faint hover:text-cream transition-colors">
+              <button @click="router.push({ name: 'letterheads.view', params: { id: lh.id } })" class="p-1.5 rounded hover:bg-gray-500 text-gray-700 hover:text-gray-1000 transition-colors">
                 <Icon icon="lucide:external-link" class="w-3.5 h-3.5" />
               </button>
-              <button v-if="can('projects.update')" @click="doDetach('letterhead', lh.id)" class="p-1.5 rounded hover:bg-red-900/30 text-cream-faint hover:text-red-400 transition-colors">
+              <button v-if="can('projects.update')" @click="doDetach('letterhead', lh.id)" class="p-1.5 rounded hover:bg-red-900/30 text-gray-700 hover:text-red-400 transition-colors">
                 <Icon icon="lucide:unlink" class="w-3.5 h-3.5" />
               </button>
             </div>
@@ -711,32 +711,32 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <!-- ── Files tab ─────────────────────────────────── -->
       <div v-if="activeTab === 'files'" class="space-y-3">
         <div class="flex items-center justify-between">
-          <span class="text-sm font-medium text-cream">Files ({{ files.length }})</span>
-          <button v-if="can('projects.update')" @click="showAddFile = true" class="flex items-center gap-1.5 text-xs text-amber hover:text-amber-light transition-colors">
+          <span class="text-sm font-medium text-gray-1000">Files ({{ files.length }})</span>
+          <button v-if="can('projects.update')" @click="showAddFile = true" class="flex items-center gap-1.5 text-xs text-green-700 hover:text-green-800 transition-colors">
             <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Add File
           </button>
         </div>
 
-        <div v-if="files.length === 0" class="text-center py-10 text-cream-faint text-sm">No files yet.</div>
-        <div v-else class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden">
+        <div v-if="files.length === 0" class="text-center py-10 text-gray-700 text-sm">No files yet.</div>
+        <div v-else class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden">
           <a
             v-for="(file, i) in files" :key="file.id"
             :href="normalizeUrl(file.url)"
             target="_blank"
             rel="noopener noreferrer"
-            :class="['flex items-center gap-3 px-4 py-3 group hover:bg-charcoal-700/40 transition-colors', i < files.length - 1 ? 'border-b border-charcoal-700/60' : '']"
+            :class="['flex items-center gap-3 px-4 py-3 group hover:bg-gray-400/40 transition-colors', i < files.length - 1 ? 'border-b border-gray-400/60' : '']"
           >
-            <Icon :icon="file.type === 'upload' ? 'lucide:file-up' : 'lucide:link'" class="w-4 h-4 text-cream-faint shrink-0" />
+            <Icon :icon="file.type === 'upload' ? 'lucide:file-up' : 'lucide:link'" class="w-4 h-4 text-gray-700 shrink-0" />
             <div class="flex-1 min-w-0">
-              <div class="text-xs font-medium text-cream group-hover:text-amber transition-colors truncate">{{ file.name }}</div>
-              <div class="text-[11px] text-cream-faint">
+              <div class="text-xs font-medium text-gray-1000 group-hover:text-green-700 transition-colors truncate">{{ file.name }}</div>
+              <div class="text-[11px] text-gray-700">
                 {{ file.mime_type ?? file.type }}{{ file.file_size ? ` · ${formatBytes(file.file_size)}` : '' }}
               </div>
             </div>
             <button
               v-if="can('projects.update')"
               @click.prevent.stop="handleDeleteFile(file.id)"
-              class="opacity-0 group-hover:opacity-100 p-1.5 rounded hover:bg-red-900/30 text-cream-faint hover:text-red-400 transition-all"
+              class="opacity-0 group-hover:opacity-100 p-1.5 rounded hover:bg-red-900/30 text-gray-700 hover:text-red-400 transition-all"
             >
               <Icon icon="lucide:trash-2" class="w-3.5 h-3.5" />
             </button>
@@ -747,8 +747,8 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <!-- ── Activity tab ──────────────────────────────── -->
       <div v-if="activeTab === 'activity'" class="space-y-4">
         <!-- Add note -->
-        <div v-if="can('projects.update')" class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4 space-y-3">
-          <label class="text-xs font-medium text-cream">Add a Note</label>
+        <div v-if="can('projects.update')" class="bg-gray-200 border border-gray-400 rounded-xl p-4 space-y-3">
+          <label class="text-xs font-medium text-gray-1000">Add a Note</label>
           <textarea
             v-model="noteText"
             class="app-inp resize-none w-full text-xs"
@@ -759,7 +759,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
             <button
               @click="handleAddNote"
               :disabled="!noteText.trim() || isSavingNote"
-              class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Icon v-if="isSavingNote" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
               {{ isSavingNote ? 'Saving…' : 'Add Note' }}
@@ -768,16 +768,16 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
         </div>
 
         <!-- Timeline -->
-        <div v-if="activities.length === 0" class="text-center py-10 text-cream-faint text-sm">No activity yet.</div>
-        <div v-else class="relative space-y-0 before:absolute before:left-5 before:top-0 before:bottom-0 before:w-px before:bg-charcoal-700">
+        <div v-if="activities.length === 0" class="text-center py-10 text-gray-700 text-sm">No activity yet.</div>
+        <div v-else class="relative space-y-0 before:absolute before:left-5 before:top-0 before:bottom-0 before:w-px before:bg-gray-400">
           <div v-for="activity in activities" :key="activity.id" class="flex items-start gap-3 relative pl-0">
-            <div class="w-10 h-10 rounded-full bg-charcoal-700 border border-charcoal-600 flex items-center justify-center shrink-0 z-10">
-              <Icon :icon="activityIcon(activity.type)" class="w-4 h-4 text-cream-faint" />
+            <div class="w-10 h-10 rounded-full bg-gray-400 border border-gray-500 flex items-center justify-center shrink-0 z-10">
+              <Icon :icon="activityIcon(activity.type)" class="w-4 h-4 text-gray-700" />
             </div>
             <div class="flex-1 pb-5 min-w-0">
-              <div class="text-xs font-medium text-cream">{{ activity.title }}</div>
-              <div v-if="activity.body" class="text-xs text-cream-muted mt-0.5 leading-relaxed">{{ activity.body }}</div>
-              <div class="text-[11px] text-cream-faint mt-1 flex items-center gap-2">
+              <div class="text-xs font-medium text-gray-1000">{{ activity.title }}</div>
+              <div v-if="activity.body" class="text-xs text-gray-900 mt-0.5 leading-relaxed">{{ activity.body }}</div>
+              <div class="text-[11px] text-gray-700 mt-1 flex items-center gap-2">
                 <span v-if="activity.user">{{ activity.user.name }}</span>
                 <span>{{ formatDateTime(activity.created_at) }}</span>
               </div>
@@ -792,11 +792,11 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
     <Teleport to="body">
       <Transition name="modal">
         <div v-if="showDeleteConfirm" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-200 flex items-center justify-center p-4" @click.self="showDeleteConfirm = false">
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
-            <h2 class="text-lg font-semibold text-cream mb-2">Delete Project?</h2>
-            <p class="text-sm text-cream-faint mb-5">This will permanently delete this project. Linked invoices and receipts will not be deleted.</p>
+          <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+            <h2 class="text-lg font-semibold text-gray-1000 mb-2">Delete Project?</h2>
+            <p class="text-sm text-gray-700 mb-5">This will permanently delete this project. Linked invoices and receipts will not be deleted.</p>
             <div class="flex gap-2">
-              <button @click="showDeleteConfirm = false" class="flex-1 py-2 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted text-sm transition-colors">Cancel</button>
+              <button @click="showDeleteConfirm = false" class="flex-1 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 text-sm transition-colors">Cancel</button>
               <button @click="handleDelete" :disabled="isDeleting" class="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white font-semibold text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
                 <Icon v-if="isDeleting" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
                 {{ isDeleting ? 'Deleting…' : 'Delete' }}
@@ -809,27 +809,27 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <!-- Attach Invoice modal -->
       <Transition name="modal">
         <div v-if="showAttachInvoice" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-200 flex items-center justify-center p-4" @click.self="showAttachInvoice = false">
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-5 w-full max-w-md shadow-2xl">
-            <h2 class="text-base font-semibold text-cream mb-4">Link Invoice</h2>
+          <div class="bg-gray-200 border border-gray-400 rounded-2xl p-5 w-full max-w-md shadow-2xl">
+            <h2 class="text-base font-semibold text-gray-1000 mb-4">Link Invoice</h2>
             <div class="relative mb-3">
-              <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint" />
+              <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-700" />
               <input v-model="attachSearch" @input="searchAttach('invoice')" class="app-inp pl-8 text-xs" placeholder="Search invoices…" />
             </div>
-            <div v-if="attachLoading" class="flex justify-center py-6"><Icon icon="lucide:loader-2" class="w-5 h-5 animate-spin text-cream-faint" /></div>
+            <div v-if="attachLoading" class="flex justify-center py-6"><Icon icon="lucide:loader-2" class="w-5 h-5 animate-spin text-gray-700" /></div>
             <div v-else class="space-y-1 max-h-64 overflow-y-auto">
               <button
                 v-for="inv in attachResults" :key="inv.id"
                 @click="doAttach('invoice', inv.id)"
                 :disabled="isAttaching"
-                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-charcoal-700 transition-colors text-left disabled:opacity-50"
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-400 transition-colors text-left disabled:opacity-50"
               >
                 <div class="flex-1 min-w-0">
-                  <div class="text-xs font-medium text-cream">{{ inv.number }}</div>
-                  <div class="text-[11px] text-cream-faint">{{ inv.to_name ?? '—' }}</div>
+                  <div class="text-xs font-medium text-gray-1000">{{ inv.number }}</div>
+                  <div class="text-[11px] text-gray-700">{{ inv.to_name ?? '—' }}</div>
                 </div>
                 <span :class="statusBadge(inv.status)">{{ statusLabel(inv.status) }}</span>
               </button>
-              <div v-if="attachResults.length === 0" class="text-center py-6 text-cream-faint text-xs">No invoices found</div>
+              <div v-if="attachResults.length === 0" class="text-center py-6 text-gray-700 text-xs">No invoices found</div>
             </div>
           </div>
         </div>
@@ -838,27 +838,27 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <!-- Attach Receipt modal -->
       <Transition name="modal">
         <div v-if="showAttachReceipt" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-200 flex items-center justify-center p-4" @click.self="showAttachReceipt = false">
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-5 w-full max-w-md shadow-2xl">
-            <h2 class="text-base font-semibold text-cream mb-4">Link Receipt</h2>
+          <div class="bg-gray-200 border border-gray-400 rounded-2xl p-5 w-full max-w-md shadow-2xl">
+            <h2 class="text-base font-semibold text-gray-1000 mb-4">Link Receipt</h2>
             <div class="relative mb-3">
-              <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint" />
+              <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-700" />
               <input v-model="attachSearch" @input="searchAttach('receipt')" class="app-inp pl-8 text-xs" placeholder="Search receipts…" />
             </div>
-            <div v-if="attachLoading" class="flex justify-center py-6"><Icon icon="lucide:loader-2" class="w-5 h-5 animate-spin text-cream-faint" /></div>
+            <div v-if="attachLoading" class="flex justify-center py-6"><Icon icon="lucide:loader-2" class="w-5 h-5 animate-spin text-gray-700" /></div>
             <div v-else class="space-y-1 max-h-64 overflow-y-auto">
               <button
                 v-for="rec in attachResults" :key="rec.id"
                 @click="doAttach('receipt', rec.id)"
                 :disabled="isAttaching"
-                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-charcoal-700 transition-colors text-left disabled:opacity-50"
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-400 transition-colors text-left disabled:opacity-50"
               >
                 <div class="flex-1 min-w-0">
-                  <div class="text-xs font-medium text-cream">{{ rec.number }}</div>
-                  <div class="text-[11px] text-cream-faint">{{ rec.to_name ?? '—' }}</div>
+                  <div class="text-xs font-medium text-gray-1000">{{ rec.number }}</div>
+                  <div class="text-[11px] text-gray-700">{{ rec.to_name ?? '—' }}</div>
                 </div>
                 <span :class="statusBadge(rec.status)">{{ statusLabel(rec.status) }}</span>
               </button>
-              <div v-if="attachResults.length === 0" class="text-center py-6 text-cream-faint text-xs">No receipts found</div>
+              <div v-if="attachResults.length === 0" class="text-center py-6 text-gray-700 text-xs">No receipts found</div>
             </div>
           </div>
         </div>
@@ -867,27 +867,27 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <!-- Attach Letterhead modal -->
       <Transition name="modal">
         <div v-if="showAttachLetterhead" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-200 flex items-center justify-center p-4" @click.self="showAttachLetterhead = false">
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-5 w-full max-w-md shadow-2xl">
-            <h2 class="text-base font-semibold text-cream mb-4">Link Letterhead</h2>
+          <div class="bg-gray-200 border border-gray-400 rounded-2xl p-5 w-full max-w-md shadow-2xl">
+            <h2 class="text-base font-semibold text-gray-1000 mb-4">Link Letterhead</h2>
             <div class="relative mb-3">
-              <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint" />
+              <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-700" />
               <input v-model="attachSearch" @input="searchAttach('letterhead')" class="app-inp pl-8 text-xs" placeholder="Search letterheads…" />
             </div>
-            <div v-if="attachLoading" class="flex justify-center py-6"><Icon icon="lucide:loader-2" class="w-5 h-5 animate-spin text-cream-faint" /></div>
+            <div v-if="attachLoading" class="flex justify-center py-6"><Icon icon="lucide:loader-2" class="w-5 h-5 animate-spin text-gray-700" /></div>
             <div v-else class="space-y-1 max-h-64 overflow-y-auto">
               <button
                 v-for="lh in attachResults" :key="lh.id"
                 @click="doAttach('letterhead', lh.id)"
                 :disabled="isAttaching"
-                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-charcoal-700 transition-colors text-left disabled:opacity-50"
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-400 transition-colors text-left disabled:opacity-50"
               >
                 <div class="flex-1 min-w-0">
-                  <div class="text-xs font-medium text-cream">{{ lh.name }}</div>
-                  <div class="text-[11px] text-cream-faint">{{ formatDate(lh.created_at) }}</div>
+                  <div class="text-xs font-medium text-gray-1000">{{ lh.name }}</div>
+                  <div class="text-[11px] text-gray-700">{{ formatDate(lh.created_at) }}</div>
                 </div>
                 <span :class="statusBadge(lh.status)">{{ statusLabel(lh.status) }}</span>
               </button>
-              <div v-if="attachResults.length === 0" class="text-center py-6 text-cream-faint text-xs">No letterheads found</div>
+              <div v-if="attachResults.length === 0" class="text-center py-6 text-gray-700 text-xs">No letterheads found</div>
             </div>
           </div>
         </div>
@@ -896,8 +896,8 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <!-- Add File modal -->
       <Transition name="modal">
         <div v-if="showAddFile" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-200 flex items-center justify-center p-4" @click.self="showAddFile = false">
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-5 w-full max-w-sm shadow-2xl">
-            <h2 class="text-base font-semibold text-cream mb-4">Add File</h2>
+          <div class="bg-gray-200 border border-gray-400 rounded-2xl p-5 w-full max-w-sm shadow-2xl">
+            <h2 class="text-base font-semibold text-gray-1000 mb-4">Add File</h2>
             <div class="space-y-3">
               <div>
                 <label class="app-label">Name</label>
@@ -908,11 +908,11 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
                 <div class="flex gap-2 mt-1">
                   <button
                     @click="fileForm.type = 'url'"
-                    :class="['flex-1 py-2 rounded-lg text-xs border transition-colors', fileForm.type === 'url' ? 'border-amber/40 bg-amber/6 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500']"
+                    :class="['flex-1 py-2 rounded-lg text-xs border transition-colors', fileForm.type === 'url' ? 'border-green-700/40 bg-green-700/6 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500']"
                   >Link / URL</button>
                   <button
                     @click="fileForm.type = 'upload'"
-                    :class="['flex-1 py-2 rounded-lg text-xs border transition-colors', fileForm.type === 'upload' ? 'border-amber/40 bg-amber/6 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500']"
+                    :class="['flex-1 py-2 rounded-lg text-xs border transition-colors', fileForm.type === 'upload' ? 'border-green-700/40 bg-green-700/6 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500']"
                   >Uploaded File</button>
                 </div>
               </div>
@@ -922,8 +922,8 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
               </div>
             </div>
             <div class="flex gap-2 mt-5">
-              <button @click="showAddFile = false" class="flex-1 py-2 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted text-sm transition-colors">Cancel</button>
-              <button @click="handleAddFile" :disabled="isSavingFile" class="flex-1 py-2 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+              <button @click="showAddFile = false" class="flex-1 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 text-sm transition-colors">Cancel</button>
+              <button @click="handleAddFile" :disabled="isSavingFile" class="flex-1 py-2 rounded-lg bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
                 <Icon v-if="isSavingFile" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
                 {{ isSavingFile ? 'Adding…' : 'Add File' }}
               </button>
@@ -935,20 +935,20 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <!-- Assign Client modal -->
       <Transition name="modal">
         <div v-if="showAssignClient" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-200 flex items-center justify-center p-4" @click.self="showAssignClient = false">
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-5 w-full max-w-md shadow-2xl">
-            <h2 class="text-base font-semibold text-cream mb-4">{{ project?.client ? 'Change Client' : 'Assign Client' }}</h2>
+          <div class="bg-gray-200 border border-gray-400 rounded-2xl p-5 w-full max-w-md shadow-2xl">
+            <h2 class="text-base font-semibold text-gray-1000 mb-4">{{ project?.client ? 'Change Client' : 'Assign Client' }}</h2>
             <div class="relative mb-3">
-              <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint" />
+              <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-700" />
               <input
                 v-model="clientSearch"
                 @input="searchClients"
-                class="w-full bg-charcoal-700 border border-charcoal-600 rounded-lg text-cream text-xs pl-8 pr-3 py-2 outline-none placeholder-[#6b6560] focus:border-amber/40 transition-colors"
+                class="w-full bg-gray-400 border border-gray-500 rounded-lg text-gray-1000 text-xs pl-8 pr-3 py-2 outline-none placeholder-[#a0a0a0] focus:border-green-700/40 transition-colors"
                 placeholder="Search clients…"
                 autofocus
               />
             </div>
             <div v-if="clientSearching" class="flex justify-center py-6">
-              <Icon icon="lucide:loader-2" class="w-5 h-5 animate-spin text-cream-faint" />
+              <Icon icon="lucide:loader-2" class="w-5 h-5 animate-spin text-gray-700" />
             </div>
             <div v-else class="space-y-1 max-h-72 overflow-y-auto">
               <button
@@ -957,23 +957,23 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
                 :disabled="isAssigningClient"
                 :class="[
                   'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-left disabled:opacity-50',
-                  project?.client?.id === c.id ? 'bg-amber/8 border border-amber/20' : 'hover:bg-charcoal-700',
+                  project?.client?.id === c.id ? 'bg-green-700/8 border border-green-700/20' : 'hover:bg-gray-400',
                 ]"
               >
-                <div class="w-8 h-8 rounded-full bg-charcoal-600 flex items-center justify-center shrink-0">
-                  <span class="text-xs font-bold text-cream-muted">
+                <div class="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center shrink-0">
+                  <span class="text-xs font-bold text-gray-900">
                     {{ c.full_name.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase() }}
                   </span>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <div class="text-xs font-medium text-cream truncate">{{ c.full_name }}</div>
-                  <div v-if="c.company" class="text-[11px] text-cream-faint truncate">{{ c.company }}</div>
+                  <div class="text-xs font-medium text-gray-1000 truncate">{{ c.full_name }}</div>
+                  <div v-if="c.company" class="text-[11px] text-gray-700 truncate">{{ c.company }}</div>
                 </div>
-                <Icon v-if="project?.client?.id === c.id" icon="lucide:check" class="w-3.5 h-3.5 text-amber shrink-0" />
+                <Icon v-if="project?.client?.id === c.id" icon="lucide:check" class="w-3.5 h-3.5 text-green-700 shrink-0" />
               </button>
-              <div v-if="clientResults.length === 0" class="text-center py-6 text-cream-faint text-xs">No clients found</div>
+              <div v-if="clientResults.length === 0" class="text-center py-6 text-gray-700 text-xs">No clients found</div>
             </div>
-            <button @click="showAssignClient = false" class="mt-4 w-full py-2 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted text-xs transition-colors">
+            <button @click="showAssignClient = false" class="mt-4 w-full py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 text-xs transition-colors">
               Cancel
             </button>
           </div>

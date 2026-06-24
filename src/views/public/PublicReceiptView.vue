@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { ReceiptSharedLinksService, type IReceipt, type IReceiptSharedLink } from '@/services/receipt.service'
+import FlowtaliLogo from '@/components/ui/FlowtaliLogo.vue'
 
 const route = useRoute()
 const token = route.params.token as string
@@ -88,12 +89,7 @@ const printPage = () => window.print()
 
     <!-- Top bar -->
     <header class="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shrink-0">
-      <div class="flex items-center gap-2">
-        <div class="w-6 h-6 rounded-md bg-amber-400 flex items-center justify-center">
-          <Icon icon="lucide:zap" class="w-3.5 h-3.5 text-white" />
-        </div>
-        <span class="text-sm font-bold text-gray-800" style="font-family: 'DM Sans', sans-serif">Flowtali</span>
-      </div>
+      <FlowtaliLogo variant="full" :size="16" theme="light" />
       <button v-if="receipt" @click="printPage()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 border border-gray-200 text-gray-600 rounded-lg transition-colors">
         <Icon icon="lucide:printer" class="w-3.5 h-3.5" /> Print / PDF
       </button>
@@ -119,8 +115,8 @@ const printPage = () => window.print()
     <div v-else-if="locked" class="flex-1 flex items-center justify-center p-6">
       <div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-8 w-full max-w-sm space-y-5">
         <div class="text-center">
-          <div class="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center mx-auto mb-3">
-            <Icon icon="lucide:lock" class="w-6 h-6 text-amber-500" />
+          <div class="w-12 h-12 rounded-xl bg-green-700-50 border border-green-700-200 flex items-center justify-center mx-auto mb-3">
+            <Icon icon="lucide:lock" class="w-6 h-6 text-green-700-500" />
           </div>
           <h2 class="text-base font-semibold text-gray-800">Access Required</h2>
           <p class="text-sm text-gray-500 mt-1">Enter the access code to view this receipt</p>
@@ -132,14 +128,14 @@ const printPage = () => window.print()
             @keydown.enter="submitCode"
             type="text"
             placeholder="e.g. ABC123"
-            class="w-full px-3 py-2.5 text-sm font-mono border border-gray-300 rounded-lg focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 text-gray-800 tracking-widest uppercase"
+            class="w-full px-3 py-2.5 text-sm font-mono border border-gray-300 rounded-lg focus:outline-none focus:border-green-700-400 focus:ring-2 focus:ring-amber-400/20 text-gray-800 tracking-widest uppercase"
           />
           <p v-if="codeError" class="text-xs text-red-500">{{ codeError }}</p>
         </div>
         <button
           @click="submitCode"
           :disabled="codeLoading"
-          class="w-full py-2.5 text-sm font-semibold bg-amber-400 hover:bg-amber-500 text-white rounded-lg transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+          class="w-full py-2.5 text-sm font-semibold bg-green-700-400 hover:bg-green-700-500 text-white rounded-lg transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
         >
           <Icon v-if="codeLoading" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
           View Receipt
@@ -159,7 +155,7 @@ const printPage = () => window.print()
       <div
         v-if="receipt.theme === 'classic'"
         class="print-document w-full max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden text-gray-800 relative"
-        :style="{ fontFamily: receipt.font_family || '\'DM Sans\', sans-serif', fontSize: '13px', minHeight: '1080px' }"
+        :style="{ fontFamily: receipt.font_family || '\'Geist Sans\', sans-serif', fontSize: '13px', minHeight: '1080px' }"
       >
         <div v-if="receipt.show_top_bar" class="h-1.5 w-full" :style="{ backgroundColor: receipt.accent_color }"></div>
         <div v-if="receipt.show_watermark && receipt.watermark_text" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
@@ -182,7 +178,7 @@ const printPage = () => window.print()
               </div>
             </div>
             <div class="text-right">
-              <div class="text-4xl font-bold text-gray-200 tracking-widest" style="font-family:'Cormorant Garamond',Georgia,serif;letter-spacing:0.15em">RECEIPT</div>
+              <div class="text-4xl font-bold text-gray-200 tracking-widest" style="font-family:var(--font-sans);letter-spacing:0.15em">RECEIPT</div>
               <div class="font-mono text-sm text-gray-400 mt-1">{{ receipt.number }}</div>
             </div>
           </div>
@@ -269,7 +265,7 @@ const printPage = () => window.print()
       <div
         v-else-if="receipt.theme === 'modern'"
         class="print-document w-full max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden text-gray-800 relative flex"
-        :style="{ fontFamily: receipt.font_family || '\'DM Sans\', sans-serif', fontSize: '13px', minHeight: '1080px' }"
+        :style="{ fontFamily: receipt.font_family || '\'Geist Sans\', sans-serif', fontSize: '13px', minHeight: '1080px' }"
       >
         <div v-if="receipt.show_watermark && receipt.watermark_text" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
           <span class="text-7xl font-black tracking-widest opacity-[0.04] text-gray-800 whitespace-nowrap">{{ receipt.watermark_text }}</span>
@@ -365,7 +361,7 @@ const printPage = () => window.print()
       <div
         v-else-if="receipt.theme === 'minimal'"
         class="print-document w-full max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden text-gray-700 relative"
-        :style="{ fontFamily: receipt.font_family || '\'DM Sans\', sans-serif', fontSize: '13px', minHeight: '1080px' }"
+        :style="{ fontFamily: receipt.font_family || '\'Geist Sans\', sans-serif', fontSize: '13px', minHeight: '1080px' }"
       >
         <div v-if="receipt.show_watermark && receipt.watermark_text" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
           <span class="text-7xl font-black tracking-widest opacity-[0.04] text-gray-800 whitespace-nowrap">{{ receipt.watermark_text }}</span>
@@ -457,7 +453,7 @@ const printPage = () => window.print()
       <div
         v-else-if="receipt.theme === 'bold'"
         class="print-document w-full max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden text-gray-800 relative"
-        :style="{ fontFamily: receipt.font_family || '\'DM Sans\', sans-serif', fontSize: '13px', minHeight: '1080px' }"
+        :style="{ fontFamily: receipt.font_family || '\'Geist Sans\', sans-serif', fontSize: '13px', minHeight: '1080px' }"
       >
         <div v-if="receipt.show_watermark && receipt.watermark_text" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
           <span class="text-7xl font-black tracking-widest opacity-[0.04] text-gray-800 whitespace-nowrap">{{ receipt.watermark_text }}</span>
@@ -559,7 +555,7 @@ const printPage = () => window.print()
       <div
         v-else
         class="print-document w-full max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden text-gray-800 relative"
-        :style="{ fontFamily: receipt.font_family || '\'DM Sans\', sans-serif', fontSize: '13px', minHeight: '1080px' }"
+        :style="{ fontFamily: receipt.font_family || '\'Geist Sans\', sans-serif', fontSize: '13px', minHeight: '1080px' }"
       >
         <div v-if="receipt.show_watermark && receipt.watermark_text" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
           <span class="text-7xl font-black tracking-widest opacity-[0.04] text-gray-800 whitespace-nowrap">{{ receipt.watermark_text }}</span>

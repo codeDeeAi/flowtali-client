@@ -12,7 +12,7 @@ const props = defineProps<{
 }>();
 
 const colorMap = {
-  amber: { bg: 'bg-amber/10', text: 'text-amber', bar: 'bg-amber' },
+  amber: { bg: 'bg-green-700/10', text: 'text-green-700', bar: 'bg-green-700' },
   red:   { bg: 'bg-red-500/10', text: 'text-red-400', bar: 'bg-red-400' },
   blue:  { bg: 'bg-blue-500/10', text: 'text-blue-400', bar: 'bg-blue-400' },
   green: { bg: 'bg-green-500/10', text: 'text-green-400', bar: 'bg-green-400' },
@@ -22,20 +22,20 @@ const c = colorMap[props.color];
 </script>
 
 <template>
-  <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 flex flex-col gap-4">
+  <div class="bg-gray-200 border border-gray-400 rounded-xl p-5 flex flex-col gap-4">
 
     <!-- Skeleton -->
     <template v-if="loading">
       <div class="animate-pulse flex flex-col gap-4">
         <div class="flex items-start justify-between">
-          <div class="w-10 h-10 rounded-lg bg-charcoal-700" />
-          <div class="w-14 h-6 rounded-full bg-charcoal-700" />
+          <div class="w-10 h-10 rounded-lg bg-gray-400" />
+          <div class="w-14 h-6 rounded-full bg-gray-400" />
         </div>
         <div>
-          <div class="w-20 h-7 rounded bg-charcoal-700 mb-2" />
-          <div class="w-24 h-4 rounded bg-charcoal-700" />
+          <div class="w-20 h-7 rounded bg-gray-400 mb-2" />
+          <div class="w-24 h-4 rounded bg-gray-400" />
         </div>
-        <div class="h-1 rounded-full bg-charcoal-700" />
+        <div class="h-1 rounded-full bg-gray-400" />
       </div>
     </template>
 
@@ -57,11 +57,11 @@ const c = colorMap[props.color];
       </div>
 
       <div>
-        <div class="text-2xl font-bold text-cream tracking-tight">{{ value }}</div>
-        <div class="text-sm text-cream-muted mt-0.5">{{ title }}</div>
+        <div class="text-2xl font-bold text-gray-1000 tracking-tight">{{ value }}</div>
+        <div class="text-sm text-gray-900 mt-0.5">{{ title }}</div>
       </div>
 
-      <div class="h-1 bg-charcoal-600 rounded-full overflow-hidden">
+      <div class="h-1 bg-gray-500 rounded-full overflow-hidden">
         <div
           :class="['h-full rounded-full transition-all duration-700', c.bar]"
           :style="{ width: `${progress}%` }"

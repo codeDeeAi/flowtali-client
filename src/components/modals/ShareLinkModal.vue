@@ -141,7 +141,7 @@ function isExpired(link: ISharedLink): boolean {
 
 function statusLabel(link: ISharedLink): { text: string; cls: string } {
   if (!link.is_active) return { text: 'Revoked', cls: 'text-red-400 bg-red-500/10 border-red-500/20' }
-  if (isExpired(link))  return { text: 'Expired', cls: 'text-gray-400 bg-charcoal-700 border-charcoal-600' }
+  if (isExpired(link))  return { text: 'Expired', cls: 'text-gray-400 bg-gray-400 border-gray-500' }
   return { text: 'Active', cls: 'text-green-400 bg-green-500/10 border-green-500/20' }
 }
 
@@ -166,20 +166,20 @@ function expiryLabel(link: ISharedLink): string {
   <Teleport to="body">
     <Transition name="modal">
       <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" @click.self="emit('close')">
-        <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh]">
+        <div class="bg-gray-200 border border-gray-400 rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh]">
 
           <!-- Header -->
-          <div class="flex items-center justify-between px-5 py-4 border-b border-charcoal-700 shrink-0">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-gray-400 shrink-0">
             <div class="flex items-center gap-2.5">
-              <div class="w-7 h-7 rounded-lg bg-amber/10 border border-amber/20 flex items-center justify-center">
-                <Icon icon="lucide:share-2" class="w-3.5 h-3.5 text-amber" />
+              <div class="w-7 h-7 rounded-lg bg-green-700/10 border border-green-700/20 flex items-center justify-center">
+                <Icon icon="lucide:share-2" class="w-3.5 h-3.5 text-green-700" />
               </div>
               <div>
-                <h3 class="text-sm font-semibold text-cream">Share Link</h3>
-                <p class="text-[11px] text-cream-faint">{{ resourceName }}</p>
+                <h3 class="text-sm font-semibold text-gray-1000">Share Link</h3>
+                <p class="text-[11px] text-gray-700">{{ resourceName }}</p>
               </div>
             </div>
-            <button @click="emit('close')" class="p-1.5 rounded-lg hover:bg-charcoal-700 text-cream-faint hover:text-cream transition-colors">
+            <button @click="emit('close')" class="p-1.5 rounded-lg hover:bg-gray-400 text-gray-700 hover:text-gray-1000 transition-colors">
               <Icon icon="lucide:x" class="w-4 h-4" />
             </button>
           </div>
@@ -188,22 +188,22 @@ function expiryLabel(link: ISharedLink): string {
           <div class="flex-1 overflow-y-auto p-5 space-y-4">
 
             <!-- Create new link -->
-            <div v-if="showCreate" class="bg-charcoal-900/60 border border-charcoal-700 rounded-xl p-4 space-y-3">
-              <p class="text-xs font-semibold text-cream-muted uppercase tracking-wider">New Link</p>
+            <div v-if="showCreate" class="bg-gray-100/60 border border-gray-400 rounded-xl p-4 space-y-3">
+              <p class="text-xs font-semibold text-gray-900 uppercase tracking-wider">New Link</p>
 
               <!-- Label -->
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Label (optional)</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Label (optional)</label>
                 <input v-model="form.label" class="app-inp text-sm w-full" placeholder="e.g. Client review" />
               </div>
 
               <!-- Visibility -->
               <div class="space-y-1.5">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Access</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Access</label>
                 <div class="grid grid-cols-2 gap-2">
                   <button
                     @click="form.visibility = 'public'"
-                    :class="['flex items-center gap-2 px-3 py-2.5 rounded-lg border text-xs font-medium transition-colors text-left', form.visibility === 'public' ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 bg-charcoal-700/40 text-cream-faint hover:text-cream']"
+                    :class="['flex items-center gap-2 px-3 py-2.5 rounded-lg border text-xs font-medium transition-colors text-left', form.visibility === 'public' ? 'border-green-700 bg-green-700/10 text-green-700' : 'border-gray-500 bg-gray-400/40 text-gray-700 hover:text-gray-1000']"
                   >
                     <Icon icon="lucide:globe" class="w-3.5 h-3.5 shrink-0" />
                     <div>
@@ -213,7 +213,7 @@ function expiryLabel(link: ISharedLink): string {
                   </button>
                   <button
                     @click="form.visibility = 'private'"
-                    :class="['flex items-center gap-2 px-3 py-2.5 rounded-lg border text-xs font-medium transition-colors text-left', form.visibility === 'private' ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 bg-charcoal-700/40 text-cream-faint hover:text-cream']"
+                    :class="['flex items-center gap-2 px-3 py-2.5 rounded-lg border text-xs font-medium transition-colors text-left', form.visibility === 'private' ? 'border-green-700 bg-green-700/10 text-green-700' : 'border-gray-500 bg-gray-400/40 text-gray-700 hover:text-gray-1000']"
                   >
                     <Icon icon="lucide:lock" class="w-3.5 h-3.5 shrink-0" />
                     <div>
@@ -226,29 +226,29 @@ function expiryLabel(link: ISharedLink): string {
 
               <!-- Access code -->
               <div v-if="form.visibility === 'private'" class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Access Code <span class="normal-case opacity-60">(leave blank to auto-generate)</span></label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Access Code <span class="normal-case opacity-60">(leave blank to auto-generate)</span></label>
                 <input v-model="form.accessCode" class="app-inp text-sm font-mono w-full" placeholder="Auto-generated" maxlength="20" />
               </div>
 
               <!-- Validity -->
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Validity Period</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Validity Period</label>
                 <div class="flex flex-wrap gap-1.5">
                   <button
                     v-for="opt in validityOptions" :key="String(opt.value)"
                     @click="form.validityDays = opt.value"
-                    :class="['px-2.5 py-1 rounded-md border text-xs font-medium transition-colors', form.validityDays === opt.value ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 bg-charcoal-700/40 text-cream-faint hover:text-cream']"
+                    :class="['px-2.5 py-1 rounded-md border text-xs font-medium transition-colors', form.validityDays === opt.value ? 'border-green-700 bg-green-700/10 text-green-700' : 'border-gray-500 bg-gray-400/40 text-gray-700 hover:text-gray-1000']"
                   >{{ opt.label }}</button>
                 </div>
               </div>
 
               <!-- Actions -->
               <div class="flex gap-2 pt-1">
-                <button @click="handleCreate" :disabled="isCreating" class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold bg-amber hover:bg-amber/90 text-charcoal-900 rounded-lg transition-colors disabled:opacity-60">
+                <button @click="handleCreate" :disabled="isCreating" class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold bg-green-700 hover:bg-green-700/90 text-bg-100 rounded-lg transition-colors disabled:opacity-60">
                   <Icon v-if="isCreating" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
                   <Icon v-else icon="lucide:link" class="w-3.5 h-3.5" /> Generate Link
                 </button>
-                <button v-if="links.length > 0" @click="showCreate = false" class="px-3 py-2 text-xs text-cream-faint hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 rounded-lg transition-colors">
+                <button v-if="links.length > 0" @click="showCreate = false" class="px-3 py-2 text-xs text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors">
                   Cancel
                 </button>
               </div>
@@ -258,66 +258,66 @@ function expiryLabel(link: ISharedLink): string {
             <button
               v-else
               @click="showCreate = true"
-              class="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-medium border border-dashed border-charcoal-600 hover:border-amber/40 text-cream-faint hover:text-cream rounded-xl transition-colors"
+              class="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-medium border border-dashed border-gray-500 hover:border-green-700/40 text-gray-700 hover:text-gray-1000 rounded-xl transition-colors"
             >
               <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Create New Link
             </button>
 
             <!-- Existing links -->
             <div v-if="links.length > 0" class="space-y-2">
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint px-0.5">{{ links.length }} Link{{ links.length !== 1 ? 's' : '' }}</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 px-0.5">{{ links.length }} Link{{ links.length !== 1 ? 's' : '' }}</p>
 
-              <div v-for="link in links" :key="link.id" class="bg-charcoal-900/40 border border-charcoal-700 rounded-xl p-3.5 space-y-3">
+              <div v-for="link in links" :key="link.id" class="bg-gray-100/40 border border-gray-400 rounded-xl p-3.5 space-y-3">
 
                 <!-- Top row -->
                 <div class="flex items-start justify-between gap-2">
                   <div class="min-w-0 flex-1">
                     <div class="flex items-center gap-2 flex-wrap">
-                      <span class="text-xs font-semibold text-cream truncate">{{ link.label || 'Shared Link' }}</span>
+                      <span class="text-xs font-semibold text-gray-1000 truncate">{{ link.label || 'Shared Link' }}</span>
                       <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium', statusLabel(link).cls]">
                         {{ statusLabel(link).text }}
                       </span>
-                      <span class="text-[9px] px-1.5 py-0.5 rounded border font-medium text-cream-faint border-charcoal-600 bg-charcoal-700">
+                      <span class="text-[9px] px-1.5 py-0.5 rounded border font-medium text-gray-700 border-gray-500 bg-gray-400">
                         {{ link.visibility === 'private' ? 'Private' : 'Public' }}
                       </span>
                     </div>
-                    <p class="text-[10px] text-cream-faint mt-0.5">{{ expiryLabel(link) }} · Created {{ fmtDate(link.created_at) }}</p>
+                    <p class="text-[10px] text-gray-700 mt-0.5">{{ expiryLabel(link) }} · Created {{ fmtDate(link.created_at) }}</p>
                   </div>
                 </div>
 
                 <!-- URL row -->
                 <div class="flex items-center gap-2">
-                  <div class="flex-1 min-w-0 bg-charcoal-800 border border-charcoal-700 rounded-lg px-2.5 py-1.5">
-                    <p class="text-[10px] font-mono text-cream-faint truncate">{{ linkUrl(link.token) }}</p>
+                  <div class="flex-1 min-w-0 bg-gray-200 border border-gray-400 rounded-lg px-2.5 py-1.5">
+                    <p class="text-[10px] font-mono text-gray-700 truncate">{{ linkUrl(link.token) }}</p>
                   </div>
                   <button
                     @click="copyToClipboard(link)"
                     :disabled="!link.is_active || isExpired(link)"
-                    class="shrink-0 p-1.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    class="shrink-0 p-1.5 rounded-lg bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                     title="Copy link"
                   ><Icon icon="lucide:copy" class="w-3.5 h-3.5" /></button>
                 </div>
 
                 <!-- Access code (private) -->
                 <div v-if="link.visibility === 'private' && link.access_code" class="flex items-center gap-2">
-                  <div class="flex-1 bg-amber/5 border border-amber/20 rounded-lg px-2.5 py-1.5 flex items-center gap-2">
-                    <Icon icon="lucide:key-round" class="w-3 h-3 text-amber shrink-0" />
-                    <span class="text-xs font-mono text-amber tracking-widest">{{ link.access_code }}</span>
+                  <div class="flex-1 bg-green-700/5 border border-green-700/20 rounded-lg px-2.5 py-1.5 flex items-center gap-2">
+                    <Icon icon="lucide:key-round" class="w-3 h-3 text-green-700 shrink-0" />
+                    <span class="text-xs font-mono text-green-700 tracking-widest">{{ link.access_code }}</span>
                   </div>
-                  <button @click="copyCode(link.access_code!)" class="shrink-0 p-1.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream transition-colors" title="Copy code">
+                  <button @click="copyCode(link.access_code!)" class="shrink-0 p-1.5 rounded-lg bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 transition-colors" title="Copy code">
                     <Icon icon="lucide:copy" class="w-3.5 h-3.5" />
                   </button>
                 </div>
 
                 <!-- Stats -->
-                <div class="flex items-center gap-4 text-[10px] text-cream-faint border-t border-charcoal-700/60 pt-2.5 mt-0.5">
+                <div class="flex items-center gap-4 text-[10px] text-gray-700 border-t border-gray-400/60 pt-2.5 mt-0.5">
                   <span class="flex items-center gap-1"><Icon icon="lucide:eye" class="w-3 h-3" /> {{ link.views }} views</span>
                   <span class="flex items-center gap-1"><Icon icon="lucide:users" class="w-3 h-3" /> {{ link.unique_views }} unique</span>
                   <span class="flex items-center gap-1 ml-auto"><Icon icon="lucide:clock" class="w-3 h-3" /> {{ fmtDateTime(link.last_viewed_at) }}</span>
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center gap-1.5 border-t border-charcoal-700/60 pt-2.5">
+                <div class="flex items-center gap-1.5 border-t border-gray-400/60 pt-2.5">
                   <button
                     v-if="link.is_active && !isExpired(link)"
                     @click="revokeLink(link.id)"
@@ -334,11 +334,11 @@ function expiryLabel(link: ISharedLink): string {
 
             <!-- Empty state -->
             <div v-else-if="!showCreate" class="flex flex-col items-center justify-center py-8 text-center">
-              <div class="w-10 h-10 rounded-xl bg-charcoal-700 border border-charcoal-600 flex items-center justify-center mb-3">
-                <Icon icon="lucide:link" class="w-5 h-5 text-cream-faint" />
+              <div class="w-10 h-10 rounded-xl bg-gray-400 border border-gray-500 flex items-center justify-center mb-3">
+                <Icon icon="lucide:link" class="w-5 h-5 text-gray-700" />
               </div>
-              <p class="text-sm text-cream-muted font-medium">No shared links yet</p>
-              <p class="text-xs text-cream-faint mt-1">Generate a link to share this {{ resourceType }}</p>
+              <p class="text-sm text-gray-900 font-medium">No shared links yet</p>
+              <p class="text-xs text-gray-700 mt-1">Generate a link to share this {{ resourceType }}</p>
             </div>
 
           </div>

@@ -98,24 +98,24 @@ const handleVerify = async () => {
 <template>
   <div class="min-h-screen grid-texture flex flex-col items-center justify-center px-4 py-16 pt-24">
     <div class="auth-card w-full max-w-md p-8 relative">
-      <router-link :to="{ name: 'signin' }" class="flex items-center gap-2 text-cream-faint text-sm mb-7 hover:text-cream">
+      <router-link :to="{ name: 'signin' }" class="flex items-center gap-2 text-gray-700 text-sm mb-7 hover:text-gray-1000">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
         Back to sign in
       </router-link>
 
-      <div class="w-12 h-12 rounded-full bg-amber-dim border border-amber-border flex items-center justify-center mb-5">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E8A83E" stroke-width="2">
+      <div class="w-12 h-12 rounded-full bg-green-100 border border-green-400 flex items-center justify-center mb-5">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="5" y="11" width="14" height="10" rx="2" />
           <path d="M8 11V7a4 4 0 0 1 8 0v4" />
         </svg>
       </div>
 
-      <h1 class="font-display text-3xl font-semibold text-cream mb-1">Two-factor verification</h1>
-      <p class="text-cream-faint text-sm mb-7">
+      <h1 class="font-sans text-3xl font-semibold text-gray-1000 mb-1">Two-factor verification</h1>
+      <p class="text-gray-700 text-sm mb-7">
         Enter the 6-character code sent to
-        <span v-if="email" class="text-cream font-medium">{{ email }}</span>
+        <span v-if="email" class="text-gray-1000 font-medium">{{ email }}</span>
         <span v-else>your email address</span>.
       </p>
 
@@ -152,13 +152,13 @@ const handleVerify = async () => {
       </div>
 
       <!-- Resend section -->
-      <div class="mt-6 p-4 rounded-lg bg-charcoal-800/60 border border-charcoal-700">
-        <p class="text-cream-faint text-xs mb-3">Didn't receive the code? Check your spam folder or request a new one.</p>
+      <div class="mt-6 p-4 rounded-lg bg-gray-200/60 border border-gray-400">
+        <p class="text-gray-700 text-xs mb-3">Didn't receive the code? Check your spam folder or request a new one.</p>
         <button
           class="w-full flex items-center justify-center gap-2 text-sm py-2.5 rounded-lg border transition-colors"
           :class="canResend
-            ? 'border-amber/30 text-amber hover:bg-amber/10'
-            : 'border-charcoal-600 text-cream-faint cursor-not-allowed'"
+            ? 'border-green-700/30 text-green-700 hover:bg-green-700/10'
+            : 'border-gray-500 text-gray-700 cursor-not-allowed'"
           :disabled="!canResend"
           @click="handleResend"
         >

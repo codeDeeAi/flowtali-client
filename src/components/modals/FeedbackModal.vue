@@ -83,15 +83,15 @@ function close() {
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm sm:hidden" @click="close" />
 
         <!-- Panel -->
-        <div class="relative w-full sm:w-[400px] bg-charcoal-800 border border-charcoal-600 rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden feedback-panel">
+        <div class="relative w-full sm:w-[400px] bg-gray-200 border border-gray-500 rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden feedback-panel">
 
           <!-- Header -->
-          <div class="flex items-center justify-between px-5 py-4 border-b border-charcoal-700">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-gray-400">
             <div>
-              <h3 class="text-cream text-sm font-semibold">Share feedback</h3>
-              <p class="text-cream-faint text-xs mt-0.5">We read every submission</p>
+              <h3 class="text-gray-1000 text-sm font-semibold">Share feedback</h3>
+              <p class="text-gray-700 text-xs mt-0.5">We read every submission</p>
             </div>
-            <button @click="close" class="text-cream-faint hover:text-cream transition-colors p-1 rounded-lg hover:bg-charcoal-700">
+            <button @click="close" class="text-gray-700 hover:text-gray-1000 transition-colors p-1 rounded-lg hover:bg-gray-400">
               <Icon icon="lucide:x" class="w-4 h-4" />
             </button>
           </div>
@@ -102,12 +102,12 @@ function close() {
               <Icon icon="lucide:check" class="w-6 h-6 text-green-400" />
             </div>
             <div>
-              <p class="text-cream font-medium text-sm">Thanks for the feedback!</p>
-              <p class="text-cream-faint text-xs mt-1">It helps us make Flowtali better.</p>
+              <p class="text-gray-1000 font-medium text-sm">Thanks for the feedback!</p>
+              <p class="text-gray-700 text-xs mt-1">It helps us make Flowtali better.</p>
             </div>
             <button
               @click="close"
-              class="mt-2 text-xs text-amber hover:underline"
+              class="mt-2 text-xs text-green-700 hover:underline"
             >
               Close
             </button>
@@ -118,20 +118,20 @@ function close() {
 
             <!-- Type selector -->
             <div>
-              <p class="text-xs font-medium text-cream-faint uppercase tracking-wider mb-2.5">Type</p>
+              <p class="text-xs font-medium text-gray-700 uppercase tracking-wider mb-2.5">Type</p>
               <div class="grid grid-cols-2 gap-2">
                 <button
                   v-for="t in types" :key="t.id"
                   @click="selectedType = t.id"
                   class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-left transition-all"
                   :class="selectedType === t.id
-                    ? 'bg-amber/10 border-amber/40 text-cream'
-                    : 'border-charcoal-600 text-cream-muted hover:border-charcoal-500 hover:text-cream bg-charcoal-900/40'"
+                    ? 'bg-green-700/10 border-green-700/40 text-gray-1000'
+                    : 'border-gray-500 text-gray-900 hover:border-gray-500 hover:text-gray-1000 bg-gray-100/40'"
                 >
-                  <Icon :icon="t.icon" class="w-3.5 h-3.5 shrink-0" :class="selectedType === t.id ? 'text-amber' : ''" />
+                  <Icon :icon="t.icon" class="w-3.5 h-3.5 shrink-0" :class="selectedType === t.id ? 'text-green-700' : ''" />
                   <div>
                     <div class="text-xs font-medium leading-none">{{ t.label }}</div>
-                    <div class="text-[10px] text-cream-faint mt-0.5 leading-none">{{ t.desc }}</div>
+                    <div class="text-[10px] text-gray-700 mt-0.5 leading-none">{{ t.desc }}</div>
                   </div>
                 </button>
               </div>
@@ -139,25 +139,25 @@ function close() {
 
             <!-- Rating -->
             <div>
-              <p class="text-xs font-medium text-cream-faint uppercase tracking-wider mb-2.5">
-                Overall rating <span class="normal-case text-cream-faint/60">(optional)</span>
+              <p class="text-xs font-medium text-gray-700 uppercase tracking-wider mb-2.5">
+                Overall rating <span class="normal-case text-gray-700/60">(optional)</span>
               </p>
               <div class="flex items-center gap-2">
                 <button
                   v-for="n in 5" :key="n"
                   @click="selectRating(n)"
                   class="text-xl transition-transform hover:scale-110 leading-none"
-                  :class="rating !== null && n <= rating ? 'text-amber' : 'text-charcoal-500 hover:text-amber/60'"
+                  :class="rating !== null && n <= rating ? 'text-green-700' : 'text-gray-500 hover:text-green-700/60'"
                 >
                   ★
                 </button>
-                <span v-if="rating" class="text-xs text-cream-faint ml-1">{{ ['','Awful','Poor','Okay','Good','Great!'][rating] }}</span>
+                <span v-if="rating" class="text-xs text-gray-700 ml-1">{{ ['','Awful','Poor','Okay','Good','Great!'][rating] }}</span>
               </div>
             </div>
 
             <!-- Message -->
             <div>
-              <p class="text-xs font-medium text-cream-faint uppercase tracking-wider mb-2">Message</p>
+              <p class="text-xs font-medium text-gray-700 uppercase tracking-wider mb-2">Message</p>
               <textarea
                 v-model="message"
                 rows="4"
@@ -167,7 +167,7 @@ function close() {
               />
               <div class="flex justify-between mt-1">
                 <span v-if="error" class="text-xs text-red-400">{{ error }}</span>
-                <span class="text-[10px] text-cream-faint/50 ml-auto">{{ message.length }}/2000</span>
+                <span class="text-[10px] text-gray-700/50 ml-auto">{{ message.length }}/2000</span>
               </div>
             </div>
 
@@ -175,7 +175,7 @@ function close() {
             <button
               @click="submit"
               :disabled="!canSubmit"
-              class="w-full bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-sm py-2.5 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              class="w-full bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-sm py-2.5 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               <svg v-if="submitting" class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>
               {{ submitting ? 'Sending…' : 'Send feedback' }}

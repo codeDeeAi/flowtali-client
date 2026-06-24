@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#000"/>
+  <rect x="60" y="60" width="1080" height="510" rx="32" fill="#0a0a0a" stroke="#2e2e2e" stroke-width="1"/>
+
+  <!-- Logo icon -->
+  <rect x="480" y="160" width="80" height="80" rx="18" fill="#00c853"/>
+  <rect x="504" y="174" width="7" height="36" rx="1.5" fill="#000"/>
+  <rect x="504" y="174" width="26" height="7" rx="1.5" fill="#000"/>
+  <rect x="504" y="188" width="19" height="7" rx="1.5" fill="#000"/>
+
+  <!-- Wordmark -->
+  <text x="576" y="218" font-family="system-ui,-apple-system,sans-serif" font-weight="700" font-size="52" letter-spacing="-1.5">
+    <tspan fill="#00c853">Flow</tspan><tspan fill="#ededed">tali</tspan>
+  </text>
+
+  <!-- Tagline -->
+  <text x="600" y="310" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-weight="400" font-size="28" fill="#a0a0a0">
+    Invoices, Receipts, Projects &amp; Letterheads
+  </text>
+  <text x="600" y="350" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-weight="400" font-size="22" fill="#878787">
+    The complete document platform for freelancers
+  </text>
+
+  <!-- URL -->
+  <text x="600" y="490" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,monospace" font-weight="500" font-size="18" fill="#00c853">
+    flowtali.com
+  </text>
+</svg>

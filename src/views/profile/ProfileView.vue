@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { ProfileService, type IUserProfile, type ISession } from '@/services/profile.service'
 import { SettingsService } from '@/services/settings.service'
 import { useNotification } from '@/composables/notification'
 
+const router      = useRouter()
 const authStore   = useAuthStore()
 const { notify }  = useNotification()
 
@@ -31,6 +33,12 @@ const avatarInput        = ref<HTMLInputElement | null>(null)
 const isLoadingSessions  = ref(false)
 const isRevokingAll      = ref(false)
 const revokingId         = ref<number | null>(null)
+
+// ── Account deletion state ─────────────────────────────────────────────────────
+const deleteStep            = ref<'idle' | 'confirm' | 'otp'>('idle')
+const deleteOtp             = ref('')
+const isDeleteInitiating    = ref(false)
+const isDeleteConfirming    = ref(false)
 
 // ── MFA state ──────────────────────────────────────────────────────────────────
 const mfaStep           = ref<'idle' | 'otp'>('idle')
@@ -224,6 +232,45 @@ async function disableMfa() {
   }
 }
 
+// ── Account deletion handlers ─────────────────────────────────────────────────
+function openDeleteModal() {
+  deleteStep.value = 'confirm'
+  deleteOtp.value = ''
+}
+
+function closeDeleteModal() {
+  deleteStep.value = 'idle'
+  deleteOtp.value = ''
+}
+
+async function sendDeletionOtp() {
+  isDeleteInitiating.value = true
+  try {
+    await ProfileService.initiateAccountDeletion()
+    deleteStep.value = 'otp'
+    deleteOtp.value = ''
+    notify('Verification code sent to your email', 'success')
+  } catch (err: any) {
+    notify(err?.response?.data?.message ?? 'Failed to send verification code', 'error')
+  } finally {
+    isDeleteInitiating.value = false
+  }
+}
+
+async function confirmDeletion() {
+  if (deleteOtp.value.length !== 6) return
+  isDeleteConfirming.value = true
+  try {
+    await ProfileService.confirmAccountDeletion(deleteOtp.value)
+    authStore.logout()
+    router.push({ name: 'signin' })
+  } catch (err: any) {
+    notify(err?.response?.data?.message ?? 'Failed to delete account', 'error')
+  } finally {
+    isDeleteConfirming.value = false
+  }
+}
+
 // ── helpers ────────────────────────────────────────────────────────────────────
 function fmtDate(iso: string | null): string {
   if (!iso) return 'Never'
@@ -254,14 +301,14 @@ function fmtRelative(iso: string | null): string {
 
     <!-- Loading skeleton -->
     <div v-if="isLoading" class="flex items-center justify-center h-48">
-      <Icon icon="lucide:loader-2" class="w-6 h-6 text-cream-faint animate-spin" />
+      <Icon icon="lucide:loader-2" class="w-6 h-6 text-gray-700 animate-spin" />
     </div>
 
     <template v-else>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
         <!-- ── Profile card ──────────────────────────────────────────────── -->
-        <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+        <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
           <!-- Avatar row -->
           <div class="flex items-center gap-4 mb-6">
             <div class="relative shrink-0">
@@ -270,7 +317,7 @@ function fmtRelative(iso: string | null): string {
                 <img :src="profile.avatar" alt="avatar" class="w-full h-full object-cover" />
               </div>
               <div v-else
-                class="w-16 h-16 rounded-full bg-amber flex items-center justify-center text-xl font-bold text-charcoal-900">
+                class="w-16 h-16 rounded-full bg-green-700 flex items-center justify-center text-xl font-bold text-bg-100">
                 {{ initials }}
               </div>
               <div v-if="isUploadingAvatar"
@@ -279,12 +326,12 @@ function fmtRelative(iso: string | null): string {
               </div>
             </div>
             <div>
-              <div class="font-display text-xl font-semibold text-cream">{{ profile?.full_name }}</div>
-              <div class="text-xs text-cream-faint">{{ profile?.email }}</div>
+              <div class="font-sans text-xl font-semibold text-gray-1000">{{ profile?.full_name }}</div>
+              <div class="text-xs text-gray-700">{{ profile?.email }}</div>
               <input ref="avatarInput" type="file" accept="image/*" class="hidden" @change="handleAvatarChange" />
               <button
                 @click="triggerAvatarUpload"
-                class="mt-2 text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-2.5 py-1 rounded-md transition-colors"
+                class="mt-2 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1 rounded-md transition-colors"
               >
                 Change Photo
               </button>
@@ -318,7 +365,7 @@ function fmtRelative(iso: string | null): string {
           <button
             @click="saveProfile"
             :disabled="isSavingProfile"
-            class="flex items-center gap-2 bg-amber hover:bg-amber-light disabled:opacity-60 text-charcoal-900 font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
+            class="flex items-center gap-2 bg-green-700 hover:bg-green-800 disabled:opacity-60 text-bg-100 font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
           >
             <Icon v-if="isSavingProfile" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
             Save Changes
@@ -329,8 +376,8 @@ function fmtRelative(iso: string | null): string {
         <div class="space-y-4">
 
           <!-- Change password -->
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
-            <h3 class="text-sm font-semibold text-cream mb-4">Change Password</h3>
+          <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
+            <h3 class="text-sm font-semibold text-gray-1000 mb-4">Change Password</h3>
             <div class="space-y-3 mb-4">
               <div>
                 <label class="app-label">Current Password</label>
@@ -339,7 +386,7 @@ function fmtRelative(iso: string | null): string {
                     :type="showCurrentPw ? 'text' : 'password'"
                     v-model="pwForm.current_password"
                     placeholder="••••••••" />
-                  <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-cream-faint hover:text-cream" @click="showCurrentPw = !showCurrentPw">
+                  <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 hover:text-gray-1000" @click="showCurrentPw = !showCurrentPw">
                     <Icon :icon="showCurrentPw ? 'lucide:eye-off' : 'lucide:eye'" class="w-4 h-4" />
                   </button>
                 </div>
@@ -351,7 +398,7 @@ function fmtRelative(iso: string | null): string {
                     :type="showNewPw ? 'text' : 'password'"
                     v-model="pwForm.password"
                     placeholder="Min. 8 characters" />
-                  <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-cream-faint hover:text-cream" @click="showNewPw = !showNewPw">
+                  <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 hover:text-gray-1000" @click="showNewPw = !showNewPw">
                     <Icon :icon="showNewPw ? 'lucide:eye-off' : 'lucide:eye'" class="w-4 h-4" />
                   </button>
                 </div>
@@ -363,7 +410,7 @@ function fmtRelative(iso: string | null): string {
                     :type="showConfirmPw ? 'text' : 'password'"
                     v-model="pwForm.password_confirmation"
                     placeholder="••••••••" />
-                  <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-cream-faint hover:text-cream" @click="showConfirmPw = !showConfirmPw">
+                  <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 hover:text-gray-1000" @click="showConfirmPw = !showConfirmPw">
                     <Icon :icon="showConfirmPw ? 'lucide:eye-off' : 'lucide:eye'" class="w-4 h-4" />
                   </button>
                 </div>
@@ -372,7 +419,7 @@ function fmtRelative(iso: string | null): string {
             <button
               @click="changePassword"
               :disabled="isSavingPw || !pwForm.current_password || !pwForm.password"
-              class="flex items-center gap-2 text-sm text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 disabled:opacity-50 px-4 py-2 rounded-lg transition-colors"
+              class="flex items-center gap-2 text-sm text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 disabled:opacity-50 px-4 py-2 rounded-lg transition-colors"
             >
               <Icon v-if="isSavingPw" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
               Update Password
@@ -380,27 +427,27 @@ function fmtRelative(iso: string | null): string {
           </div>
 
           <!-- Two-Factor Authentication -->
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+          <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
             <div class="flex items-start justify-between mb-1">
-              <h3 class="text-sm font-semibold text-cream">Two-Factor Authentication</h3>
+              <h3 class="text-sm font-semibold text-gray-1000">Two-Factor Authentication</h3>
               <span
                 :class="[
                   'text-[10px] font-semibold px-2 py-0.5 rounded-full',
                   profile?.mfa_enabled
                     ? 'bg-green-500/10 text-green-400 border border-green-500/20'
-                    : 'bg-charcoal-600 text-cream-muted border border-charcoal-500',
+                    : 'bg-gray-500 text-gray-900 border border-gray-500',
                 ]"
               >
                 {{ profile?.mfa_enabled ? 'Enabled' : 'Disabled' }}
               </span>
             </div>
-            <p class="text-xs text-cream-faint mb-4">
+            <p class="text-xs text-gray-700 mb-4">
               Add an extra layer of security — a one-time code is emailed on every login.
             </p>
 
             <!-- OTP confirmation step -->
             <div v-if="mfaStep === 'otp'" class="space-y-3">
-              <p class="text-xs text-cream-muted">Enter the 6-character code sent to your email:</p>
+              <p class="text-xs text-gray-900">Enter the 6-character code sent to your email:</p>
               <input
                 v-model="mfaOtp"
                 class="app-inp tracking-widest font-mono text-center"
@@ -413,14 +460,14 @@ function fmtRelative(iso: string | null): string {
                 <button
                   @click="confirmEnableMfa"
                   :disabled="mfaOtp.length !== 6 || isMfaSubmitting"
-                  class="flex items-center gap-2 bg-amber hover:bg-amber-light disabled:opacity-60 text-charcoal-900 font-semibold text-xs px-4 py-2 rounded-lg transition-colors"
+                  class="flex items-center gap-2 bg-green-700 hover:bg-green-800 disabled:opacity-60 text-bg-100 font-semibold text-xs px-4 py-2 rounded-lg transition-colors"
                 >
                   <Icon v-if="isMfaSubmitting" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
                   Verify & Enable
                 </button>
                 <button
                   @click="mfaStep = 'idle'"
-                  class="text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-4 py-2 rounded-lg transition-colors"
+                  class="text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-4 py-2 rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
@@ -432,7 +479,7 @@ function fmtRelative(iso: string | null): string {
               v-else-if="!profile?.mfa_enabled"
               @click="initiateMfa"
               :disabled="isMfaInitiating"
-              class="flex items-center gap-2 text-sm text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 disabled:opacity-50 px-4 py-2 rounded-lg transition-colors"
+              class="flex items-center gap-2 text-sm text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 disabled:opacity-50 px-4 py-2 rounded-lg transition-colors"
             >
               <Icon v-if="isMfaInitiating" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
               <Icon v-else icon="lucide:shield-check" class="w-4 h-4" />
@@ -450,7 +497,7 @@ function fmtRelative(iso: string | null): string {
                 <Icon v-else icon="lucide:shield-off" class="w-3.5 h-3.5" />
                 Disable 2FA
               </button>
-              <p v-if="orgRequiresMfa" class="text-[11px] text-amber/70 flex items-center gap-1.5">
+              <p v-if="orgRequiresMfa" class="text-[11px] text-green-700/70 flex items-center gap-1.5">
                 <Icon icon="lucide:info" class="w-3 h-3 shrink-0" />
                 Required by your organization — cannot be disabled.
               </p>
@@ -458,13 +505,13 @@ function fmtRelative(iso: string | null): string {
           </div>
 
           <!-- Active sessions -->
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+          <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
             <div class="flex items-center justify-between mb-4">
-              <h3 class="text-sm font-semibold text-cream">Active Sessions</h3>
-              <span class="text-xs text-cream-faint">{{ activeSessions.length }} active</span>
+              <h3 class="text-sm font-semibold text-gray-1000">Active Sessions</h3>
+              <span class="text-xs text-gray-700">{{ activeSessions.length }} active</span>
             </div>
 
-            <div v-if="activeSessions.length === 0" class="text-xs text-cream-faint py-2">
+            <div v-if="activeSessions.length === 0" class="text-xs text-gray-700 py-2">
               No active sessions found.
             </div>
 
@@ -472,21 +519,21 @@ function fmtRelative(iso: string | null): string {
               <div
                 v-for="session in activeSessions"
                 :key="session.id"
-                class="flex items-center justify-between py-2.5 px-3 rounded-lg bg-charcoal-700/50"
+                class="flex items-center justify-between py-2.5 px-3 rounded-lg bg-gray-400/50"
               >
                 <div class="flex items-center gap-2.5">
-                  <div class="w-7 h-7 rounded-full bg-charcoal-600 flex items-center justify-center shrink-0">
-                    <Icon icon="lucide:monitor" class="w-3.5 h-3.5 text-cream-muted" />
+                  <div class="w-7 h-7 rounded-full bg-gray-500 flex items-center justify-center shrink-0">
+                    <Icon icon="lucide:monitor" class="w-3.5 h-3.5 text-gray-900" />
                   </div>
                   <div>
-                    <div class="text-xs font-medium text-cream flex items-center gap-1.5">
+                    <div class="text-xs font-medium text-gray-1000 flex items-center gap-1.5">
                       {{ session.name }}
                       <span v-if="session.is_current"
                         class="text-[10px] font-semibold text-green-400 bg-green-500/10 border border-green-500/20 px-1.5 py-0.5 rounded-full">
                         Current
                       </span>
                     </div>
-                    <div class="text-[11px] text-cream-faint mt-0.5">
+                    <div class="text-[11px] text-gray-700 mt-0.5">
                       Last active {{ fmtRelative(session.last_used_at) }}
                       <span v-if="session.expires_at"> · Expires {{ fmtDate(session.expires_at) }}</span>
                     </div>
@@ -516,12 +563,15 @@ function fmtRelative(iso: string | null): string {
           </div>
 
           <!-- Danger zone -->
-          <div class="bg-charcoal-800 border border-red-500/15 rounded-xl p-5">
+          <div class="bg-gray-200 border border-red-500/15 rounded-xl p-5">
             <h3 class="text-sm font-semibold text-red-400 mb-1">Danger Zone</h3>
-            <p class="text-xs text-cream-faint mb-4">
+            <p class="text-xs text-gray-700 mb-4">
               Permanently delete your account and all associated data. This cannot be undone.
             </p>
-            <button class="text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 border border-red-500/20 px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+            <button
+              @click="openDeleteModal"
+              class="text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 border border-red-500/20 px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+            >
               <Icon icon="lucide:trash-2" class="w-3.5 h-3.5" />
               Delete Account
             </button>
@@ -529,5 +579,118 @@ function fmtRelative(iso: string | null): string {
         </div>
       </div>
     </template>
+
+    <!-- Account deletion modal -->
+    <Teleport to="body">
+      <Transition name="fade">
+        <div v-if="deleteStep !== 'idle'"
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          @click.self="closeDeleteModal"
+        >
+          <div class="bg-gray-200 border border-gray-400 rounded-xl w-full max-w-md p-6 shadow-xl">
+
+            <!-- Step 1: Initial confirmation -->
+            <template v-if="deleteStep === 'confirm'">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
+                  <Icon icon="lucide:alert-triangle" class="w-5 h-5 text-red-400" />
+                </div>
+                <div>
+                  <h3 class="text-base font-semibold text-gray-1000">Delete Account</h3>
+                  <p class="text-xs text-gray-700">This action is permanent</p>
+                </div>
+              </div>
+
+              <div class="bg-red-500/5 border border-red-500/15 rounded-lg p-3.5 mb-4">
+                <p class="text-xs text-red-400 leading-relaxed">
+                  Deleting your account will permanently remove:
+                </p>
+                <ul class="text-xs text-red-400/80 mt-2 space-y-1 list-disc list-inside">
+                  <li>All organizations you own</li>
+                  <li>All invoices, clients, and projects</li>
+                  <li>Your profile and authentication data</li>
+                </ul>
+              </div>
+
+              <p class="text-xs text-gray-700 mb-5">
+                A verification code will be sent to <strong class="text-gray-900">{{ profile?.email }}</strong> to confirm this action.
+              </p>
+
+              <div class="flex gap-2 justify-end">
+                <button
+                  @click="closeDeleteModal"
+                  class="text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-4 py-2 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  @click="sendDeletionOtp"
+                  :disabled="isDeleteInitiating"
+                  class="flex items-center gap-2 text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 border border-red-500/20 disabled:opacity-50 px-4 py-2 rounded-lg transition-colors"
+                >
+                  <Icon v-if="isDeleteInitiating" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
+                  <Icon v-else icon="lucide:mail" class="w-3.5 h-3.5" />
+                  Send Verification Code
+                </button>
+              </div>
+            </template>
+
+            <!-- Step 2: OTP entry -->
+            <template v-if="deleteStep === 'otp'">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
+                  <Icon icon="lucide:shield-alert" class="w-5 h-5 text-red-400" />
+                </div>
+                <div>
+                  <h3 class="text-base font-semibold text-gray-1000">Confirm Deletion</h3>
+                  <p class="text-xs text-gray-700">Enter the code sent to your email</p>
+                </div>
+              </div>
+
+              <p class="text-xs text-gray-700 mb-4">
+                Enter the 6-character verification code sent to <strong class="text-gray-900">{{ profile?.email }}</strong>
+              </p>
+
+              <input
+                v-model="deleteOtp"
+                class="app-inp tracking-widest font-mono text-center mb-2"
+                placeholder="A1B2C3"
+                maxlength="6"
+                autocomplete="one-time-code"
+                @keyup.enter="confirmDeletion"
+              />
+
+              <button
+                @click="sendDeletionOtp"
+                :disabled="isDeleteInitiating"
+                class="text-xs text-gray-700 hover:text-gray-900 mb-5 flex items-center gap-1 transition-colors"
+              >
+                <Icon v-if="isDeleteInitiating" icon="lucide:loader-2" class="w-3 h-3 animate-spin" />
+                Resend code
+              </button>
+
+              <div class="flex gap-2 justify-end">
+                <button
+                  @click="closeDeleteModal"
+                  class="text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-4 py-2 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  @click="confirmDeletion"
+                  :disabled="deleteOtp.length !== 6 || isDeleteConfirming"
+                  class="flex items-center gap-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 px-4 py-2 rounded-lg transition-colors"
+                >
+                  <Icon v-if="isDeleteConfirming" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
+                  <Icon v-else icon="lucide:trash-2" class="w-3.5 h-3.5" />
+                  Delete My Account
+                </button>
+              </div>
+            </template>
+
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>

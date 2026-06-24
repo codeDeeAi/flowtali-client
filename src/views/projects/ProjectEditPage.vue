@@ -106,7 +106,7 @@ async function handleSubmit() {
 
     <!-- Header -->
     <div class="flex items-center gap-3">
-      <button @click="router.push({ name: 'projects.view', params: { id: projectId } })" class="p-1.5 rounded-md hover:bg-charcoal-700 text-cream-faint hover:text-cream transition-colors">
+      <button @click="router.push({ name: 'projects.view', params: { id: projectId } })" class="p-1.5 rounded-md hover:bg-gray-400 text-gray-700 hover:text-gray-1000 transition-colors">
         <Icon icon="lucide:arrow-left" class="w-4 h-4" />
       </button>
       <div>
@@ -117,7 +117,7 @@ async function handleSubmit() {
 
     <!-- Loading -->
     <div v-if="loading" class="flex items-center justify-center py-20">
-      <Icon icon="lucide:loader-2" class="w-6 h-6 text-cream-faint animate-spin" />
+      <Icon icon="lucide:loader-2" class="w-6 h-6 text-gray-700 animate-spin" />
     </div>
 
     <form v-else @submit.prevent="handleSubmit" class="space-y-5">
@@ -195,13 +195,13 @@ async function handleSubmit() {
 
       <!-- Actions -->
       <div class="flex items-center justify-end gap-3 pt-2">
-        <button type="button" @click="router.push({ name: 'projects.view', params: { id: projectId } })" class="px-4 py-2 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-sm transition-colors">
+        <button type="button" @click="router.push({ name: 'projects.view', params: { id: projectId } })" class="px-4 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-sm transition-colors">
           Cancel
         </button>
         <button
           type="submit"
           :disabled="isSaving"
-          class="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Icon v-if="isSaving" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
           {{ isSaving ? 'Saving…' : 'Save Changes' }}

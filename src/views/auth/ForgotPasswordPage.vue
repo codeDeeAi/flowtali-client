@@ -39,7 +39,7 @@ const handleForgot = async () => {
 <template>
   <div class="min-h-screen grid-texture flex flex-col items-center justify-center px-4 py-16 pt-24">
     <div class="auth-card w-full max-w-md p-8 relative">
-      <router-link :to="{ name: 'signin' }" class="flex items-center gap-2 text-cream-faint text-sm mb-7 hover:text-cream">
+      <router-link :to="{ name: 'signin' }" class="flex items-center gap-2 text-gray-700 text-sm mb-7 hover:text-gray-1000">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
@@ -47,8 +47,8 @@ const handleForgot = async () => {
       </router-link>
 
       <div v-if="!sent">
-        <h1 class="font-display text-3xl font-semibold text-cream mb-2">Reset your password</h1>
-        <p class="text-cream-faint text-sm mb-7">Enter your email and we'll send you a reset code.</p>
+        <h1 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">Reset your password</h1>
+        <p class="text-gray-700 text-sm mb-7">Enter your email and we'll send you a reset code.</p>
 
         <BasicAlert type="danger" class="mb-4" v-if="getError('general').value">
           <span>{{ getError('general').value }}</span>
@@ -82,15 +82,15 @@ const handleForgot = async () => {
       </div>
 
       <div v-else class="text-center py-4">
-        <div class="w-16 h-16 rounded-full bg-amber-dim border border-amber-border flex items-center justify-center mx-auto mb-5">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E8A83E" stroke-width="2">
+        <div class="w-16 h-16 rounded-full bg-green-100 border border-green-400 flex items-center justify-center mx-auto mb-5">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
             <polyline points="22,6 12,13 2,6" />
           </svg>
         </div>
-        <h2 class="font-display text-2xl font-semibold text-cream mb-2">Check your email</h2>
-        <p class="text-cream-muted text-sm mb-6">
-          We sent a reset code to <span class="text-amber">{{ email }}</span>
+        <h2 class="font-sans text-2xl font-semibold text-gray-1000 mb-2">Check your email</h2>
+        <p class="text-gray-900 text-sm mb-6">
+          We sent a reset code to <span class="text-green-700">{{ email }}</span>
         </p>
         <router-link :to="{ name: 'auth.reset-password', query: { email } }" class="btn-primary text-sm px-6 py-2.5 inline-block mb-3">
           Enter reset code

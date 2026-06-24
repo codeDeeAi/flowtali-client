@@ -72,7 +72,7 @@ function isExpired(link: IReceiptSharedLink) {
 }
 function linkStatusLabel(link: IReceiptSharedLink) {
   if (!link.is_active) return { text: 'Revoked', cls: 'text-red-400 bg-red-500/10 border-red-500/20' }
-  if (isExpired(link)) return { text: 'Expired', cls: 'text-gray-400 bg-charcoal-700 border-charcoal-600' }
+  if (isExpired(link)) return { text: 'Expired', cls: 'text-gray-400 bg-gray-400 border-gray-500' }
   return { text: 'Active', cls: 'text-green-400 bg-green-500/10 border-green-500/20' }
 }
 function expiryLabel(link: IReceiptSharedLink) {
@@ -129,12 +129,12 @@ async function handleDelete() {
   <div class="p-4 md:p-6 space-y-5 min-h-full">
 
     <div v-if="loading" class="flex items-center justify-center py-24">
-      <Icon icon="lucide:loader-2" class="w-6 h-6 text-cream-faint animate-spin" />
+      <Icon icon="lucide:loader-2" class="w-6 h-6 text-gray-700 animate-spin" />
     </div>
 
     <div v-else-if="notFound" class="flex flex-col items-center justify-center py-24 text-center">
-      <p class="text-cream-faint">Receipt not found</p>
-      <button @click="router.push({ name: 'receipts' })" class="mt-4 text-amber text-sm hover:underline">Back to receipts</button>
+      <p class="text-gray-700">Receipt not found</p>
+      <button @click="router.push({ name: 'receipts' })" class="mt-4 text-green-700 text-sm hover:underline">Back to receipts</button>
     </div>
 
     <template v-else-if="receipt">
@@ -142,7 +142,7 @@ async function handleDelete() {
       <!-- Header -->
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div class="flex items-center gap-3">
-          <button @click="router.push({ name: 'receipts' })" class="p-1.5 rounded-lg hover:bg-charcoal-700 text-cream-faint hover:text-cream transition-colors shrink-0">
+          <button @click="router.push({ name: 'receipts' })" class="p-1.5 rounded-lg hover:bg-gray-400 text-gray-700 hover:text-gray-1000 transition-colors shrink-0">
             <Icon icon="lucide:arrow-left" class="w-4 h-4" />
           </button>
           <div>
@@ -154,16 +154,16 @@ async function handleDelete() {
           </div>
         </div>
         <div class="flex items-center flex-wrap gap-2 ml-9 sm:ml-0">
-          <button @click="handlePrint" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream rounded-lg transition-colors" title="Print / PDF">
+          <button @click="handlePrint" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors" title="Print / PDF">
             <Icon icon="lucide:printer" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> Print / PDF</span>
           </button>
           <button
             @click="showShareModal = true"
-            class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream rounded-lg transition-colors"
+            class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors"
             title="Share"
           >
             <Icon icon="lucide:share-2" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> Share</span>
-            <span v-if="activeLinks > 0" class="ml-0.5 px-1.5 py-0.5 bg-amber/20 text-amber text-[9px] font-bold rounded-full">{{ activeLinks }}</span>
+            <span v-if="activeLinks > 0" class="ml-0.5 px-1.5 py-0.5 bg-green-700/20 text-green-700 text-[9px] font-bold rounded-full">{{ activeLinks }}</span>
           </button>
           <button
             v-if="receipt.status !== 'finalized'"
@@ -176,7 +176,7 @@ async function handleDelete() {
             <Icon v-else icon="lucide:check-circle" class="w-3.5 h-3.5" />
             <span class="hidden sm:inline">Finalize</span>
           </button>
-          <button @click="router.push({ name: 'receipts.edit', params: { id: receipt.id } })" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-amber hover:bg-amber-light text-charcoal-900 font-semibold rounded-lg transition-colors">
+          <button @click="router.push({ name: 'receipts.edit', params: { id: receipt.id } })" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-green-700 hover:bg-green-800 text-bg-100 font-semibold rounded-lg transition-colors">
             <Icon icon="lucide:pencil" class="w-3.5 h-3.5" /> Edit
           </button>
           <button @click="showDeleteConfirm = true" class="flex items-center gap-1.5 px-2 py-2 text-xs font-medium bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-lg transition-colors" title="Delete">
@@ -189,10 +189,10 @@ async function handleDelete() {
       <div class="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-5">
 
         <!-- Receipt document preview -->
-        <div class="bg-charcoal-700/30 rounded-xl p-3 sm:p-6 overflow-x-auto">
+        <div class="bg-gray-400/30 rounded-xl p-3 sm:p-6 overflow-x-auto">
           <div
             class="print-document min-w-[560px] w-full max-w-2xl mx-auto bg-white rounded-lg shadow-2xl overflow-hidden text-gray-800 relative"
-            :style="{ fontFamily: receipt.font_family || '\'DM Sans\', sans-serif', fontSize: '13px' }"
+            :style="{ fontFamily: receipt.font_family || 'Geist Sans, sans-serif', fontSize: '13px' }"
           >
             <div class="h-1.5 w-full" :style="{ backgroundColor: receipt.accent_color }"></div>
 
@@ -220,7 +220,7 @@ async function handleDelete() {
                   </div>
                 </div>
                 <div class="text-right">
-                  <div class="text-3xl font-bold text-gray-200 tracking-widest" style="font-family:'Cormorant Garamond',Georgia,serif">RECEIPT</div>
+                  <div class="text-3xl font-bold text-gray-200 tracking-widest" style="font-family:var(--font-sans)">RECEIPT</div>
                   <div class="font-mono text-sm text-gray-400 mt-1">{{ receipt.number }}</div>
                 </div>
               </div>
@@ -298,31 +298,31 @@ async function handleDelete() {
         <div class="space-y-4">
 
           <!-- Stats -->
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4 space-y-3">
+          <div class="bg-gray-200 border border-gray-400 rounded-xl p-4 space-y-3">
             <div class="flex items-center justify-between">
-              <p class="text-xs font-semibold text-cream-muted uppercase tracking-wider">Shared Links</p>
+              <p class="text-xs font-semibold text-gray-900 uppercase tracking-wider">Shared Links</p>
               <button
                 @click="showShareModal = true"
-                class="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-amber hover:text-amber/80 bg-amber/10 hover:bg-amber/15 rounded-md transition-colors"
+                class="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-green-700 hover:text-green-700/80 bg-green-700/10 hover:bg-green-700/15 rounded-md transition-colors"
               >
                 <Icon icon="lucide:plus" class="w-3 h-3" /> New Link
               </button>
             </div>
             <div class="grid grid-cols-3 gap-2">
-              <div class="bg-charcoal-900/50 rounded-lg p-2.5 text-center">
-                <div class="text-lg font-bold text-cream">{{ links.length }}</div>
-                <div class="text-[9px] text-cream-faint uppercase tracking-wide mt-0.5">Total</div>
+              <div class="bg-gray-100/50 rounded-lg p-2.5 text-center">
+                <div class="text-lg font-bold text-gray-1000">{{ links.length }}</div>
+                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">Total</div>
               </div>
-              <div class="bg-charcoal-900/50 rounded-lg p-2.5 text-center">
+              <div class="bg-gray-100/50 rounded-lg p-2.5 text-center">
                 <div class="text-lg font-bold text-green-400">{{ activeLinks }}</div>
-                <div class="text-[9px] text-cream-faint uppercase tracking-wide mt-0.5">Active</div>
+                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">Active</div>
               </div>
-              <div class="bg-charcoal-900/50 rounded-lg p-2.5 text-center">
-                <div class="text-lg font-bold text-cream">{{ totalViews }}</div>
-                <div class="text-[9px] text-cream-faint uppercase tracking-wide mt-0.5">Views</div>
+              <div class="bg-gray-100/50 rounded-lg p-2.5 text-center">
+                <div class="text-lg font-bold text-gray-1000">{{ totalViews }}</div>
+                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">Views</div>
               </div>
             </div>
-            <div class="flex items-center gap-3 text-xs text-cream-faint pt-0.5">
+            <div class="flex items-center gap-3 text-xs text-gray-700 pt-0.5">
               <span class="flex items-center gap-1"><Icon icon="lucide:lock" class="w-3 h-3" />{{ links.filter(l => l.visibility === 'private').length }} private</span>
               <span class="flex items-center gap-1"><Icon icon="lucide:globe" class="w-3 h-3" />{{ links.filter(l => l.visibility === 'public').length }} public</span>
             </div>
@@ -332,45 +332,45 @@ async function handleDelete() {
           <div v-if="links.length > 0" class="space-y-2">
             <div
               v-for="link in links" :key="link.id"
-              class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-3.5 space-y-2.5"
+              class="bg-gray-200 border border-gray-400 rounded-xl p-3.5 space-y-2.5"
             >
               <div class="flex items-start justify-between gap-2">
                 <div class="min-w-0">
                   <div class="flex items-center gap-1.5 flex-wrap">
-                    <span class="text-xs font-semibold text-cream truncate">{{ link.label || 'Shared Link' }}</span>
+                    <span class="text-xs font-semibold text-gray-1000 truncate">{{ link.label || 'Shared Link' }}</span>
                     <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium', linkStatusLabel(link).cls]">{{ linkStatusLabel(link).text }}</span>
                   </div>
-                  <p class="text-[10px] text-cream-faint mt-0.5">{{ expiryLabel(link) }}</p>
+                  <p class="text-[10px] text-gray-700 mt-0.5">{{ expiryLabel(link) }}</p>
                 </div>
-                <span class="text-[9px] px-1.5 py-0.5 rounded border font-medium text-cream-faint border-charcoal-600 bg-charcoal-700 shrink-0">
+                <span class="text-[9px] px-1.5 py-0.5 rounded border font-medium text-gray-700 border-gray-500 bg-gray-400 shrink-0">
                   {{ link.visibility === 'private' ? 'Private' : 'Public' }}
                 </span>
               </div>
 
               <div class="flex items-center gap-1.5">
-                <div class="flex-1 min-w-0 bg-charcoal-900/60 border border-charcoal-700 rounded px-2 py-1">
-                  <p class="text-[10px] font-mono text-cream-faint truncate">{{ linkUrl(link.token) }}</p>
+                <div class="flex-1 min-w-0 bg-gray-100/60 border border-gray-400 rounded px-2 py-1">
+                  <p class="text-[10px] font-mono text-gray-700 truncate">{{ linkUrl(link.token) }}</p>
                 </div>
                 <button
                   @click="copyLink(link.token)"
                   :disabled="!link.is_active || isExpired(link)"
-                  class="p-1 rounded bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream transition-colors disabled:opacity-40"
+                  class="p-1 rounded bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 transition-colors disabled:opacity-40"
                 ><Icon icon="lucide:copy" class="w-3 h-3" /></button>
               </div>
 
               <div v-if="link.visibility === 'private' && link.access_code" class="flex items-center gap-1.5">
-                <Icon icon="lucide:key-round" class="w-3 h-3 text-amber shrink-0" />
-                <span class="text-[10px] font-mono text-amber tracking-widest">{{ link.access_code }}</span>
+                <Icon icon="lucide:key-round" class="w-3 h-3 text-green-700 shrink-0" />
+                <span class="text-[10px] font-mono text-green-700 tracking-widest">{{ link.access_code }}</span>
               </div>
 
-              <div class="flex items-center gap-3 text-[10px] text-cream-faint border-t border-charcoal-700/50 pt-2">
+              <div class="flex items-center gap-3 text-[10px] text-gray-700 border-t border-gray-400/50 pt-2">
                 <span class="flex items-center gap-1"><Icon icon="lucide:eye" class="w-3 h-3" /> {{ link.views }}</span>
                 <span class="flex items-center gap-1 ml-auto"><Icon icon="lucide:clock" class="w-3 h-3" /> {{ fmtDateTime(link.last_viewed_at) }}</span>
               </div>
 
-              <div v-if="link.view_log.length > 0" class="space-y-1 border-t border-charcoal-700/50 pt-2">
-                <p class="text-[9px] uppercase tracking-wider text-cream-faint">Recent Views</p>
-                <div v-for="(entry, i) in link.view_log.slice(0, 5)" :key="i" class="flex items-center justify-between text-[10px] text-cream-faint">
+              <div v-if="link.view_log.length > 0" class="space-y-1 border-t border-gray-400/50 pt-2">
+                <p class="text-[9px] uppercase tracking-wider text-gray-700">Recent Views</p>
+                <div v-for="(entry, i) in link.view_log.slice(0, 5)" :key="i" class="flex items-center justify-between text-[10px] text-gray-700">
                   <span>{{ entry.browser }}</span>
                   <span>{{ fmtDateTime(entry.timestamp) }}</span>
                 </div>
@@ -379,11 +379,11 @@ async function handleDelete() {
           </div>
 
           <!-- Empty state -->
-          <div v-else class="bg-charcoal-800 border border-dashed border-charcoal-600 rounded-xl p-6 flex flex-col items-center text-center gap-2">
-            <Icon icon="lucide:share-2" class="w-8 h-8 text-cream-faint" />
-            <p class="text-xs font-medium text-cream-muted">No shared links yet</p>
-            <p class="text-[11px] text-cream-faint">Generate a link to share this receipt with clients</p>
-            <button @click="showShareModal = true" class="mt-2 flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-amber/10 hover:bg-amber/15 border border-amber/20 text-amber rounded-lg transition-colors">
+          <div v-else class="bg-gray-200 border border-dashed border-gray-500 rounded-xl p-6 flex flex-col items-center text-center gap-2">
+            <Icon icon="lucide:share-2" class="w-8 h-8 text-gray-700" />
+            <p class="text-xs font-medium text-gray-900">No shared links yet</p>
+            <p class="text-[11px] text-gray-700">Generate a link to share this receipt with clients</p>
+            <button @click="showShareModal = true" class="mt-2 flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-green-700/10 hover:bg-green-700/15 border border-green-700/20 text-green-700 rounded-lg transition-colors">
               <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Create Link
             </button>
           </div>
@@ -408,18 +408,18 @@ async function handleDelete() {
     <Teleport to="body">
       <Transition name="modal">
         <div v-if="showDeleteConfirm && receipt" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" @click.self="showDeleteConfirm = false">
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
+          <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
             <div class="flex items-start gap-3">
               <div class="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
                 <Icon icon="lucide:trash-2" class="w-4 h-4 text-red-400" />
               </div>
               <div>
-                <h3 class="text-sm font-semibold text-cream">Delete {{ receipt.number }}?</h3>
-                <p class="text-xs text-cream-faint mt-1 leading-relaxed">This receipt will be permanently deleted. This action cannot be undone.</p>
+                <h3 class="text-sm font-semibold text-gray-1000">Delete {{ receipt.number }}?</h3>
+                <p class="text-xs text-gray-700 mt-1 leading-relaxed">This receipt will be permanently deleted. This action cannot be undone.</p>
               </div>
             </div>
             <div class="flex justify-end gap-2">
-              <button @click="showDeleteConfirm = false" :disabled="isDeleting" class="px-4 py-2 text-xs font-medium text-cream-faint hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 rounded-lg transition-colors disabled:opacity-50">Cancel</button>
+              <button @click="showDeleteConfirm = false" :disabled="isDeleting" class="px-4 py-2 text-xs font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors disabled:opacity-50">Cancel</button>
               <button @click="handleDelete" :disabled="isDeleting" class="px-4 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-1.5">
                 <Icon v-if="isDeleting" icon="lucide:loader-2" class="w-3 h-3 animate-spin" />
                 Delete

@@ -50,18 +50,18 @@ const showUpgrade = computed(() => subStore.isStarter)
 </script>
 
 <template>
-  <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+  <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
     <div class="flex items-center justify-between mb-4">
-      <h3 class="text-sm font-semibold text-cream">Plan Usage</h3>
-      <span class="text-[10px] font-bold bg-amber/10 text-amber border border-amber/20 px-2 py-0.5 rounded-full">
+      <h3 class="text-sm font-semibold text-gray-1000">Plan Usage</h3>
+      <span class="text-[10px] font-bold bg-green-700/10 text-green-700 border border-green-700/20 px-2 py-0.5 rounded-full">
         {{ planLabel }}
       </span>
     </div>
 
     <div class="flex flex-col gap-3">
       <div v-for="item in items" :key="item.label" class="flex items-center justify-between">
-        <span class="text-xs text-cream-muted">{{ item.label }}</span>
-        <span class="text-xs font-medium" :class="item.limit !== null ? 'text-amber' : 'text-cream-faint'">
+        <span class="text-xs text-gray-900">{{ item.label }}</span>
+        <span class="text-xs font-medium" :class="item.limit !== null ? 'text-green-700' : 'text-gray-700'">
           {{ item.limitLabel }}
         </span>
       </div>
@@ -69,12 +69,12 @@ const showUpgrade = computed(() => subStore.isStarter)
 
     <button v-if="showUpgrade"
       @click="router.push({ name: 'billing' })"
-      class="mt-5 w-full py-2.5 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 text-sm font-semibold transition-colors">
+      class="mt-5 w-full py-2.5 rounded-lg bg-green-700 hover:bg-green-800 text-bg-100 text-sm font-semibold transition-colors">
       Upgrade Plan
     </button>
     <button v-else
       @click="router.push({ name: 'billing' })"
-      class="mt-5 w-full py-2.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted text-sm font-medium transition-colors">
+      class="mt-5 w-full py-2.5 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 text-sm font-medium transition-colors">
       Manage Plan
     </button>
   </div>

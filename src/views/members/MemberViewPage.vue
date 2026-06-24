@@ -48,8 +48,8 @@ const memberInitials = computed(() => {
 })
 
 const avatarColor = computed(() => {
-  if (!member.value) return '#e8a83e'
-  const colors = ['#e8a83e', '#60a5fa', '#a78bfa', '#4ade80', '#f87171', '#38bdf8', '#fb923c', '#34d399']
+  if (!member.value) return '#00c853'
+  const colors = ['#00c853', '#60a5fa', '#a78bfa', '#4ade80', '#f87171', '#38bdf8', '#fb923c', '#34d399']
   let h = 0
   for (let i = 0; i < member.value.id.length; i++) h = (h * 31 + member.value.id.charCodeAt(i)) >>> 0
   return colors[h % colors.length]
@@ -107,16 +107,16 @@ const handleRemove = async () => {
 
     <!-- Loading -->
     <div v-if="loading" class="flex items-center justify-center py-24">
-      <Icon icon="lucide:loader-2" class="w-6 h-6 text-cream-faint animate-spin" />
+      <Icon icon="lucide:loader-2" class="w-6 h-6 text-gray-700 animate-spin" />
     </div>
 
     <!-- Not found -->
     <div v-else-if="notFound" class="flex flex-col items-center justify-center py-24 text-center">
-      <div class="w-12 h-12 rounded-full bg-charcoal-700 flex items-center justify-center mb-4">
-        <Icon icon="lucide:user-x" class="w-6 h-6 text-cream-faint" />
+      <div class="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center mb-4">
+        <Icon icon="lucide:user-x" class="w-6 h-6 text-gray-700" />
       </div>
-      <p class="text-cream-faint text-sm">Member not found</p>
-      <button @click="router.push({ name: 'members' })" class="mt-4 text-amber text-sm hover:underline">Back to members</button>
+      <p class="text-gray-700 text-sm">Member not found</p>
+      <button @click="router.push({ name: 'members' })" class="mt-4 text-green-700 text-sm hover:underline">Back to members</button>
     </div>
 
     <template v-else-if="member">
@@ -124,7 +124,7 @@ const handleRemove = async () => {
       <!-- Header -->
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div class="flex items-center gap-3">
-          <button @click="router.push({ name: 'members' })" class="p-1.5 rounded-lg hover:bg-charcoal-700 text-cream-faint hover:text-cream transition-colors shrink-0">
+          <button @click="router.push({ name: 'members' })" class="p-1.5 rounded-lg hover:bg-gray-400 text-gray-700 hover:text-gray-1000 transition-colors shrink-0">
             <Icon icon="lucide:arrow-left" class="w-4 h-4" />
           </button>
           <div>
@@ -143,7 +143,7 @@ const handleRemove = async () => {
         <div v-if="!member.is_owner" class="flex items-center gap-2 ml-9 sm:ml-0">
           <button
             @click="showChangeRole = true"
-            class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 hover:border-charcoal-500 text-cream-faint hover:text-cream rounded-lg transition-colors"
+            class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 hover:border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors"
           >
             <Icon icon="lucide:shield" class="w-3.5 h-3.5" /> Change Roles
           </button>
@@ -161,37 +161,37 @@ const handleRemove = async () => {
 
         <!-- Left: Profile card -->
         <div class="flex flex-col gap-5">
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 space-y-5">
+          <div class="bg-gray-200 border border-gray-400 rounded-xl p-5 space-y-5">
             <div class="flex flex-col items-center text-center">
               <div class="relative mb-3">
-                <div class="w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold text-charcoal-900" :style="{ backgroundColor: avatarColor }">
+                <div class="w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold text-bg-100" :style="{ backgroundColor: avatarColor }">
                   {{ memberInitials }}
                 </div>
-                <span :class="['absolute bottom-0.5 right-0.5 w-3.5 h-3.5 rounded-full border-2 border-charcoal-800', member.is_active ? 'bg-green-400' : 'bg-charcoal-500']"></span>
+                <span :class="['absolute bottom-0.5 right-0.5 w-3.5 h-3.5 rounded-full border-2 border-gray-300', member.is_active ? 'bg-green-400' : 'bg-gray-500']"></span>
               </div>
-              <div class="text-base font-semibold text-cream">{{ member.user?.full_name }}</div>
-              <div class="text-xs text-cream-faint mt-0.5">{{ member.user?.email }}</div>
+              <div class="text-base font-semibold text-gray-1000">{{ member.user?.full_name }}</div>
+              <div class="text-xs text-gray-700 mt-0.5">{{ member.user?.email }}</div>
             </div>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
             <div class="space-y-3">
               <div class="flex items-center gap-3">
-                <div class="w-7 h-7 rounded-lg bg-charcoal-700 flex items-center justify-center shrink-0">
-                  <Icon icon="lucide:mail" class="w-3.5 h-3.5 text-cream-faint" />
+                <div class="w-7 h-7 rounded-lg bg-gray-400 flex items-center justify-center shrink-0">
+                  <Icon icon="lucide:mail" class="w-3.5 h-3.5 text-gray-700" />
                 </div>
                 <div class="min-w-0">
-                  <div class="text-[10px] text-cream-faint uppercase tracking-wide">Email</div>
-                  <div class="text-xs text-cream truncate">{{ member.user?.email }}</div>
+                  <div class="text-[10px] text-gray-700 uppercase tracking-wide">Email</div>
+                  <div class="text-xs text-gray-1000 truncate">{{ member.user?.email }}</div>
                 </div>
               </div>
               <div class="flex items-center gap-3">
-                <div class="w-7 h-7 rounded-lg bg-charcoal-700 flex items-center justify-center shrink-0">
-                  <Icon icon="lucide:calendar" class="w-3.5 h-3.5 text-cream-faint" />
+                <div class="w-7 h-7 rounded-lg bg-gray-400 flex items-center justify-center shrink-0">
+                  <Icon icon="lucide:calendar" class="w-3.5 h-3.5 text-gray-700" />
                 </div>
                 <div>
-                  <div class="text-[10px] text-cream-faint uppercase tracking-wide">Member Since</div>
-                  <div class="text-xs text-cream">{{ joinedDate }}</div>
+                  <div class="text-[10px] text-gray-700 uppercase tracking-wide">Member Since</div>
+                  <div class="text-xs text-gray-1000">{{ joinedDate }}</div>
                 </div>
               </div>
             </div>
@@ -199,46 +199,46 @@ const handleRemove = async () => {
 
           <!-- Stats -->
           <div class="grid grid-cols-2 gap-3">
-            <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4 text-center">
-              <div class="text-2xl font-bold text-cream">{{ member.roles.length }}</div>
-              <div class="text-xs text-cream-faint mt-0.5">Roles</div>
+            <div class="bg-gray-200 border border-gray-400 rounded-xl p-4 text-center">
+              <div class="text-2xl font-bold text-gray-1000">{{ member.roles.length }}</div>
+              <div class="text-xs text-gray-700 mt-0.5">Roles</div>
             </div>
-            <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4 text-center">
-              <div class="text-xs font-semibold text-cream">{{ member.is_active ? 'Active' : 'Inactive' }}</div>
-              <div class="text-xs text-cream-faint mt-0.5">Status</div>
+            <div class="bg-gray-200 border border-gray-400 rounded-xl p-4 text-center">
+              <div class="text-xs font-semibold text-gray-1000">{{ member.is_active ? 'Active' : 'Inactive' }}</div>
+              <div class="text-xs text-gray-700 mt-0.5">Status</div>
             </div>
           </div>
         </div>
 
         <!-- Right: Roles & Permissions -->
-        <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden">
-          <div class="px-5 py-4 border-b border-charcoal-700">
-            <h3 class="text-sm font-semibold text-cream">Assigned Roles</h3>
-            <p class="text-xs text-cream-faint mt-0.5">
+        <div class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden">
+          <div class="px-5 py-4 border-b border-gray-400">
+            <h3 class="text-sm font-semibold text-gray-1000">Assigned Roles</h3>
+            <p class="text-xs text-gray-700 mt-0.5">
               {{ member.is_owner ? 'Organization owner — has full access' : member.roles.length ? `${member.roles.length} role${member.roles.length !== 1 ? 's' : ''} assigned` : 'No roles assigned' }}
             </p>
           </div>
           <div v-if="member.is_owner" class="flex items-center gap-3 px-5 py-6">
-            <div class="w-8 h-8 rounded-lg bg-amber/10 flex items-center justify-center shrink-0">
-              <Icon icon="lucide:crown" class="w-4 h-4 text-amber" />
+            <div class="w-8 h-8 rounded-lg bg-green-700/10 flex items-center justify-center shrink-0">
+              <Icon icon="lucide:crown" class="w-4 h-4 text-green-700" />
             </div>
             <div>
-              <div class="text-sm font-medium text-cream">Owner</div>
-              <div class="text-xs text-cream-faint mt-0.5">Full access to all organization features</div>
+              <div class="text-sm font-medium text-gray-1000">Owner</div>
+              <div class="text-xs text-gray-700 mt-0.5">Full access to all organization features</div>
             </div>
           </div>
           <div v-else-if="!member.roles.length" class="flex flex-col items-center justify-center py-12">
-            <Icon icon="lucide:shield-off" class="w-8 h-8 text-cream-faint/30 mb-3" />
-            <p class="text-xs text-cream-faint">No roles assigned</p>
+            <Icon icon="lucide:shield-off" class="w-8 h-8 text-gray-700/30 mb-3" />
+            <p class="text-xs text-gray-700">No roles assigned</p>
           </div>
-          <div v-else class="divide-y divide-charcoal-700/60">
+          <div v-else class="divide-y divide-gray-400/60">
             <div v-for="role in member.roles" :key="role.id" class="flex items-start gap-3 px-5 py-4">
-              <div class="w-7 h-7 rounded-lg bg-charcoal-700 flex items-center justify-center shrink-0 mt-0.5">
-                <Icon icon="lucide:shield" class="w-3.5 h-3.5 text-amber" />
+              <div class="w-7 h-7 rounded-lg bg-gray-400 flex items-center justify-center shrink-0 mt-0.5">
+                <Icon icon="lucide:shield" class="w-3.5 h-3.5 text-green-700" />
               </div>
               <div>
-                <div class="text-sm font-medium text-cream">{{ role.name }}</div>
-                <div v-if="role.description" class="text-xs text-cream-faint mt-0.5">{{ role.description }}</div>
+                <div class="text-sm font-medium text-gray-1000">{{ role.name }}</div>
+                <div v-if="role.description" class="text-xs text-gray-700 mt-0.5">{{ role.description }}</div>
               </div>
             </div>
           </div>
@@ -251,40 +251,40 @@ const handleRemove = async () => {
     <Teleport to="body">
       <Transition name="modal">
         <div v-if="showChangeRole && member" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" @click.self="showChangeRole = false">
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+          <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
             <div class="flex items-center justify-between mb-2">
-              <h2 class="font-display text-lg font-semibold text-cream">Change Roles</h2>
-              <button @click="showChangeRole = false" class="p-1.5 rounded-lg hover:bg-charcoal-700 text-cream-faint hover:text-cream transition-colors">
+              <h2 class="font-sans text-lg font-semibold text-gray-1000">Change Roles</h2>
+              <button @click="showChangeRole = false" class="p-1.5 rounded-lg hover:bg-gray-400 text-gray-700 hover:text-gray-1000 transition-colors">
                 <Icon icon="lucide:x" class="w-4 h-4" />
               </button>
             </div>
-            <p class="text-xs text-cream-faint mb-5">
-              Updating roles for <span class="text-cream font-medium">{{ member.user?.full_name }}</span>
+            <p class="text-xs text-gray-700 mb-5">
+              Updating roles for <span class="text-gray-1000 font-medium">{{ member.user?.full_name }}</span>
             </p>
 
             <div class="space-y-1.5 mb-5 max-h-60 overflow-y-auto">
               <label
                 v-for="role in availableRoles" :key="role.id"
-                :class="['flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-colors', newRoleIds.includes(role.id) ? 'border-amber bg-amber/5' : 'border-charcoal-600 bg-charcoal-700/30 hover:border-charcoal-500']"
+                :class="['flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-colors', newRoleIds.includes(role.id) ? 'border-green-700 bg-green-700/5' : 'border-gray-500 bg-gray-400/30 hover:border-gray-500']"
               >
                 <input type="checkbox" :value="role.id" :checked="newRoleIds.includes(role.id)" @change="toggleNewRole(role.id)" class="sr-only" />
-                <div :class="['w-4 h-4 rounded border-2 shrink-0 flex items-center justify-center transition-colors', newRoleIds.includes(role.id) ? 'border-amber bg-amber' : 'border-charcoal-500']">
-                  <Icon v-if="newRoleIds.includes(role.id)" icon="lucide:check" class="w-2.5 h-2.5 text-charcoal-900" />
+                <div :class="['w-4 h-4 rounded border-2 shrink-0 flex items-center justify-center transition-colors', newRoleIds.includes(role.id) ? 'border-green-700 bg-green-700' : 'border-gray-500']">
+                  <Icon v-if="newRoleIds.includes(role.id)" icon="lucide:check" class="w-2.5 h-2.5 text-bg-100" />
                 </div>
                 <div>
-                  <div class="text-sm font-medium text-cream">{{ role.name }}</div>
-                  <div v-if="role.description" class="text-xs text-cream-faint mt-0.5">{{ role.description }}</div>
+                  <div class="text-sm font-medium text-gray-1000">{{ role.name }}</div>
+                  <div v-if="role.description" class="text-xs text-gray-700 mt-0.5">{{ role.description }}</div>
                 </div>
               </label>
-              <div v-if="!availableRoles.length" class="text-xs text-cream-faint/70 text-center py-3">No roles available.</div>
+              <div v-if="!availableRoles.length" class="text-xs text-gray-700/70 text-center py-3">No roles available.</div>
             </div>
 
             <div class="flex gap-2">
-              <button @click="showChangeRole = false" class="flex-1 py-2.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-sm transition-colors">Cancel</button>
+              <button @click="showChangeRole = false" class="flex-1 py-2.5 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-sm transition-colors">Cancel</button>
               <button
                 @click="handleChangeRole"
                 :disabled="isSaving"
-                :class="['flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg font-semibold text-sm transition-colors', !isSaving ? 'bg-amber hover:bg-amber-light text-charcoal-900' : 'bg-amber/40 text-charcoal-900/50 cursor-not-allowed']"
+                :class="['flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg font-semibold text-sm transition-colors', !isSaving ? 'bg-green-700 hover:bg-green-800 text-bg-100' : 'bg-green-700/40 text-bg-100/50 cursor-not-allowed']"
               >
                 <Icon v-if="isSaving" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
                 {{ isSaving ? 'Saving…' : 'Update Roles' }}
@@ -299,20 +299,20 @@ const handleRemove = async () => {
     <Teleport to="body">
       <Transition name="modal">
         <div v-if="showRemoveConfirm && member" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" @click.self="showRemoveConfirm = false">
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
+          <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
             <div class="flex items-start gap-3">
               <div class="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
                 <Icon icon="lucide:user-x" class="w-4 h-4 text-red-400" />
               </div>
               <div>
-                <h3 class="text-sm font-semibold text-cream">Remove member?</h3>
-                <p class="text-xs text-cream-faint mt-1 leading-relaxed">
-                  <span class="text-cream font-medium">{{ member.user?.full_name }}</span> will lose access immediately. This cannot be undone.
+                <h3 class="text-sm font-semibold text-gray-1000">Remove member?</h3>
+                <p class="text-xs text-gray-700 mt-1 leading-relaxed">
+                  <span class="text-gray-1000 font-medium">{{ member.user?.full_name }}</span> will lose access immediately. This cannot be undone.
                 </p>
               </div>
             </div>
             <div class="flex items-center justify-end gap-2">
-              <button @click="showRemoveConfirm = false" class="px-4 py-2 text-xs font-medium text-cream-faint hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 rounded-lg transition-colors">Cancel</button>
+              <button @click="showRemoveConfirm = false" class="px-4 py-2 text-xs font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors">Cancel</button>
               <button
                 @click="handleRemove"
                 :disabled="isSaving"

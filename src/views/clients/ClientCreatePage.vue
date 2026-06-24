@@ -99,7 +99,7 @@ const handleSubmit = async () => {
     <div class="flex items-center gap-3">
       <button
         @click="router.push({ name: 'clients' })"
-        class="p-1.5 rounded-lg hover:bg-charcoal-700 text-cream-faint hover:text-cream transition-colors"
+        class="p-1.5 rounded-lg hover:bg-gray-400 text-gray-700 hover:text-gray-1000 transition-colors"
       >
         <Icon icon="lucide:arrow-left" class="w-4 h-4" />
       </button>
@@ -111,15 +111,15 @@ const handleSubmit = async () => {
 
     <!-- Loading form data -->
     <div v-if="getLoader('isLoadingForm')" class="flex items-center justify-center py-20">
-      <Icon icon="lucide:loader-2" class="w-6 h-6 text-cream-faint animate-spin" />
+      <Icon icon="lucide:loader-2" class="w-6 h-6 text-gray-700 animate-spin" />
     </div>
 
     <!-- Form card -->
-    <div v-else class="max-w-2xl bg-charcoal-800 border border-charcoal-700 rounded-xl p-6 space-y-6">
+    <div v-else class="max-w-2xl bg-gray-200 border border-gray-400 rounded-xl p-6 space-y-6">
 
       <!-- Basic info -->
       <div>
-        <h2 class="text-sm font-semibold text-cream mb-4">Basic Information</h2>
+        <h2 class="text-sm font-semibold text-gray-1000 mb-4">Basic Information</h2>
         <div class="space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <InputField
@@ -143,7 +143,7 @@ const handleSubmit = async () => {
 
           <!-- Client type -->
           <div class="space-y-1">
-            <label class="flex text-sm text-cream-faint">
+            <label class="flex text-sm text-gray-700">
               <span>Client Type</span>
               <span class="text-red-400 ml-0.5">*</span>
             </label>
@@ -154,8 +154,8 @@ const handleSubmit = async () => {
                 :class="[
                   'px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors',
                   form.client_type === t.value
-                    ? 'border-amber bg-amber/10 text-amber'
-                    : 'border-charcoal-600 bg-charcoal-700/50 text-cream-faint hover:border-charcoal-500 hover:text-cream'
+                    ? 'border-green-700 bg-green-700/10 text-green-700'
+                    : 'border-gray-500 bg-gray-400/50 text-gray-700 hover:border-gray-500 hover:text-gray-1000'
                 ]"
               >
                 {{ t.label }}
@@ -166,11 +166,11 @@ const handleSubmit = async () => {
         </div>
       </div>
 
-      <div class="h-px bg-charcoal-700"></div>
+      <div class="h-px bg-gray-400"></div>
 
       <!-- Contact info -->
       <div>
-        <h2 class="text-sm font-semibold text-cream mb-4">Contact Details</h2>
+        <h2 class="text-sm font-semibold text-gray-1000 mb-4">Contact Details</h2>
         <div class="space-y-4">
           <InputField
             v-model="form.email"
@@ -201,11 +201,11 @@ const handleSubmit = async () => {
         </div>
       </div>
 
-      <div class="h-px bg-charcoal-700"></div>
+      <div class="h-px bg-gray-400"></div>
 
       <!-- Notes -->
       <div>
-        <h2 class="text-sm font-semibold text-cream mb-4">Notes</h2>
+        <h2 class="text-sm font-semibold text-gray-1000 mb-4">Notes</h2>
         <TextArea
           v-model="form.notes"
           label-text="Additional Notes"
@@ -220,14 +220,14 @@ const handleSubmit = async () => {
       <div class="flex items-center justify-end gap-3 pt-2">
         <button
           @click="router.push({ name: 'clients' })"
-          class="px-4 py-2 text-sm font-medium text-cream-faint hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 rounded-lg transition-colors"
+          class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors"
         >
           Cancel
         </button>
         <button
           @click="handleSubmit"
           :disabled="!canSubmit || getLoader('isSaving')"
-          :class="['flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-colors', canSubmit && !getLoader('isSaving') ? 'bg-amber hover:bg-amber-light text-charcoal-900' : 'bg-amber/50 text-charcoal-900/50 cursor-not-allowed']"
+          :class="['flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-colors', canSubmit && !getLoader('isSaving') ? 'bg-green-700 hover:bg-green-800 text-bg-100' : 'bg-green-700/50 text-bg-100/50 cursor-not-allowed']"
         >
           <Icon v-if="getLoader('isSaving')" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
           <Icon v-else icon="lucide:user-plus" class="w-3.5 h-3.5" />

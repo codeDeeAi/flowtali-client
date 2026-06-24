@@ -12,26 +12,26 @@ function copyEmail() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-charcoal-900 text-cream">
+  <div class="min-h-screen bg-gray-100 text-gray-1000">
 
     <!-- Nav -->
-    <header class="border-b border-charcoal-800 px-6 py-4 flex items-center justify-between max-w-4xl mx-auto">
-      <button @click="router.back()" class="flex items-center gap-2 text-sm text-cream-muted hover:text-cream transition-colors">
+    <header class="border-b border-gray-300 px-6 py-4 flex items-center justify-between max-w-4xl mx-auto">
+      <button @click="router.back()" class="flex items-center gap-2 text-sm text-gray-900 hover:text-gray-1000 transition-colors">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
         Back
       </button>
-      <router-link to="/" class="font-display text-lg font-bold text-amber">Flowtali</router-link>
+      <router-link to="/" class="font-sans text-lg font-bold text-green-700">Flowtali</router-link>
     </header>
 
     <main class="max-w-4xl mx-auto px-6 py-20">
 
       <!-- Header -->
       <div class="text-center mb-16">
-        <div class="inline-flex items-center gap-2 bg-amber/10 border border-amber/20 text-amber text-xs font-semibold px-3 py-1.5 rounded-full mb-6">
+        <div class="inline-flex items-center gap-2 bg-green-700/10 border border-green-700/20 text-green-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-6">
           Get in touch
         </div>
-        <h1 class="text-4xl font-bold font-display text-cream mb-4">We'd love to hear from you</h1>
-        <p class="text-cream-muted text-lg max-w-xl mx-auto">
+        <h1 class="text-4xl font-bold font-sans text-gray-1000 mb-4">We'd love to hear from you</h1>
+        <p class="text-gray-900 text-lg max-w-xl mx-auto">
           Have a question, a feature request, or just want to say hello? Drop us a line — we read every message.
         </p>
       </div>
@@ -41,23 +41,23 @@ function copyEmail() {
         <!-- Contact card -->
         <div class="space-y-4">
 
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-6">
+          <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6">
             <div class="flex items-center gap-3 mb-4">
-              <div class="w-10 h-10 rounded-xl bg-amber/10 border border-amber/20 flex items-center justify-center shrink-0">
-                <svg class="w-5 h-5 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              <div class="w-10 h-10 rounded-xl bg-green-700/10 border border-green-700/20 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
               </div>
               <div>
-                <div class="text-sm font-semibold text-cream">Email us</div>
-                <div class="text-xs text-cream-faint">We typically reply within 24 hours</div>
+                <div class="text-sm font-semibold text-gray-1000">Email us</div>
+                <div class="text-xs text-gray-700">We typically reply within 24 hours</div>
               </div>
             </div>
             <div class="flex items-center gap-2">
-              <a href="mailto:flowtaliltd@gmail.com" class="flex-1 text-sm font-mono text-amber hover:underline truncate">
+              <a href="mailto:flowtaliltd@gmail.com" class="flex-1 text-sm font-mono text-green-700 hover:underline truncate">
                 flowtaliltd@gmail.com
               </a>
               <button
                 @click="copyEmail"
-                class="shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 text-xs bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream rounded-lg transition-colors"
+                class="shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 text-xs bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 rounded-lg transition-colors"
               >
                 <svg v-if="!copied" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
                 <svg v-else class="w-3.5 h-3.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
@@ -66,24 +66,24 @@ function copyEmail() {
             </div>
           </div>
 
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-6">
+          <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6">
             <div class="flex items-center gap-3 mb-3">
-              <div class="w-10 h-10 rounded-xl bg-amber/10 border border-amber/20 flex items-center justify-center shrink-0">
-                <svg class="w-5 h-5 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3"/></svg>
+              <div class="w-10 h-10 rounded-xl bg-green-700/10 border border-green-700/20 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3"/></svg>
               </div>
               <div>
-                <div class="text-sm font-semibold text-cream">Response time</div>
-                <div class="text-xs text-cream-faint">Business hours, Mon – Fri</div>
+                <div class="text-sm font-semibold text-gray-1000">Response time</div>
+                <div class="text-xs text-gray-700">Business hours, Mon – Fri</div>
               </div>
             </div>
-            <p class="text-sm text-cream-muted">We aim to respond to all enquiries within <strong class="text-cream">one business day</strong>. For urgent issues, please include "URGENT" in your subject line.</p>
+            <p class="text-sm text-gray-900">We aim to respond to all enquiries within <strong class="text-gray-1000">one business day</strong>. For urgent issues, please include "URGENT" in your subject line.</p>
           </div>
 
         </div>
 
         <!-- What to write about -->
-        <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-6 space-y-5">
-          <h3 class="text-base font-semibold text-cream">What can we help with?</h3>
+        <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 space-y-5">
+          <h3 class="text-base font-semibold text-gray-1000">What can we help with?</h3>
 
           <div class="space-y-3">
             <div v-for="item in [
@@ -94,18 +94,18 @@ function copyEmail() {
             ]" :key="item.title"
               class="flex items-start gap-3"
             >
-              <div class="w-7 h-7 rounded-lg bg-charcoal-700 border border-charcoal-600 flex items-center justify-center shrink-0 mt-0.5">
-                <svg class="w-3.5 h-3.5 text-cream-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.icon"/></svg>
+              <div class="w-7 h-7 rounded-lg bg-gray-400 border border-gray-500 flex items-center justify-center shrink-0 mt-0.5">
+                <svg class="w-3.5 h-3.5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.icon"/></svg>
               </div>
               <div>
-                <div class="text-sm font-medium text-cream">{{ item.title }}</div>
-                <div class="text-xs text-cream-faint mt-0.5 leading-relaxed">{{ item.desc }}</div>
+                <div class="text-sm font-medium text-gray-1000">{{ item.title }}</div>
+                <div class="text-xs text-gray-700 mt-0.5 leading-relaxed">{{ item.desc }}</div>
               </div>
             </div>
           </div>
 
-          <div class="pt-2 border-t border-charcoal-700">
-            <a href="mailto:flowtaliltd@gmail.com" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-sm rounded-xl transition-colors">
+          <div class="pt-2 border-t border-gray-400">
+            <a href="mailto:flowtaliltd@gmail.com" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-sm rounded-xl transition-colors">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
               Send us an email
             </a>
@@ -116,13 +116,13 @@ function copyEmail() {
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-charcoal-800 mt-4 px-6 py-8 text-center">
-      <div class="flex items-center justify-center gap-6 text-sm text-cream-faint">
-        <router-link :to="{ name: 'about' }" class="hover:text-cream transition-colors">About</router-link>
-        <router-link :to="{ name: 'privacy' }" class="hover:text-cream transition-colors">Privacy</router-link>
-        <router-link :to="{ name: 'terms' }" class="hover:text-cream transition-colors">Terms</router-link>
+    <footer class="border-t border-gray-300 mt-4 px-6 py-8 text-center">
+      <div class="flex items-center justify-center gap-6 text-sm text-gray-700">
+        <router-link :to="{ name: 'about' }" class="hover:text-gray-1000 transition-colors">About</router-link>
+        <router-link :to="{ name: 'privacy' }" class="hover:text-gray-1000 transition-colors">Privacy</router-link>
+        <router-link :to="{ name: 'terms' }" class="hover:text-gray-1000 transition-colors">Terms</router-link>
       </div>
-      <p class="text-xs text-cream-faint/50 mt-4">© {{ new Date().getFullYear() }} Flowtali. All rights reserved.</p>
+      <p class="text-xs text-gray-700/50 mt-4">© {{ new Date().getFullYear() }} Flowtali. All rights reserved.</p>
     </footer>
   </div>
 </template>

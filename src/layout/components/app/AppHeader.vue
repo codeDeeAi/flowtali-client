@@ -5,6 +5,7 @@ import { RouterLink, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import NotificationsDropdown from '@/components/notifications/NotificationsDropdown.vue'
 import ProfileDropdown from '@/components/profile/ProfileDropdown.vue'
+import FlowtaliLogo from '@/components/ui/FlowtaliLogo.vue'
 
 defineEmits<{
   toggleSidebar: []
@@ -44,13 +45,13 @@ const pageTitle = computed(() => PAGE_TITLES[String(route.name)] ?? '')
 </script>
 
 <template>
-  <nav class="flex items-center justify-between px-4 h-14 bg-dark-light border-b border-charcoal-700 shrink-0 z-10">
+  <nav class="flex items-center justify-between px-4 h-14 bg-bg-200 border-b border-gray-400 shrink-0 z-10">
 
     <!-- Left: hamburger + logo + breadcrumb -->
     <div class="flex items-center gap-3">
       <!-- Hamburger (mobile only) -->
       <button
-        class="md:hidden flex items-center justify-center w-8 h-8 rounded-md text-cream-muted hover:text-cream hover:bg-charcoal-700 transition-colors"
+        class="md:hidden flex items-center justify-center w-8 h-8 rounded-md text-gray-900 hover:text-gray-1000 hover:bg-gray-400 transition-colors"
         @click="$emit('toggleSidebar')"
         aria-label="Toggle sidebar"
       >
@@ -58,21 +59,19 @@ const pageTitle = computed(() => PAGE_TITLES[String(route.name)] ?? '')
       </button>
 
       <!-- Flowtali wordmark -->
-      <RouterLink :to="{ name: 'dashboard' }" class="flex items-center shrink-0 select-none">
-        <span class="font-display font-bold text-[16px] tracking-tight leading-none">
-          <span class="text-amber">Flow</span><span class="text-cream">tali</span>
-        </span>
+      <RouterLink :to="{ name: 'dashboard' }" class="flex items-center shrink-0">
+        <FlowtaliLogo variant="full" :size="18" />
       </RouterLink>
 
       <!-- Page title (mobile only) -->
-      <span v-if="pageTitle" class="md:hidden text-sm font-semibold text-cream">{{ pageTitle }}</span>
+      <span v-if="pageTitle" class="md:hidden text-sm font-semibold text-gray-1000">{{ pageTitle }}</span>
 
       <!-- Breadcrumb (desktop only) -->
       <div v-if="orgName && pageTitle" class="hidden md:flex items-center gap-1.5 text-sm">
-        <div class="w-px h-4 bg-charcoal-700 mx-0.5"></div>
-        <span class="text-cream-muted truncate max-w-35">{{ orgName }}</span>
-        <Icon icon="lucide:chevron-right" class="w-3.5 h-3.5 text-cream-faint shrink-0" />
-        <span class="text-cream font-medium">{{ pageTitle }}</span>
+        <div class="w-px h-4 bg-gray-400 mx-0.5"></div>
+        <span class="text-gray-900 truncate max-w-35">{{ orgName }}</span>
+        <Icon icon="lucide:chevron-right" class="w-3.5 h-3.5 text-gray-700 shrink-0" />
+        <span class="text-gray-1000 font-medium">{{ pageTitle }}</span>
       </div>
     </div>
 

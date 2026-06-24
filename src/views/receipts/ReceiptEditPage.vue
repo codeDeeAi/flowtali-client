@@ -51,7 +51,7 @@ onMounted(async () => {
       discount:                 rec.discount,
       theme:                    rec.theme,
       accentColor:              rec.accent_color,
-      fontFamily:               rec.font_family ?? "'DM Sans', sans-serif",
+      fontFamily:               rec.font_family ?? "var(--font-sans)",
       signatureUrl:             rec.signature_url ?? '',
       stampUrl:                 rec.stamp_url ?? '',
       stamp:                    rec.stamp ?? '',
@@ -78,13 +78,13 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="isLoading" class="flex items-center justify-center h-screen bg-charcoal-900">
-    <Icon icon="lucide:loader-2" class="w-6 h-6 text-cream-faint animate-spin" />
+  <div v-if="isLoading" class="flex items-center justify-center h-screen bg-gray-100">
+    <Icon icon="lucide:loader-2" class="w-6 h-6 text-gray-700 animate-spin" />
   </div>
 
-  <div v-else-if="notFound" class="flex flex-col items-center justify-center h-screen bg-charcoal-900">
-    <p class="text-cream-faint">Receipt not found</p>
-    <button @click="$router.push({ name: 'receipts' })" class="mt-4 text-amber text-sm hover:underline">
+  <div v-else-if="notFound" class="flex flex-col items-center justify-center h-screen bg-gray-100">
+    <p class="text-gray-700">Receipt not found</p>
+    <button @click="$router.push({ name: 'receipts' })" class="mt-4 text-green-700 text-sm hover:underline">
       Back to receipts
     </button>
   </div>

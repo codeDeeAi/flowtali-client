@@ -5,6 +5,7 @@ import { useLoaders } from '@/composables/loaders.ts'
 import { signupSchema } from './validation/schema.ts'
 import { useFormErrors } from '@/composables/formErrors'
 import { useSeo } from '@/composables/useSeo'
+import FlowtaliLogo from '@/components/ui/FlowtaliLogo.vue'
 
 useSeo({
   title: 'Create Account',
@@ -103,31 +104,25 @@ const handleGoogleSignup = async () => {
   <div class="min-h-screen grid-texture flex flex-col items-center justify-center px-4 py-16 pt-24">
     <div
       class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none"
-      style="background:radial-gradient(circle,rgba(232,168,62,0.07) 0%,transparent 70%)" />
+      style="background:radial-gradient(circle,rgba(0,200,83,0.07) 0%,transparent 70%)" />
     <div class="auth-card w-full max-w-md p-8 relative">
       <router-link :to="{ name: 'home' }"
-        class="flex items-center gap-2 text-cream-faint text-sm mb-7 hover:text-cream transition-colors">
+        class="flex items-center gap-2 text-gray-700 text-sm mb-7 hover:text-gray-1000 transition-colors">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
         Back to Flowtali
       </router-link>
 
-      <div class="flex items-center gap-2.5 mb-2">
-        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-amber to-amber-light flex items-center justify-center">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0a0a0b" stroke-width="2.5">
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <path d="M7 8h10M7 12h6M7 16h4" />
-          </svg>
-        </div>
-        <span class="font-display font-semibold text-lg text-cream">Flowtali</span>
+      <div class="mb-2">
+        <FlowtaliLogo variant="full" :size="22" />
       </div>
 
-      <h1 class="font-display text-3xl font-semibold text-cream mt-5 mb-1">Create your account</h1>
-      <p class="text-cream-faint text-sm mb-7">Free for 14 days — no credit card needed.</p>
+      <h1 class="font-sans text-3xl font-semibold text-gray-1000 mt-5 mb-1">Create your account</h1>
+      <p class="text-gray-700 text-sm mb-7">Free for 14 days — no credit card needed.</p>
 
       <button
-        class="w-full flex items-center justify-center gap-3 bg-charcoal-700/60 border border-charcoal-600/80 hover:border-charcoal-500 rounded-lg py-3 text-cream text-sm font-medium transition-all mb-4 disabled:opacity-60"
+        class="w-full flex items-center justify-center gap-3 bg-gray-400/60 border border-gray-500/80 hover:border-gray-500 rounded-lg py-3 text-gray-1000 text-sm font-medium transition-all mb-4 disabled:opacity-60"
         :disabled="getLoader('isGoogleLoading')" @click="handleGoogleSignup">
         <svg v-if="!getLoader('isGoogleLoading')" width="18" height="18" viewBox="0 0 24 24">
           <path
@@ -150,9 +145,9 @@ const handleGoogleSignup = async () => {
       </button>
 
       <div class="flex items-center gap-3 mb-4">
-        <div class="flex-1 h-px bg-charcoal-700/60" />
-        <span class="text-cream-faint text-xs">or sign up with email</span>
-        <div class="flex-1 h-px bg-charcoal-700/60" />
+        <div class="flex-1 h-px bg-gray-400/60" />
+        <span class="text-gray-700 text-xs">or sign up with email</span>
+        <div class="flex-1 h-px bg-gray-400/60" />
       </div>
 
       <BasicAlert type="danger" class="mb-4" v-if="getError('general').value">
@@ -181,18 +176,18 @@ const handleGoogleSignup = async () => {
           <div class="relative mt-0.5">
             <input type="checkbox" v-model="signupForm.agreed" class="sr-only" />
             <div class="w-4 h-4 rounded border transition-colors"
-              :class="signupForm.agreed ? 'bg-amber border-amber' : 'border-charcoal-600 bg-charcoal-700'">
-              <svg v-if="signupForm.agreed" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0a0a0b"
+              :class="signupForm.agreed ? 'bg-green-700 border-green-700' : 'border-gray-500 bg-gray-400'">
+              <svg v-if="signupForm.agreed" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#000000"
                 stroke-width="3" class="absolute top-0.5 left-0.5">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
           </div>
-          <span class="text-cream-faint text-sm">
+          <span class="text-gray-700 text-sm">
             I agree to Flowtali's
-            <router-link :to="{ name: 'terms' }" target="_blank" class="text-amber hover:underline">Terms</router-link>
+            <router-link :to="{ name: 'terms' }" target="_blank" class="text-green-700 hover:underline">Terms</router-link>
             and
-            <router-link :to="{ name: 'privacy' }" target="_blank" class="text-amber hover:underline">Privacy Policy</router-link>
+            <router-link :to="{ name: 'privacy' }" target="_blank" class="text-green-700 hover:underline">Privacy Policy</router-link>
           </span>
         </label>
         <p v-if="getError('agreed').value" class="text-red-400 text-xs -mt-2">{{ getError('agreed').value }}</p>
@@ -211,9 +206,9 @@ const handleGoogleSignup = async () => {
       </div>
     </div>
 
-    <p class="text-center text-cream-faint text-sm mt-6">
+    <p class="text-center text-gray-700 text-sm mt-6">
       Already have an account?
-      <router-link :to="{ name: 'signin' }" class="text-amber hover:underline">Sign in</router-link>
+      <router-link :to="{ name: 'signin' }" class="text-green-700 hover:underline">Sign in</router-link>
     </p>
   </div>
 </template>

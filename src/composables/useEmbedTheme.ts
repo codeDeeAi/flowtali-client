@@ -10,8 +10,8 @@ export interface EmbedAppearance {
 
 const CSS_VAR_MAP: Record<keyof EmbedAppearance, string> = {
   primaryColor:    '--color-amber',
-  backgroundColor: '--color-charcoal-900',
-  textColor:       '--color-cream',
+  backgroundColor: '--color-gray-100',
+  textColor:       '--color-gray-1000',
   fontFamily:      '--font-sans',
   borderRadius:    '--embed-radius',
 }

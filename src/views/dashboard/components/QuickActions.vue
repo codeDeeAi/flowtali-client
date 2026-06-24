@@ -24,17 +24,17 @@ const actions = computed(() =>
 </script>
 
 <template>
-  <div v-if="actions.length" class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
-    <h3 class="text-sm font-semibold text-cream mb-3">Quick Actions</h3>
+  <div v-if="actions.length" class="bg-gray-200 border border-gray-400 rounded-xl p-5">
+    <h3 class="text-sm font-semibold text-gray-1000 mb-3">Quick Actions</h3>
     <div class="flex flex-col gap-1">
       <button
         v-for="action in actions"
         :key="action.label"
-        class="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg hover:bg-charcoal-700 text-cream-muted hover:text-cream transition-colors text-left group"
+        class="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg hover:bg-gray-400 text-gray-900 hover:text-gray-1000 transition-colors text-left group"
         @click="router.push({ name: action.route })"
       >
-        <div class="w-7 h-7 rounded-md bg-charcoal-700 group-hover:bg-charcoal-600 flex items-center justify-center shrink-0 transition-colors">
-          <Icon :icon="action.icon" class="w-3.5 h-3.5 text-amber" />
+        <div class="w-7 h-7 rounded-md bg-gray-400 group-hover:bg-gray-500 flex items-center justify-center shrink-0 transition-colors">
+          <Icon :icon="action.icon" class="w-3.5 h-3.5 text-green-700" />
         </div>
         <span class="text-sm">{{ action.label }}</span>
       </button>

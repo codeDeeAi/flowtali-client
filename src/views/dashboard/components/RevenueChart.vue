@@ -48,20 +48,20 @@ const bars = computed(() => {
 </script>
 
 <template>
-  <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+  <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
 
     <!-- Skeleton -->
     <template v-if="loading">
       <div class="animate-pulse">
         <div class="flex items-start justify-between mb-5">
           <div>
-            <div class="w-32 h-4 rounded bg-charcoal-700 mb-2" />
-            <div class="w-44 h-3 rounded bg-charcoal-700" />
+            <div class="w-32 h-4 rounded bg-gray-400 mb-2" />
+            <div class="w-44 h-3 rounded bg-gray-400" />
           </div>
-          <div class="w-28 h-7 rounded-lg bg-charcoal-700" />
+          <div class="w-28 h-7 rounded-lg bg-gray-400" />
         </div>
         <div class="flex items-end gap-1.5 h-[140px]">
-          <div v-for="i in 14" :key="i" class="flex-1 rounded-t bg-charcoal-700" :style="{ height: `${30 + Math.sin(i * 0.8) * 25 + 25}%` }" />
+          <div v-for="i in 14" :key="i" class="flex-1 rounded-t bg-gray-400" :style="{ height: `${30 + Math.sin(i * 0.8) * 25 + 25}%` }" />
         </div>
       </div>
     </template>
@@ -70,12 +70,12 @@ const bars = computed(() => {
     <template v-else>
       <div class="flex items-start justify-between mb-5">
         <div>
-          <h3 class="text-sm font-semibold text-cream">Revenue Overview</h3>
-          <p class="text-xs text-cream-faint mt-0.5">Invoice payments received</p>
+          <h3 class="text-sm font-semibold text-gray-1000">Revenue Overview</h3>
+          <p class="text-xs text-gray-700 mt-0.5">Invoice payments received</p>
         </div>
       </div>
 
-      <div v-if="!hasData" class="flex items-center justify-center h-[140px] text-xs text-cream-faint">
+      <div v-if="!hasData" class="flex items-center justify-center h-[140px] text-xs text-gray-700">
         No revenue data yet
       </div>
 
@@ -88,8 +88,8 @@ const bars = computed(() => {
       >
         <defs>
           <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#e8a83e" />
-            <stop offset="100%" stop-color="#e8a83e" stop-opacity="0.25" />
+            <stop offset="0%" stop-color="#00c853" />
+            <stop offset="100%" stop-color="#00c853" stop-opacity="0.25" />
           </linearGradient>
         </defs>
         <rect

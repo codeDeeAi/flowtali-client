@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-1">
-    <label v-if="labelText" class="flex capitalize text-sm text-cream-faint" :class="[
+    <label v-if="labelText" class="flex capitalize text-sm text-gray-700" :class="[
       labelClass,
       {
         'label__color -': !error,

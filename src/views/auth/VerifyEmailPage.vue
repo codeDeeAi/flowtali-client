@@ -80,10 +80,10 @@ onMounted(() => {
 
       <!-- Verifying spinner -->
       <div v-if="state === 'verifying'" class="py-8">
-        <svg class="animate-spin w-10 h-10 text-amber mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg class="animate-spin w-10 h-10 text-green-700 mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" />
         </svg>
-        <p class="text-cream-faint">Verifying your email address…</p>
+        <p class="text-gray-700">Verifying your email address…</p>
       </div>
 
       <!-- Success -->
@@ -93,8 +93,8 @@ onMounted(() => {
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </div>
-        <h2 class="font-display text-2xl font-semibold text-cream mb-2">Email verified!</h2>
-        <p class="text-cream-muted text-sm mb-6">Your email address has been verified. You can now sign in.</p>
+        <h2 class="font-sans text-2xl font-semibold text-gray-1000 mb-2">Email verified!</h2>
+        <p class="text-gray-900 text-sm mb-6">Your email address has been verified. You can now sign in.</p>
         <router-link :to="{ name: 'signin' }" class="btn-primary text-sm px-6 py-2.5 inline-block">
           Sign in to Flowtali
         </router-link>
@@ -107,8 +107,8 @@ onMounted(() => {
             <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
         </div>
-        <h2 class="font-display text-2xl font-semibold text-cream mb-2">Verification failed</h2>
-        <p class="text-cream-muted text-sm mb-6">{{ getError('general').value }}</p>
+        <h2 class="font-sans text-2xl font-semibold text-gray-1000 mb-2">Verification failed</h2>
+        <p class="text-gray-900 text-sm mb-6">{{ getError('general').value }}</p>
         <button class="btn-primary text-sm px-6 py-2.5 mb-3" @click="state = 'resend'">
           Resend verification email
         </button>
@@ -120,7 +120,7 @@ onMounted(() => {
 
       <!-- Resend form (no URL params or after error) -->
       <div v-else class="text-left">
-        <router-link :to="{ name: 'signin' }" class="flex items-center gap-2 text-cream-faint text-sm mb-7 hover:text-cream">
+        <router-link :to="{ name: 'signin' }" class="flex items-center gap-2 text-gray-700 text-sm mb-7 hover:text-gray-1000">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
@@ -128,8 +128,8 @@ onMounted(() => {
         </router-link>
 
         <div v-if="!resendSent">
-          <h1 class="font-display text-3xl font-semibold text-cream mb-1">Verify your email</h1>
-          <p class="text-cream-faint text-sm mb-7">
+          <h1 class="font-sans text-3xl font-semibold text-gray-1000 mb-1">Verify your email</h1>
+          <p class="text-gray-700 text-sm mb-7">
             Please click the verification link in your email. If you need a new one, enter your email below.
           </p>
 
@@ -161,15 +161,15 @@ onMounted(() => {
         </div>
 
         <div v-else class="text-center py-4">
-          <div class="w-16 h-16 rounded-full bg-amber-dim border border-amber-border flex items-center justify-center mx-auto mb-5">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E8A83E" stroke-width="2">
+          <div class="w-16 h-16 rounded-full bg-green-100 border border-green-400 flex items-center justify-center mx-auto mb-5">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
               <polyline points="22,6 12,13 2,6" />
             </svg>
           </div>
-          <h2 class="font-display text-2xl font-semibold text-cream mb-2">Email sent!</h2>
-          <p class="text-cream-muted text-sm mb-6">
-            If <span class="text-amber">{{ resendEmail }}</span> is registered and unverified, a new verification link has been sent.
+          <h2 class="font-sans text-2xl font-semibold text-gray-1000 mb-2">Email sent!</h2>
+          <p class="text-gray-900 text-sm mb-6">
+            If <span class="text-green-700">{{ resendEmail }}</span> is registered and unverified, a new verification link has been sent.
           </p>
           <router-link :to="{ name: 'signin' }" class="btn-ghost text-sm px-6 py-2.5">
             Back to sign in

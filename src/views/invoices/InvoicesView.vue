@@ -43,7 +43,7 @@ const statusLabel: Record<string, string> = {
   paid: 'Paid', sent: 'Due', overdue: 'Overdue', draft: 'Draft', void: 'Void',
 }
 
-const colorPalette = ['#60a5fa', '#a78bfa', '#f87171', '#4ade80', '#e8a83e', '#38bdf8', '#fb923c', '#34d399']
+const colorPalette = ['#60a5fa', '#a78bfa', '#f87171', '#4ade80', '#00c853', '#38bdf8', '#fb923c', '#34d399']
 const clientColor = (id: string) => colorPalette[id.charCodeAt(id.length - 1) % colorPalette.length]
 
 function initials(name: string | null) {
@@ -175,7 +175,7 @@ async function deleteSelected() {
         <p class="page-subtitle">Manage and track all your invoices</p>
       </div>
       <div class="flex items-center gap-2">
-        <button @click="router.push({ name: 'invoices.create' })" class="flex items-center gap-2 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs px-3 py-2 rounded-lg transition-colors">
+        <button @click="router.push({ name: 'invoices.create' })" class="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs px-3 py-2 rounded-lg transition-colors">
           <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> New Invoice
         </button>
       </div>
@@ -183,42 +183,42 @@ async function deleteSelected() {
 
     <!-- Summary cards -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-3 sm:p-4">
-        <div class="text-xs text-cream-faint mb-1">Total Invoices</div>
-        <div class="text-xl font-bold text-cream font-mono">{{ stats?.total ?? '—' }}</div>
+      <div class="bg-gray-200 border border-gray-400 rounded-xl p-3 sm:p-4">
+        <div class="text-xs text-gray-700 mb-1">Total Invoices</div>
+        <div class="text-xl font-bold text-gray-1000 font-mono">{{ stats?.total ?? '—' }}</div>
       </div>
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-3 sm:p-4">
-        <div class="text-xs text-cream-faint mb-1">Paid</div>
+      <div class="bg-gray-200 border border-gray-400 rounded-xl p-3 sm:p-4">
+        <div class="text-xs text-gray-700 mb-1">Paid</div>
         <div class="text-xl font-bold text-green-400 font-mono">{{ stats?.paid ?? '—' }}</div>
       </div>
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-3 sm:p-4">
-        <div class="text-xs text-cream-faint mb-1">Overdue</div>
+      <div class="bg-gray-200 border border-gray-400 rounded-xl p-3 sm:p-4">
+        <div class="text-xs text-gray-700 mb-1">Overdue</div>
         <div class="text-xl font-bold text-red-400 font-mono">{{ stats?.overdue ?? '—' }}</div>
       </div>
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-3 sm:p-4">
-        <div class="text-xs text-cream-faint mb-1">Draft</div>
-        <div class="text-xl font-bold text-cream-muted">{{ stats?.draft ?? '—' }}</div>
+      <div class="bg-gray-200 border border-gray-400 rounded-xl p-3 sm:p-4">
+        <div class="text-xs text-gray-700 mb-1">Draft</div>
+        <div class="text-xl font-bold text-gray-900">{{ stats?.draft ?? '—' }}</div>
       </div>
     </div>
 
     <!-- Filter tabs (horizontally scrollable on mobile) -->
     <div class="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-      <div class="flex items-center gap-1 bg-charcoal-800 border border-charcoal-700 rounded-lg p-1 w-max sm:w-fit">
+      <div class="flex items-center gap-1 bg-gray-200 border border-gray-400 rounded-lg p-1 w-max sm:w-fit">
         <button
           v-for="f in filters" :key="f.key"
-          :class="['text-xs font-medium px-3 py-1.5 rounded-md transition-colors whitespace-nowrap', filterTab === f.key ? 'bg-amber/10 text-amber' : 'text-cream-faint hover:text-cream-muted']"
+          :class="['text-xs font-medium px-3 py-1.5 rounded-md transition-colors whitespace-nowrap', filterTab === f.key ? 'bg-green-700/10 text-green-700' : 'text-gray-700 hover:text-gray-900']"
           @click="onFilter(f.key)"
         >{{ f.label }}</button>
       </div>
     </div>
 
     <!-- Table card -->
-    <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden">
+    <div class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden">
       <!-- Search + bulk actions -->
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-b border-charcoal-700 gap-2">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-b border-gray-400 gap-2">
         <div class="flex items-center gap-3">
           <div class="relative flex-1 sm:flex-initial">
-            <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint" />
+            <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-700" />
             <input v-model="searchQuery" placeholder="Search invoices…" class="app-inp pl-8 w-full sm:w-48 text-xs py-2" />
           </div>
           <Transition name="fade">
@@ -232,12 +232,12 @@ async function deleteSelected() {
             </button>
           </Transition>
         </div>
-        <span class="text-xs text-cream-faint shrink-0 hidden sm:block">{{ totalInvoices }} invoice{{ totalInvoices !== 1 ? 's' : '' }}</span>
+        <span class="text-xs text-gray-700 shrink-0 hidden sm:block">{{ totalInvoices }} invoice{{ totalInvoices !== 1 ? 's' : '' }}</span>
       </div>
 
       <!-- Loading -->
       <div v-if="isLoading" class="flex items-center justify-center py-16">
-        <Icon icon="lucide:loader-2" class="w-6 h-6 text-amber animate-spin" />
+        <Icon icon="lucide:loader-2" class="w-6 h-6 text-green-700 animate-spin" />
       </div>
 
       <!-- Desktop table -->
@@ -245,7 +245,7 @@ async function deleteSelected() {
         <table class="app-table">
           <thead>
             <tr>
-              <th class="w-8"><input type="checkbox" class="accent-amber" :checked="allSelected" @change="toggleAll" /></th>
+              <th class="w-8"><input type="checkbox" class="accent-green-700" :checked="allSelected" @change="toggleAll" /></th>
               <th>Invoice</th>
               <th>Client</th>
               <th>Amount</th>
@@ -258,86 +258,86 @@ async function deleteSelected() {
           <tbody>
             <tr
               v-for="inv in invoices" :key="inv.id"
-              :class="['cursor-pointer', selectedIds.has(inv.id) ? 'bg-amber/5' : '']"
+              :class="['cursor-pointer', selectedIds.has(inv.id) ? 'bg-green-700/5' : '']"
               @click="router.push({ name: 'invoices.view', params: { id: inv.id } })"
             >
-              <td @click.stop><input type="checkbox" class="accent-amber" :checked="selectedIds.has(inv.id)" @change="toggleOne(inv.id)" /></td>
-              <td class="font-mono text-xs text-cream-muted">{{ inv.number }}</td>
+              <td @click.stop><input type="checkbox" class="accent-green-700" :checked="selectedIds.has(inv.id)" @change="toggleOne(inv.id)" /></td>
+              <td class="font-mono text-xs text-gray-900">{{ inv.number }}</td>
               <td>
                 <div class="flex items-center gap-2.5">
-                  <div class="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-charcoal-900 shrink-0" :style="{ backgroundColor: clientColor(inv.id) }">
+                  <div class="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-bg-100 shrink-0" :style="{ backgroundColor: clientColor(inv.id) }">
                     {{ initials(inv.to_name) }}
                   </div>
                   <div>
-                    <div class="text-sm font-medium text-cream leading-tight">{{ inv.to_name || '—' }}</div>
-                    <div class="text-xs text-cream-faint">{{ inv.to_email || inv.to_company || '' }}</div>
+                    <div class="text-sm font-medium text-gray-1000 leading-tight">{{ inv.to_name || '—' }}</div>
+                    <div class="text-xs text-gray-700">{{ inv.to_email || inv.to_company || '' }}</div>
                   </div>
                 </div>
               </td>
-              <td class="font-mono font-semibold text-cream">{{ fmtAmount(inv) }}</td>
+              <td class="font-mono font-semibold text-gray-1000">{{ fmtAmount(inv) }}</td>
               <td><span :class="['status-badge', statusClass[inv.status] ?? 'status-draft']">{{ statusLabel[inv.status] ?? inv.status }}</span></td>
-              <td class="text-cream-faint text-xs">{{ fmtDate(inv.issue_date) }}</td>
-              <td class="text-cream-faint text-xs">{{ fmtDate(inv.due_date) }}</td>
+              <td class="text-gray-700 text-xs">{{ fmtDate(inv.issue_date) }}</td>
+              <td class="text-gray-700 text-xs">{{ fmtDate(inv.due_date) }}</td>
               <td @click.stop>
                 <div class="flex items-center gap-0.5">
                   <button
                     @click="router.push({ name: 'invoices.view', params: { id: inv.id } })"
-                    class="w-7 h-7 flex items-center justify-center rounded-md text-cream-faint hover:text-cream hover:bg-charcoal-700 transition-colors"
+                    class="w-7 h-7 flex items-center justify-center rounded-md text-gray-700 hover:text-gray-1000 hover:bg-gray-400 transition-colors"
                     title="View"
                   ><Icon icon="lucide:eye" class="w-3.5 h-3.5" /></button>
                   <button
                     @click="router.push({ name: 'invoices.edit', params: { id: inv.id } })"
-                    class="w-7 h-7 flex items-center justify-center rounded-md text-cream-faint hover:text-cream hover:bg-charcoal-700 transition-colors"
+                    class="w-7 h-7 flex items-center justify-center rounded-md text-gray-700 hover:text-gray-1000 hover:bg-gray-400 transition-colors"
                     title="Edit"
                   ><Icon icon="lucide:pencil" class="w-3.5 h-3.5" /></button>
                   <button
                     v-if="inv.status !== 'paid'"
                     @click="markPaid(inv)"
-                    class="w-7 h-7 flex items-center justify-center rounded-md text-cream-faint hover:text-green-400 hover:bg-charcoal-700 transition-colors"
+                    class="w-7 h-7 flex items-center justify-center rounded-md text-gray-700 hover:text-green-400 hover:bg-gray-400 transition-colors"
                     title="Mark as paid"
                   ><Icon icon="lucide:check-circle" class="w-3.5 h-3.5" /></button>
                   <button
                     @click="openDelete(inv)"
-                    class="w-7 h-7 flex items-center justify-center rounded-md text-cream-faint hover:text-red-400 hover:bg-charcoal-700 transition-colors"
+                    class="w-7 h-7 flex items-center justify-center rounded-md text-gray-700 hover:text-red-400 hover:bg-gray-400 transition-colors"
                     title="Delete"
                   ><Icon icon="lucide:trash-2" class="w-3.5 h-3.5" /></button>
                 </div>
               </td>
             </tr>
             <tr v-if="invoices.length === 0">
-              <td colspan="8" class="text-center py-12 text-cream-faint text-sm">No invoices match your filters</td>
+              <td colspan="8" class="text-center py-12 text-gray-700 text-sm">No invoices match your filters</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <!-- Mobile cards -->
-      <div v-if="!isLoading" class="sm:hidden divide-y divide-charcoal-700">
+      <div v-if="!isLoading" class="sm:hidden divide-y divide-gray-400">
         <div
           v-for="inv in invoices" :key="inv.id"
-          class="px-4 py-3.5 cursor-pointer hover:bg-charcoal-700/30 transition-colors"
+          class="px-4 py-3.5 cursor-pointer hover:bg-gray-400/30 transition-colors"
           @click="router.push({ name: 'invoices.view', params: { id: inv.id } })"
         >
           <div class="flex items-center justify-between gap-3">
             <div class="flex items-center gap-3 min-w-0">
-              <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-charcoal-900 shrink-0" :style="{ backgroundColor: clientColor(inv.id) }">
+              <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-bg-100 shrink-0" :style="{ backgroundColor: clientColor(inv.id) }">
                 {{ initials(inv.to_name) }}
               </div>
               <div class="min-w-0">
-                <div class="text-sm font-medium text-cream truncate">{{ inv.to_name || '—' }}</div>
-                <div class="text-xs text-cream-faint">{{ inv.number }} · {{ fmtDate(inv.issue_date) }}</div>
+                <div class="text-sm font-medium text-gray-1000 truncate">{{ inv.to_name || '—' }}</div>
+                <div class="text-xs text-gray-700">{{ inv.number }} · {{ fmtDate(inv.issue_date) }}</div>
               </div>
             </div>
             <div class="flex flex-col items-end gap-1.5 shrink-0">
-              <span class="text-sm font-semibold font-mono text-cream">{{ fmtAmount(inv) }}</span>
+              <span class="text-sm font-semibold font-mono text-gray-1000">{{ fmtAmount(inv) }}</span>
               <span :class="['status-badge', statusClass[inv.status] ?? 'status-draft']">{{ statusLabel[inv.status] ?? inv.status }}</span>
             </div>
           </div>
           <!-- Quick actions row -->
-          <div class="flex items-center gap-2 mt-2.5 pt-2.5 border-t border-charcoal-700/50" @click.stop>
+          <div class="flex items-center gap-2 mt-2.5 pt-2.5 border-t border-gray-400/50" @click.stop>
             <button
               @click="router.push({ name: 'invoices.edit', params: { id: inv.id } })"
-              class="flex items-center gap-1.5 text-xs text-cream-muted hover:text-cream bg-charcoal-700/60 hover:bg-charcoal-700 px-3 py-1.5 rounded-lg transition-colors flex-1 justify-center"
+              class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400/60 hover:bg-gray-400 px-3 py-1.5 rounded-lg transition-colors flex-1 justify-center"
             >
               <Icon icon="lucide:pencil" class="w-3.5 h-3.5" /> Edit
             </button>
@@ -356,11 +356,11 @@ async function deleteSelected() {
             </button>
           </div>
         </div>
-        <div v-if="invoices.length === 0" class="text-center py-12 text-cream-faint text-sm">No invoices match your filters</div>
+        <div v-if="invoices.length === 0" class="text-center py-12 text-gray-700 text-sm">No invoices match your filters</div>
       </div>
 
       <!-- Pagination row -->
-      <div class="px-4 py-3 border-t border-charcoal-700">
+      <div class="px-4 py-3 border-t border-gray-400">
         <Pagination v-model="currentPage" :total="totalInvoices" :per-page="perPage" />
       </div>
     </div>
@@ -371,18 +371,18 @@ async function deleteSelected() {
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="showDeleteConfirm && deleteTarget" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" @click.self="showDeleteConfirm = false">
-        <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
+        <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
           <div class="flex items-start gap-3">
             <div class="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
               <Icon icon="lucide:trash-2" class="w-4 h-4 text-red-400" />
             </div>
             <div>
-              <h3 class="text-sm font-semibold text-cream">Delete {{ deleteTarget.number }}?</h3>
-              <p class="text-xs text-cream-faint mt-1 leading-relaxed">This invoice will be permanently deleted. This action cannot be undone.</p>
+              <h3 class="text-sm font-semibold text-gray-1000">Delete {{ deleteTarget.number }}?</h3>
+              <p class="text-xs text-gray-700 mt-1 leading-relaxed">This invoice will be permanently deleted. This action cannot be undone.</p>
             </div>
           </div>
           <div class="flex justify-end gap-2">
-            <button @click="showDeleteConfirm = false" :disabled="isDeleting" class="px-4 py-2 text-xs font-medium text-cream-faint hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 rounded-lg transition-colors disabled:opacity-50">Cancel</button>
+            <button @click="showDeleteConfirm = false" :disabled="isDeleting" class="px-4 py-2 text-xs font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors disabled:opacity-50">Cancel</button>
             <button @click="handleDelete" :disabled="isDeleting" class="px-4 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-1.5">
               <Icon v-if="isDeleting" icon="lucide:loader-2" class="w-3 h-3 animate-spin" />
               Delete

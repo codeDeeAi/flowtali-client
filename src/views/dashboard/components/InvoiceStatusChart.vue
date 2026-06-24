@@ -48,26 +48,26 @@ const arcs = computed(() => {
 </script>
 
 <template>
-  <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+  <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
 
     <!-- Skeleton -->
     <template v-if="loading">
       <div class="animate-pulse">
         <div class="flex items-start justify-between mb-4">
           <div>
-            <div class="w-28 h-4 rounded bg-charcoal-700 mb-2" />
-            <div class="w-16 h-3 rounded bg-charcoal-700" />
+            <div class="w-28 h-4 rounded bg-gray-400 mb-2" />
+            <div class="w-16 h-3 rounded bg-gray-400" />
           </div>
         </div>
         <div class="flex items-center gap-6">
-          <div class="w-28 h-28 rounded-full bg-charcoal-700 shrink-0" />
+          <div class="w-28 h-28 rounded-full bg-gray-400 shrink-0" />
           <div class="flex flex-col gap-3 flex-1">
             <div v-for="i in 4" :key="i" class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-charcoal-600" />
-                <div class="w-12 h-3 rounded bg-charcoal-700" />
+                <div class="w-2 h-2 rounded-full bg-gray-500" />
+                <div class="w-12 h-3 rounded bg-gray-400" />
               </div>
-              <div class="w-6 h-3 rounded bg-charcoal-700" />
+              <div class="w-6 h-3 rounded bg-gray-400" />
             </div>
           </div>
         </div>
@@ -78,12 +78,12 @@ const arcs = computed(() => {
     <template v-else>
       <div class="flex items-start justify-between mb-4">
         <div>
-          <h3 class="text-sm font-semibold text-cream">Invoice Status</h3>
-          <p class="text-xs text-cream-faint mt-0.5">This month</p>
+          <h3 class="text-sm font-semibold text-gray-1000">Invoice Status</h3>
+          <p class="text-xs text-gray-700 mt-0.5">This month</p>
         </div>
       </div>
 
-      <div v-if="!breakdown || total === 0" class="flex items-center justify-center h-28 text-xs text-cream-faint">
+      <div v-if="!breakdown || total === 0" class="flex items-center justify-center h-28 text-xs text-gray-700">
         No invoices yet
       </div>
 
@@ -106,8 +106,8 @@ const arcs = computed(() => {
           />
         </svg>
         <div class="absolute inset-0 flex flex-col items-center justify-center">
-          <span class="text-2xl font-bold text-cream leading-none">{{ total }}</span>
-          <span class="text-[10px] text-cream-faint mt-0.5">total</span>
+          <span class="text-2xl font-bold text-gray-1000 leading-none">{{ total }}</span>
+          <span class="text-[10px] text-gray-700 mt-0.5">total</span>
         </div>
       </div>
 
@@ -120,9 +120,9 @@ const arcs = computed(() => {
         >
           <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full shrink-0" :style="{ backgroundColor: seg.color }" />
-            <span class="text-sm text-cream-muted">{{ seg.label }}</span>
+            <span class="text-sm text-gray-900">{{ seg.label }}</span>
           </div>
-          <span class="text-sm font-semibold text-cream">{{ seg.value }}</span>
+          <span class="text-sm font-semibold text-gray-1000">{{ seg.value }}</span>
         </div>
       </div>
     </div>

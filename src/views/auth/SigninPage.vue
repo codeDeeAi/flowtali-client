@@ -5,6 +5,7 @@ import { useLoaders } from '@/composables/loaders.ts'
 import { signinSchema } from './validation/schema.ts'
 import { useFormErrors } from '@/composables/formErrors'
 import { useSeo } from '@/composables/useSeo'
+import FlowtaliLogo from '@/components/ui/FlowtaliLogo.vue'
 
 useSeo({
   title: 'Sign In',
@@ -104,11 +105,11 @@ const handleGoogleSignin = async () => {
   <div class="min-h-screen grid-texture flex flex-col items-center justify-center px-4 py-16 pt-24">
     <div
       class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none"
-      style="background:radial-gradient(circle,rgba(232,168,62,0.07) 0%,transparent 70%)" />
+      style="background:radial-gradient(circle,rgba(0,200,83,0.07) 0%,transparent 70%)" />
     <div class="auth-card w-full max-w-md p-8 relative">
       <router-link
         :to="{ name: 'home' }"
-        class="flex items-center gap-2 text-cream-faint text-sm mb-7 hover:text-cream"
+        class="flex items-center gap-2 text-gray-700 text-sm mb-7 hover:text-gray-1000"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -116,21 +117,15 @@ const handleGoogleSignin = async () => {
         Back to Flowtali
       </router-link>
 
-      <div class="flex items-center gap-2.5 mb-2">
-        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-amber to-amber-light flex items-center justify-center">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0a0a0b" stroke-width="2.5">
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <path d="M7 8h10M7 12h6M7 16h4" />
-          </svg>
-        </div>
-        <span class="font-display font-semibold text-lg text-cream">Flowtali</span>
+      <div class="mb-2">
+        <FlowtaliLogo variant="full" :size="22" />
       </div>
 
-      <h1 class="font-display text-3xl font-semibold text-cream mt-5 mb-1">Welcome back</h1>
-      <p class="text-cream-faint text-sm mb-7">Sign in to your Flowtali account.</p>
+      <h1 class="font-sans text-3xl font-semibold text-gray-1000 mt-5 mb-1">Welcome back</h1>
+      <p class="text-gray-700 text-sm mb-7">Sign in to your Flowtali account.</p>
 
       <button
-        class="w-full flex items-center justify-center gap-3 bg-charcoal-700/60 border border-charcoal-600/80 hover:border-charcoal-500 rounded-lg py-3 text-cream text-sm font-medium transition-all mb-4 disabled:opacity-60"
+        class="w-full flex items-center justify-center gap-3 bg-gray-400/60 border border-gray-500/80 hover:border-gray-500 rounded-lg py-3 text-gray-1000 text-sm font-medium transition-all mb-4 disabled:opacity-60"
         :disabled="getLoader('isGoogleLoading')"
         @click="handleGoogleSignin"
       >
@@ -147,14 +142,14 @@ const handleGoogleSignin = async () => {
       </button>
 
       <div class="flex items-center gap-3 mb-5">
-        <div class="flex-1 h-px bg-charcoal-700/60" />
-        <span class="text-cream-faint text-xs">or sign in with email</span>
-        <div class="flex-1 h-px bg-charcoal-700/60" />
+        <div class="flex-1 h-px bg-gray-400/60" />
+        <span class="text-gray-700 text-xs">or sign in with email</span>
+        <div class="flex-1 h-px bg-gray-400/60" />
       </div>
 
       <BasicAlert type="danger" class="mb-4" v-if="getError('general').value">
         <span>{{ getError('general').value }}</span>
-        <router-link v-if="emailNotVerified" :to="{ name: 'auth.verify-email' }" class="block mt-2 text-amber underline text-xs">
+        <router-link v-if="emailNotVerified" :to="{ name: 'auth.verify-email' }" class="block mt-2 text-green-700 underline text-xs">
           Resend verification email →
         </router-link>
       </BasicAlert>
@@ -173,8 +168,8 @@ const handleGoogleSignin = async () => {
         />
         <div>
           <div class="flex items-center justify-between mb-1.5">
-            <label class="block text-xs text-cream-faint uppercase tracking-wider">Password</label>
-            <router-link :to="{ name: 'forgot-password' }" class="text-amber text-xs hover:underline">
+            <label class="block text-xs text-gray-700 uppercase tracking-wider">Password</label>
+            <router-link :to="{ name: 'forgot-password' }" class="text-green-700 text-xs hover:underline">
               Forgot password?
             </router-link>
           </div>
@@ -202,14 +197,14 @@ const handleGoogleSignin = async () => {
       </div>
 
       <div class="text-center mt-4">
-        <router-link :to="{ name: 'auth.magic-login' }" class="text-amber text-sm hover:underline">
+        <router-link :to="{ name: 'auth.magic-login' }" class="text-green-700 text-sm hover:underline">
           Sign in without password →
         </router-link>
       </div>
 
-      <p class="text-center text-cream-faint text-sm mt-5">
+      <p class="text-center text-gray-700 text-sm mt-5">
         Don't have an account?
-        <router-link :to="{ name: 'signup' }" class="text-amber hover:underline">Sign up free</router-link>
+        <router-link :to="{ name: 'signup' }" class="text-green-700 hover:underline">Sign up free</router-link>
       </p>
     </div>
   </div>

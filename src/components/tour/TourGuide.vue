@@ -222,14 +222,14 @@ function handleEnd() { tourStore.endTour() }
           width: spotlightRect.width + 'px',
           height: spotlightRect.height + 'px',
           boxShadow: '0 0 0 9999px rgba(0,0,0,0.75)',
-          border: '2px solid rgba(232,168,62,0.6)',
+          border: '2px solid rgba(0,200,83,0.6)',
           zIndex: 1,
         }"
       />
 
       <!-- Tooltip card -->
       <div
-        class="absolute z-10 bg-charcoal-800 border border-charcoal-600 rounded-xl shadow-2xl p-5 transition-all duration-300"
+        class="absolute z-10 bg-gray-200 border border-gray-500 rounded-xl shadow-2xl p-5 transition-all duration-300"
         :style="tooltipStyle"
         style="box-shadow: 0 20px 60px rgba(0,0,0,0.6);"
       >
@@ -240,21 +240,21 @@ function handleEnd() { tourStore.endTour() }
               v-for="(_, i) in steps"
               :key="i"
               class="h-1 rounded-full transition-all duration-300"
-              :class="i === currentStep ? 'bg-amber w-4' : i < currentStep ? 'bg-amber/40 w-2' : 'bg-charcoal-600 w-2'"
+              :class="i === currentStep ? 'bg-green-700 w-4' : i < currentStep ? 'bg-green-700/40 w-2' : 'bg-gray-500 w-2'"
             />
           </div>
-          <span class="text-[10px] text-cream-faint font-medium">{{ currentStep + 1 }} / {{ totalSteps }}</span>
+          <span class="text-[10px] text-gray-700 font-medium">{{ currentStep + 1 }} / {{ totalSteps }}</span>
         </div>
 
         <!-- Content -->
-        <h3 class="font-display text-base font-semibold text-cream mb-1.5">{{ step?.title }}</h3>
-        <p class="text-sm text-cream-faint leading-relaxed mb-4">{{ step?.description }}</p>
+        <h3 class="font-sans text-base font-semibold text-gray-1000 mb-1.5">{{ step?.title }}</h3>
+        <p class="text-sm text-gray-700 leading-relaxed mb-4">{{ step?.description }}</p>
 
         <!-- Actions -->
         <div class="flex items-center gap-2">
           <button
             v-if="!isFirst"
-            class="flex items-center gap-1 text-xs text-cream-faint hover:text-cream transition-colors px-2 py-1.5 rounded-lg hover:bg-charcoal-700"
+            class="flex items-center gap-1 text-xs text-gray-700 hover:text-gray-1000 transition-colors px-2 py-1.5 rounded-lg hover:bg-gray-400"
             @click="handlePrev"
           >
             <Icon icon="lucide:arrow-left" class="w-3.5 h-3.5" />
@@ -264,14 +264,14 @@ function handleEnd() { tourStore.endTour() }
           <div class="flex-1" />
 
           <button
-            class="text-xs text-cream-faint hover:text-cream transition-colors px-2 py-1.5 rounded-lg hover:bg-charcoal-700"
+            class="text-xs text-gray-700 hover:text-gray-1000 transition-colors px-2 py-1.5 rounded-lg hover:bg-gray-400"
             @click="handleEnd"
           >
             Skip tour
           </button>
 
           <button
-            class="flex items-center gap-1.5 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors"
+            class="flex items-center gap-1.5 bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors"
             @click="handleNext"
           >
             {{ isLast ? 'Finish' : 'Next' }}

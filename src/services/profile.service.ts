@@ -67,4 +67,12 @@ export const ProfileService = {
   disableMfa() {
     return http.delete<{ data: IUserProfile }>('/api/v1/profile/mfa/disable')
   },
+
+  initiateAccountDeletion() {
+    return http.post('/api/v1/profile/delete/initiate')
+  },
+
+  confirmAccountDeletion(otp: string) {
+    return http.post('/api/v1/profile/delete/confirm', { otp })
+  },
 }

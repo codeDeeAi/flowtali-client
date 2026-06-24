@@ -19,7 +19,7 @@ const typeMeta: Record<string, { icon: string; color: string }> = {
   invoice_overdue: { icon: 'lucide:alert-triangle', color: '#f87171' },
   invoice_sent:    { icon: 'lucide:send',           color: '#60a5fa' },
   invoice_viewed:  { icon: 'lucide:eye',            color: '#a78bfa' },
-  member_joined:   { icon: 'lucide:user-plus',      color: '#e8a83e' },
+  member_joined:   { icon: 'lucide:user-plus',      color: '#00c853' },
   role_changed:    { icon: 'lucide:shield',         color: '#38bdf8' },
 }
 
@@ -108,7 +108,7 @@ watch(orgId, () => { fetchCount(); notifications.value = []; unreadCount.value =
   <div ref="dropdownRef" class="relative">
     <!-- Bell button -->
     <button
-      class="relative flex items-center justify-center w-8 h-8 rounded-md text-cream-muted hover:text-cream hover:bg-charcoal-700 transition-colors"
+      class="relative flex items-center justify-center w-8 h-8 rounded-md text-gray-900 hover:text-gray-1000 hover:bg-gray-400 transition-colors"
       @click="onOpen"
       aria-label="Notifications"
     >
@@ -116,7 +116,7 @@ watch(orgId, () => { fetchCount(); notifications.value = []; unreadCount.value =
       <!-- Unread badge -->
       <span
         v-if="unreadCount > 0"
-        class="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-amber text-charcoal-900 text-[9px] font-bold leading-none px-0.5"
+        class="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-green-700 text-bg-100 text-[9px] font-bold leading-none px-0.5"
       >
         {{ unreadCount > 99 ? '99+' : unreadCount }}
       </span>
@@ -133,19 +133,19 @@ watch(orgId, () => { fetchCount(); notifications.value = []; unreadCount.value =
     >
       <div
         v-if="open"
-        class="absolute right-0 top-full mt-2 w-80 bg-charcoal-800 border border-charcoal-700 rounded-xl shadow-2xl z-50 overflow-hidden origin-top-right"
+        class="absolute right-0 top-full mt-2 w-80 bg-gray-200 border border-gray-400 rounded-xl shadow-2xl z-50 overflow-hidden origin-top-right"
       >
         <!-- Header -->
-        <div class="flex items-center justify-between px-4 py-3 border-b border-charcoal-700">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-gray-400">
           <div class="flex items-center gap-2">
-            <span class="text-sm font-semibold text-cream">Notifications</span>
-            <span v-if="unreadCount > 0" class="text-[10px] font-bold bg-amber/15 text-amber px-1.5 py-0.5 rounded-full">
+            <span class="text-sm font-semibold text-gray-1000">Notifications</span>
+            <span v-if="unreadCount > 0" class="text-[10px] font-bold bg-green-700/15 text-green-700 px-1.5 py-0.5 rounded-full">
               {{ unreadCount }} new
             </span>
           </div>
           <button
             v-if="unreadCount > 0"
-            class="text-[11px] text-cream-faint hover:text-cream transition-colors"
+            class="text-[11px] text-gray-700 hover:text-gray-1000 transition-colors"
             @click="markAllRead"
           >
             Mark all read
@@ -156,11 +156,11 @@ watch(orgId, () => { fetchCount(); notifications.value = []; unreadCount.value =
         <div class="max-h-[380px] overflow-y-auto">
           <!-- Loading -->
           <div v-if="isLoading" class="flex items-center justify-center py-10">
-            <Icon icon="lucide:loader-2" class="w-5 h-5 text-amber animate-spin" />
+            <Icon icon="lucide:loader-2" class="w-5 h-5 text-green-700 animate-spin" />
           </div>
 
           <!-- Empty -->
-          <div v-else-if="notifications.length === 0" class="flex flex-col items-center justify-center py-10 gap-2 text-cream-faint">
+          <div v-else-if="notifications.length === 0" class="flex flex-col items-center justify-center py-10 gap-2 text-gray-700">
             <Icon icon="lucide:bell-off" class="w-8 h-8 opacity-40" />
             <span class="text-xs">No notifications yet</span>
           </div>
@@ -170,8 +170,8 @@ watch(orgId, () => { fetchCount(); notifications.value = []; unreadCount.value =
             v-else
             v-for="n in notifications"
             :key="n.id"
-            class="w-full flex items-start gap-3 px-4 py-3 border-b border-charcoal-700 last:border-0 hover:bg-charcoal-700/50 transition-colors text-left"
-            :class="{ 'bg-amber/5': !n.read_at }"
+            class="w-full flex items-start gap-3 px-4 py-3 border-b border-gray-400 last:border-0 hover:bg-gray-400/50 transition-colors text-left"
+            :class="{ 'bg-green-700/5': !n.read_at }"
             @click="markRead(n)"
           >
             <!-- Type icon -->
@@ -184,15 +184,15 @@ watch(orgId, () => { fetchCount(); notifications.value = []; unreadCount.value =
 
             <!-- Text -->
             <div class="flex-1 min-w-0">
-              <div class="text-xs font-medium text-cream leading-snug" :class="{ 'font-semibold': !n.read_at }">
+              <div class="text-xs font-medium text-gray-1000 leading-snug" :class="{ 'font-semibold': !n.read_at }">
                 {{ n.title }}
               </div>
-              <div v-if="n.body" class="text-[11px] text-cream-faint mt-0.5 truncate">{{ n.body }}</div>
-              <div class="text-[10px] text-cream-faint/60 mt-1">{{ timeAgo(n.created_at) }}</div>
+              <div v-if="n.body" class="text-[11px] text-gray-700 mt-0.5 truncate">{{ n.body }}</div>
+              <div class="text-[10px] text-gray-700/60 mt-1">{{ timeAgo(n.created_at) }}</div>
             </div>
 
             <!-- Unread dot -->
-            <div v-if="!n.read_at" class="w-1.5 h-1.5 rounded-full bg-amber shrink-0 mt-1.5"></div>
+            <div v-if="!n.read_at" class="w-1.5 h-1.5 rounded-full bg-green-700 shrink-0 mt-1.5"></div>
           </button>
         </div>
       </div>

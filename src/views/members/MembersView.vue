@@ -118,7 +118,7 @@ const memberInitials = (m: IMember) => {
 }
 
 const avatarColor = (id: string) => {
-  const colors = ['#e8a83e', '#60a5fa', '#a78bfa', '#4ade80', '#f87171', '#38bdf8', '#fb923c', '#34d399']
+  const colors = ['#00c853', '#60a5fa', '#a78bfa', '#4ade80', '#f87171', '#38bdf8', '#fb923c', '#34d399']
   let h = 0
   for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0
   return colors[h % colors.length]
@@ -229,39 +229,39 @@ const handleRemove = async () => {
           <h1 class="page-title">Team Members</h1>
           <p class="page-subtitle">{{ total }} member{{ total !== 1 ? 's' : '' }}</p>
         </div>
-        <button v-if="canInvite" @click="openAdd" class="flex items-center gap-2 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs px-3 py-2 rounded-lg transition-colors">
+        <button v-if="canInvite" @click="openAdd" class="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs px-3 py-2 rounded-lg transition-colors">
           <Icon icon="lucide:user-round-plus" class="w-3.5 h-3.5" />
           <span class="hidden sm:inline">Add Member</span>
           <span class="sm:hidden">Add</span>
         </button>
-        <button v-else @click="router.push({ name: 'billing' })" class="flex items-center gap-1.5 border border-amber/40 text-amber text-xs px-3 py-2 rounded-lg transition-colors hover:bg-amber/10">
+        <button v-else @click="router.push({ name: 'billing' })" class="flex items-center gap-1.5 border border-green-700/40 text-green-700 text-xs px-3 py-2 rounded-lg transition-colors hover:bg-green-700/10">
           <Icon icon="lucide:lock" class="w-3.5 h-3.5" />
           <span class="hidden sm:inline">Upgrade to invite</span>
           <span class="sm:hidden">Upgrade</span>
         </button>
       </div>
       <div class="relative">
-        <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint" />
+        <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-700" />
         <input v-model="searchQuery" type="search" @input="onSearch" placeholder="Search members…" class="app-inp pl-8 text-xs py-2 w-full" />
       </div>
     </div>
 
     <!-- Loading -->
     <div v-if="isLoading" class="flex justify-center py-16">
-      <Icon icon="lucide:loader-2" class="w-6 h-6 text-cream-faint animate-spin" />
+      <Icon icon="lucide:loader-2" class="w-6 h-6 text-gray-700 animate-spin" />
     </div>
 
     <!-- Empty -->
     <div v-else-if="!members.length" class="flex flex-col items-center justify-center py-16 text-center">
-      <div class="w-12 h-12 rounded-full bg-charcoal-700 flex items-center justify-center mb-4">
-        <Icon icon="lucide:users" class="w-6 h-6 text-cream-faint" />
+      <div class="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center mb-4">
+        <Icon icon="lucide:users" class="w-6 h-6 text-gray-700" />
       </div>
-      <p class="text-cream-faint text-sm">No members found</p>
-      <p v-if="searchQuery" class="text-cream-faint/60 text-xs mt-1">Try adjusting your search query</p>
+      <p class="text-gray-700 text-sm">No members found</p>
+      <p v-if="searchQuery" class="text-gray-700/60 text-xs mt-1">Try adjusting your search query</p>
     </div>
 
     <!-- Members table -->
-    <div v-else class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden">
+    <div v-else class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden">
 
       <!-- Desktop -->
       <div class="hidden sm:block overflow-x-auto">
@@ -284,27 +284,27 @@ const handleRemove = async () => {
               <td>
                 <div class="flex items-center gap-3">
                   <div class="relative shrink-0">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-charcoal-900" :style="{ backgroundColor: avatarColor(m.id) }">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-bg-100" :style="{ backgroundColor: avatarColor(m.id) }">
                       {{ memberInitials(m) }}
                     </div>
-                    <span :class="['absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-charcoal-800', m.is_active ? 'bg-green-400' : 'bg-charcoal-500']"></span>
+                    <span :class="['absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-gray-300', m.is_active ? 'bg-green-400' : 'bg-gray-500']"></span>
                   </div>
                   <div>
-                    <div class="text-sm font-medium text-cream">{{ m.user?.full_name }}</div>
-                    <div class="text-xs text-cream-faint">{{ m.user?.email }}</div>
+                    <div class="text-sm font-medium text-gray-1000">{{ m.user?.full_name }}</div>
+                    <div class="text-xs text-gray-700">{{ m.user?.email }}</div>
                   </div>
                 </div>
               </td>
               <td>
                 <span v-if="m.is_owner" class="status-badge role-owner">Owner</span>
-                <span v-else-if="m.roles.length" class="text-xs text-cream-muted">{{ m.roles.map(r => r.name).join(', ') }}</span>
-                <span v-else class="text-xs text-cream-faint/50">No role</span>
+                <span v-else-if="m.roles.length" class="text-xs text-gray-900">{{ m.roles.map(r => r.name).join(', ') }}</span>
+                <span v-else class="text-xs text-gray-700/50">No role</span>
               </td>
               <td><span :class="['status-badge', m.is_active ? 'status-active' : 'status-inactive']">{{ m.is_active ? 'Active' : 'Inactive' }}</span></td>
-              <td class="text-xs text-cream-faint">{{ new Date(m.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) }}</td>
+              <td class="text-xs text-gray-700">{{ new Date(m.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) }}</td>
               <td @click.stop>
                 <div class="flex items-center gap-1.5">
-                  <button v-if="!m.is_owner" @click="openChangeRole(m)" class="text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-2.5 py-1 rounded-md transition-colors">
+                  <button v-if="!m.is_owner" @click="openChangeRole(m)" class="text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1 rounded-md transition-colors">
                     Change Role
                   </button>
                   <button v-if="!m.is_owner" @click="openRemove(m)" class="text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 px-2.5 py-1 rounded-md transition-colors">
@@ -318,29 +318,29 @@ const handleRemove = async () => {
       </div>
 
       <!-- Mobile -->
-      <div class="sm:hidden divide-y divide-charcoal-700">
+      <div class="sm:hidden divide-y divide-gray-400">
         <div
           v-for="m in members" :key="m.id"
-          class="px-4 py-3.5 flex items-center justify-between cursor-pointer hover:bg-charcoal-700/40 transition-colors"
+          class="px-4 py-3.5 flex items-center justify-between cursor-pointer hover:bg-gray-400/40 transition-colors"
           @click="router.push({ name: 'members.view', params: { id: m.id } })"
         >
           <div class="flex items-center gap-3">
             <div class="relative shrink-0">
-              <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-charcoal-900" :style="{ backgroundColor: avatarColor(m.id) }">
+              <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-bg-100" :style="{ backgroundColor: avatarColor(m.id) }">
                 {{ memberInitials(m) }}
               </div>
-              <span :class="['absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-charcoal-800', m.is_active ? 'bg-green-400' : 'bg-charcoal-500']"></span>
+              <span :class="['absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-gray-300', m.is_active ? 'bg-green-400' : 'bg-gray-500']"></span>
             </div>
             <div>
-              <div class="text-sm font-medium text-cream">{{ m.user?.full_name }}</div>
-              <div class="text-xs text-cream-faint">{{ m.user?.email }}</div>
+              <div class="text-sm font-medium text-gray-1000">{{ m.user?.full_name }}</div>
+              <div class="text-xs text-gray-700">{{ m.user?.email }}</div>
             </div>
           </div>
           <div class="flex flex-col items-end gap-1.5">
             <span v-if="m.is_owner" class="status-badge role-owner">Owner</span>
-            <span v-else-if="m.roles.length" class="text-xs text-cream-muted">{{ m.roles[0]?.name }}</span>
+            <span v-else-if="m.roles.length" class="text-xs text-gray-900">{{ m.roles[0]?.name }}</span>
             <div v-if="!m.is_owner" class="flex items-center gap-1.5" @click.stop>
-              <button @click="openChangeRole(m)" class="text-[10px] text-cream-muted hover:text-cream bg-charcoal-700 px-2 py-0.5 rounded transition-colors">Role</button>
+              <button @click="openChangeRole(m)" class="text-[10px] text-gray-900 hover:text-gray-1000 bg-gray-400 px-2 py-0.5 rounded transition-colors">Role</button>
               <button @click="openRemove(m)" class="text-[10px] text-red-400 hover:text-red-300 bg-red-500/10 px-2 py-0.5 rounded transition-colors">Remove</button>
             </div>
           </div>
@@ -352,17 +352,17 @@ const handleRemove = async () => {
 
     <!-- Pending Invitations -->
     <div v-if="isLoadingInvitations || pendingInvitations.length" class="mt-6">
-      <h2 class="text-sm font-semibold text-cream mb-3">Pending Invitations</h2>
+      <h2 class="text-sm font-semibold text-gray-1000 mb-3">Pending Invitations</h2>
 
       <div v-if="isLoadingInvitations" class="flex justify-center py-8">
-        <Icon icon="lucide:loader-2" class="w-5 h-5 text-cream-faint animate-spin" />
+        <Icon icon="lucide:loader-2" class="w-5 h-5 text-gray-700 animate-spin" />
       </div>
 
-      <div v-else class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden divide-y divide-charcoal-700">
+      <div v-else class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden divide-y divide-gray-400">
         <div v-for="inv in pendingInvitations" :key="inv.id" class="flex items-center justify-between px-4 py-3">
           <div>
-            <div class="text-sm text-cream">{{ inv.email }}</div>
-            <div class="text-xs text-cream-faint mt-0.5">
+            <div class="text-sm text-gray-1000">{{ inv.email }}</div>
+            <div class="text-xs text-gray-700 mt-0.5">
               <span v-if="inv.role_ids.length">{{ inv.role_ids.length }} role{{ inv.role_ids.length !== 1 ? 's' : '' }}</span>
               <span v-else>No roles assigned</span>
               &middot; Expires {{ new Date(inv.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) }}
@@ -384,20 +384,20 @@ const handleRemove = async () => {
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="showAddModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" @click.self="showAddModal = false">
-        <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+        <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
           <div class="flex items-center justify-between mb-5">
             <div>
-              <h2 class="font-display text-lg font-semibold text-cream">Add Team Member</h2>
-              <p class="text-xs text-cream-faint mt-0.5">An invitation email will be sent to the address</p>
+              <h2 class="font-sans text-lg font-semibold text-gray-1000">Add Team Member</h2>
+              <p class="text-xs text-gray-700 mt-0.5">An invitation email will be sent to the address</p>
             </div>
-            <button @click="showAddModal = false" class="p-1.5 rounded-lg hover:bg-charcoal-700 text-cream-faint hover:text-cream transition-colors">
+            <button @click="showAddModal = false" class="p-1.5 rounded-lg hover:bg-gray-400 text-gray-700 hover:text-gray-1000 transition-colors">
               <Icon icon="lucide:x" class="w-4 h-4" />
             </button>
           </div>
 
           <div class="space-y-4 mb-5">
             <div class="space-y-1">
-              <label class="flex text-sm text-cream-faint">Email Address <span class="text-red-400 ml-0.5">*</span></label>
+              <label class="flex text-sm text-gray-700">Email Address <span class="text-red-400 ml-0.5">*</span></label>
               <input
                 v-model="addForm.email"
                 type="email"
@@ -409,33 +409,33 @@ const handleRemove = async () => {
             </div>
 
             <div v-if="availableRoles.length" class="space-y-1">
-              <label class="text-sm text-cream-faint">Assign Roles <span class="text-cream-faint/50 text-xs">(optional)</span></label>
+              <label class="text-sm text-gray-700">Assign Roles <span class="text-gray-700/50 text-xs">(optional)</span></label>
               <div class="space-y-1.5 max-h-48 overflow-y-auto">
                 <label
                   v-for="role in availableRoles" :key="role.id"
-                  :class="['flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-colors', addForm.role_ids.includes(role.id) ? 'border-amber bg-amber/5' : 'border-charcoal-600 bg-charcoal-700/30 hover:border-charcoal-500']"
+                  :class="['flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-colors', addForm.role_ids.includes(role.id) ? 'border-green-700 bg-green-700/5' : 'border-gray-500 bg-gray-400/30 hover:border-gray-500']"
                 >
                   <input type="checkbox" :value="role.id" :checked="addForm.role_ids.includes(role.id)" @change="toggleAddRole(role.id)" class="sr-only" />
-                  <div :class="['w-4 h-4 rounded border-2 shrink-0 flex items-center justify-center transition-colors', addForm.role_ids.includes(role.id) ? 'border-amber bg-amber' : 'border-charcoal-500']">
-                    <Icon v-if="addForm.role_ids.includes(role.id)" icon="lucide:check" class="w-2.5 h-2.5 text-charcoal-900" />
+                  <div :class="['w-4 h-4 rounded border-2 shrink-0 flex items-center justify-center transition-colors', addForm.role_ids.includes(role.id) ? 'border-green-700 bg-green-700' : 'border-gray-500']">
+                    <Icon v-if="addForm.role_ids.includes(role.id)" icon="lucide:check" class="w-2.5 h-2.5 text-bg-100" />
                   </div>
                   <div>
-                    <div class="text-sm font-medium text-cream">{{ role.name }}</div>
-                    <div v-if="role.description" class="text-xs text-cream-faint mt-0.5">{{ role.description }}</div>
+                    <div class="text-sm font-medium text-gray-1000">{{ role.name }}</div>
+                    <div v-if="role.description" class="text-xs text-gray-700 mt-0.5">{{ role.description }}</div>
                   </div>
                 </label>
               </div>
             </div>
 
-            <div v-else class="text-xs text-cream-faint/70 text-center py-2">No roles available — create roles first.</div>
+            <div v-else class="text-xs text-gray-700/70 text-center py-2">No roles available — create roles first.</div>
           </div>
 
           <div class="flex gap-2">
-            <button @click="showAddModal = false" class="flex-1 py-2.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-sm transition-colors">Cancel</button>
+            <button @click="showAddModal = false" class="flex-1 py-2.5 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-sm transition-colors">Cancel</button>
             <button
               @click="handleAdd"
               :disabled="getLoader('isSending') || !addForm.email.trim()"
-              :class="['flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg font-semibold text-sm transition-colors', addForm.email.trim() && !getLoader('isSending') ? 'bg-amber hover:bg-amber-light text-charcoal-900' : 'bg-amber/40 text-charcoal-900/50 cursor-not-allowed']"
+              :class="['flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg font-semibold text-sm transition-colors', addForm.email.trim() && !getLoader('isSending') ? 'bg-green-700 hover:bg-green-800 text-bg-100' : 'bg-green-700/40 text-bg-100/50 cursor-not-allowed']"
             >
               <Icon v-if="getLoader('isSending')" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
               {{ getLoader('isSending') ? 'Sending…' : 'Send Invite' }}
@@ -450,40 +450,40 @@ const handleRemove = async () => {
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="showChangeRole && selectedMember" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" @click.self="showChangeRole = false">
-        <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+        <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
           <div class="flex items-center justify-between mb-2">
-            <h2 class="font-display text-lg font-semibold text-cream">Change Roles</h2>
-            <button @click="showChangeRole = false" class="p-1.5 rounded-lg hover:bg-charcoal-700 text-cream-faint hover:text-cream transition-colors">
+            <h2 class="font-sans text-lg font-semibold text-gray-1000">Change Roles</h2>
+            <button @click="showChangeRole = false" class="p-1.5 rounded-lg hover:bg-gray-400 text-gray-700 hover:text-gray-1000 transition-colors">
               <Icon icon="lucide:x" class="w-4 h-4" />
             </button>
           </div>
-          <p class="text-xs text-cream-faint mb-5">
-            Updating roles for <span class="text-cream font-medium">{{ selectedMember.user?.full_name }}</span>
+          <p class="text-xs text-gray-700 mb-5">
+            Updating roles for <span class="text-gray-1000 font-medium">{{ selectedMember.user?.full_name }}</span>
           </p>
 
           <div class="space-y-1.5 mb-5 max-h-60 overflow-y-auto">
             <label
               v-for="role in availableRoles" :key="role.id"
-              :class="['flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-colors', newRoleIds.includes(role.id) ? 'border-amber bg-amber/5' : 'border-charcoal-600 bg-charcoal-700/30 hover:border-charcoal-500']"
+              :class="['flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-colors', newRoleIds.includes(role.id) ? 'border-green-700 bg-green-700/5' : 'border-gray-500 bg-gray-400/30 hover:border-gray-500']"
             >
               <input type="checkbox" :value="role.id" :checked="newRoleIds.includes(role.id)" @change="toggleNewRole(role.id)" class="sr-only" />
-              <div :class="['w-4 h-4 rounded border-2 shrink-0 flex items-center justify-center transition-colors', newRoleIds.includes(role.id) ? 'border-amber bg-amber' : 'border-charcoal-500']">
-                <Icon v-if="newRoleIds.includes(role.id)" icon="lucide:check" class="w-2.5 h-2.5 text-charcoal-900" />
+              <div :class="['w-4 h-4 rounded border-2 shrink-0 flex items-center justify-center transition-colors', newRoleIds.includes(role.id) ? 'border-green-700 bg-green-700' : 'border-gray-500']">
+                <Icon v-if="newRoleIds.includes(role.id)" icon="lucide:check" class="w-2.5 h-2.5 text-bg-100" />
               </div>
               <div>
-                <div class="text-sm font-medium text-cream">{{ role.name }}</div>
-                <div v-if="role.description" class="text-xs text-cream-faint mt-0.5">{{ role.description }}</div>
+                <div class="text-sm font-medium text-gray-1000">{{ role.name }}</div>
+                <div v-if="role.description" class="text-xs text-gray-700 mt-0.5">{{ role.description }}</div>
               </div>
             </label>
-            <div v-if="!availableRoles.length" class="text-xs text-cream-faint/70 text-center py-3">No roles available.</div>
+            <div v-if="!availableRoles.length" class="text-xs text-gray-700/70 text-center py-3">No roles available.</div>
           </div>
 
           <div class="flex gap-2">
-            <button @click="showChangeRole = false" class="flex-1 py-2.5 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-sm transition-colors">Cancel</button>
+            <button @click="showChangeRole = false" class="flex-1 py-2.5 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-sm transition-colors">Cancel</button>
             <button
               @click="handleChangeRole"
               :disabled="getLoader('isSending')"
-              :class="['flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg font-semibold text-sm transition-colors', !getLoader('isSending') ? 'bg-amber hover:bg-amber-light text-charcoal-900' : 'bg-amber/40 text-charcoal-900/50 cursor-not-allowed']"
+              :class="['flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg font-semibold text-sm transition-colors', !getLoader('isSending') ? 'bg-green-700 hover:bg-green-800 text-bg-100' : 'bg-green-700/40 text-bg-100/50 cursor-not-allowed']"
             >
               <Icon v-if="getLoader('isSending')" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
               {{ getLoader('isSending') ? 'Saving…' : 'Update Roles' }}
@@ -498,20 +498,20 @@ const handleRemove = async () => {
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="showRemoveConfirm && selectedMember" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" @click.self="showRemoveConfirm = false">
-        <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
+        <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
           <div class="flex items-start gap-3">
             <div class="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
               <Icon icon="lucide:user-x" class="w-4 h-4 text-red-400" />
             </div>
             <div>
-              <h3 class="text-sm font-semibold text-cream">Remove member?</h3>
-              <p class="text-xs text-cream-faint mt-1 leading-relaxed">
-                <span class="text-cream font-medium">{{ selectedMember.user?.full_name }}</span> will lose access immediately.
+              <h3 class="text-sm font-semibold text-gray-1000">Remove member?</h3>
+              <p class="text-xs text-gray-700 mt-1 leading-relaxed">
+                <span class="text-gray-1000 font-medium">{{ selectedMember.user?.full_name }}</span> will lose access immediately.
               </p>
             </div>
           </div>
           <div class="flex items-center justify-end gap-2">
-            <button @click="showRemoveConfirm = false" class="px-4 py-2 text-xs font-medium text-cream-faint hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 rounded-lg transition-colors">Cancel</button>
+            <button @click="showRemoveConfirm = false" class="px-4 py-2 text-xs font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors">Cancel</button>
             <button
               @click="handleRemove"
               :disabled="getLoader('isSending')"

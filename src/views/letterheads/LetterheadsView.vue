@@ -62,7 +62,7 @@ const onSearch = () => { currentPage.value = 1; fetchLetterheads() }
 const onPageChange = () => fetchLetterheads()
 
 const templateBadgeClass: Record<string, string> = {
-  classic:   'bg-amber/10 text-amber border-amber/20',
+  classic:   'bg-green-700/10 text-green-700 border-green-700/20',
   modern:    'bg-blue-500/10 text-blue-400 border-blue-500/20',
   bold:      'bg-red-500/10 text-red-400 border-red-500/20',
   minimal:   'bg-green-500/10 text-green-400 border-green-500/20',
@@ -122,7 +122,7 @@ function lastUsedLabel(lh: ILetterhead): string {
       </div>
       <button
         @click="router.push({ name: 'letterheads.create' })"
-        class="flex items-center gap-2 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs px-3 py-2 rounded-lg transition-colors self-start sm:self-auto"
+        class="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs px-3 py-2 rounded-lg transition-colors self-start sm:self-auto"
       >
         <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> New Letterhead
       </button>
@@ -130,29 +130,29 @@ function lastUsedLabel(lh: ILetterhead): string {
 
     <!-- Stats row -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4">
-        <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-1">Total Templates</p>
-        <p class="text-2xl font-bold text-cream">{{ stats?.total ?? total }}</p>
+      <div class="bg-gray-200 border border-gray-400 rounded-xl p-4">
+        <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-1">Total Templates</p>
+        <p class="text-2xl font-bold text-gray-1000">{{ stats?.total ?? total }}</p>
       </div>
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4">
-        <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-1">Total Uses</p>
-        <p class="text-2xl font-bold text-cream">{{ stats?.total_uses ?? '—' }}</p>
+      <div class="bg-gray-200 border border-gray-400 rounded-xl p-4">
+        <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-1">Total Uses</p>
+        <p class="text-2xl font-bold text-gray-1000">{{ stats?.total_uses ?? '—' }}</p>
       </div>
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4">
-        <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-1">Most Used</p>
-        <p class="text-sm font-semibold text-cream truncate">{{ stats?.most_used?.name ?? '—' }}</p>
-        <p v-if="stats?.most_used" class="text-[10px] text-cream-faint mt-0.5">{{ stats.most_used.uses }} uses</p>
+      <div class="bg-gray-200 border border-gray-400 rounded-xl p-4">
+        <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-1">Most Used</p>
+        <p class="text-sm font-semibold text-gray-1000 truncate">{{ stats?.most_used?.name ?? '—' }}</p>
+        <p v-if="stats?.most_used" class="text-[10px] text-gray-700 mt-0.5">{{ stats.most_used.uses }} uses</p>
       </div>
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4">
-        <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-1">Confidential</p>
-        <p class="text-2xl font-bold text-cream">{{ stats?.confidential ?? '—' }}</p>
+      <div class="bg-gray-200 border border-gray-400 rounded-xl p-4">
+        <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-1">Confidential</p>
+        <p class="text-2xl font-bold text-gray-1000">{{ stats?.confidential ?? '—' }}</p>
       </div>
     </div>
 
     <!-- Toolbar -->
     <div class="flex flex-col sm:flex-row gap-3">
       <div class="relative flex-1">
-        <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint pointer-events-none" />
+        <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-700 pointer-events-none" />
         <input
           v-model="search"
           @input="onSearch"
@@ -161,35 +161,35 @@ function lastUsedLabel(lh: ILetterhead): string {
         />
       </div>
       <!-- View toggle -->
-      <div class="flex items-center gap-1 bg-charcoal-800 border border-charcoal-700 rounded-lg p-1 shrink-0">
+      <div class="flex items-center gap-1 bg-gray-200 border border-gray-400 rounded-lg p-1 shrink-0">
         <button
           @click="viewMode = 'grid'"
-          :class="['p-1.5 rounded transition-colors', viewMode === 'grid' ? 'bg-charcoal-600 text-cream' : 'text-cream-faint hover:text-cream']"
+          :class="['p-1.5 rounded transition-colors', viewMode === 'grid' ? 'bg-gray-500 text-gray-1000' : 'text-gray-700 hover:text-gray-1000']"
         ><Icon icon="lucide:layout-grid" class="w-4 h-4" /></button>
         <button
           @click="viewMode = 'list'"
-          :class="['p-1.5 rounded transition-colors', viewMode === 'list' ? 'bg-charcoal-600 text-cream' : 'text-cream-faint hover:text-cream']"
+          :class="['p-1.5 rounded transition-colors', viewMode === 'list' ? 'bg-gray-500 text-gray-1000' : 'text-gray-700 hover:text-gray-1000']"
         ><Icon icon="lucide:list" class="w-4 h-4" /></button>
       </div>
     </div>
 
     <!-- Empty -->
     <div v-if="!loading && letterheads.length === 0" class="flex flex-col items-center justify-center py-24 text-center">
-      <Icon icon="lucide:file-text" class="w-10 h-10 text-cream-faint mb-3" />
-      <p class="text-cream-muted font-medium">No letterheads found</p>
-      <p class="text-cream-faint text-xs mt-1">Try a different search or create a new one</p>
+      <Icon icon="lucide:file-text" class="w-10 h-10 text-gray-700 mb-3" />
+      <p class="text-gray-900 font-medium">No letterheads found</p>
+      <p class="text-gray-700 text-xs mt-1">Try a different search or create a new one</p>
     </div>
 
     <!-- ── GRID VIEW ── -->
     <div v-else-if="viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <div
         v-for="lh in letterheads" :key="lh.id"
-        class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden hover:border-charcoal-500 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 cursor-pointer group"
+        class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden hover:border-gray-500 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 cursor-pointer group"
         @click="router.push({ name: 'letterheads.edit', params: { id: lh.id } })"
       >
         <!-- Thumbnail preview -->
-        <div class="h-48 flex items-center justify-center border-b border-charcoal-700 p-4 bg-charcoal-900/50">
-          <div class="bg-white w-full h-full rounded-md overflow-hidden shadow-xl relative" style="font-family: 'DM Sans', sans-serif; color: #1a1a1a;">
+        <div class="h-48 flex items-center justify-center border-b border-gray-400 p-4 bg-gray-100/50">
+          <div class="bg-white w-full h-full rounded-md overflow-hidden shadow-xl relative" style="font-family: var(--font-sans); color: #1a1a1a;">
             <!-- Top bar -->
             <div class="h-1 w-full" :style="{ backgroundColor: lh.accent_color }"></div>
             <div class="p-3 h-full flex flex-col">
@@ -226,32 +226,32 @@ function lastUsedLabel(lh: ILetterhead): string {
         <!-- Card body -->
         <div class="p-4">
           <div class="flex items-start justify-between mb-1">
-            <span class="text-sm font-semibold text-cream group-hover:text-amber transition-colors">{{ lh.name }}</span>
-            <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium ml-2 shrink-0', templateBadgeClass[lh.theme] ?? 'bg-charcoal-700 text-cream-faint border-charcoal-600']">
+            <span class="text-sm font-semibold text-gray-1000 group-hover:text-green-700 transition-colors">{{ lh.name }}</span>
+            <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium ml-2 shrink-0', templateBadgeClass[lh.theme] ?? 'bg-gray-400 text-gray-700 border-gray-500']">
               {{ templateLabel[lh.theme] ?? lh.theme }}
             </span>
           </div>
-          <p class="text-xs text-cream-faint mb-3">{{ lh.uses }} uses · Last used {{ lastUsedLabel(lh) }}</p>
+          <p class="text-xs text-gray-700 mb-3">{{ lh.uses }} uses · Last used {{ lastUsedLabel(lh) }}</p>
           <div class="flex items-center gap-2" @click.stop>
             <button
               @click="router.push({ name: 'letterheads.view', params: { id: lh.id } })"
-              class="flex-1 text-xs py-1.5 bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream rounded-md transition-colors"
+              class="flex-1 text-xs py-1.5 bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 rounded-md transition-colors"
             >View</button>
             <button
               @click="router.push({ name: 'letterheads.edit', params: { id: lh.id } })"
-              class="w-7 h-7 flex items-center justify-center rounded-md bg-charcoal-700 hover:bg-charcoal-600 text-cream-faint hover:text-cream transition-colors"
+              class="w-7 h-7 flex items-center justify-center rounded-md bg-gray-400 hover:bg-gray-500 text-gray-700 hover:text-gray-1000 transition-colors"
               title="Edit"
             ><Icon icon="lucide:pencil" class="w-3.5 h-3.5" /></button>
             <button
               @click="openShare(lh)"
-              class="relative w-7 h-7 flex items-center justify-center rounded-md bg-charcoal-700 hover:bg-charcoal-600 text-cream-faint hover:text-cream transition-colors"
+              class="relative w-7 h-7 flex items-center justify-center rounded-md bg-gray-400 hover:bg-gray-500 text-gray-700 hover:text-gray-1000 transition-colors"
               title="Share"
             >
               <Icon icon="lucide:share-2" class="w-3.5 h-3.5" />
             </button>
             <button
               @click="confirmDelete(lh)"
-              class="w-7 h-7 flex items-center justify-center rounded-md bg-charcoal-700 hover:bg-red-500/20 text-cream-faint hover:text-red-400 transition-colors"
+              class="w-7 h-7 flex items-center justify-center rounded-md bg-gray-400 hover:bg-red-500/20 text-gray-700 hover:text-red-400 transition-colors"
               title="Delete"
             ><Icon icon="lucide:trash-2" class="w-3.5 h-3.5" /></button>
           </div>
@@ -261,35 +261,35 @@ function lastUsedLabel(lh: ILetterhead): string {
       <!-- Create new card -->
       <div
         @click="router.push({ name: 'letterheads.create' })"
-        class="bg-charcoal-800 border border-dashed border-charcoal-600 hover:border-amber/40 rounded-xl flex flex-col items-center justify-center gap-3 p-6 min-h-[300px] cursor-pointer transition-colors group"
+        class="bg-gray-200 border border-dashed border-gray-500 hover:border-green-700/40 rounded-xl flex flex-col items-center justify-center gap-3 p-6 min-h-[300px] cursor-pointer transition-colors group"
       >
-        <div class="w-10 h-10 rounded-xl bg-amber/10 border border-amber/20 flex items-center justify-center group-hover:bg-amber/15 transition-colors">
-          <Icon icon="lucide:plus" class="w-5 h-5 text-amber" />
+        <div class="w-10 h-10 rounded-xl bg-green-700/10 border border-green-700/20 flex items-center justify-center group-hover:bg-green-700/15 transition-colors">
+          <Icon icon="lucide:plus" class="w-5 h-5 text-green-700" />
         </div>
         <div class="text-center">
-          <div class="text-sm font-medium text-cream-muted group-hover:text-cream transition-colors">New Letterhead</div>
-          <div class="text-xs text-cream-faint mt-0.5">Start from a template</div>
+          <div class="text-sm font-medium text-gray-900 group-hover:text-gray-1000 transition-colors">New Letterhead</div>
+          <div class="text-xs text-gray-700 mt-0.5">Start from a template</div>
         </div>
       </div>
     </div>
 
     <!-- ── LIST VIEW ── -->
-    <div v-else class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden">
+    <div v-else class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden">
       <table class="w-full text-sm">
         <thead>
-          <tr class="border-b border-charcoal-700 bg-charcoal-900/40">
-            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-cream-faint font-medium">Name</th>
-            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-cream-faint font-medium hidden sm:table-cell">Theme</th>
-            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-cream-faint font-medium hidden md:table-cell">Watermark</th>
-            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-cream-faint font-medium hidden lg:table-cell">Uses</th>
-            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-cream-faint font-medium hidden md:table-cell">Last Used</th>
+          <tr class="border-b border-gray-400 bg-gray-100/40">
+            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-gray-700 font-medium">Name</th>
+            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-gray-700 font-medium hidden sm:table-cell">Theme</th>
+            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-gray-700 font-medium hidden md:table-cell">Watermark</th>
+            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-gray-700 font-medium hidden lg:table-cell">Uses</th>
+            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-gray-700 font-medium hidden md:table-cell">Last Used</th>
             <th class="py-3 px-4"></th>
           </tr>
         </thead>
         <tbody>
           <tr
             v-for="lh in letterheads" :key="lh.id"
-            class="border-b border-charcoal-700/50 last:border-0 hover:bg-charcoal-700/30 cursor-pointer transition-colors"
+            class="border-b border-gray-400/50 last:border-0 hover:bg-gray-400/30 cursor-pointer transition-colors"
             @click="router.push({ name: 'letterheads.view', params: { id: lh.id } })"
           >
             <td class="py-3 px-4">
@@ -308,39 +308,39 @@ function lastUsedLabel(lh: ILetterhead): string {
                   </div>
                 </div>
                 <div>
-                  <div class="font-medium text-cream text-sm">{{ lh.name }}</div>
-                  <div class="text-xs text-cream-faint">{{ lh.company }}</div>
+                  <div class="font-medium text-gray-1000 text-sm">{{ lh.name }}</div>
+                  <div class="text-xs text-gray-700">{{ lh.company }}</div>
                 </div>
               </div>
             </td>
             <td class="py-3 px-4 hidden sm:table-cell">
-              <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium', templateBadgeClass[lh.theme] ?? 'bg-charcoal-700 text-cream-faint border-charcoal-600']">
+              <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium', templateBadgeClass[lh.theme] ?? 'bg-gray-400 text-gray-700 border-gray-500']">
                 {{ templateLabel[lh.theme] ?? lh.theme }}
               </span>
             </td>
             <td class="py-3 px-4 hidden md:table-cell">
-              <span v-if="lh.watermark" class="text-xs text-cream-faint font-mono">{{ lh.watermark }}</span>
-              <span v-else class="text-xs text-charcoal-600">—</span>
+              <span v-if="lh.watermark" class="text-xs text-gray-700 font-mono">{{ lh.watermark }}</span>
+              <span v-else class="text-xs text-gray-500">—</span>
             </td>
-            <td class="py-3 px-4 hidden lg:table-cell text-xs text-cream-muted">{{ lh.uses }}</td>
-            <td class="py-3 px-4 hidden md:table-cell text-xs text-cream-faint">{{ lastUsedLabel(lh) }}</td>
+            <td class="py-3 px-4 hidden lg:table-cell text-xs text-gray-900">{{ lh.uses }}</td>
+            <td class="py-3 px-4 hidden md:table-cell text-xs text-gray-700">{{ lastUsedLabel(lh) }}</td>
             <td class="py-3 px-4" @click.stop>
               <div class="flex items-center justify-end gap-1">
                 <button
                   @click="router.push({ name: 'letterheads.edit', params: { id: lh.id } })"
-                  class="p-1.5 rounded hover:bg-charcoal-600 text-cream-faint hover:text-cream transition-colors"
+                  class="p-1.5 rounded hover:bg-gray-500 text-gray-700 hover:text-gray-1000 transition-colors"
                   title="Edit"
                 ><Icon icon="lucide:pencil" class="w-3.5 h-3.5" /></button>
                 <button
                   @click="openShare(lh)"
-                  class="relative p-1.5 rounded hover:bg-charcoal-600 text-cream-faint hover:text-cream transition-colors"
+                  class="relative p-1.5 rounded hover:bg-gray-500 text-gray-700 hover:text-gray-1000 transition-colors"
                   title="Share"
                 >
                   <Icon icon="lucide:share-2" class="w-3.5 h-3.5" />
                 </button>
                 <button
                   @click="confirmDelete(lh)"
-                  class="p-1.5 rounded hover:bg-red-500/20 text-cream-faint hover:text-red-400 transition-colors"
+                  class="p-1.5 rounded hover:bg-red-500/20 text-gray-700 hover:text-red-400 transition-colors"
                   title="Delete"
                 ><Icon icon="lucide:trash-2" class="w-3.5 h-3.5" /></button>
               </div>
@@ -373,21 +373,21 @@ function lastUsedLabel(lh: ILetterhead): string {
     <Teleport to="body">
       <Transition name="modal">
         <div v-if="showDeleteConfirm" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-6 w-full max-w-sm shadow-2xl">
+          <div class="bg-gray-200 border border-gray-400 rounded-xl p-6 w-full max-w-sm shadow-2xl">
             <div class="flex items-center gap-3 mb-4">
               <div class="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
                 <Icon icon="lucide:trash-2" class="w-4 h-4 text-red-400" />
               </div>
               <div>
-                <p class="font-semibold text-cream text-sm">Delete Letterhead</p>
-                <p class="text-xs text-cream-faint">This action cannot be undone</p>
+                <p class="font-semibold text-gray-1000 text-sm">Delete Letterhead</p>
+                <p class="text-xs text-gray-700">This action cannot be undone</p>
               </div>
             </div>
-            <p class="text-sm text-cream-muted mb-5">
-              Are you sure you want to delete <span class="font-semibold text-cream">{{ deleteTarget?.name }}</span>?
+            <p class="text-sm text-gray-900 mb-5">
+              Are you sure you want to delete <span class="font-semibold text-gray-1000">{{ deleteTarget?.name }}</span>?
             </p>
             <div class="flex justify-end gap-2">
-              <button @click="showDeleteConfirm = false" class="px-4 py-2 text-xs font-medium text-cream-faint hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 rounded-lg transition-colors">Cancel</button>
+              <button @click="showDeleteConfirm = false" class="px-4 py-2 text-xs font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors">Cancel</button>
               <button @click="doDelete" :disabled="isDeleting" class="px-4 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors disabled:opacity-60">
                 <Icon v-if="isDeleting" icon="lucide:loader-2" class="w-3 h-3 animate-spin inline mr-1" />
                 Delete

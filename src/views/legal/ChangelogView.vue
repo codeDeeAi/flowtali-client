@@ -21,9 +21,25 @@ interface Release {
 
 const releases: Release[] = [
   {
-    version: 'v1.7',
+    version: 'v1.8',
     date: 'June 2026',
     badge: 'Latest',
+    changes: [
+      { type: 'new', text: 'Complete design system overhaul — migrated the entire frontend to a Geist-based dark theme inspired by Vercel\'s design system, with a new green accent palette replacing the previous amber/charcoal scheme.' },
+      { type: 'new', text: 'Geist Sans and Geist Mono variable fonts — self-hosted for faster loading and a sharper, more professional typographic feel across the entire app.' },
+      { type: 'new', text: 'Design reference document (DESIGN.md) — a comprehensive design system guide covering colors, typography, spacing, radii, shadows, motion, components, and content voice guidelines.' },
+      { type: 'improved', text: 'Standardised 10-step color scale for grays, green accent, red (errors), amber (warnings), and blue (info) — every color token now encodes intent, not just lightness.' },
+      { type: 'improved', text: 'All buttons, inputs, toggles, tables, badges, and navigation components rebuilt with consistent Geist tokens — flat design, no gradients, subtle shadows.' },
+      { type: 'improved', text: 'Global focus ring updated to a two-layer green ring for better accessibility across all interactive elements.' },
+      { type: 'improved', text: 'Reduced motion support — all animations now respect the prefers-reduced-motion media query.' },
+      { type: 'improved', text: 'Landing page hero, features, pricing, testimonials, and FAQ sections updated with the new green accent and cleaner typography.' },
+      { type: 'improved', text: 'All legal pages (About, Privacy, Terms, Contact, Changelog) and public document views updated to the new design system.' },
+    ],
+  },
+  {
+    version: 'v1.7',
+    date: 'June 2026',
+    badge: null,
     changes: [
       { type: 'new', text: 'First-login welcome modal — new users are greeted with a "Take a tour" prompt on their first sign-in, with the option to skip.' },
       { type: 'new', text: 'Interactive tour guide — a step-by-step spotlight walkthrough covers key features; steps are automatically tailored to personal vs. organisation accounts.' },
@@ -126,50 +142,50 @@ const releases: Release[] = [
 ]
 
 const typeConfig: Record<ChangeType, { label: string; classes: string }> = {
-  new:      { label: 'New',      classes: 'bg-amber/10 text-amber border-amber/20' },
+  new:      { label: 'New',      classes: 'bg-green-700/10 text-green-700 border-green-700/20' },
   improved: { label: 'Improved', classes: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
   fix:      { label: 'Fix',      classes: 'bg-green-500/10 text-green-400 border-green-500/20' },
 }
 </script>
 
 <template>
-  <div class="min-h-screen bg-charcoal-900 text-cream">
+  <div class="min-h-screen bg-gray-100 text-gray-1000">
 
     <!-- Nav -->
-    <header class="border-b border-charcoal-800 px-6 py-4 flex items-center justify-between max-w-3xl mx-auto">
-      <button @click="router.back()" class="flex items-center gap-2 text-sm text-cream-muted hover:text-cream transition-colors">
+    <header class="border-b border-gray-300 px-6 py-4 flex items-center justify-between max-w-3xl mx-auto">
+      <button @click="router.back()" class="flex items-center gap-2 text-sm text-gray-900 hover:text-gray-1000 transition-colors">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
         Back
       </button>
-      <router-link to="/" class="font-display text-lg font-bold text-amber">Flowtali</router-link>
+      <router-link to="/" class="font-sans text-lg font-bold text-green-700">Flowtali</router-link>
     </header>
 
     <!-- Hero -->
     <main class="max-w-3xl mx-auto px-6 py-14">
       <div class="mb-14">
-        <div class="inline-flex items-center gap-2 bg-amber/10 border border-amber/20 text-amber text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
+        <div class="inline-flex items-center gap-2 bg-green-700/10 border border-green-700/20 text-green-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
           Product Updates
         </div>
-        <h1 class="text-4xl font-bold font-display text-cream mb-3">Changelog</h1>
-        <p class="text-cream-muted leading-relaxed">New features, improvements, and fixes — in chronological order.</p>
+        <h1 class="text-4xl font-bold font-sans text-gray-1000 mb-3">Changelog</h1>
+        <p class="text-gray-900 leading-relaxed">New features, improvements, and fixes — in chronological order.</p>
       </div>
 
       <!-- Timeline -->
       <div class="relative">
-        <div class="absolute left-0 top-0 bottom-0 w-px bg-charcoal-700 ml-[5px]"></div>
+        <div class="absolute left-0 top-0 bottom-0 w-px bg-gray-400 ml-[5px]"></div>
 
         <div v-for="release in releases" :key="release.version" class="relative pl-10 mb-14 last:mb-0">
           <!-- Dot -->
-          <div class="absolute left-0 top-1.5 w-2.5 h-2.5 rounded-full bg-amber border-2 border-charcoal-900"></div>
+          <div class="absolute left-0 top-1.5 w-2.5 h-2.5 rounded-full bg-green-700 border-2 border-gray-100"></div>
 
           <!-- Header -->
           <div class="flex items-center gap-3 mb-5">
-            <span class="text-xl font-bold font-display text-cream">{{ release.version }}</span>
+            <span class="text-xl font-bold font-sans text-gray-1000">{{ release.version }}</span>
             <span v-if="release.badge" class="text-xs font-semibold px-2 py-0.5 rounded-full border"
-              :class="release.badge === 'Latest' ? 'bg-amber/10 text-amber border-amber/20' : 'bg-charcoal-700 text-cream-muted border-charcoal-600'">
+              :class="release.badge === 'Latest' ? 'bg-green-700/10 text-green-700 border-green-700/20' : 'bg-gray-400 text-gray-900 border-gray-500'">
               {{ release.badge }}
             </span>
-            <span class="text-sm text-cream-faint ml-auto">{{ release.date }}</span>
+            <span class="text-sm text-gray-700 ml-auto">{{ release.date }}</span>
           </div>
 
           <!-- Changes -->
@@ -179,7 +195,7 @@ const typeConfig: Record<ChangeType, { label: string; classes: string }> = {
                 :class="typeConfig[change.type].classes">
                 {{ typeConfig[change.type].label }}
               </span>
-              <p class="text-sm text-cream-muted leading-relaxed">{{ change.text }}</p>
+              <p class="text-sm text-gray-900 leading-relaxed">{{ change.text }}</p>
             </div>
           </div>
         </div>
@@ -187,13 +203,13 @@ const typeConfig: Record<ChangeType, { label: string; classes: string }> = {
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-charcoal-800 mt-8 px-6 py-8 text-center">
-      <div class="flex items-center justify-center gap-6 text-sm text-cream-faint">
-        <router-link :to="{ name: 'privacy' }" class="hover:text-cream transition-colors">Privacy Policy</router-link>
-        <router-link :to="{ name: 'terms' }" class="hover:text-cream transition-colors">Terms of Service</router-link>
-        <router-link :to="{ name: 'contact' }" class="hover:text-cream transition-colors">Contact</router-link>
+    <footer class="border-t border-gray-300 mt-8 px-6 py-8 text-center">
+      <div class="flex items-center justify-center gap-6 text-sm text-gray-700">
+        <router-link :to="{ name: 'privacy' }" class="hover:text-gray-1000 transition-colors">Privacy Policy</router-link>
+        <router-link :to="{ name: 'terms' }" class="hover:text-gray-1000 transition-colors">Terms of Service</router-link>
+        <router-link :to="{ name: 'contact' }" class="hover:text-gray-1000 transition-colors">Contact</router-link>
       </div>
-      <p class="text-xs text-cream-faint/50 mt-4">© {{ new Date().getFullYear() }} Flowtali. All rights reserved.</p>
+      <p class="text-xs text-gray-700/50 mt-4">© {{ new Date().getFullYear() }} Flowtali. All rights reserved.</p>
     </footer>
   </div>
 </template>

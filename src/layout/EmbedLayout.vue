@@ -6,7 +6,7 @@ useEmbedTheme()
 </script>
 
 <template>
-  <div class="embed-root w-full h-full min-h-screen bg-charcoal-900 text-cream overflow-auto">
+  <div class="embed-root w-full h-full min-h-screen bg-gray-100 text-gray-1000 overflow-auto">
     <RouterView />
   </div>
 </template>

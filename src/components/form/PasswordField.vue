@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-1">
-    <label v-if="labelText" class="flex capitalize text-sm text-cream-faint" :class="[
+    <label v-if="labelText" class="flex capitalize text-sm text-gray-700" :class="[
       labelClass,
       {
         'label__color -': !error,
@@ -16,7 +16,7 @@
         @change="handleChange" @keydown="handleKeyDown" @focus="handleFocus" @blur="handleBlur" />
       <small v-if="error" class="error__color text-xs">{{ error }}</small>
 
-      <button class="absolute right-3 top-1/2 -translate-y-1/2 text-cream-faint hover:text-cream"
+      <button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 hover:text-gray-1000"
         @click="handleTypeChange"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="2">
           <path v-if="type === 'password'" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -30,7 +30,7 @@
     <!-- Strength Indicator -->
     <div v-if="useStrengthIndicator" class="flex gap-1 mt-2">
       <div v-for="i in 4" :key="i" class="flex-1 h-0.5 rounded-full transition-colors duration-200"
-        :class="passwordStrength >= i ? (passwordStrength >= 4 ? 'bg-green-500' : passwordStrength >= 3 ? 'bg-amber' : 'bg-red-500') : 'bg-charcoal-600'">
+        :class="passwordStrength >= i ? (passwordStrength >= 4 ? 'bg-green-500' : passwordStrength >= 3 ? 'bg-green-700' : 'bg-red-500') : 'bg-gray-500'">
       </div>
     </div>
   </div>

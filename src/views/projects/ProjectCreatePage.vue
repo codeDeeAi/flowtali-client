@@ -44,9 +44,9 @@ onMounted(async () => {
 });
 
 const STATUSES = [
-  { value: 'draft',     label: 'Draft',     desc: 'Not yet started',         color: 'text-cream-muted' },
+  { value: 'draft',     label: 'Draft',     desc: 'Not yet started',         color: 'text-gray-900' },
   { value: 'active',    label: 'Active',    desc: 'Currently in progress',   color: 'text-green-400' },
-  { value: 'on_hold',   label: 'On Hold',   desc: 'Temporarily paused',      color: 'text-amber' },
+  { value: 'on_hold',   label: 'On Hold',   desc: 'Temporarily paused',      color: 'text-green-700' },
   { value: 'completed', label: 'Completed', desc: 'Successfully finished',   color: 'text-blue-400' },
   { value: 'cancelled', label: 'Cancelled', desc: 'No longer proceeding',    color: 'text-red-400' },
 ];
@@ -88,7 +88,7 @@ async function handleSubmit() {
       <div class="flex items-center gap-3">
         <button
           @click="router.push({ name: 'projects' })"
-          class="p-2 rounded-lg hover:bg-charcoal-700 text-cream-faint hover:text-cream transition-colors shrink-0"
+          class="p-2 rounded-lg hover:bg-gray-400 text-gray-700 hover:text-gray-1000 transition-colors shrink-0"
         >
           <Icon icon="lucide:arrow-left" class="w-4 h-4" />
         </button>
@@ -100,14 +100,14 @@ async function handleSubmit() {
 
       <!-- Loading skeleton -->
       <div v-if="isLoading" class="flex items-center justify-center py-20">
-        <Icon icon="lucide:loader-2" class="w-5 h-5 text-cream-faint animate-spin" />
+        <Icon icon="lucide:loader-2" class="w-5 h-5 text-gray-700 animate-spin" />
       </div>
 
       <form v-else @submit.prevent="handleSubmit" class="space-y-5">
 
         <!-- ── Core identity ─────────────────────────────────────── -->
-        <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 space-y-4">
-          <h2 class="text-xs font-semibold uppercase tracking-wider text-cream-faint">Project Identity</h2>
+        <div class="bg-gray-200 border border-gray-400 rounded-xl p-5 space-y-4">
+          <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-700">Project Identity</h2>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
@@ -142,8 +142,8 @@ async function handleSubmit() {
         </div>
 
         <!-- ── Status & tracking ─────────────────────────────────── -->
-        <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 space-y-4">
-          <h2 class="text-xs font-semibold uppercase tracking-wider text-cream-faint">Status</h2>
+        <div class="bg-gray-200 border border-gray-400 rounded-xl p-5 space-y-4">
+          <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-700">Status</h2>
 
           <div>
             <label class="app-label mb-2">Initial Status</label>
@@ -155,12 +155,12 @@ async function handleSubmit() {
                 :class="[
                   'flex flex-col items-start px-3 py-2.5 rounded-lg border text-left transition-colors',
                   form.status === s.value
-                    ? 'border-amber/40 bg-amber/6'
-                    : 'border-charcoal-600 hover:border-charcoal-500',
+                    ? 'border-green-700/40 bg-green-700/6'
+                    : 'border-gray-500 hover:border-gray-500',
                 ]"
               >
-                <span :class="['text-xs font-semibold', form.status === s.value ? 'text-amber' : s.color]">{{ s.label }}</span>
-                <span class="text-[10px] text-cream-faint mt-0.5 leading-tight">{{ s.desc }}</span>
+                <span :class="['text-xs font-semibold', form.status === s.value ? 'text-green-700' : s.color]">{{ s.label }}</span>
+                <span class="text-[10px] text-gray-700 mt-0.5 leading-tight">{{ s.desc }}</span>
               </button>
             </div>
           </div>
@@ -173,13 +173,13 @@ async function handleSubmit() {
                 @click="form.status_tracking = 'manual'"
                 :class="[
                   'flex items-start gap-3 px-4 py-3 rounded-lg border text-left transition-colors',
-                  form.status_tracking === 'manual' ? 'border-amber/40 bg-amber/6' : 'border-charcoal-600 hover:border-charcoal-500',
+                  form.status_tracking === 'manual' ? 'border-green-700/40 bg-green-700/6' : 'border-gray-500 hover:border-gray-500',
                 ]"
               >
-                <Icon icon="lucide:hand" class="w-4 h-4 mt-0.5 shrink-0" :class="form.status_tracking === 'manual' ? 'text-amber' : 'text-cream-faint'" />
+                <Icon icon="lucide:hand" class="w-4 h-4 mt-0.5 shrink-0" :class="form.status_tracking === 'manual' ? 'text-green-700' : 'text-gray-700'" />
                 <div>
-                  <div class="text-xs font-semibold" :class="form.status_tracking === 'manual' ? 'text-amber' : 'text-cream-muted'">Manual</div>
-                  <div class="text-[10px] text-cream-faint mt-0.5">You control status changes</div>
+                  <div class="text-xs font-semibold" :class="form.status_tracking === 'manual' ? 'text-green-700' : 'text-gray-900'">Manual</div>
+                  <div class="text-[10px] text-gray-700 mt-0.5">You control status changes</div>
                 </div>
               </button>
               <button
@@ -187,13 +187,13 @@ async function handleSubmit() {
                 @click="form.status_tracking = 'auto'"
                 :class="[
                   'flex items-start gap-3 px-4 py-3 rounded-lg border text-left transition-colors',
-                  form.status_tracking === 'auto' ? 'border-amber/40 bg-amber/6' : 'border-charcoal-600 hover:border-charcoal-500',
+                  form.status_tracking === 'auto' ? 'border-green-700/40 bg-green-700/6' : 'border-gray-500 hover:border-gray-500',
                 ]"
               >
-                <Icon icon="lucide:zap" class="w-4 h-4 mt-0.5 shrink-0" :class="form.status_tracking === 'auto' ? 'text-amber' : 'text-cream-faint'" />
+                <Icon icon="lucide:zap" class="w-4 h-4 mt-0.5 shrink-0" :class="form.status_tracking === 'auto' ? 'text-green-700' : 'text-gray-700'" />
                 <div>
-                  <div class="text-xs font-semibold" :class="form.status_tracking === 'auto' ? 'text-amber' : 'text-cream-muted'">Auto</div>
-                  <div class="text-[10px] text-cream-faint mt-0.5">Updates based on payments</div>
+                  <div class="text-xs font-semibold" :class="form.status_tracking === 'auto' ? 'text-green-700' : 'text-gray-900'">Auto</div>
+                  <div class="text-[10px] text-gray-700 mt-0.5">Updates based on payments</div>
                 </div>
               </button>
             </div>
@@ -201,8 +201,8 @@ async function handleSubmit() {
         </div>
 
         <!-- ── Financials & timeline ──────────────────────────────── -->
-        <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 space-y-4">
-          <h2 class="text-xs font-semibold uppercase tracking-wider text-cream-faint">Financials & Timeline</h2>
+        <div class="bg-gray-200 border border-gray-400 rounded-xl p-5 space-y-4">
+          <h2 class="text-xs font-semibold uppercase tracking-wider text-gray-700">Financials & Timeline</h2>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -214,7 +214,7 @@ async function handleSubmit() {
             <div>
               <label class="app-label">Contract Value</label>
               <div class="relative">
-                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-cream-faint font-medium">{{ form.currency }}</span>
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-700 font-medium">{{ form.currency }}</span>
                 <input
                   v-model="form.contract_value"
                   type="number"
@@ -244,14 +244,14 @@ async function handleSubmit() {
           <button
             type="button"
             @click="router.push({ name: 'projects' })"
-            class="px-4 py-2 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-sm transition-colors"
+            class="px-4 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-sm transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
             :disabled="isSaving"
-            class="flex items-center gap-2 px-5 py-2 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            class="flex items-center gap-2 px-5 py-2 rounded-lg bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Icon v-if="isSaving" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
             {{ isSaving ? 'Creating…' : 'Create Project' }}

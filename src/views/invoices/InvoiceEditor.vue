@@ -78,8 +78,8 @@ const form = ref({
 
   // Design
   theme: 'classic' as 'classic' | 'modern' | 'minimal' | 'bold' | 'executive',
-  accentColor: '#E8A83E',
-  fontFamily: "'DM Sans', sans-serif",
+  accentColor: '#00c853',
+  fontFamily: "var(--font-sans)",
   signatureUrl: '',
   stampUrl: '',
   stamp: '' as string,
@@ -327,15 +327,15 @@ const themes = [
   { id: 'executive', label: 'Executive' },
 ] as const
 
-const accentSwatches = ['#E8A83E', '#4f86c6', '#5ab88a', '#e05a5a', '#9b71c8', '#e8854a', '#3bbfc7', '#d4548a', '#1a1a1a', '#637074']
+const accentSwatches = ['#00c853', '#4f86c6', '#5ab88a', '#e05a5a', '#9b71c8', '#e8854a', '#3bbfc7', '#d4548a', '#1a1a1a', '#637074']
 
 const fontOptions = [
-  { value: "'DM Sans', sans-serif", label: 'DM Sans (Modern)' },
-  { value: "'Playfair Display', serif", label: 'Playfair Display (Elegant)' },
-  { value: "'Cormorant Garamond', serif", label: 'Cormorant Garamond (Literary)' },
+  { value: "var(--font-sans)", label: 'Geist Sans (Modern)' },
+  { value: "var(--font-sans)", label: 'Geist Sans (Elegant)' },
+  { value: "var(--font-sans)", label: 'Geist Sans (Literary)' },
   { value: "'Lato', sans-serif", label: 'Lato (Clean)' },
   { value: "'Montserrat', sans-serif", label: 'Montserrat (Contemporary)' },
-  { value: "'DM Mono', monospace", label: 'DM Mono (Technical)' },
+  { value: "var(--font-mono)", label: 'Geist Mono (Technical)' },
 ]
 
 const paymentLinkTypes = ['PayPal', 'Venmo', 'Cash App', 'Stripe', 'Wise', 'Revolut', 'Zelle', 'Custom']
@@ -474,33 +474,33 @@ const handleSaveDraft = () => handleSave('draft')
 </script>
 
 <template>
-  <div class="flex flex-col h-screen overflow-hidden bg-charcoal-900">
+  <div class="flex flex-col h-screen overflow-hidden bg-gray-100">
 
     <!-- ── Top bar ──────────────────────────────────────────────────────────── -->
-    <div class="flex items-center justify-between px-4 md:px-5 h-13 border-b border-charcoal-700 bg-charcoal-900/90 backdrop-blur-md shrink-0 z-20">
+    <div class="flex items-center justify-between px-4 md:px-5 h-13 border-b border-gray-400 bg-gray-100/90 backdrop-blur-md shrink-0 z-20">
       <div class="flex items-center gap-3">
         <button
           @click="router.push({ name: 'invoices' })"
-          class="flex items-center gap-2 text-cream-muted hover:text-cream text-sm transition-colors"
+          class="flex items-center gap-2 text-gray-900 hover:text-gray-1000 text-sm transition-colors"
         >
           <Icon icon="lucide:arrow-left" class="w-4 h-4" />
           <span class="hidden sm:inline">Invoices</span>
         </button>
-        <span class="text-charcoal-600">/</span>
+        <span class="text-gray-500">/</span>
         <div class="flex items-center gap-2">
-          <div class="w-5 h-5 rounded bg-amber/10 border border-amber/25 flex items-center justify-center">
-            <Icon icon="lucide:file-text" class="w-3 h-3 text-amber" />
+          <div class="w-5 h-5 rounded bg-green-700/10 border border-green-700/25 flex items-center justify-center">
+            <Icon icon="lucide:file-text" class="w-3 h-3 text-green-700" />
           </div>
-          <span class="font-semibold text-cream text-sm">
+          <span class="font-semibold text-gray-1000 text-sm">
             {{ mode === 'create' ? 'New Invoice' : 'Edit Invoice' }}
           </span>
-          <span class="font-mono text-xs text-cream-faint">{{ form.number }}</span>
+          <span class="font-mono text-xs text-gray-700">{{ form.number }}</span>
         </div>
       </div>
       <div class="flex items-center gap-2">
         <button
           @click="handlePrint"
-          class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream rounded-lg transition-colors"
+          class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 rounded-lg transition-colors"
           title="Print / PDF"
         >
           <Icon icon="lucide:printer" class="w-3.5 h-3.5" />
@@ -508,7 +508,7 @@ const handleSaveDraft = () => handleSave('draft')
         </button>
         <button
           @click="showShareModal = true"
-          class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream rounded-lg transition-colors"
+          class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 rounded-lg transition-colors"
           title="Share"
         >
           <Icon icon="lucide:share-2" class="w-3.5 h-3.5" />
@@ -517,7 +517,7 @@ const handleSaveDraft = () => handleSave('draft')
         <button
           @click="handleSaveDraft"
           :disabled="getLoader('isSaving')"
-          class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream rounded-lg transition-colors disabled:opacity-50"
+          class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 rounded-lg transition-colors disabled:opacity-50"
           title="Save Draft"
         >
           <Icon icon="lucide:save" class="w-3.5 h-3.5" />
@@ -526,7 +526,7 @@ const handleSaveDraft = () => handleSave('draft')
         <button
           @click="() => handleSave()"
           :disabled="getLoader('isSaving')"
-          class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-semibold rounded-lg transition-colors bg-amber hover:bg-amber/90 text-charcoal-900 disabled:opacity-60 disabled:cursor-not-allowed"
+          class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-semibold rounded-lg transition-colors bg-green-700 hover:bg-green-700/90 text-bg-100 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <Icon v-if="getLoader('isSaving')" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
           <Icon v-else icon="lucide:send" class="w-3.5 h-3.5" />
@@ -539,17 +539,17 @@ const handleSaveDraft = () => handleSave('draft')
     <div class="flex flex-1 overflow-hidden">
 
       <!-- ── Left sidebar ──────────────────────────────────────────────────── -->
-      <aside :class="['md:w-[380px] md:shrink-0 border-r border-charcoal-700 bg-charcoal-800/60 flex flex-col overflow-hidden', tab === 'Preview' ? 'hidden md:flex' : 'w-full']">
+      <aside :class="['md:w-[380px] md:shrink-0 border-r border-gray-400 bg-gray-200/60 flex flex-col overflow-hidden', tab === 'Preview' ? 'hidden md:flex' : 'w-full']">
 
         <!-- Tab bar -->
-        <div class="flex border-b border-charcoal-700 shrink-0">
+        <div class="flex border-b border-gray-400 shrink-0">
           <button
             v-for="t in tabs" :key="t"
             @click="tab = t"
             :class="[
               'flex-1 py-2.5 text-xs font-medium transition-colors border-b-2',
               t === 'Preview' ? 'md:hidden' : '',
-              tab === t ? 'border-amber text-amber' : 'border-transparent text-cream-faint hover:text-cream'
+              tab === t ? 'border-green-700 text-green-700' : 'border-transparent text-gray-700 hover:text-gray-1000'
             ]"
           >
             <template v-if="t === 'Preview'">
@@ -568,8 +568,8 @@ const handleSaveDraft = () => handleSave('draft')
 
             <!-- Quick-fill profiles -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Quick-Fill Profiles</p>
-              <div v-if="isDraftLoading" class="flex items-center gap-2 text-xs text-cream-faint py-2">
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Quick-Fill Profiles</p>
+              <div v-if="isDraftLoading" class="flex items-center gap-2 text-xs text-gray-700 py-2">
                 <Icon icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" /> Loading…
               </div>
               <div v-else-if="orgProfiles.length" class="space-y-1.5">
@@ -577,68 +577,68 @@ const handleSaveDraft = () => handleSave('draft')
                   v-for="p in orgProfiles" :key="p.id"
                   type="button"
                   @click="fillFrom(p)"
-                  class="w-full text-left p-2.5 rounded-lg border border-charcoal-600 bg-charcoal-700/40 hover:border-amber/50 hover:bg-charcoal-700 transition-colors group"
+                  class="w-full text-left p-2.5 rounded-lg border border-gray-500 bg-gray-400/40 hover:border-green-700/50 hover:bg-gray-400 transition-colors group"
                 >
-                  <p class="text-xs font-medium text-cream group-hover:text-amber transition-colors">{{ p.name }}</p>
-                  <p v-if="p.tagline" class="text-[10px] text-cream-faint mt-0.5 truncate">{{ p.tagline }}</p>
-                  <p v-else-if="p.email" class="text-[10px] text-cream-faint mt-0.5 truncate">{{ p.email }}</p>
+                  <p class="text-xs font-medium text-gray-1000 group-hover:text-green-700 transition-colors">{{ p.name }}</p>
+                  <p v-if="p.tagline" class="text-[10px] text-gray-700 mt-0.5 truncate">{{ p.tagline }}</p>
+                  <p v-else-if="p.email" class="text-[10px] text-gray-700 mt-0.5 truncate">{{ p.email }}</p>
                 </button>
               </div>
               <div v-else-if="draftData?.organization" class="space-y-1.5">
                 <button
                   type="button"
                   @click="fillFrom({ name: draftData!.organization!.name })"
-                  class="w-full text-left p-2.5 rounded-lg border border-charcoal-600 bg-charcoal-700/40 hover:border-amber/50 hover:bg-charcoal-700 transition-colors group"
+                  class="w-full text-left p-2.5 rounded-lg border border-gray-500 bg-gray-400/40 hover:border-green-700/50 hover:bg-gray-400 transition-colors group"
                 >
-                  <p class="text-xs font-medium text-cream group-hover:text-amber transition-colors">{{ draftData.organization.name }}</p>
-                  <p class="text-[10px] text-cream-faint mt-0.5">Organization name</p>
+                  <p class="text-xs font-medium text-gray-1000 group-hover:text-green-700 transition-colors">{{ draftData.organization.name }}</p>
+                  <p class="text-[10px] text-gray-700 mt-0.5">Organization name</p>
                 </button>
-                <p class="text-[10px] text-cream-faint/60">Add profiles in Organization Preferences for more options.</p>
+                <p class="text-[10px] text-gray-700/60">Add profiles in Organization Preferences for more options.</p>
               </div>
-              <p v-else-if="!isDraftLoading" class="text-[10px] text-cream-faint/60">No profiles set up yet</p>
+              <p v-else-if="!isDraftLoading" class="text-[10px] text-gray-700/60">No profiles set up yet</p>
             </div>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
             <!-- Fields -->
             <div class="space-y-3">
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Company Name</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Company Name</label>
                 <input v-model="form.fromName" class="app-inp text-sm" placeholder="Your Studio Name" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Tagline / Role</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Tagline / Role</label>
                 <input v-model="form.fromTagline" class="app-inp text-sm" placeholder="Creative Agency & Digital Studio" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Email</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Email</label>
                 <input v-model="form.fromEmail" type="email" class="app-inp text-sm" placeholder="hello@studio.com" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Phone</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Phone</label>
                 <input v-model="form.fromPhone" class="app-inp text-sm" placeholder="+1 555 000 0000" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Website</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Website</label>
                 <input v-model="form.fromWebsite" class="app-inp text-sm" placeholder="www.yourstudio.com" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Address</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Address</label>
                 <textarea v-model="form.fromAddress" class="app-inp text-sm resize-none" rows="3" placeholder="123 Street\nCity, Country" />
               </div>
             </div>
 
             <!-- Logo upload -->
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Logo</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Logo</p>
               <div v-if="form.logoUrl" class="mb-2 flex items-center gap-3">
-                <img :src="form.logoUrl" alt="Logo" class="h-12 w-auto rounded border border-charcoal-600 bg-charcoal-700 object-contain p-1" />
-                <button @click="form.logoUrl = ''" class="text-xs text-cream-faint hover:text-red-400 transition-colors flex items-center gap-1">
+                <img :src="form.logoUrl" alt="Logo" class="h-12 w-auto rounded border border-gray-500 bg-gray-400 object-contain p-1" />
+                <button @click="form.logoUrl = ''" class="text-xs text-gray-700 hover:text-red-400 transition-colors flex items-center gap-1">
                   <Icon icon="lucide:trash-2" class="w-3.5 h-3.5" /> Remove
                 </button>
               </div>
-              <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-dashed border-charcoal-600 hover:border-amber/50 text-xs text-cream-faint hover:text-cream transition-colors">
+              <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-dashed border-gray-500 hover:border-green-700/50 text-xs text-gray-700 hover:text-gray-1000 transition-colors">
                 <Icon icon="lucide:upload" class="w-3.5 h-3.5" />
                 {{ form.logoUrl ? 'Replace logo' : 'Upload logo' }}
                 <input type="file" accept="image/*" class="hidden" @change="handleLogoUpload" />
@@ -646,69 +646,69 @@ const handleSaveDraft = () => handleSave('draft')
             </div>
 
             <!-- Bank / Payment Details -->
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
             <div class="space-y-3">
               <div class="flex items-center justify-between">
-                <p class="text-[10px] uppercase tracking-wider text-cream-faint">Bank / Payment Details</p>
+                <p class="text-[10px] uppercase tracking-wider text-gray-700">Bank / Payment Details</p>
               </div>
               <!-- Saved bank account quick-fill -->
               <div v-if="orgBankAccounts.length" class="space-y-1">
-                <p class="text-[10px] text-cream-faint/70 mb-1">Quick-fill from saved account:</p>
+                <p class="text-[10px] text-gray-700/70 mb-1">Quick-fill from saved account:</p>
                 <div class="flex flex-wrap gap-1.5">
                   <button
                     v-for="b in orgBankAccounts" :key="b.id"
                     type="button"
                     @click="fillBank(b)"
-                    class="text-xs px-2.5 py-1 rounded border border-charcoal-600 text-cream-faint hover:border-amber/50 hover:text-cream transition-colors"
+                    class="text-xs px-2.5 py-1 rounded border border-gray-500 text-gray-700 hover:border-green-700/50 hover:text-gray-1000 transition-colors"
                   >{{ b.label }}</button>
                 </div>
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] text-cream-faint">Bank Name</label>
+                <label class="text-[10px] text-gray-700">Bank Name</label>
                 <input v-model="form.fromBankName" class="app-inp text-sm" placeholder="Chase Bank" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] text-cream-faint">Account Name</label>
+                <label class="text-[10px] text-gray-700">Account Name</label>
                 <input v-model="form.fromBankAccountName" class="app-inp text-sm" placeholder="Acme Design Studio" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] text-cream-faint">Account Number</label>
+                <label class="text-[10px] text-gray-700">Account Number</label>
                 <input v-model="form.fromBankAccountNumber" class="app-inp text-sm font-mono" placeholder="0000000000" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] text-cream-faint">Sort / Routing Code</label>
+                <label class="text-[10px] text-gray-700">Sort / Routing Code</label>
                 <input v-model="form.fromBankSortCode" class="app-inp text-sm font-mono" placeholder="12-34-56" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] text-cream-faint">IBAN <span class="text-cream-faint/50">(optional)</span></label>
+                <label class="text-[10px] text-gray-700">IBAN <span class="text-gray-700/50">(optional)</span></label>
                 <input v-model="form.fromBankIban" class="app-inp text-sm font-mono" placeholder="GB29 NWBK 6016 1331 9268 19" />
               </div>
             </div>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
             <!-- Payment links -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Payment Links</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Payment Links</p>
               <!-- Saved payment link quick-add -->
               <div v-if="orgPaymentLinks.length" class="mb-2 space-y-1">
-                <p class="text-[10px] text-cream-faint/70">Add from saved:</p>
+                <p class="text-[10px] text-gray-700/70">Add from saved:</p>
                 <div class="flex flex-wrap gap-1.5">
                   <button
                     v-for="pl in orgPaymentLinks" :key="pl.id"
                     type="button"
                     @click="addSavedPaymentLink(pl)"
-                    class="text-xs px-2.5 py-1 rounded border border-charcoal-600 text-cream-faint hover:border-amber/50 hover:text-cream transition-colors"
+                    class="text-xs px-2.5 py-1 rounded border border-gray-500 text-gray-700 hover:border-green-700/50 hover:text-gray-1000 transition-colors"
                   >{{ pl.label }}</button>
                 </div>
               </div>
               <div class="space-y-2">
-                <div v-for="link in form.paymentLinks" :key="link.id" class="bg-charcoal-700/40 border border-charcoal-600 rounded-lg p-3 space-y-2">
+                <div v-for="link in form.paymentLinks" :key="link.id" class="bg-gray-400/40 border border-gray-500 rounded-lg p-3 space-y-2">
                   <div class="flex items-center justify-between">
                     <select v-model="link.type" class="app-select text-xs flex-1 mr-2">
                       <option v-for="t in paymentLinkTypes" :key="t">{{ t }}</option>
                     </select>
-                    <button @click="removePaymentLink(link.id)" class="text-cream-faint hover:text-red-400 transition-colors shrink-0">
+                    <button @click="removePaymentLink(link.id)" class="text-gray-700 hover:text-red-400 transition-colors shrink-0">
                       <Icon icon="lucide:x" class="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -721,7 +721,7 @@ const handleSaveDraft = () => handleSave('draft')
               </div>
               <button
                 @click="addPaymentLink"
-                class="mt-2 w-full flex items-center justify-center gap-2 py-2 border border-dashed border-charcoal-600 hover:border-amber/50 rounded-lg text-xs text-cream-faint hover:text-cream transition-colors"
+                class="mt-2 w-full flex items-center justify-center gap-2 py-2 border border-dashed border-gray-500 hover:border-green-700/50 rounded-lg text-xs text-gray-700 hover:text-gray-1000 transition-colors"
               >
                 <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Add payment link
               </button>
@@ -735,50 +735,50 @@ const handleSaveDraft = () => handleSave('draft')
 
             <!-- Client quick-picker -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Select client</p>
-              <div v-if="isDraftLoading" class="flex items-center gap-2 text-xs text-cream-faint py-2">
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Select client</p>
+              <div v-if="isDraftLoading" class="flex items-center gap-2 text-xs text-gray-700 py-2">
                 <Icon icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" /> Loading clients…
               </div>
               <div v-else-if="clientPresets.length" class="space-y-1.5 max-h-64 overflow-y-auto pr-1">
                 <button
                   v-for="c in clientPresets" :key="c.id"
                   @click="fillTo(c)"
-                  class="w-full text-left p-2.5 rounded-lg border border-charcoal-600 bg-charcoal-700/40 hover:border-amber/50 hover:bg-charcoal-700 transition-colors group flex items-center gap-3"
-                  :class="form.toEmail === c.email ? 'border-amber/60 bg-amber/5' : ''"
+                  class="w-full text-left p-2.5 rounded-lg border border-gray-500 bg-gray-400/40 hover:border-green-700/50 hover:bg-gray-400 transition-colors group flex items-center gap-3"
+                  :class="form.toEmail === c.email ? 'border-green-700/60 bg-green-700/5' : ''"
                 >
-                  <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-charcoal-900 bg-amber/80 shrink-0">
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-bg-100 bg-green-700/80 shrink-0">
                     {{ clientInitials(c.name) }}
                   </div>
                   <div class="min-w-0">
-                    <p class="text-xs font-medium text-cream truncate">{{ c.name }}</p>
-                    <p class="text-[10px] text-cream-faint truncate">{{ c.company ?? c.email }}</p>
+                    <p class="text-xs font-medium text-gray-1000 truncate">{{ c.name }}</p>
+                    <p class="text-[10px] text-gray-700 truncate">{{ c.company ?? c.email }}</p>
                   </div>
                 </button>
               </div>
-              <p v-else-if="!isDraftLoading" class="text-[10px] text-cream-faint/60">No clients added yet</p>
+              <p v-else-if="!isDraftLoading" class="text-[10px] text-gray-700/60">No clients added yet</p>
             </div>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
             <div class="space-y-3">
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Bill To Name</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Bill To Name</label>
                 <input v-model="form.toName" class="app-inp text-sm" placeholder="Client Name" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Company</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Company</label>
                 <input v-model="form.toCompany" class="app-inp text-sm" placeholder="Client Company" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Email</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Email</label>
                 <input v-model="form.toEmail" type="email" class="app-inp text-sm" placeholder="client@example.com" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Phone</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Phone</label>
                 <input v-model="form.toPhone" class="app-inp text-sm" placeholder="+1 555 000 0000" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Billing Address</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Billing Address</label>
                 <textarea v-model="form.toAddress" class="app-inp text-sm resize-none" rows="3" placeholder="123 Client St&#10;City, Country" />
               </div>
             </div>
@@ -793,56 +793,56 @@ const handleSaveDraft = () => handleSave('draft')
             <div class="space-y-2">
               <div
                 v-for="(item, i) in form.items" :key="item.id"
-                class="bg-charcoal-700/40 border border-charcoal-600 rounded-lg p-3 space-y-2"
+                class="bg-gray-400/40 border border-gray-500 rounded-lg p-3 space-y-2"
               >
                 <div class="flex items-center justify-between">
-                  <span class="text-[10px] uppercase tracking-wider text-cream-faint">Item {{ i + 1 }}</span>
-                  <button v-if="form.items.length > 1" @click="removeItem(item.id)" class="text-cream-faint hover:text-red-400 transition-colors">
+                  <span class="text-[10px] uppercase tracking-wider text-gray-700">Item {{ i + 1 }}</span>
+                  <button v-if="form.items.length > 1" @click="removeItem(item.id)" class="text-gray-700 hover:text-red-400 transition-colors">
                     <Icon icon="lucide:x" class="w-3.5 h-3.5" />
                   </button>
                 </div>
                 <input v-model="item.description" class="app-inp text-sm" placeholder="Description" />
                 <div class="grid grid-cols-3 gap-2">
                   <div class="space-y-0.5">
-                    <label class="text-[10px] text-cream-faint">Qty</label>
+                    <label class="text-[10px] text-gray-700">Qty</label>
                     <input v-model.number="item.qty" type="number" min="0" class="app-inp text-sm" />
                   </div>
                   <div class="space-y-0.5">
-                    <label class="text-[10px] text-cream-faint">Unit</label>
+                    <label class="text-[10px] text-gray-700">Unit</label>
                     <select v-model="item.unit" class="app-select text-sm">
                       <option v-for="u in unitOptions" :key="u">{{ u }}</option>
                     </select>
                   </div>
                   <div class="space-y-0.5">
-                    <label class="text-[10px] text-cream-faint">Rate ({{ sym }})</label>
+                    <label class="text-[10px] text-gray-700">Rate ({{ sym }})</label>
                     <input v-model.number="item.rate" type="number" min="0" class="app-inp text-sm" />
                   </div>
                 </div>
-                <div class="text-right text-xs font-mono text-amber">{{ fmtMoney(item.qty * item.rate) }}</div>
+                <div class="text-right text-xs font-mono text-green-700">{{ fmtMoney(item.qty * item.rate) }}</div>
               </div>
             </div>
 
             <!-- Add item -->
             <button
               @click="addItem"
-              class="w-full flex items-center justify-center gap-2 py-2.5 border border-dashed border-charcoal-600 hover:border-amber/50 rounded-lg text-xs text-cream-faint hover:text-cream transition-colors"
+              class="w-full flex items-center justify-center gap-2 py-2.5 border border-dashed border-gray-500 hover:border-green-700/50 rounded-lg text-xs text-gray-700 hover:text-gray-1000 transition-colors"
             >
               <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Add Line Item
             </button>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
             <!-- Discount -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Discount</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Discount</p>
               <div class="flex gap-2 mb-2">
                 <button
                   @click="form.discountType = 'percent'"
-                  :class="['flex-1 py-1.5 rounded text-xs border transition-colors', form.discountType === 'percent' ? 'bg-amber/10 border-amber text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500']"
+                  :class="['flex-1 py-1.5 rounded text-xs border transition-colors', form.discountType === 'percent' ? 'bg-green-700/10 border-green-700 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500']"
                 >%</button>
                 <button
                   @click="form.discountType = 'flat'"
-                  :class="['flex-1 py-1.5 rounded text-xs border transition-colors', form.discountType === 'flat' ? 'bg-amber/10 border-amber text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500']"
+                  :class="['flex-1 py-1.5 rounded text-xs border transition-colors', form.discountType === 'flat' ? 'bg-green-700/10 border-green-700 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500']"
                 >{{ sym }} Flat</button>
               </div>
               <input
@@ -856,25 +856,25 @@ const handleSaveDraft = () => handleSave('draft')
 
             <!-- Tax lines -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Tax Lines</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Tax Lines</p>
               <div class="space-y-2">
                 <div v-for="(tax, ti) in form.taxes" :key="tax.id" class="space-y-1.5">
                   <!-- Row 1: label + toggle + remove -->
                   <div class="flex gap-1.5 items-center">
                     <input v-model="tax.label" class="app-inp text-sm min-w-0 flex-1" placeholder="VAT" />
-                    <div class="flex rounded border border-charcoal-600 overflow-hidden shrink-0 text-xs">
+                    <div class="flex rounded border border-gray-500 overflow-hidden shrink-0 text-xs">
                       <button
                         type="button"
                         @click="tax.type = 'percent'"
-                        :class="['px-2 py-1 transition-colors', tax.type === 'percent' ? 'bg-amber text-charcoal-900 font-semibold' : 'text-cream-faint hover:bg-charcoal-700']"
+                        :class="['px-2 py-1 transition-colors', tax.type === 'percent' ? 'bg-green-700 text-bg-100 font-semibold' : 'text-gray-700 hover:bg-gray-400']"
                       >%</button>
                       <button
                         type="button"
                         @click="tax.type = 'flat'"
-                        :class="['px-2 py-1 transition-colors', tax.type === 'flat' ? 'bg-amber text-charcoal-900 font-semibold' : 'text-cream-faint hover:bg-charcoal-700']"
+                        :class="['px-2 py-1 transition-colors', tax.type === 'flat' ? 'bg-green-700 text-bg-100 font-semibold' : 'text-gray-700 hover:bg-gray-400']"
                       >$</button>
                     </div>
-                    <button type="button" v-if="form.taxes.length > 1" @click="removeTax(tax.id)" class="text-cream-faint hover:text-red-400 transition-colors shrink-0">
+                    <button type="button" v-if="form.taxes.length > 1" @click="removeTax(tax.id)" class="text-gray-700 hover:text-red-400 transition-colors shrink-0">
                       <Icon icon="lucide:x" class="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -886,7 +886,7 @@ const handleSaveDraft = () => handleSave('draft')
                       class="app-inp text-sm flex-1"
                       :placeholder="tax.type === 'flat' ? '0.00' : '0'"
                     />
-                    <span v-if="tax.rate > 0" class="text-xs font-mono text-cream-faint whitespace-nowrap shrink-0">
+                    <span v-if="tax.rate > 0" class="text-xs font-mono text-gray-700 whitespace-nowrap shrink-0">
                       = {{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}
                     </span>
                   </div>
@@ -895,34 +895,34 @@ const handleSaveDraft = () => handleSave('draft')
               <button
                 type="button"
                 @click="addTax"
-                class="mt-2 flex items-center gap-1.5 text-xs text-cream-faint hover:text-amber transition-colors"
+                class="mt-2 flex items-center gap-1.5 text-xs text-gray-700 hover:text-green-700 transition-colors"
               >
                 <Icon icon="lucide:plus" class="w-3 h-3" /> Add tax line
               </button>
             </div>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
             <!-- Running totals -->
             <div class="space-y-2 text-sm">
-              <div class="flex justify-between text-cream-faint">
+              <div class="flex justify-between text-gray-700">
                 <span>Subtotal</span>
                 <span class="font-mono">{{ fmtMoney(subtotal) }}</span>
               </div>
-              <div v-if="form.discount > 0" class="flex justify-between text-cream-faint">
+              <div v-if="form.discount > 0" class="flex justify-between text-gray-700">
                 <span>Discount {{ form.discountType === 'percent' ? `(${form.discount}%)` : '' }}</span>
                 <span class="font-mono text-red-400">-{{ fmtMoney(discountAmt) }}</span>
               </div>
               <template v-for="tax in form.taxes" :key="tax.id">
-                <div v-if="tax.rate > 0" class="flex justify-between text-cream-faint">
+                <div v-if="tax.rate > 0" class="flex justify-between text-gray-700">
                   <span>{{ tax.label }}{{ tax.type !== 'flat' ? ` (${tax.rate}%)` : '' }}</span>
                   <span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span>
                 </div>
               </template>
-              <div class="h-px bg-charcoal-600"></div>
-              <div class="flex justify-between font-semibold text-cream">
+              <div class="h-px bg-gray-500"></div>
+              <div class="flex justify-between font-semibold text-gray-1000">
                 <span>Total</span>
-                <span class="font-mono text-amber">{{ fmtMoney(total) }}</span>
+                <span class="font-mono text-green-700">{{ fmtMoney(total) }}</span>
               </div>
             </div>
           </template>
@@ -934,14 +934,14 @@ const handleSaveDraft = () => handleSave('draft')
 
             <!-- Theme -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Theme</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Theme</p>
               <div class="grid grid-cols-2 gap-2">
                 <button
                   v-for="th in themes" :key="th.id"
                   @click="form.theme = th.id"
                   :class="[
                     'p-3 rounded-lg border text-xs font-medium text-left transition-colors',
-                    form.theme === th.id ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500 hover:text-cream'
+                    form.theme === th.id ? 'border-green-700 bg-green-700/10 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500 hover:text-gray-1000'
                   ]"
                 >
                   <!-- Mini preview thumbnail -->
@@ -1007,23 +1007,23 @@ const handleSaveDraft = () => handleSave('draft')
               </div>
             </div>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
             <!-- Accent Color -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Accent Color</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Accent Color</p>
               <div class="flex items-center gap-2 mb-2">
-                <input type="color" v-model="form.accentColor" class="w-9 h-9 rounded cursor-pointer border border-charcoal-600 bg-charcoal-800 p-0.5 shrink-0" />
-                <input v-model="form.accentColor" class="app-inp text-sm flex-1 font-mono" placeholder="#E8A83E" />
+                <input type="color" v-model="form.accentColor" class="w-9 h-9 rounded cursor-pointer border border-gray-500 bg-gray-200 p-0.5 shrink-0" />
+                <input v-model="form.accentColor" class="app-inp text-sm flex-1 font-mono" placeholder="#00c853" />
               </div>
               <div v-if="orgBrandColors.length" class="mb-2">
-                <p class="text-[10px] text-cream-faint/60 mb-1.5">Brand</p>
+                <p class="text-[10px] text-gray-700/60 mb-1.5">Brand</p>
                 <div class="flex flex-wrap gap-1.5">
                   <button
                     v-for="c in orgBrandColors" :key="c"
                     @click="form.accentColor = c"
                     class="w-6 h-6 rounded-full border-2 transition-transform hover:scale-110"
-                    :class="form.accentColor === c ? 'border-cream/80' : 'border-transparent'"
+                    :class="form.accentColor === c ? 'border-gray-1000/80' : 'border-transparent'"
                     :style="{ background: c }"
                   />
                 </div>
@@ -1033,30 +1033,30 @@ const handleSaveDraft = () => handleSave('draft')
                   v-for="c in accentSwatches" :key="c"
                   @click="form.accentColor = c"
                   class="w-6 h-6 rounded-full border-2 transition-transform hover:scale-110"
-                  :class="form.accentColor === c ? 'border-cream/80' : 'border-transparent'"
+                  :class="form.accentColor === c ? 'border-gray-1000/80' : 'border-transparent'"
                   :style="{ background: c }"
                 />
               </div>
             </div>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
             <!-- Font Family -->
             <div class="space-y-1">
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint">Font Family</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700">Font Family</p>
               <select v-model="form.fontFamily" class="app-select text-sm">
                 <option v-for="f in fontOptions" :key="f.value" :value="f.value">{{ f.label }}</option>
               </select>
             </div>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
             <!-- Logo upload (Design tab) -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Logo</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Logo</p>
               <div v-if="form.logoUrl" class="mb-2 flex items-center gap-3">
-                <img :src="form.logoUrl" alt="Logo" class="h-10 w-auto rounded border border-charcoal-600 bg-charcoal-700 object-contain p-1" />
-                <button @click="form.logoUrl = ''" class="text-xs text-cream-faint hover:text-red-400 transition-colors flex items-center gap-1">
+                <img :src="form.logoUrl" alt="Logo" class="h-10 w-auto rounded border border-gray-500 bg-gray-400 object-contain p-1" />
+                <button @click="form.logoUrl = ''" class="text-xs text-gray-700 hover:text-red-400 transition-colors flex items-center gap-1">
                   <Icon icon="lucide:trash-2" class="w-3 h-3" /> Remove
                 </button>
               </div>
@@ -1065,12 +1065,12 @@ const handleSaveDraft = () => handleSave('draft')
                   v-for="logo in savedLogos" :key="logo.id"
                   @click="form.logoUrl = logo.url"
                   class="rounded border p-0.5 transition-colors"
-                  :class="form.logoUrl === logo.url ? 'border-amber' : 'border-charcoal-600 hover:border-amber/50'"
+                  :class="form.logoUrl === logo.url ? 'border-green-700' : 'border-gray-500 hover:border-green-700/50'"
                 >
                   <img :src="logo.url" alt="Logo" class="h-8 w-auto object-contain" style="max-width: 60px" />
                 </button>
               </div>
-              <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-dashed border-charcoal-600 hover:border-amber/50 text-xs text-cream-faint hover:text-cream transition-colors">
+              <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-dashed border-gray-500 hover:border-green-700/50 text-xs text-gray-700 hover:text-gray-1000 transition-colors">
                 <Icon v-if="isUploadingLogo" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
                 <Icon v-else icon="lucide:upload" class="w-3.5 h-3.5" />
                 {{ isUploadingLogo ? 'Uploading…' : form.logoUrl ? 'Replace logo' : 'Upload logo' }}
@@ -1080,10 +1080,10 @@ const handleSaveDraft = () => handleSave('draft')
 
             <!-- Signature -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Signature</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Signature</p>
               <div v-if="form.signatureUrl" class="mb-2 flex items-center gap-3">
-                <img :src="form.signatureUrl" alt="Signature" class="h-10 w-auto rounded border border-charcoal-600 bg-charcoal-700 object-contain p-1" />
-                <button @click="form.signatureUrl = ''" class="text-xs text-cream-faint hover:text-red-400 transition-colors flex items-center gap-1">
+                <img :src="form.signatureUrl" alt="Signature" class="h-10 w-auto rounded border border-gray-500 bg-gray-400 object-contain p-1" />
+                <button @click="form.signatureUrl = ''" class="text-xs text-gray-700 hover:text-red-400 transition-colors flex items-center gap-1">
                   <Icon icon="lucide:trash-2" class="w-3 h-3" /> Remove
                 </button>
               </div>
@@ -1092,12 +1092,12 @@ const handleSaveDraft = () => handleSave('draft')
                   v-for="sig in savedSignatures" :key="sig.id"
                   @click="form.signatureUrl = sig.url"
                   class="rounded border p-0.5 transition-colors"
-                  :class="form.signatureUrl === sig.url ? 'border-amber' : 'border-charcoal-600 hover:border-amber/50'"
+                  :class="form.signatureUrl === sig.url ? 'border-green-700' : 'border-gray-500 hover:border-green-700/50'"
                 >
                   <img :src="sig.url" alt="Signature" class="h-8 w-auto object-contain" style="max-width: 80px" />
                 </button>
               </div>
-              <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-dashed border-charcoal-600 hover:border-amber/50 text-xs text-cream-faint hover:text-cream transition-colors">
+              <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-dashed border-gray-500 hover:border-green-700/50 text-xs text-gray-700 hover:text-gray-1000 transition-colors">
                 <Icon v-if="isUploadingSig" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
                 <Icon v-else icon="lucide:pen-line" class="w-3.5 h-3.5" />
                 {{ isUploadingSig ? 'Uploading…' : form.signatureUrl ? 'Replace signature' : 'Upload signature' }}
@@ -1105,18 +1105,18 @@ const handleSaveDraft = () => handleSave('draft')
               </label>
             </div>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
             <!-- Stamp -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Stamp / Watermark</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Stamp / Watermark</p>
               <div class="grid grid-cols-3 gap-1.5">
                 <button
                   type="button"
                   @click="form.stamp = ''"
                   :class="[
                     'py-1.5 rounded border text-xs font-semibold transition-colors',
-                    form.stamp === '' ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500'
+                    form.stamp === '' ? 'border-green-700 bg-green-700/10 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500'
                   ]"
                 >None</button>
                 <button
@@ -1125,7 +1125,7 @@ const handleSaveDraft = () => handleSave('draft')
                   @click="form.stamp = s.text"
                   :class="[
                     'py-1.5 rounded border text-xs font-semibold transition-colors',
-                    form.stamp === s.text ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500'
+                    form.stamp === s.text ? 'border-green-700 bg-green-700/10 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500'
                   ]"
                   :style="form.stamp !== s.text ? { color: s.color + 'cc', borderColor: s.color + '40' } : {}"
                 >{{ s.text }}</button>
@@ -1135,12 +1135,12 @@ const handleSaveDraft = () => handleSave('draft')
             <!-- Watermark text -->
             <div class="space-y-2">
               <div class="flex items-center justify-between">
-                <p class="text-[10px] uppercase tracking-wider text-cream-faint">Watermark Text</p>
+                <p class="text-[10px] uppercase tracking-wider text-gray-700">Watermark Text</p>
                 <label class="flex items-center gap-1.5 cursor-pointer">
-                  <span class="text-[10px] text-cream-faint">{{ form.showWatermark ? 'Visible' : 'Hidden' }}</span>
+                  <span class="text-[10px] text-gray-700">{{ form.showWatermark ? 'Visible' : 'Hidden' }}</span>
                   <div class="relative">
                     <input type="checkbox" v-model="form.showWatermark" class="sr-only" />
-                    <div :class="['w-8 h-4 rounded-full transition-colors', form.showWatermark ? 'bg-amber' : 'bg-charcoal-600']"></div>
+                    <div :class="['w-8 h-4 rounded-full transition-colors', form.showWatermark ? 'bg-green-700' : 'bg-gray-500']"></div>
                     <div :class="['absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all', form.showWatermark ? 'left-4' : 'left-0.5']"></div>
                   </div>
                 </label>
@@ -1148,18 +1148,18 @@ const handleSaveDraft = () => handleSave('draft')
               <input v-model="form.watermarkText" class="app-inp text-sm" placeholder="CONFIDENTIAL" />
             </div>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
             <!-- Show/hide toggles -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-3">Show / Hide</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-3">Show / Hide</p>
               <div class="space-y-2.5">
                 <div v-for="field in toggleFields" :key="field.key" class="flex items-center justify-between">
-                  <span class="text-xs text-cream-muted">{{ field.label }}</span>
+                  <span class="text-xs text-gray-900">{{ field.label }}</span>
                   <label class="flex items-center cursor-pointer">
                     <div class="relative">
                       <input type="checkbox" v-model="(form as any)[field.key]" class="sr-only" />
-                      <div :class="['w-8 h-4 rounded-full transition-colors', (form as any)[field.key] ? 'bg-amber' : 'bg-charcoal-600']"></div>
+                      <div :class="['w-8 h-4 rounded-full transition-colors', (form as any)[field.key] ? 'bg-green-700' : 'bg-gray-500']"></div>
                       <div :class="['absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all', (form as any)[field.key] ? 'left-4' : 'left-0.5']"></div>
                     </div>
                   </label>
@@ -1176,20 +1176,20 @@ const handleSaveDraft = () => handleSave('draft')
             <div class="space-y-3">
               <!-- Invoice Number -->
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Invoice Number</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Invoice Number</label>
                 <input v-model="form.number" class="app-inp text-sm font-mono" placeholder="INV-0001" />
               </div>
 
               <!-- Payment Terms -->
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Payment Terms</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Payment Terms</label>
                 <div class="grid grid-cols-2 gap-1.5">
                   <button
                     v-for="term in paymentTermsOptions" :key="term"
                     @click="form.paymentTerms = term"
                     :class="[
                       'py-1.5 px-2 rounded border text-xs transition-colors text-left',
-                      form.paymentTerms === term ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500 hover:text-cream'
+                      form.paymentTerms === term ? 'border-green-700 bg-green-700/10 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500 hover:text-gray-1000'
                     ]"
                   >{{ term }}</button>
                 </div>
@@ -1197,15 +1197,15 @@ const handleSaveDraft = () => handleSave('draft')
 
               <!-- Issue Date -->
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Issue Date</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Issue Date</label>
                 <input v-model="form.issueDate" type="date" class="app-inp text-sm" />
               </div>
 
               <!-- Due Date -->
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">
                   Due Date
-                  <span v-if="form.paymentTerms !== 'Custom'" class="text-cream-faint/50 normal-case">(auto)</span>
+                  <span v-if="form.paymentTerms !== 'Custom'" class="text-gray-700/50 normal-case">(auto)</span>
                 </label>
                 <input
                   v-model="form.dueDate"
@@ -1218,7 +1218,7 @@ const handleSaveDraft = () => handleSave('draft')
 
               <!-- Currency -->
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Currency</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Currency</label>
                 <select v-model="form.currency" class="app-select text-sm">
                   <option v-for="c in currencies" :key="c.code" :value="c.code">{{ c.label }}</option>
                 </select>
@@ -1226,21 +1226,21 @@ const handleSaveDraft = () => handleSave('draft')
 
               <!-- PO Number -->
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">PO Number <span class="text-cream-faint/50 normal-case">(optional)</span></label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">PO Number <span class="text-gray-700/50 normal-case">(optional)</span></label>
                 <input v-model="form.poNumber" class="app-inp text-sm" placeholder="PO-2024-001" />
               </div>
 
-              <div class="h-px bg-charcoal-700"></div>
+              <div class="h-px bg-gray-400"></div>
 
               <!-- Notes -->
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Notes / Payment Instructions</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Notes / Payment Instructions</label>
                 <textarea v-model="form.notes" class="app-inp text-sm resize-none" rows="4" placeholder="Payment due within 30 days…" />
               </div>
 
               <!-- Footer text -->
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Custom Footer Text</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Custom Footer Text</label>
                 <input v-model="form.footerText" class="app-inp text-sm" placeholder="Thank you for your business!" />
               </div>
             </div>
@@ -1250,18 +1250,18 @@ const handleSaveDraft = () => handleSave('draft')
       </aside>
 
       <!-- ── Preview panel ──────────────────────────────────────────────────── -->
-      <main :class="['flex-col flex-1 bg-charcoal-900/50 overflow-y-auto items-center', tab === 'Preview' ? 'flex' : 'hidden md:flex']">
+      <main :class="['flex-col flex-1 bg-gray-100/50 overflow-y-auto items-center', tab === 'Preview' ? 'flex' : 'hidden md:flex']">
 
         <!-- Zoom controls -->
-        <div class="sticky top-0 z-10 w-full flex items-center justify-end gap-2 px-6 py-2 bg-charcoal-900/80 backdrop-blur-sm border-b border-charcoal-800">
-          <span class="text-xs text-cream-faint mr-2">{{ Math.round(zoom * 100) }}%</span>
-          <button @click="zoomOut" class="p-1.5 rounded bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream transition-colors">
+        <div class="sticky top-0 z-10 w-full flex items-center justify-end gap-2 px-6 py-2 bg-gray-100/80 backdrop-blur-sm border-b border-gray-300">
+          <span class="text-xs text-gray-700 mr-2">{{ Math.round(zoom * 100) }}%</span>
+          <button @click="zoomOut" class="p-1.5 rounded bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 transition-colors">
             <Icon icon="lucide:minus" class="w-3.5 h-3.5" />
           </button>
-          <button @click="zoomIn" class="p-1.5 rounded bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream transition-colors">
+          <button @click="zoomIn" class="p-1.5 rounded bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 transition-colors">
             <Icon icon="lucide:plus" class="w-3.5 h-3.5" />
           </button>
-          <button @click="zoomFit" class="px-2.5 py-1 rounded bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors">
+          <button @click="zoomFit" class="px-2.5 py-1 rounded bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 text-xs transition-colors">
             Fit
           </button>
         </div>
@@ -1325,7 +1325,7 @@ const handleSaveDraft = () => handleSave('draft')
                     </div>
                   </div>
                   <div class="text-right">
-                    <div class="text-4xl font-bold text-gray-200 tracking-widest" style="font-family: 'Cormorant Garamond', Georgia, serif; letter-spacing: 0.15em">INVOICE</div>
+                    <div class="text-4xl font-bold text-gray-200 tracking-widest" style="font-family: var(--font-sans); letter-spacing: 0.15em">INVOICE</div>
                     <div class="font-mono text-sm text-gray-400 mt-1">{{ form.number }}</div>
                   </div>
                 </div>

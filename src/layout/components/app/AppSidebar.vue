@@ -50,7 +50,7 @@ const newOrgName = ref('');
 const newOrgType = ref<'business' | 'personal'>('business');
 const isCreating = ref(false);
 
-const PALETTE = ['#e8a83e', '#60a5fa', '#4ade80', '#a78bfa', '#f87171', '#fb923c', '#38bdf8', '#34d399'];
+const PALETTE = ['#00c853', '#60a5fa', '#4ade80', '#a78bfa', '#f87171', '#fb923c', '#38bdf8', '#34d399'];
 
 function orgInitials(name: string): string {
   return name.split(' ').slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('');
@@ -172,7 +172,7 @@ function isActive(to: string) {
   <!-- Sidebar: fixed overlay on mobile, static in flex on desktop -->
   <aside
     :class="[
-      'flex flex-col bg-dark-light border-r border-charcoal-700 shrink-0 transition-all duration-300 h-full relative',
+      'flex flex-col bg-bg-200 border-r border-gray-400 shrink-0 transition-all duration-300 h-full relative',
       'fixed md:static inset-y-0 left-0 z-30',
       mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0 hidden md:block',
       collapsed ? 'w-[60px]' : 'w-64',
@@ -180,7 +180,7 @@ function isActive(to: string) {
   >
     <!-- Mobile close button (floating, top-right) -->
     <button
-      class="md:hidden absolute top-3 right-3 z-50 flex items-center justify-center w-7 h-7 rounded-md text-cream-faint hover:text-cream hover:bg-charcoal-700 transition-colors"
+      class="md:hidden absolute top-3 right-3 z-50 flex items-center justify-center w-7 h-7 rounded-md text-gray-700 hover:text-gray-1000 hover:bg-gray-400 transition-colors"
       @click="$emit('close')"
       aria-label="Close sidebar"
     >
@@ -198,8 +198,8 @@ function isActive(to: string) {
         :class="[
           'w-full flex items-center gap-2.5 rounded-lg px-2 py-2 transition-colors group border',
           orgDropOpen
-            ? 'bg-charcoal-700 border-amber/30'
-            : 'hover:bg-charcoal-700 border-transparent',
+            ? 'bg-gray-400 border-green-700/30'
+            : 'hover:bg-gray-400 border-transparent',
           collapsed ? 'justify-center' : '',
         ]"
         :title="collapsed ? (currentOrg?.name ?? '') : undefined"
@@ -207,7 +207,7 @@ function isActive(to: string) {
       >
         <div
           v-if="currentOrg"
-          class="w-7 h-7 rounded-md overflow-hidden shrink-0 flex items-center justify-center text-xs font-bold text-charcoal-900"
+          class="w-7 h-7 rounded-md overflow-hidden shrink-0 flex items-center justify-center text-xs font-bold text-bg-100"
           :style="currentOrg.logo ? {} : { backgroundColor: orgColor(currentOrg.id) }"
         >
           <img v-if="currentOrg.logo" :src="currentOrg.logo" :alt="currentOrg.name" class="w-full h-full object-cover" />
@@ -216,15 +216,15 @@ function isActive(to: string) {
         <div
           :class="['flex-1 min-w-0 text-left overflow-hidden transition-all duration-300', collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100']"
         >
-          <div class="text-sm font-medium text-cream truncate leading-tight">{{ currentOrg?.name ?? 'Select organization' }}</div>
+          <div class="text-sm font-medium text-gray-1000 truncate leading-tight">{{ currentOrg?.name ?? 'Select organization' }}</div>
           <div class="flex items-center gap-1.5 mt-0.5">
-            <span class="text-xs text-amber font-medium capitalize">{{ currentOrg?.type ?? '' }}</span>
+            <span class="text-xs text-green-700 font-medium capitalize">{{ currentOrg?.type ?? '' }}</span>
           </div>
         </div>
         <Icon
           v-if="!collapsed"
           icon="lucide:chevrons-up-down"
-          :class="['w-3.5 h-3.5 shrink-0 transition-colors', orgDropOpen ? 'text-amber' : 'text-cream-faint group-hover:text-cream-muted']"
+          :class="['w-3.5 h-3.5 shrink-0 transition-colors', orgDropOpen ? 'text-green-700' : 'text-gray-700 group-hover:text-gray-900']"
         />
       </button>
 
@@ -232,12 +232,12 @@ function isActive(to: string) {
       <Transition name="drop">
         <div
           v-if="orgDropOpen && !collapsed"
-          class="absolute top-full left-0 right-0 mt-1.5 bg-charcoal-800 border border-charcoal-600 rounded-xl shadow-2xl z-50 overflow-hidden"
+          class="absolute top-full left-0 right-0 mt-1.5 bg-gray-200 border border-gray-500 rounded-xl shadow-2xl z-50 overflow-hidden"
           style="box-shadow: 0 16px 48px rgba(0,0,0,0.6);"
         >
           <!-- Header label -->
           <div class="px-3 pt-3 pb-1.5">
-            <span class="text-[10px] font-semibold uppercase tracking-widest text-cream-faint">Your Organizations</span>
+            <span class="text-[10px] font-semibold uppercase tracking-widest text-gray-700">Your Organizations</span>
           </div>
 
           <!-- Org list -->
@@ -246,36 +246,36 @@ function isActive(to: string) {
               v-for="org in organizations"
               :key="org.id"
               class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg transition-colors group/item"
-              :class="currentOrg?.id === org.id ? 'bg-amber/8' : 'hover:bg-charcoal-700'"
+              :class="currentOrg?.id === org.id ? 'bg-green-700/8' : 'hover:bg-gray-400'"
               @click="switchOrg(org)"
             >
               <div
-                class="w-7 h-7 rounded-md overflow-hidden shrink-0 flex items-center justify-center text-[10px] font-bold text-charcoal-900"
+                class="w-7 h-7 rounded-md overflow-hidden shrink-0 flex items-center justify-center text-[10px] font-bold text-bg-100"
                 :style="org.logo ? {} : { backgroundColor: orgColor(org.id) }"
               >
                 <img v-if="org.logo" :src="org.logo" :alt="org.name" class="w-full h-full object-cover" />
                 <span v-else>{{ orgInitials(org.name) }}</span>
               </div>
               <div class="flex-1 min-w-0 text-left">
-                <div class="text-xs font-medium text-cream truncate leading-tight">{{ org.name }}</div>
-                <div class="text-[10px] text-cream-faint">{{ orgRole(org) }}</div>
+                <div class="text-xs font-medium text-gray-1000 truncate leading-tight">{{ org.name }}</div>
+                <div class="text-[10px] text-gray-700">{{ orgRole(org) }}</div>
               </div>
               <Icon
                 v-if="currentOrg?.id === org.id"
                 icon="lucide:check"
-                class="w-3.5 h-3.5 text-amber shrink-0"
+                class="w-3.5 h-3.5 text-green-700 shrink-0"
               />
             </button>
           </div>
 
           <!-- Divider + Create button -->
-          <div class="mx-3 h-px bg-charcoal-700 my-1"></div>
+          <div class="mx-3 h-px bg-gray-400 my-1"></div>
           <div class="px-1.5 pb-2">
             <button
-              class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-amber hover:bg-amber/8 transition-colors"
+              class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-green-700 hover:bg-green-700/8 transition-colors"
               @click="orgDropOpen = false; showCreateModal = true"
             >
-              <div class="w-7 h-7 rounded-md border border-dashed border-amber/40 flex items-center justify-center shrink-0">
+              <div class="w-7 h-7 rounded-md border border-dashed border-green-700/40 flex items-center justify-center shrink-0">
                 <Icon icon="lucide:plus" class="w-3.5 h-3.5" />
               </div>
               <span class="text-xs font-medium">Create organization</span>
@@ -293,9 +293,9 @@ function isActive(to: string) {
           class="fixed inset-0 bg-black/70 backdrop-blur-sm z-200 flex items-center justify-center p-4"
           @click.self="showCreateModal = false"
         >
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
-            <h2 class="font-display text-xl font-semibold text-cream mb-1">Create Organization</h2>
-            <p class="text-xs text-cream-faint mb-5">Set up a new workspace for your team or business</p>
+          <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+            <h2 class="font-sans text-xl font-semibold text-gray-1000 mb-1">Create Organization</h2>
+            <p class="text-xs text-gray-700 mb-5">Set up a new workspace for your team or business</p>
 
             <div class="space-y-4 mb-5">
               <div>
@@ -314,22 +314,22 @@ function isActive(to: string) {
                   <button
                     :class="[
                       'p-3 rounded-lg border text-left transition-colors',
-                      newOrgType === 'business' ? 'border-amber/40 bg-amber/6' : 'border-charcoal-600 hover:border-charcoal-500',
+                      newOrgType === 'business' ? 'border-green-700/40 bg-green-700/6' : 'border-gray-500 hover:border-gray-500',
                     ]"
                     @click="newOrgType = 'business'"
                   >
-                    <div class="text-xs font-semibold" :class="newOrgType === 'business' ? 'text-amber' : 'text-cream-muted'">Business</div>
-                    <div class="text-[10px] text-cream-faint mt-0.5">Team & client management</div>
+                    <div class="text-xs font-semibold" :class="newOrgType === 'business' ? 'text-green-700' : 'text-gray-900'">Business</div>
+                    <div class="text-[10px] text-gray-700 mt-0.5">Team & client management</div>
                   </button>
                   <button
                     :class="[
                       'p-3 rounded-lg border text-left transition-colors',
-                      newOrgType === 'personal' ? 'border-amber/40 bg-amber/6' : 'border-charcoal-600 hover:border-charcoal-500',
+                      newOrgType === 'personal' ? 'border-green-700/40 bg-green-700/6' : 'border-gray-500 hover:border-gray-500',
                     ]"
                     @click="newOrgType = 'personal'"
                   >
-                    <div class="text-xs font-semibold" :class="newOrgType === 'personal' ? 'text-amber' : 'text-cream-muted'">Personal</div>
-                    <div class="text-[10px] text-cream-faint mt-0.5">Solo freelancer mode</div>
+                    <div class="text-xs font-semibold" :class="newOrgType === 'personal' ? 'text-green-700' : 'text-gray-900'">Personal</div>
+                    <div class="text-[10px] text-gray-700 mt-0.5">Solo freelancer mode</div>
                   </button>
                 </div>
               </div>
@@ -337,13 +337,13 @@ function isActive(to: string) {
 
             <div class="flex gap-2">
               <button
-                class="flex-1 py-2 rounded-lg bg-charcoal-700 hover:bg-charcoal-600 text-cream-muted hover:text-cream text-sm transition-colors"
+                class="flex-1 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-sm transition-colors"
                 @click="showCreateModal = false"
               >
                 Cancel
               </button>
               <button
-                class="flex-1 py-2 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                class="flex-1 py-2 rounded-lg bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 :disabled="!newOrgName.trim() || isCreating"
                 @click="createOrg"
               >
@@ -365,7 +365,7 @@ function isActive(to: string) {
         <div
           v-if="section.label"
           :class="[
-            'text-[10px] font-semibold uppercase tracking-widest text-cream-faint px-2 mb-1 transition-all duration-300',
+            'text-[10px] font-semibold uppercase tracking-widest text-gray-700 px-2 mb-1 transition-all duration-300',
             collapsed ? 'opacity-0 select-none' : 'opacity-100',
           ]"
         >
@@ -381,8 +381,8 @@ function isActive(to: string) {
           :class="[
             'flex items-center gap-2.5 rounded-lg px-2 py-2 text-sm transition-colors group relative',
             isActive(item.to)
-              ? 'text-amber bg-amber-dim'
-              : 'text-cream-muted hover:text-cream hover:bg-charcoal-700',
+              ? 'text-green-700 bg-green-100'
+              : 'text-gray-900 hover:text-gray-1000 hover:bg-gray-400',
             collapsed ? 'justify-center' : '',
           ]"
           :title="collapsed ? item.name : undefined"
@@ -391,7 +391,7 @@ function isActive(to: string) {
           <!-- Active indicator bar -->
           <span
             v-if="isActive(item.to)"
-            class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-amber rounded-r"
+            class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-green-700 rounded-r"
           />
 
           <Icon :icon="item.icon" class="w-4 h-4 shrink-0" />
@@ -405,7 +405,7 @@ function isActive(to: string) {
           <!-- Badge -->
           <span
             v-if="item.badge && !collapsed"
-            class="text-[10px] font-semibold bg-amber text-charcoal-900 rounded-full px-1.5 py-0.5 leading-none shrink-0"
+            class="text-[10px] font-semibold bg-green-700 text-bg-100 rounded-full px-1.5 py-0.5 leading-none shrink-0"
           >
             {{ item.badge }}
           </span>
@@ -418,7 +418,7 @@ function isActive(to: string) {
       <button
         @click="feedbackStore.open()"
         :class="[
-          'w-full flex items-center gap-2.5 rounded-lg px-2 py-2 transition-colors text-cream-faint hover:text-cream hover:bg-charcoal-700',
+          'w-full flex items-center gap-2.5 rounded-lg px-2 py-2 transition-colors text-gray-700 hover:text-gray-1000 hover:bg-gray-400',
           collapsed ? 'justify-center' : '',
         ]"
         :title="collapsed ? 'Share feedback' : undefined"
@@ -430,27 +430,27 @@ function isActive(to: string) {
 
     <!-- User profile (bottom) -->
     <div
-      class="px-2 py-3 border-t border-charcoal-700 shrink-0 relative"
+      class="px-2 py-3 border-t border-gray-400 shrink-0 relative"
       v-click-outside="() => (userMenuOpen = false)"
     >
       <!-- User menu dropdown (opens upward) -->
       <Transition name="drop-up">
         <div
           v-if="userMenuOpen && !collapsed"
-          class="absolute bottom-full left-2 right-2 mb-1.5 bg-charcoal-800 border border-charcoal-600 rounded-xl shadow-2xl overflow-hidden z-50"
+          class="absolute bottom-full left-2 right-2 mb-1.5 bg-gray-200 border border-gray-500 rounded-xl shadow-2xl overflow-hidden z-50"
           style="box-shadow: 0 -8px 32px rgba(0,0,0,0.5);"
         >
           <div class="px-1.5 py-1.5 space-y-0.5">
             <RouterLink
               :to="{ name: 'profile' }"
-              class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-charcoal-700 transition-colors text-cream-muted hover:text-cream"
+              class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-gray-400 transition-colors text-gray-900 hover:text-gray-1000"
               @click="userMenuOpen = false"
             >
               <Icon icon="lucide:user" class="w-3.5 h-3.5 shrink-0" />
               <span class="text-xs font-medium">My Profile</span>
             </RouterLink>
             <button
-              class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-red-900/30 transition-colors text-cream-muted hover:text-red-400 disabled:opacity-50"
+              class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-red-900/30 transition-colors text-gray-900 hover:text-red-400 disabled:opacity-50"
               :disabled="isLoggingOut"
               @click="handleLogout"
             >
@@ -466,15 +466,15 @@ function isActive(to: string) {
 
       <button
         :class="[
-          'w-full flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-charcoal-700 transition-colors group',
-          userMenuOpen ? 'bg-charcoal-700' : '',
+          'w-full flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-gray-400 transition-colors group',
+          userMenuOpen ? 'bg-gray-400' : '',
           collapsed ? 'justify-center' : '',
         ]"
         :title="collapsed ? `${authStore.getUser?.first_name} ${authStore.getUser?.last_name}` : undefined"
         @click="userMenuOpen = !userMenuOpen"
       >
-        <div class="w-7 h-7 rounded-full overflow-hidden shrink-0 flex items-center justify-center text-xs font-bold text-charcoal-900"
-          :class="authStore.getUser?.avatar ? '' : 'bg-amber'"
+        <div class="w-7 h-7 rounded-full overflow-hidden shrink-0 flex items-center justify-center text-xs font-bold text-bg-100"
+          :class="authStore.getUser?.avatar ? '' : 'bg-green-700'"
         >
           <img
             v-if="authStore.getUser?.avatar"
@@ -489,14 +489,14 @@ function isActive(to: string) {
         <div
           :class="['flex-1 min-w-0 text-left overflow-hidden transition-all duration-300', collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100']"
         >
-          <div class="text-sm font-medium text-cream truncate leading-tight capitalize">
+          <div class="text-sm font-medium text-gray-1000 truncate leading-tight capitalize">
             {{ authStore.getUser?.first_name }} {{ authStore.getUser?.last_name }}
           </div>
         </div>
         <Icon
           v-if="!collapsed"
           icon="lucide:more-horizontal"
-          class="w-4 h-4 text-cream-faint group-hover:text-cream-muted shrink-0 transition-colors"
+          class="w-4 h-4 text-gray-700 group-hover:text-gray-900 shrink-0 transition-colors"
         />
       </button>
     </div>

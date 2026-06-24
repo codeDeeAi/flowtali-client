@@ -17,7 +17,7 @@ const { isOnline, justReconnected } = useNetworkStatus()
     <!-- Offline -->
     <div
       v-if="!isOnline"
-      class="fixed top-0 inset-x-0 z-[9999] flex items-center justify-center gap-2 px-4 py-2 bg-charcoal-900 border-b border-red-500/30 text-red-400 text-xs font-medium"
+      class="fixed top-0 inset-x-0 z-[9999] flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 border-b border-red-500/30 text-red-400 text-xs font-medium"
       role="status"
       aria-live="assertive"
     >
@@ -28,7 +28,7 @@ const { isOnline, justReconnected } = useNetworkStatus()
     <!-- Just reconnected -->
     <div
       v-else-if="justReconnected"
-      class="fixed top-0 inset-x-0 z-[9999] flex items-center justify-center gap-2 px-4 py-2 bg-charcoal-900 border-b border-green-500/30 text-green-400 text-xs font-medium"
+      class="fixed top-0 inset-x-0 z-[9999] flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 border-b border-green-500/30 text-green-400 text-xs font-medium"
       role="status"
       aria-live="polite"
     >

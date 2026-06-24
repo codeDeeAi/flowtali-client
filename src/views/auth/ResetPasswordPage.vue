@@ -87,15 +87,15 @@ onMounted(() => {
     <div class="auth-card w-full max-w-md p-8 relative">
 
       <div v-if="!success">
-        <router-link :to="{ name: 'forgot-password' }" class="flex items-center gap-2 text-cream-faint text-sm mb-7 hover:text-cream">
+        <router-link :to="{ name: 'forgot-password' }" class="flex items-center gap-2 text-gray-700 text-sm mb-7 hover:text-gray-1000">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
           Back
         </router-link>
 
-        <h1 class="font-display text-3xl font-semibold text-cream mb-1">Set new password</h1>
-        <p class="text-cream-faint text-sm mb-7">Enter the code from your email and choose a new password.</p>
+        <h1 class="font-sans text-3xl font-semibold text-gray-1000 mb-1">Set new password</h1>
+        <p class="text-gray-700 text-sm mb-7">Enter the code from your email and choose a new password.</p>
 
         <BasicAlert type="danger" class="mb-4" v-if="getError('general').value">
           <span>{{ getError('general').value }}</span>
@@ -162,8 +162,8 @@ onMounted(() => {
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </div>
-        <h2 class="font-display text-2xl font-semibold text-cream mb-2">Password reset!</h2>
-        <p class="text-cream-muted text-sm mb-6">Your password has been reset. You can now sign in with your new password.</p>
+        <h2 class="font-sans text-2xl font-semibold text-gray-1000 mb-2">Password reset!</h2>
+        <p class="text-gray-900 text-sm mb-6">Your password has been reset. You can now sign in with your new password.</p>
         <router-link :to="{ name: 'signin' }" class="btn-primary text-sm px-6 py-2.5 inline-block">
           Sign in
         </router-link>

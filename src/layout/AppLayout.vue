@@ -71,13 +71,13 @@ function handleSkipTour() {
 
       <!-- Floating collapse toggle (desktop only) -->
       <button
-        class="hidden md:flex absolute top-5 z-40 w-5 h-5 rounded-full bg-charcoal-800 border border-charcoal-600 items-center justify-center text-cream-faint hover:text-cream hover:border-charcoal-500 transition-all duration-300 shadow-lg"
+        class="hidden md:flex absolute top-5 z-40 w-5 h-5 rounded-full bg-gray-200 border border-gray-500 items-center justify-center text-gray-700 hover:text-gray-1000 hover:border-gray-500 transition-all duration-300 shadow-lg"
         :style="{ left: collapsed ? 'calc(60px - 10px)' : 'calc(256px - 10px)' }"
         :aria-label="collapsed ? 'Expand sidebar' : 'Collapse sidebar'" @click="collapsed = !collapsed">
         <Icon :icon="collapsed ? 'lucide:chevron-right' : 'lucide:chevron-left'" class="w-3 h-3" />
       </button>
 
-      <div class="bg-charcoal-900 overflow-auto pb-16 md:pb-0" :class="{ hidden: mobileOpen, 'flex-1': !mobileOpen }">
+      <div class="bg-gray-100 overflow-auto pb-16 md:pb-0" :class="{ hidden: mobileOpen, 'flex-1': !mobileOpen }">
         <RouterView />
       </div>
     </main>

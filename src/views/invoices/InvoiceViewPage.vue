@@ -97,7 +97,7 @@ function isExpired(link: IInvoiceSharedLink) {
 }
 function linkStatusLabel(link: IInvoiceSharedLink) {
   if (!link.is_active) return { text: 'Revoked', cls: 'text-red-400 bg-red-500/10 border-red-500/20' }
-  if (isExpired(link)) return { text: 'Expired', cls: 'text-gray-400 bg-charcoal-700 border-charcoal-600' }
+  if (isExpired(link)) return { text: 'Expired', cls: 'text-gray-400 bg-gray-400 border-gray-500' }
   return { text: 'Active', cls: 'text-green-400 bg-green-500/10 border-green-500/20' }
 }
 function expiryLabel(link: IInvoiceSharedLink) {
@@ -242,12 +242,12 @@ async function handleDelete() {
   <div class="p-4 md:p-6 space-y-5 min-h-full">
 
     <div v-if="loading" class="flex items-center justify-center py-24">
-      <Icon icon="lucide:loader-2" class="w-6 h-6 text-cream-faint animate-spin" />
+      <Icon icon="lucide:loader-2" class="w-6 h-6 text-gray-700 animate-spin" />
     </div>
 
     <div v-else-if="notFound" class="flex flex-col items-center justify-center py-24 text-center">
-      <p class="text-cream-faint">Invoice not found</p>
-      <button @click="router.push({ name: 'invoices' })" class="mt-4 text-amber text-sm hover:underline">Back to invoices</button>
+      <p class="text-gray-700">Invoice not found</p>
+      <button @click="router.push({ name: 'invoices' })" class="mt-4 text-green-700 text-sm hover:underline">Back to invoices</button>
     </div>
 
     <template v-else-if="invoice">
@@ -255,7 +255,7 @@ async function handleDelete() {
       <!-- Header -->
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div class="flex items-center gap-3">
-          <button @click="router.push({ name: 'invoices' })" class="p-1.5 rounded-lg hover:bg-charcoal-700 text-cream-faint hover:text-cream transition-colors shrink-0">
+          <button @click="router.push({ name: 'invoices' })" class="p-1.5 rounded-lg hover:bg-gray-400 text-gray-700 hover:text-gray-1000 transition-colors shrink-0">
             <Icon icon="lucide:arrow-left" class="w-4 h-4" />
           </button>
           <div>
@@ -267,24 +267,24 @@ async function handleDelete() {
           </div>
         </div>
         <div class="flex items-center flex-wrap gap-2 ml-9 sm:ml-0">
-          <button @click="handlePrint" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream rounded-lg transition-colors" title="Print / PDF">
+          <button @click="handlePrint" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors" title="Print / PDF">
             <Icon icon="lucide:printer" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> Print / PDF</span>
           </button>
           <button
             @click="showShareModal = true"
-            class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream rounded-lg transition-colors"
+            class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors"
             title="Share"
           >
             <Icon icon="lucide:share-2" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> Share</span>
-            <span v-if="activeLinks > 0" class="ml-0.5 px-1.5 py-0.5 bg-amber/20 text-amber text-[9px] font-bold rounded-full">{{ activeLinks }}</span>
+            <span v-if="activeLinks > 0" class="ml-0.5 px-1.5 py-0.5 bg-green-700/20 text-green-700 text-[9px] font-bold rounded-full">{{ activeLinks }}</span>
           </button>
           <button
             @click="openGenerateReceiptModal"
-            class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream rounded-lg transition-colors"
+            class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors"
             title="Generate Receipt"
           >
             <Icon icon="lucide:receipt" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> Generate Receipt</span>
-            <span v-if="receipts.length > 0" class="ml-0.5 px-1.5 py-0.5 bg-amber/20 text-amber text-[9px] font-bold rounded-full">{{ receipts.length }}</span>
+            <span v-if="receipts.length > 0" class="ml-0.5 px-1.5 py-0.5 bg-green-700/20 text-green-700 text-[9px] font-bold rounded-full">{{ receipts.length }}</span>
           </button>
           <button
             v-if="invoice.status !== 'paid'"
@@ -297,7 +297,7 @@ async function handleDelete() {
             <Icon v-else icon="lucide:check-circle" class="w-3.5 h-3.5" />
             <span class="hidden sm:inline">Mark Paid</span>
           </button>
-          <button @click="router.push({ name: 'invoices.edit', params: { id: invoice.id } })" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-amber hover:bg-amber-light text-charcoal-900 font-semibold rounded-lg transition-colors">
+          <button @click="router.push({ name: 'invoices.edit', params: { id: invoice.id } })" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-green-700 hover:bg-green-800 text-bg-100 font-semibold rounded-lg transition-colors">
             <Icon icon="lucide:pencil" class="w-3.5 h-3.5" /> Edit
           </button>
           <button @click="showDeleteConfirm = true" class="flex items-center gap-1.5 px-2 py-2 text-xs font-medium bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-lg transition-colors" title="Delete">
@@ -310,10 +310,10 @@ async function handleDelete() {
       <div class="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-5">
 
         <!-- Invoice document preview (classic style) -->
-        <div class="bg-charcoal-700/30 rounded-xl p-3 sm:p-6 overflow-x-auto">
+        <div class="bg-gray-400/30 rounded-xl p-3 sm:p-6 overflow-x-auto">
           <div
             class="print-document min-w-[560px] w-full max-w-2xl mx-auto bg-white rounded-lg shadow-2xl overflow-hidden text-gray-800 relative"
-            :style="{ fontFamily: invoice.font_family || '\'DM Sans\', sans-serif', fontSize: '13px' }"
+            :style="{ fontFamily: invoice.font_family || 'Geist Sans, sans-serif', fontSize: '13px' }"
           >
             <div class="h-1.5 w-full" :style="{ backgroundColor: invoice.accent_color }"></div>
 
@@ -341,7 +341,7 @@ async function handleDelete() {
                   </div>
                 </div>
                 <div class="text-right">
-                  <div class="text-3xl font-bold text-gray-200 tracking-widest" style="font-family:'Cormorant Garamond',Georgia,serif">INVOICE</div>
+                  <div class="text-3xl font-bold text-gray-200 tracking-widest" style="font-family:var(--font-sans)">INVOICE</div>
                   <div class="font-mono text-sm text-gray-400 mt-1">{{ invoice.number }}</div>
                 </div>
               </div>
@@ -417,12 +417,12 @@ async function handleDelete() {
         <div class="space-y-4">
 
           <!-- Receipts panel -->
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4 space-y-3">
+          <div class="bg-gray-200 border border-gray-400 rounded-xl p-4 space-y-3">
             <div class="flex items-center justify-between">
-              <p class="text-xs font-semibold text-cream-muted uppercase tracking-wider">Receipts</p>
+              <p class="text-xs font-semibold text-gray-900 uppercase tracking-wider">Receipts</p>
               <button
                 @click="openGenerateReceiptModal"
-                class="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-amber hover:text-amber/80 bg-amber/10 hover:bg-amber/15 rounded-md transition-colors"
+                class="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-green-700 hover:text-green-700/80 bg-green-700/10 hover:bg-green-700/15 rounded-md transition-colors"
               >
                 <Icon icon="lucide:plus" class="w-3 h-3" /> Generate
               </button>
@@ -434,23 +434,23 @@ async function handleDelete() {
                 v-for="rec in receipts"
                 :key="rec.id"
                 @click="router.push({ name: 'receipts.view', params: { id: rec.id } })"
-                class="w-full text-left bg-charcoal-900/50 hover:bg-charcoal-700/50 border border-charcoal-700 hover:border-charcoal-600 rounded-lg p-2.5 transition-colors group"
+                class="w-full text-left bg-gray-100/50 hover:bg-gray-400/50 border border-gray-400 hover:border-gray-500 rounded-lg p-2.5 transition-colors group"
               >
                 <div class="flex items-center justify-between gap-2">
                   <div class="min-w-0">
                     <div class="flex items-center gap-1.5">
-                      <span class="text-xs font-semibold text-cream font-mono group-hover:text-amber transition-colors truncate">{{ rec.number }}</span>
+                      <span class="text-xs font-semibold text-gray-1000 font-mono group-hover:text-green-700 transition-colors truncate">{{ rec.number }}</span>
                       <span
                         v-if="rec.stamp"
                         class="shrink-0 text-[9px] font-bold px-1.5 py-0.5 rounded border"
                         :style="{ color: stampColor[rec.stamp] ?? '#9ca3af', borderColor: (stampColor[rec.stamp] ?? '#9ca3af') + '40', backgroundColor: (stampColor[rec.stamp] ?? '#9ca3af') + '15' }"
                       >{{ rec.stamp }}</span>
                     </div>
-                    <p class="text-[10px] text-cream-faint mt-0.5">{{ fmtDate(rec.issue_date) }}</p>
+                    <p class="text-[10px] text-gray-700 mt-0.5">{{ fmtDate(rec.issue_date) }}</p>
                   </div>
                   <div class="text-right shrink-0">
-                    <div class="text-xs font-semibold text-cream">{{ sym }}{{ rec.totals.total.toLocaleString('en', { minimumFractionDigits: 2 }) }}</div>
-                    <div class="text-[9px] text-cream-faint capitalize">{{ rec.status }}</div>
+                    <div class="text-xs font-semibold text-gray-1000">{{ sym }}{{ rec.totals.total.toLocaleString('en', { minimumFractionDigits: 2 }) }}</div>
+                    <div class="text-[9px] text-gray-700 capitalize">{{ rec.status }}</div>
                   </div>
                 </div>
               </button>
@@ -458,41 +458,41 @@ async function handleDelete() {
 
             <!-- Empty state -->
             <div v-else class="py-4 text-center">
-              <Icon icon="lucide:receipt" class="w-7 h-7 text-cream-faint mx-auto mb-2" />
-              <p class="text-[11px] text-cream-faint">No receipts yet</p>
+              <Icon icon="lucide:receipt" class="w-7 h-7 text-gray-700 mx-auto mb-2" />
+              <p class="text-[11px] text-gray-700">No receipts yet</p>
               <button
                 @click="openGenerateReceiptModal"
-                class="mt-2 text-[11px] text-amber hover:underline"
+                class="mt-2 text-[11px] text-green-700 hover:underline"
               >Generate from this invoice</button>
             </div>
           </div>
 
           <!-- Shared Links -->
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4 space-y-3">
+          <div class="bg-gray-200 border border-gray-400 rounded-xl p-4 space-y-3">
             <div class="flex items-center justify-between">
-              <p class="text-xs font-semibold text-cream-muted uppercase tracking-wider">Shared Links</p>
+              <p class="text-xs font-semibold text-gray-900 uppercase tracking-wider">Shared Links</p>
               <button
                 @click="showShareModal = true"
-                class="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-amber hover:text-amber/80 bg-amber/10 hover:bg-amber/15 rounded-md transition-colors"
+                class="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-green-700 hover:text-green-700/80 bg-green-700/10 hover:bg-green-700/15 rounded-md transition-colors"
               >
                 <Icon icon="lucide:plus" class="w-3 h-3" /> New Link
               </button>
             </div>
             <div class="grid grid-cols-3 gap-2">
-              <div class="bg-charcoal-900/50 rounded-lg p-2.5 text-center">
-                <div class="text-lg font-bold text-cream">{{ links.length }}</div>
-                <div class="text-[9px] text-cream-faint uppercase tracking-wide mt-0.5">Total</div>
+              <div class="bg-gray-100/50 rounded-lg p-2.5 text-center">
+                <div class="text-lg font-bold text-gray-1000">{{ links.length }}</div>
+                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">Total</div>
               </div>
-              <div class="bg-charcoal-900/50 rounded-lg p-2.5 text-center">
+              <div class="bg-gray-100/50 rounded-lg p-2.5 text-center">
                 <div class="text-lg font-bold text-green-400">{{ activeLinks }}</div>
-                <div class="text-[9px] text-cream-faint uppercase tracking-wide mt-0.5">Active</div>
+                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">Active</div>
               </div>
-              <div class="bg-charcoal-900/50 rounded-lg p-2.5 text-center">
-                <div class="text-lg font-bold text-cream">{{ totalViews }}</div>
-                <div class="text-[9px] text-cream-faint uppercase tracking-wide mt-0.5">Views</div>
+              <div class="bg-gray-100/50 rounded-lg p-2.5 text-center">
+                <div class="text-lg font-bold text-gray-1000">{{ totalViews }}</div>
+                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">Views</div>
               </div>
             </div>
-            <div class="flex items-center gap-3 text-xs text-cream-faint pt-0.5">
+            <div class="flex items-center gap-3 text-xs text-gray-700 pt-0.5">
               <span class="flex items-center gap-1"><Icon icon="lucide:lock" class="w-3 h-3" />{{ links.filter(l => l.visibility === 'private').length }} private</span>
               <span class="flex items-center gap-1"><Icon icon="lucide:globe" class="w-3 h-3" />{{ links.filter(l => l.visibility === 'public').length }} public</span>
             </div>
@@ -502,45 +502,45 @@ async function handleDelete() {
           <div v-if="links.length > 0" class="space-y-2">
             <div
               v-for="link in links" :key="link.id"
-              class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-3.5 space-y-2.5"
+              class="bg-gray-200 border border-gray-400 rounded-xl p-3.5 space-y-2.5"
             >
               <div class="flex items-start justify-between gap-2">
                 <div class="min-w-0">
                   <div class="flex items-center gap-1.5 flex-wrap">
-                    <span class="text-xs font-semibold text-cream truncate">{{ link.label || 'Shared Link' }}</span>
+                    <span class="text-xs font-semibold text-gray-1000 truncate">{{ link.label || 'Shared Link' }}</span>
                     <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium', linkStatusLabel(link).cls]">{{ linkStatusLabel(link).text }}</span>
                   </div>
-                  <p class="text-[10px] text-cream-faint mt-0.5">{{ expiryLabel(link) }}</p>
+                  <p class="text-[10px] text-gray-700 mt-0.5">{{ expiryLabel(link) }}</p>
                 </div>
-                <span class="text-[9px] px-1.5 py-0.5 rounded border font-medium text-cream-faint border-charcoal-600 bg-charcoal-700 shrink-0">
+                <span class="text-[9px] px-1.5 py-0.5 rounded border font-medium text-gray-700 border-gray-500 bg-gray-400 shrink-0">
                   {{ link.visibility === 'private' ? 'Private' : 'Public' }}
                 </span>
               </div>
 
               <div class="flex items-center gap-1.5">
-                <div class="flex-1 min-w-0 bg-charcoal-900/60 border border-charcoal-700 rounded px-2 py-1">
-                  <p class="text-[10px] font-mono text-cream-faint truncate">{{ linkUrl(link.token) }}</p>
+                <div class="flex-1 min-w-0 bg-gray-100/60 border border-gray-400 rounded px-2 py-1">
+                  <p class="text-[10px] font-mono text-gray-700 truncate">{{ linkUrl(link.token) }}</p>
                 </div>
                 <button
                   @click="copyLink(link.token)"
                   :disabled="!link.is_active || isExpired(link)"
-                  class="p-1 rounded bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-faint hover:text-cream transition-colors disabled:opacity-40"
+                  class="p-1 rounded bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 transition-colors disabled:opacity-40"
                 ><Icon icon="lucide:copy" class="w-3 h-3" /></button>
               </div>
 
               <div v-if="link.visibility === 'private' && link.access_code" class="flex items-center gap-1.5">
-                <Icon icon="lucide:key-round" class="w-3 h-3 text-amber shrink-0" />
-                <span class="text-[10px] font-mono text-amber tracking-widest">{{ link.access_code }}</span>
+                <Icon icon="lucide:key-round" class="w-3 h-3 text-green-700 shrink-0" />
+                <span class="text-[10px] font-mono text-green-700 tracking-widest">{{ link.access_code }}</span>
               </div>
 
-              <div class="flex items-center gap-3 text-[10px] text-cream-faint border-t border-charcoal-700/50 pt-2">
+              <div class="flex items-center gap-3 text-[10px] text-gray-700 border-t border-gray-400/50 pt-2">
                 <span class="flex items-center gap-1"><Icon icon="lucide:eye" class="w-3 h-3" /> {{ link.views }}</span>
                 <span class="flex items-center gap-1 ml-auto"><Icon icon="lucide:clock" class="w-3 h-3" /> {{ fmtDateTime(link.last_viewed_at) }}</span>
               </div>
 
-              <div v-if="link.view_log.length > 0" class="space-y-1 border-t border-charcoal-700/50 pt-2">
-                <p class="text-[9px] uppercase tracking-wider text-cream-faint">Recent Views</p>
-                <div v-for="(entry, i) in link.view_log.slice(0, 5)" :key="i" class="flex items-center justify-between text-[10px] text-cream-faint">
+              <div v-if="link.view_log.length > 0" class="space-y-1 border-t border-gray-400/50 pt-2">
+                <p class="text-[9px] uppercase tracking-wider text-gray-700">Recent Views</p>
+                <div v-for="(entry, i) in link.view_log.slice(0, 5)" :key="i" class="flex items-center justify-between text-[10px] text-gray-700">
                   <span>{{ entry.browser }}</span>
                   <span>{{ fmtDateTime(entry.timestamp) }}</span>
                 </div>
@@ -549,11 +549,11 @@ async function handleDelete() {
           </div>
 
           <!-- Links empty state -->
-          <div v-else class="bg-charcoal-800 border border-dashed border-charcoal-600 rounded-xl p-6 flex flex-col items-center text-center gap-2">
-            <Icon icon="lucide:share-2" class="w-8 h-8 text-cream-faint" />
-            <p class="text-xs font-medium text-cream-muted">No shared links yet</p>
-            <p class="text-[11px] text-cream-faint">Generate a link to share this invoice with clients</p>
-            <button @click="showShareModal = true" class="mt-2 flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-amber/10 hover:bg-amber/15 border border-amber/20 text-amber rounded-lg transition-colors">
+          <div v-else class="bg-gray-200 border border-dashed border-gray-500 rounded-xl p-6 flex flex-col items-center text-center gap-2">
+            <Icon icon="lucide:share-2" class="w-8 h-8 text-gray-700" />
+            <p class="text-xs font-medium text-gray-900">No shared links yet</p>
+            <p class="text-[11px] text-gray-700">Generate a link to share this invoice with clients</p>
+            <button @click="showShareModal = true" class="mt-2 flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-green-700/10 hover:bg-green-700/15 border border-green-700/20 text-green-700 rounded-lg transition-colors">
               <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Create Link
             </button>
           </div>
@@ -582,19 +582,19 @@ async function handleDelete() {
           class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           @click.self="showGenerateReceiptModal = false"
         >
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-5">
+          <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-5">
 
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-lg bg-amber/10 flex items-center justify-center shrink-0">
-                  <Icon icon="lucide:receipt" class="w-4 h-4 text-amber" />
+                <div class="w-8 h-8 rounded-lg bg-green-700/10 flex items-center justify-center shrink-0">
+                  <Icon icon="lucide:receipt" class="w-4 h-4 text-green-700" />
                 </div>
                 <div>
-                  <h3 class="text-sm font-semibold text-cream">Generate Receipt</h3>
-                  <p class="text-[11px] text-cream-faint">From {{ invoice.number }}</p>
+                  <h3 class="text-sm font-semibold text-gray-1000">Generate Receipt</h3>
+                  <p class="text-[11px] text-gray-700">From {{ invoice.number }}</p>
                 </div>
               </div>
-              <button @click="showGenerateReceiptModal = false" class="p-1 rounded hover:bg-charcoal-700 text-cream-faint transition-colors">
+              <button @click="showGenerateReceiptModal = false" class="p-1 rounded hover:bg-gray-400 text-gray-700 transition-colors">
                 <Icon icon="lucide:x" class="w-4 h-4" />
               </button>
             </div>
@@ -603,42 +603,42 @@ async function handleDelete() {
 
               <!-- Receipt number -->
               <div>
-                <label class="block text-[10px] uppercase tracking-wider text-cream-faint mb-1.5">Receipt Number</label>
+                <label class="block text-[10px] uppercase tracking-wider text-gray-700 mb-1.5">Receipt Number</label>
                 <input
                   v-model="receiptForm.number"
                   type="text"
-                  class="w-full bg-charcoal-900/60 border border-charcoal-600 rounded-lg px-3 py-2 text-xs text-cream placeholder-cream-faint focus:outline-none focus:border-amber/50 transition-colors"
+                  class="w-full bg-gray-100/60 border border-gray-500 rounded-lg px-3 py-2 text-xs text-gray-1000 placeholder-gray-700 focus:outline-none focus:border-green-700/50 transition-colors"
                   placeholder="REC-001"
                 />
               </div>
 
               <!-- Payment date -->
               <div>
-                <label class="block text-[10px] uppercase tracking-wider text-cream-faint mb-1.5">Payment Date</label>
+                <label class="block text-[10px] uppercase tracking-wider text-gray-700 mb-1.5">Payment Date</label>
                 <input
                   v-model="receiptForm.paidAt"
                   type="date"
-                  class="w-full bg-charcoal-900/60 border border-charcoal-600 rounded-lg px-3 py-2 text-xs text-cream focus:outline-none focus:border-amber/50 transition-colors"
+                  class="w-full bg-gray-100/60 border border-gray-500 rounded-lg px-3 py-2 text-xs text-gray-1000 focus:outline-none focus:border-green-700/50 transition-colors"
                 />
               </div>
 
               <!-- Payment method + Reference in two cols -->
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="block text-[10px] uppercase tracking-wider text-cream-faint mb-1.5">Payment Method</label>
+                  <label class="block text-[10px] uppercase tracking-wider text-gray-700 mb-1.5">Payment Method</label>
                   <input
                     v-model="receiptForm.paymentMethod"
                     type="text"
-                    class="w-full bg-charcoal-900/60 border border-charcoal-600 rounded-lg px-3 py-2 text-xs text-cream placeholder-cream-faint focus:outline-none focus:border-amber/50 transition-colors"
+                    class="w-full bg-gray-100/60 border border-gray-500 rounded-lg px-3 py-2 text-xs text-gray-1000 placeholder-gray-700 focus:outline-none focus:border-green-700/50 transition-colors"
                     placeholder="Bank Transfer"
                   />
                 </div>
                 <div>
-                  <label class="block text-[10px] uppercase tracking-wider text-cream-faint mb-1.5">Reference</label>
+                  <label class="block text-[10px] uppercase tracking-wider text-gray-700 mb-1.5">Reference</label>
                   <input
                     v-model="receiptForm.referenceNumber"
                     type="text"
-                    class="w-full bg-charcoal-900/60 border border-charcoal-600 rounded-lg px-3 py-2 text-xs text-cream placeholder-cream-faint focus:outline-none focus:border-amber/50 transition-colors"
+                    class="w-full bg-gray-100/60 border border-gray-500 rounded-lg px-3 py-2 text-xs text-gray-1000 placeholder-gray-700 focus:outline-none focus:border-green-700/50 transition-colors"
                     placeholder="TXN-12345"
                   />
                 </div>
@@ -646,7 +646,7 @@ async function handleDelete() {
 
               <!-- Stamp -->
               <div>
-                <label class="block text-[10px] uppercase tracking-wider text-cream-faint mb-1.5">Status Stamp</label>
+                <label class="block text-[10px] uppercase tracking-wider text-gray-700 mb-1.5">Status Stamp</label>
                 <div class="grid grid-cols-4 gap-1.5">
                   <button
                     v-for="opt in receiptStampOpts"
@@ -655,8 +655,8 @@ async function handleDelete() {
                     :class="[
                       'px-2 py-1.5 rounded-lg border text-[10px] font-semibold transition-colors text-center',
                       receiptForm.stamp === opt.value
-                        ? 'border-amber/50 bg-amber/10 text-amber'
-                        : 'border-charcoal-600 bg-charcoal-900/50 text-cream-faint hover:border-charcoal-500 hover:text-cream'
+                        ? 'border-green-700/50 bg-green-700/10 text-green-700'
+                        : 'border-gray-500 bg-gray-100/50 text-gray-700 hover:border-gray-500 hover:text-gray-1000'
                     ]"
                   >
                     <span v-if="opt.value" class="block w-1.5 h-1.5 rounded-full mx-auto mb-1" :style="{ backgroundColor: opt.color }"></span>
@@ -668,13 +668,13 @@ async function handleDelete() {
               <!-- Balance due (shown for PARTIALLY PAID / UNPAID) -->
               <Transition name="slide-down">
                 <div v-if="showsBalanceDue">
-                  <label class="block text-[10px] uppercase tracking-wider text-cream-faint mb-1.5">Balance Due ({{ invoice.currency }})</label>
+                  <label class="block text-[10px] uppercase tracking-wider text-gray-700 mb-1.5">Balance Due ({{ invoice.currency }})</label>
                   <input
                     v-model.number="receiptForm.balanceDue"
                     type="number"
                     min="0"
                     step="0.01"
-                    class="w-full bg-charcoal-900/60 border border-charcoal-600 rounded-lg px-3 py-2 text-xs text-cream placeholder-cream-faint focus:outline-none focus:border-amber/50 transition-colors"
+                    class="w-full bg-gray-100/60 border border-gray-500 rounded-lg px-3 py-2 text-xs text-gray-1000 placeholder-gray-700 focus:outline-none focus:border-green-700/50 transition-colors"
                     placeholder="0.00"
                   />
                 </div>
@@ -687,12 +687,12 @@ async function handleDelete() {
               <button
                 @click="showGenerateReceiptModal = false"
                 :disabled="isGeneratingReceipt"
-                class="px-4 py-2 text-xs font-medium text-cream-faint hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 rounded-lg transition-colors disabled:opacity-50"
+                class="px-4 py-2 text-xs font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors disabled:opacity-50"
               >Cancel</button>
               <button
                 @click="submitGenerateReceipt"
                 :disabled="isGeneratingReceipt || !receiptForm.number"
-                class="px-4 py-2 text-xs font-semibold bg-amber hover:bg-amber-light text-charcoal-900 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-1.5"
+                class="px-4 py-2 text-xs font-semibold bg-green-700 hover:bg-green-800 text-bg-100 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-1.5"
               >
                 <Icon v-if="isGeneratingReceipt" icon="lucide:loader-2" class="w-3 h-3 animate-spin" />
                 <Icon v-else icon="lucide:receipt" class="w-3 h-3" />
@@ -709,18 +709,18 @@ async function handleDelete() {
     <Teleport to="body">
       <Transition name="modal">
         <div v-if="showDeleteConfirm && invoice" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" @click.self="showDeleteConfirm = false">
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
+          <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4">
             <div class="flex items-start gap-3">
               <div class="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
                 <Icon icon="lucide:trash-2" class="w-4 h-4 text-red-400" />
               </div>
               <div>
-                <h3 class="text-sm font-semibold text-cream">Delete {{ invoice.number }}?</h3>
-                <p class="text-xs text-cream-faint mt-1 leading-relaxed">This invoice will be permanently deleted. This action cannot be undone.</p>
+                <h3 class="text-sm font-semibold text-gray-1000">Delete {{ invoice.number }}?</h3>
+                <p class="text-xs text-gray-700 mt-1 leading-relaxed">This invoice will be permanently deleted. This action cannot be undone.</p>
               </div>
             </div>
             <div class="flex justify-end gap-2">
-              <button @click="showDeleteConfirm = false" :disabled="isDeleting" class="px-4 py-2 text-xs font-medium text-cream-faint hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 rounded-lg transition-colors disabled:opacity-50">Cancel</button>
+              <button @click="showDeleteConfirm = false" :disabled="isDeleting" class="px-4 py-2 text-xs font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors disabled:opacity-50">Cancel</button>
               <button @click="handleDelete" :disabled="isDeleting" class="px-4 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-1.5">
                 <Icon v-if="isDeleting" icon="lucide:loader-2" class="w-3 h-3 animate-spin" />
                 Delete

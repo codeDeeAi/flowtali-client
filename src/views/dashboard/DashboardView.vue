@@ -116,16 +116,16 @@ onMounted(async () => {
     <!-- Page header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <h1 class="text-xl md:text-2xl font-bold text-cream">
+        <h1 class="text-xl md:text-2xl font-bold text-gray-1000">
           {{ greeting }}, {{ userName }} 👋
         </h1>
-        <p class="text-sm text-cream-muted mt-1">
+        <p class="text-sm text-gray-900 mt-1">
           Here's what's happening with {{ orgName }} today
         </p>
       </div>
       <div v-if="can('invoices.read')" class="flex items-center gap-2 shrink-0">
         <button
-          class="flex items-center gap-1.5 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
+          class="flex items-center gap-1.5 bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
           @click="router.push({ name: 'invoices.create' })"
         >
           <Icon icon="lucide:plus" class="w-4 h-4" />

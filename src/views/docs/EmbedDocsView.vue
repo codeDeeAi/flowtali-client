@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useSeo } from '@/composables/useSeo'
+import FlowtaliLogo from '@/components/ui/FlowtaliLogo.vue'
 
 useSeo({
   title: 'Embed SDK Docs — Flowtali',
@@ -112,22 +113,19 @@ function scrollTo(id: string) {
 </script>
 
 <template>
-  <div class="min-h-screen bg-charcoal-900 text-cream">
+  <div class="min-h-screen bg-gray-100 text-gray-1000">
 
     <!-- Header -->
-    <header class="border-b border-charcoal-700/40 bg-charcoal-900/95 backdrop-blur sticky top-0 z-30">
+    <header class="border-b border-gray-400/40 bg-gray-100/95 backdrop-blur sticky top-0 z-30">
       <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
         <div class="flex items-center gap-6">
-          <router-link to="/" class="flex items-center gap-2 text-cream hover:text-amber transition-colors">
-            <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-amber to-amber-light flex items-center justify-center">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0a0a0b" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h10M7 12h6M7 16h4"/></svg>
-            </div>
-            <span class="font-display font-semibold text-lg">Flowtali</span>
+          <router-link to="/" class="flex items-center hover:opacity-80 transition-opacity">
+            <FlowtaliLogo variant="full" :size="20" />
           </router-link>
-          <span class="text-charcoal-500">/</span>
-          <span class="text-cream-muted text-sm">Embed SDK Docs</span>
+          <span class="text-gray-500">/</span>
+          <span class="text-gray-900 text-sm">Embed SDK Docs</span>
         </div>
-        <router-link to="/app/dashboard" class="text-xs text-amber hover:underline">Open app →</router-link>
+        <router-link to="/app/dashboard" class="text-xs text-green-700 hover:underline">Open app →</router-link>
       </div>
     </header>
 
@@ -135,11 +133,11 @@ function scrollTo(id: string) {
 
       <!-- Sidebar -->
       <aside class="hidden lg:block w-52 flex-shrink-0 sticky top-24 h-fit">
-        <p class="text-cream-faint text-xs font-semibold uppercase tracking-widest mb-4">On this page</p>
+        <p class="text-gray-700 text-xs font-semibold uppercase tracking-widest mb-4">On this page</p>
         <nav class="flex flex-col gap-1">
           <button v-for="s in sections" :key="s.id" @click="scrollTo(s.id)"
             class="text-left text-sm px-3 py-1.5 rounded-lg transition-colors"
-            :class="activeSection === s.id ? 'text-amber bg-amber/8' : 'text-cream-muted hover:text-cream'">
+            :class="activeSection === s.id ? 'text-green-700 bg-green-700/8' : 'text-gray-900 hover:text-gray-1000'">
             {{ s.label }}
           </button>
         </nav>
@@ -150,61 +148,61 @@ function scrollTo(id: string) {
 
         <!-- ── Overview ─────────────────────────────────────────────────────── -->
         <section id="overview" class="mb-16 scroll-mt-24">
-          <div class="inline-flex items-center gap-2 bg-amber/10 border border-amber/20 text-amber text-xs font-medium px-3 py-1 rounded-full mb-5">New in v1.5</div>
-          <h1 class="font-display text-4xl md:text-5xl font-semibold text-cream mb-4">Embed SDK</h1>
-          <p class="text-cream-muted text-lg leading-relaxed mb-6">
+          <div class="inline-flex items-center gap-2 bg-green-700/10 border border-green-700/20 text-green-700 text-xs font-medium px-3 py-1 rounded-full mb-5">New in v1.5</div>
+          <h1 class="font-sans text-4xl md:text-5xl font-semibold text-gray-1000 mb-4">Embed SDK</h1>
+          <p class="text-gray-900 text-lg leading-relaxed mb-6">
             The Flowtali Embed SDK lets you embed any Flowtali view — invoices, projects, receipts, clients, letterheads, preferences, and more — directly in your own website or SaaS product. Your users get the full Flowtali experience without leaving your platform.
           </p>
           <div class="grid sm:grid-cols-3 gap-4 mt-8">
-            <div class="bg-charcoal-800/60 border border-charcoal-700/40 rounded-xl p-4">
-              <div class="text-amber text-lg mb-2">⚡</div>
-              <div class="text-cream text-sm font-medium mb-1">One script tag</div>
-              <div class="text-cream-muted text-xs leading-relaxed">Drop in a single JS file and call three lines of code.</div>
+            <div class="bg-gray-200/60 border border-gray-400/40 rounded-xl p-4">
+              <div class="text-green-700 text-lg mb-2">⚡</div>
+              <div class="text-gray-1000 text-sm font-medium mb-1">One script tag</div>
+              <div class="text-gray-900 text-xs leading-relaxed">Drop in a single JS file and call three lines of code.</div>
             </div>
-            <div class="bg-charcoal-800/60 border border-charcoal-700/40 rounded-xl p-4">
-              <div class="text-amber text-lg mb-2">🔐</div>
-              <div class="text-cream text-sm font-medium mb-1">JWT-based auth</div>
-              <div class="text-cream-muted text-xs leading-relaxed">Your backend issues short-lived tokens. No shared passwords.</div>
+            <div class="bg-gray-200/60 border border-gray-400/40 rounded-xl p-4">
+              <div class="text-green-700 text-lg mb-2">🔐</div>
+              <div class="text-gray-1000 text-sm font-medium mb-1">JWT-based auth</div>
+              <div class="text-gray-900 text-xs leading-relaxed">Your backend issues short-lived tokens. No shared passwords.</div>
             </div>
-            <div class="bg-charcoal-800/60 border border-charcoal-700/40 rounded-xl p-4">
-              <div class="text-amber text-lg mb-2">🎨</div>
-              <div class="text-cream text-sm font-medium mb-1">Fully themeable</div>
-              <div class="text-cream-muted text-xs leading-relaxed">Match your brand with colors, fonts, and border radius.</div>
+            <div class="bg-gray-200/60 border border-gray-400/40 rounded-xl p-4">
+              <div class="text-green-700 text-lg mb-2">🎨</div>
+              <div class="text-gray-1000 text-sm font-medium mb-1">Fully themeable</div>
+              <div class="text-gray-900 text-xs leading-relaxed">Match your brand with colors, fonts, and border radius.</div>
             </div>
           </div>
         </section>
 
         <!-- ── Quick start ──────────────────────────────────────────────────── -->
         <section id="quickstart" class="mb-16 scroll-mt-24">
-          <h2 class="font-display text-3xl font-semibold text-cream mb-2">Quick start</h2>
-          <p class="text-cream-muted text-sm mb-8">Get an invoice list embedded in under 10 minutes.</p>
+          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">Quick start</h2>
+          <p class="text-gray-900 text-sm mb-8">Get an invoice list embedded in under 10 minutes.</p>
 
           <!-- Step 1 -->
           <div class="mb-8">
             <div class="flex items-center gap-3 mb-3">
-              <div class="w-6 h-6 rounded-full bg-amber/20 text-amber text-xs font-bold flex items-center justify-center flex-shrink-0">1</div>
-              <h3 class="text-cream font-medium">Generate an API key in Flowtali</h3>
+              <div class="w-6 h-6 rounded-full bg-green-700/20 text-green-700 text-xs font-bold flex items-center justify-center flex-shrink-0">1</div>
+              <h3 class="text-gray-1000 font-medium">Generate an API key in Flowtali</h3>
             </div>
-            <p class="text-cream-muted text-sm ml-9">Go to <strong class="text-cream">Org Settings → API Keys</strong> and create a new key. You'll receive a <code class="ci">pk_live_</code> (publishable) and a <code class="ci">sk_live_</code> (secret) key. Store the secret key securely — it is shown only once.</p>
+            <p class="text-gray-900 text-sm ml-9">Go to <strong class="text-gray-1000">Org Settings → API Keys</strong> and create a new key. You'll receive a <code class="ci">pk_live_</code> (publishable) and a <code class="ci">sk_live_</code> (secret) key. Store the secret key securely — it is shown only once.</p>
           </div>
 
           <!-- Step 2 -->
           <div class="mb-8">
             <div class="flex items-center gap-3 mb-3">
-              <div class="w-6 h-6 rounded-full bg-amber/20 text-amber text-xs font-bold flex items-center justify-center flex-shrink-0">2</div>
-              <h3 class="text-cream font-medium">Generate an embed token from your backend</h3>
+              <div class="w-6 h-6 rounded-full bg-green-700/20 text-green-700 text-xs font-bold flex items-center justify-center flex-shrink-0">2</div>
+              <h3 class="text-gray-1000 font-medium">Generate an embed token from your backend</h3>
             </div>
-            <p class="text-cream-muted text-sm ml-9 mb-4">When one of your users logs in, your server calls the Flowtali API to mint a short-lived token for them. The <code class="ci">sk_live_</code> key must never leave your server.</p>
+            <p class="text-gray-900 text-sm ml-9 mb-4">When one of your users logs in, your server calls the Flowtali API to mint a short-lived token for them. The <code class="ci">sk_live_</code> key must never leave your server.</p>
 
             <div class="ml-9">
               <div id="cb-backend" class="code-block">
                 <!-- Tabs -->
-                <div class="flex items-center justify-between px-3 pt-2 pb-0 border-b border-charcoal-700/60">
+                <div class="flex items-center justify-between px-3 pt-2 pb-0 border-b border-gray-400/60">
                   <div class="flex items-center gap-1">
                     <button v-for="t in ([['node','Node.js'],['php','PHP / Laravel'],['go','Go']] as [string,string][])" :key="t[0]"
                       @click="backendTab = t[0]"
                       class="px-3 py-1.5 text-xs rounded-t transition-colors -mb-px border-b-2"
-                      :class="backendTab === t[0] ? 'text-amber border-amber' : 'text-cream-faint hover:text-cream border-transparent'">
+                      :class="backendTab === t[0] ? 'text-green-700 border-green-700' : 'text-gray-700 hover:text-gray-1000 border-transparent'">
                       {{ t[1] }}
                     </button>
                   </div>
@@ -280,19 +278,19 @@ resp, _ := http.DefaultClient.Do(req)
           <!-- Step 3 -->
           <div class="mb-8">
             <div class="flex items-center gap-3 mb-3">
-              <div class="w-6 h-6 rounded-full bg-amber/20 text-amber text-xs font-bold flex items-center justify-center flex-shrink-0">3</div>
-              <h3 class="text-cream font-medium">Add the SDK and mount the embed</h3>
+              <div class="w-6 h-6 rounded-full bg-green-700/20 text-green-700 text-xs font-bold flex items-center justify-center flex-shrink-0">3</div>
+              <h3 class="text-gray-1000 font-medium">Add the SDK and mount the embed</h3>
             </div>
-            <p class="text-cream-muted text-sm ml-9 mb-4">Pass the token from Step 2 to the SDK. Pick whichever framework you're using below.</p>
+            <p class="text-gray-900 text-sm ml-9 mb-4">Pass the token from Step 2 to the SDK. Pick whichever framework you're using below.</p>
 
             <div class="ml-9">
               <div id="cb-frontend" class="code-block">
-                <div class="flex items-center justify-between px-3 pt-2 pb-0 border-b border-charcoal-700/60">
+                <div class="flex items-center justify-between px-3 pt-2 pb-0 border-b border-gray-400/60">
                   <div class="flex items-center gap-1">
                     <button v-for="t in ([['html','HTML / JS'],['react','React'],['vue','Vue 3'],['next','Next.js'],['nuxt','Nuxt 3']] as [string,string][])" :key="t[0]"
                       @click="frontendTab = t[0]"
                       class="px-3 py-1.5 text-xs rounded-t transition-colors -mb-px border-b-2"
-                      :class="frontendTab === t[0] ? 'text-amber border-amber' : 'text-cream-faint hover:text-cream border-transparent'">
+                      :class="frontendTab === t[0] ? 'text-green-700 border-green-700' : 'text-gray-700 hover:text-gray-1000 border-transparent'">
                       {{ t[1] }}
                     </button>
                   </div>
@@ -422,45 +420,45 @@ onUnmounted(() => ft?.destroy())
 
         <!-- ── Authentication ───────────────────────────────────────────────── -->
         <section id="auth" class="mb-16 scroll-mt-24">
-          <h2 class="font-display text-3xl font-semibold text-cream mb-2">Authentication</h2>
-          <p class="text-cream-muted text-sm mb-6">The embed uses a two-key system, the same model as Stripe.</p>
+          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">Authentication</h2>
+          <p class="text-gray-900 text-sm mb-6">The embed uses a two-key system, the same model as Stripe.</p>
 
-          <div class="bg-charcoal-800/50 border border-charcoal-700/40 rounded-xl p-5 mb-6">
+          <div class="bg-gray-200/50 border border-gray-400/40 rounded-xl p-5 mb-6">
             <div class="grid sm:grid-cols-2 gap-6">
               <div>
-                <div class="text-xs font-semibold text-amber uppercase tracking-wider mb-2">Publishable key <code class="ci">pk_live_</code></div>
-                <p class="text-cream-muted text-sm leading-relaxed">Safe for frontend / browser code. Passed to <code class="ci">Flowtali.init()</code>. Identifies your organization but cannot generate tokens or access data directly.</p>
+                <div class="text-xs font-semibold text-green-700 uppercase tracking-wider mb-2">Publishable key <code class="ci">pk_live_</code></div>
+                <p class="text-gray-900 text-sm leading-relaxed">Safe for frontend / browser code. Passed to <code class="ci">Flowtali.init()</code>. Identifies your organization but cannot generate tokens or access data directly.</p>
               </div>
               <div>
                 <div class="text-xs font-semibold text-red-400/80 uppercase tracking-wider mb-2">Secret key <code class="ci">sk_live_</code></div>
-                <p class="text-cream-muted text-sm leading-relaxed">Server-side only. Never ship this in frontend code or commit it to git. Used to call <code class="ci">POST /orgs/{'{org}'}/embed/token</code> and generate per-user embed tokens.</p>
+                <p class="text-gray-900 text-sm leading-relaxed">Server-side only. Never ship this in frontend code or commit it to git. Used to call <code class="ci">POST /orgs/{'{org}'}/embed/token</code> and generate per-user embed tokens.</p>
               </div>
             </div>
           </div>
 
-          <div class="bg-amber/5 border border-amber/20 rounded-xl px-4 py-3 flex gap-3 text-sm">
-            <svg class="w-4 h-4 text-amber flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z"/></svg>
-            <span class="text-cream-muted">Embed tokens are rate-limited to <strong class="text-cream">30 generations per minute</strong> per IP and expire after a maximum of 24 hours (<code class="ci">expires_in</code> max is <code class="ci">86400</code>).</span>
+          <div class="bg-green-700/5 border border-green-700/20 rounded-xl px-4 py-3 flex gap-3 text-sm">
+            <svg class="w-4 h-4 text-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z"/></svg>
+            <span class="text-gray-900">Embed tokens are rate-limited to <strong class="text-gray-1000">30 generations per minute</strong> per IP and expire after a maximum of 24 hours (<code class="ci">expires_in</code> max is <code class="ci">86400</code>).</span>
           </div>
         </section>
 
         <!-- ── Permissions ──────────────────────────────────────────────────── -->
         <section id="permissions" class="mb-16 scroll-mt-24">
-          <h2 class="font-display text-3xl font-semibold text-cream mb-2">Permissions</h2>
-          <p class="text-cream-muted text-sm mb-4">Each embed token carries a <code class="ci">permissions</code> array. The embed blocks any action not explicitly granted — even if the UI renders the option. Grant only what each user actually needs.</p>
+          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">Permissions</h2>
+          <p class="text-gray-900 text-sm mb-4">Each embed token carries a <code class="ci">permissions</code> array. The embed blocks any action not explicitly granted — even if the UI renders the option. Grant only what each user actually needs.</p>
 
-          <div class="bg-charcoal-800/50 border border-charcoal-700/40 rounded-xl overflow-hidden">
+          <div class="bg-gray-200/50 border border-gray-400/40 rounded-xl overflow-hidden">
             <table class="w-full text-sm">
               <thead>
-                <tr class="border-b border-charcoal-700/40">
-                  <th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider w-56">Permission</th>
-                  <th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider">What it allows</th>
+                <tr class="border-b border-gray-400/40">
+                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider w-56">Permission</th>
+                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider">What it allows</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-charcoal-700/20">
+              <tbody class="divide-y divide-gray-400/20">
                 <tr v-for="p in allPermissions" :key="p.perm">
                   <td class="px-4 py-2.5"><code class="ci">{{ p.perm }}</code></td>
-                  <td class="px-4 py-2.5 text-cream-muted">{{ p.desc }}</td>
+                  <td class="px-4 py-2.5 text-gray-900">{{ p.desc }}</td>
                 </tr>
               </tbody>
             </table>
@@ -469,8 +467,8 @@ onUnmounted(() => ft?.destroy())
 
         <!-- ── Available views ─────────────────────────────────────────────── -->
         <section id="views" class="mb-16 scroll-mt-24">
-          <h2 class="font-display text-3xl font-semibold text-cream mb-2">Available views</h2>
-          <p class="text-cream-muted text-sm mb-4">Pass any of these as the <code class="ci">view</code> param to <code class="ci">ft.mount()</code> or <code class="ci">ft.open()</code>. For views with a dynamic ID, pass the ID via <code class="ci">params</code>.</p>
+          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">Available views</h2>
+          <p class="text-gray-900 text-sm mb-4">Pass any of these as the <code class="ci">view</code> param to <code class="ci">ft.mount()</code> or <code class="ci">ft.open()</code>. For views with a dynamic ID, pass the ID via <code class="ci">params</code>.</p>
 
           <div id="cb-views" class="code-block mb-5">
             <div class="code-lang-row"><span>Example</span><button @click="copyCode('cb-views')" class="copy-btn" title="Copy"><svg v-if="copiedBlock !== 'cb-views'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button></div>
@@ -482,20 +480,20 @@ ft.mount('#container', { view: 'invoices/INV_ID', token })
 ft.mount('#container', { view: 'projects/PROJ_ID/edit', token })</code></pre>
           </div>
 
-          <div class="bg-charcoal-800/50 border border-charcoal-700/40 rounded-xl overflow-hidden">
+          <div class="bg-gray-200/50 border border-gray-400/40 rounded-xl overflow-hidden">
             <table class="w-full text-sm">
               <thead>
-                <tr class="border-b border-charcoal-700/40">
-                  <th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider">view</th>
-                  <th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider hidden sm:table-cell">Permission</th>
-                  <th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider hidden md:table-cell">Description</th>
+                <tr class="border-b border-gray-400/40">
+                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider">view</th>
+                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider hidden sm:table-cell">Permission</th>
+                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider hidden md:table-cell">Description</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-charcoal-700/20">
+              <tbody class="divide-y divide-gray-400/20">
                 <tr v-for="v in allViews" :key="v.view">
                   <td class="px-4 py-2.5"><code class="ci text-xs">{{ v.view }}</code></td>
                   <td class="px-4 py-2.5 hidden sm:table-cell"><code class="ci text-xs">{{ v.perm }}</code></td>
-                  <td class="px-4 py-2.5 text-cream-muted text-xs hidden md:table-cell">{{ v.desc }}</td>
+                  <td class="px-4 py-2.5 text-gray-900 text-xs hidden md:table-cell">{{ v.desc }}</td>
                 </tr>
               </tbody>
             </table>
@@ -504,17 +502,17 @@ ft.mount('#container', { view: 'projects/PROJ_ID/edit', token })</code></pre>
 
         <!-- ── Appearance ──────────────────────────────────────────────────── -->
         <section id="appearance" class="mb-16 scroll-mt-24">
-          <h2 class="font-display text-3xl font-semibold text-cream mb-2">Appearance / theming</h2>
-          <p class="text-cream-muted text-sm mb-6">Pass an <code class="ci">appearance</code> object to <code class="ci">Flowtali.init()</code> to apply your brand globally, or override per-mount call.</p>
+          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">Appearance / theming</h2>
+          <p class="text-gray-900 text-sm mb-6">Pass an <code class="ci">appearance</code> object to <code class="ci">Flowtali.init()</code> to apply your brand globally, or override per-mount call.</p>
 
           <div id="cb-appear-global" class="code-block mb-4">
             <div class="code-lang-row"><span>Global (all mounts from this instance)</span><button @click="copyCode('cb-appear-global')" class="copy-btn" title="Copy"><svg v-if="copiedBlock !== 'cb-appear-global'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button></div>
             <pre v-pre class="code-pre"><code>const ft = Flowtali.init('pk_live_...', {
   appearance: {
-    primaryColor:    '#6366f1',       // buttons, links, focus rings (default: #e8a83e)
-    backgroundColor: '#ffffff',       // iframe background          (default: #111113)
-    textColor:       '#111827',       // primary body text           (default: #f5f0e8)
-    fontFamily:      'Inter, sans-serif', //                        (default: DM Sans)
+    primaryColor:    '#6366f1',       // buttons, links, focus rings (default: #00c853)
+    backgroundColor: '#ffffff',       // iframe background          (default: #000000)
+    textColor:       '#111827',       // primary body text           (default: #ededed)
+    fontFamily:      'Inter, sans-serif', //                        (default: Geist Sans)
     borderRadius:    '8px',           // inputs and cards            (default: 7px)
   },
 })</code></pre>
@@ -532,26 +530,26 @@ ft.mount('#container', { view: 'projects/PROJ_ID/edit', token })</code></pre>
 
         <!-- ── Events ──────────────────────────────────────────────────────── -->
         <section id="events" class="mb-16 scroll-mt-24">
-          <h2 class="font-display text-3xl font-semibold text-cream mb-2">Events</h2>
-          <p class="text-cream-muted text-sm mb-6">
+          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">Events</h2>
+          <p class="text-gray-900 text-sm mb-6">
             Listen for actions inside the embed with <code class="ci">ft.on()</code>. Events fire after successful mutations — not on validation errors or cancelled actions. Use them to sync your own system, show toasts, or update UI state.
           </p>
 
           <!-- Full event reference -->
-          <h3 class="text-cream font-medium text-sm mb-3">All events</h3>
-          <div class="bg-charcoal-800/50 border border-charcoal-700/40 rounded-xl overflow-hidden mb-8">
+          <h3 class="text-gray-1000 font-medium text-sm mb-3">All events</h3>
+          <div class="bg-gray-200/50 border border-gray-400/40 rounded-xl overflow-hidden mb-8">
             <table class="w-full text-sm">
               <thead>
-                <tr class="border-b border-charcoal-700/40">
-                  <th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider w-48">Event</th>
-                  <th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider hidden sm:table-cell">Fired when</th>
-                  <th class="text-left px-4 py-2.5 text-cream-faint text-xs uppercase tracking-wider hidden lg:table-cell">Payload shape</th>
+                <tr class="border-b border-gray-400/40">
+                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider w-48">Event</th>
+                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider hidden sm:table-cell">Fired when</th>
+                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider hidden lg:table-cell">Payload shape</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-charcoal-700/20">
+              <tbody class="divide-y divide-gray-400/20">
                 <tr v-for="e in allEvents" :key="e.event">
                   <td class="px-4 py-2.5"><code class="ci text-xs">{{ e.event }}</code></td>
-                  <td class="px-4 py-2.5 text-cream-muted text-xs hidden sm:table-cell">{{ e.desc }}</td>
+                  <td class="px-4 py-2.5 text-gray-900 text-xs hidden sm:table-cell">{{ e.desc }}</td>
                   <td class="px-4 py-2.5 hidden lg:table-cell"><code class="ci text-xs">{{ e.payload }}</code></td>
                 </tr>
               </tbody>
@@ -559,14 +557,14 @@ ft.mount('#container', { view: 'projects/PROJ_ID/edit', token })</code></pre>
           </div>
 
           <!-- Framework examples -->
-          <h3 class="text-cream font-medium text-sm mb-4">Framework examples</h3>
+          <h3 class="text-gray-1000 font-medium text-sm mb-4">Framework examples</h3>
           <div id="cb-events" class="code-block">
-            <div class="flex items-center justify-between px-3 pt-2 pb-0 border-b border-charcoal-700/60">
+            <div class="flex items-center justify-between px-3 pt-2 pb-0 border-b border-gray-400/60">
               <div class="flex items-center gap-1">
                 <button v-for="t in ([['js','JS / HTML'],['react','React'],['vue','Vue 3'],['next','Next.js'],['nuxt','Nuxt 3']] as [string,string][])" :key="t[0]"
                   @click="eventsTab = t[0]"
                   class="px-3 py-1.5 text-xs rounded-t transition-colors -mb-px border-b-2"
-                  :class="eventsTab === t[0] ? 'text-amber border-amber' : 'text-cream-faint hover:text-cream border-transparent'">
+                  :class="eventsTab === t[0] ? 'text-green-700 border-green-700' : 'text-gray-700 hover:text-gray-1000 border-transparent'">
                   {{ t[1] }}
                 </button>
               </div>
@@ -715,48 +713,48 @@ onUnmounted(() => ft?.destroy())
 
         <!-- ── SDK reference ───────────────────────────────────────────────── -->
         <section id="reference" class="mb-16 scroll-mt-24">
-          <h2 class="font-display text-3xl font-semibold text-cream mb-6">SDK reference</h2>
+          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-6">SDK reference</h2>
 
           <div class="flex flex-col gap-7">
-            <div class="border border-charcoal-700/40 rounded-xl p-5">
-              <h3 class="font-mono text-sm text-cream font-semibold mb-1">Flowtali.init(publishableKey, options?)</h3>
-              <p class="text-cream-muted text-xs mb-3">Initializes the SDK. Returns a <code class="ci">FlowtaliInstance</code>.</p>
-              <table class="w-full text-xs"><thead><tr class="border-b border-charcoal-700/30"><th class="text-left py-1.5 pr-3 text-cream-faint uppercase tracking-wider">Option</th><th class="text-left py-1.5 pr-3 text-cream-faint uppercase tracking-wider">Type</th><th class="text-left py-1.5 text-cream-faint uppercase tracking-wider">Description</th></tr></thead>
-              <tbody class="divide-y divide-charcoal-700/20">
-                <tr><td class="py-1.5 pr-3"><code class="ci">appearance</code></td><td class="py-1.5 pr-3 text-cream-muted">object</td><td class="py-1.5 text-cream-muted">Default theme applied to all mounts from this instance.</td></tr>
+            <div class="border border-gray-400/40 rounded-xl p-5">
+              <h3 class="font-mono text-sm text-gray-1000 font-semibold mb-1">Flowtali.init(publishableKey, options?)</h3>
+              <p class="text-gray-900 text-xs mb-3">Initializes the SDK. Returns a <code class="ci">FlowtaliInstance</code>.</p>
+              <table class="w-full text-xs"><thead><tr class="border-b border-gray-400/30"><th class="text-left py-1.5 pr-3 text-gray-700 uppercase tracking-wider">Option</th><th class="text-left py-1.5 pr-3 text-gray-700 uppercase tracking-wider">Type</th><th class="text-left py-1.5 text-gray-700 uppercase tracking-wider">Description</th></tr></thead>
+              <tbody class="divide-y divide-gray-400/20">
+                <tr><td class="py-1.5 pr-3"><code class="ci">appearance</code></td><td class="py-1.5 pr-3 text-gray-900">object</td><td class="py-1.5 text-gray-900">Default theme applied to all mounts from this instance.</td></tr>
               </tbody></table>
             </div>
 
-            <div class="border border-charcoal-700/40 rounded-xl p-5">
-              <h3 class="font-mono text-sm text-cream font-semibold mb-1">ft.mount(selector, options)</h3>
-              <p class="text-cream-muted text-xs mb-3">Mounts the embed inside a container. <code class="ci">selector</code> can be a CSS string or a DOM element.</p>
-              <table class="w-full text-xs"><thead><tr class="border-b border-charcoal-700/30"><th class="text-left py-1.5 pr-3 text-cream-faint uppercase tracking-wider">Option</th><th class="text-left py-1.5 pr-3 text-cream-faint uppercase tracking-wider">Type</th><th class="text-left py-1.5 text-cream-faint uppercase tracking-wider">Description</th></tr></thead>
-              <tbody class="divide-y divide-charcoal-700/20">
-                <tr><td class="py-1.5 pr-3"><code class="ci">view</code></td><td class="py-1.5 pr-3 text-cream-muted">string</td><td class="py-1.5 text-cream-muted">Which view to render. See Available views.</td></tr>
-                <tr><td class="py-1.5 pr-3"><code class="ci">token</code></td><td class="py-1.5 pr-3 text-cream-muted">string</td><td class="py-1.5 text-cream-muted">Short-lived embed JWT from your backend.</td></tr>
-                <tr><td class="py-1.5 pr-3"><code class="ci">params</code></td><td class="py-1.5 pr-3 text-cream-muted">object</td><td class="py-1.5 text-cream-muted">Optional query params forwarded to the view (e.g. <code class="ci">{ filter: 'unpaid' }</code>).</td></tr>
-                <tr><td class="py-1.5 pr-3"><code class="ci">appearance</code></td><td class="py-1.5 pr-3 text-cream-muted">object</td><td class="py-1.5 text-cream-muted">Per-mount theme override, merged over init appearance.</td></tr>
+            <div class="border border-gray-400/40 rounded-xl p-5">
+              <h3 class="font-mono text-sm text-gray-1000 font-semibold mb-1">ft.mount(selector, options)</h3>
+              <p class="text-gray-900 text-xs mb-3">Mounts the embed inside a container. <code class="ci">selector</code> can be a CSS string or a DOM element.</p>
+              <table class="w-full text-xs"><thead><tr class="border-b border-gray-400/30"><th class="text-left py-1.5 pr-3 text-gray-700 uppercase tracking-wider">Option</th><th class="text-left py-1.5 pr-3 text-gray-700 uppercase tracking-wider">Type</th><th class="text-left py-1.5 text-gray-700 uppercase tracking-wider">Description</th></tr></thead>
+              <tbody class="divide-y divide-gray-400/20">
+                <tr><td class="py-1.5 pr-3"><code class="ci">view</code></td><td class="py-1.5 pr-3 text-gray-900">string</td><td class="py-1.5 text-gray-900">Which view to render. See Available views.</td></tr>
+                <tr><td class="py-1.5 pr-3"><code class="ci">token</code></td><td class="py-1.5 pr-3 text-gray-900">string</td><td class="py-1.5 text-gray-900">Short-lived embed JWT from your backend.</td></tr>
+                <tr><td class="py-1.5 pr-3"><code class="ci">params</code></td><td class="py-1.5 pr-3 text-gray-900">object</td><td class="py-1.5 text-gray-900">Optional query params forwarded to the view (e.g. <code class="ci">{ filter: 'unpaid' }</code>).</td></tr>
+                <tr><td class="py-1.5 pr-3"><code class="ci">appearance</code></td><td class="py-1.5 pr-3 text-gray-900">object</td><td class="py-1.5 text-gray-900">Per-mount theme override, merged over init appearance.</td></tr>
               </tbody></table>
             </div>
 
-            <div class="border border-charcoal-700/40 rounded-xl p-5">
-              <h3 class="font-mono text-sm text-cream font-semibold mb-1">ft.open(options)</h3>
-              <p class="text-cream-muted text-xs">Same as <code class="ci">mount()</code> but renders inside a centered overlay modal with a backdrop and close button. Accepts the same options.</p>
+            <div class="border border-gray-400/40 rounded-xl p-5">
+              <h3 class="font-mono text-sm text-gray-1000 font-semibold mb-1">ft.open(options)</h3>
+              <p class="text-gray-900 text-xs">Same as <code class="ci">mount()</code> but renders inside a centered overlay modal with a backdrop and close button. Accepts the same options.</p>
             </div>
 
-            <div class="border border-charcoal-700/40 rounded-xl p-5">
-              <h3 class="font-mono text-sm text-cream font-semibold mb-1">ft.on(event, handler) / ft.off(event, handler)</h3>
-              <p class="text-cream-muted text-xs">Subscribe / unsubscribe to embed events. Use <code class="ci">'*'</code> to catch all events — handler receives <code class="ci">(eventName, data)</code>.</p>
+            <div class="border border-gray-400/40 rounded-xl p-5">
+              <h3 class="font-mono text-sm text-gray-1000 font-semibold mb-1">ft.on(event, handler) / ft.off(event, handler)</h3>
+              <p class="text-gray-900 text-xs">Subscribe / unsubscribe to embed events. Use <code class="ci">'*'</code> to catch all events — handler receives <code class="ci">(eventName, data)</code>.</p>
             </div>
 
-            <div class="border border-charcoal-700/40 rounded-xl p-5">
-              <h3 class="font-mono text-sm text-cream font-semibold mb-1">ft.destroy()</h3>
-              <p class="text-cream-muted text-xs">Removes the iframe or modal and clears all state. Call this in your component's unmount / cleanup hook to avoid memory leaks.</p>
+            <div class="border border-gray-400/40 rounded-xl p-5">
+              <h3 class="font-mono text-sm text-gray-1000 font-semibold mb-1">ft.destroy()</h3>
+              <p class="text-gray-900 text-xs">Removes the iframe or modal and clears all state. Call this in your component's unmount / cleanup hook to avoid memory leaks.</p>
             </div>
 
-            <div class="border border-charcoal-700/40 rounded-xl p-5">
-              <h3 class="font-mono text-sm text-cream font-semibold mb-1">Flowtali.config({ baseUrl })</h3>
-              <p class="text-cream-muted text-xs">Override the Flowtali base URL before calling <code class="ci">init()</code>. Useful for staging environments or self-hosted deployments.</p>
+            <div class="border border-gray-400/40 rounded-xl p-5">
+              <h3 class="font-mono text-sm text-gray-1000 font-semibold mb-1">Flowtali.config({ baseUrl })</h3>
+              <p class="text-gray-900 text-xs">Override the Flowtali base URL before calling <code class="ci">init()</code>. Useful for staging environments or self-hosted deployments.</p>
             </div>
           </div>
         </section>
@@ -778,17 +776,17 @@ onUnmounted(() => ft?.destroy())
 <style scoped>
 .code-block {
   background: #0e0e10;
-  border: 1px solid #2e2e37;
+  border: 1px solid #2e2e2e;
   border-radius: 10px;
   overflow: hidden;
-  font-family: 'DM Mono', monospace;
+  font-family: var(--font-mono);
 }
 .code-lang {
-  background: #18181c;
-  border-bottom: 1px solid #2e2e37;
+  background: #1a1a1a;
+  border-bottom: 1px solid #2e2e2e;
   padding: 6px 14px;
   font-size: 11px;
-  color: #6b6560;
+  color: #a0a0a0;
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -796,11 +794,11 @@ onUnmounted(() => ft?.destroy())
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #18181c;
-  border-bottom: 1px solid #2e2e37;
+  background: #1a1a1a;
+  border-bottom: 1px solid #2e2e2e;
   padding: 5px 10px 5px 14px;
   font-size: 11px;
-  color: #6b6560;
+  color: #a0a0a0;
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -810,7 +808,7 @@ onUnmounted(() => ft?.destroy())
   justify-content: center;
   padding: 4px 6px;
   border-radius: 5px;
-  color: #6b6560;
+  color: #a0a0a0;
   transition: background 0.15s, color 0.15s;
   border: none;
   background: transparent;
@@ -819,7 +817,7 @@ onUnmounted(() => ft?.destroy())
 }
 .copy-btn:hover {
   background: rgba(255,255,255,0.06);
-  color: #f5f0e8;
+  color: #ededed;
 }
 .copy-toast {
   position: fixed;
@@ -829,11 +827,11 @@ onUnmounted(() => ft?.destroy())
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #222228;
-  border: 1px solid #2e2e37;
-  color: #f5f0e8;
+  background: #292929;
+  border: 1px solid #2e2e2e;
+  color: #ededed;
   font-size: 13px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-sans);
   padding: 10px 16px;
   border-radius: 10px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.45);
@@ -857,10 +855,10 @@ onUnmounted(() => ft?.destroy())
   color: #d4cfc8;
 }
 .ci {
-  background: rgba(232,168,62,0.1);
-  border: 1px solid rgba(232,168,62,0.15);
-  color: #e8a83e;
-  font-family: 'DM Mono', monospace;
+  background: rgba(0,200,83,0.1);
+  border: 1px solid rgba(0,200,83,0.15);
+  color: #00c853;
+  font-family: var(--font-mono);
   font-size: 0.8em;
   padding: 1px 5px;
   border-radius: 4px;

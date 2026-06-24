@@ -11,6 +11,6 @@ const message = route.query.message as string || 'Access denied. Invalid or expi
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z" />
       </svg>
     </div>
-    <p class="text-cream text-sm font-medium">{{ message }}</p>
+    <p class="text-gray-1000 text-sm font-medium">{{ message }}</p>
   </div>
 </template>

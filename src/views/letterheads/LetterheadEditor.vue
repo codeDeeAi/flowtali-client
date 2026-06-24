@@ -54,8 +54,8 @@ const form = ref({
 
   // Design
   theme:        'classic' as 'classic' | 'modern' | 'minimal' | 'bold' | 'legal' | 'executive',
-  accentColor:  '#E8A83E',
-  fontFamily:   "'DM Sans', sans-serif",
+  accentColor:  '#00c853',
+  fontFamily:   "var(--font-sans)",
   headerLayout: 'left' as 'left' | 'center' | 'right' | 'split',
   watermark:    '',
   showWatermark:false,
@@ -182,16 +182,16 @@ const themes = [
   { id: 'executive', label: 'Executive', desc: 'Premium dual-column' },
 ]
 
-const accentPresets = ['#E8A83E','#60a5fa','#4ade80','#f87171','#a78bfa','#fb923c','#38bdf8','#1a1a1a']
+const accentPresets = ['#00c853','#60a5fa','#4ade80','#f87171','#a78bfa','#fb923c','#38bdf8','#1a1a1a']
 
 const fonts = [
-  { value: "'DM Sans', sans-serif",       label: 'DM Sans (Default)' },
+  { value: "var(--font-sans)",       label: 'Geist Sans (Default)' },
   { value: "'Inter', sans-serif",          label: 'Inter (Modern)' },
-  { value: "'Cormorant Garamond', serif",  label: 'Cormorant (Elegant)' },
-  { value: "'Playfair Display', serif",    label: 'Playfair (Editorial)' },
+  { value: "var(--font-sans)",  label: 'Geist Sans (Elegant)' },
+  { value: "var(--font-sans)",    label: 'Geist Sans (Editorial)' },
   { value: "'Lato', sans-serif",           label: 'Lato (Clean)' },
   { value: "'Montserrat', sans-serif",     label: 'Montserrat (Contemporary)' },
-  { value: "'DM Mono', monospace",         label: 'DM Mono (Technical)' },
+  { value: "var(--font-mono)",         label: 'Geist Mono (Technical)' },
   { value: "Georgia, serif",               label: 'Georgia (Traditional)' },
 ]
 
@@ -305,35 +305,35 @@ const handleSave = async () => {
 </script>
 
 <template>
-  <div class="flex flex-col h-screen overflow-hidden bg-charcoal-900">
+  <div class="flex flex-col h-screen overflow-hidden bg-gray-100">
 
     <!-- Top bar -->
-    <div class="flex items-center justify-between px-4 md:px-5 h-13 border-b border-charcoal-700 bg-charcoal-900/90 backdrop-blur-md shrink-0 z-20">
+    <div class="flex items-center justify-between px-4 md:px-5 h-13 border-b border-gray-400 bg-gray-100/90 backdrop-blur-md shrink-0 z-20">
       <div class="flex items-center gap-3">
-        <button @click="router.push({ name: 'letterheads' })" class="flex items-center gap-2 text-cream-muted hover:text-cream text-sm transition-colors">
+        <button @click="router.push({ name: 'letterheads' })" class="flex items-center gap-2 text-gray-900 hover:text-gray-1000 text-sm transition-colors">
           <Icon icon="lucide:arrow-left" class="w-4 h-4" />
           <span class="hidden sm:inline">Letterheads</span>
         </button>
-        <span class="text-charcoal-600">/</span>
+        <span class="text-gray-500">/</span>
         <div class="flex items-center gap-2">
-          <div class="w-5 h-5 rounded bg-amber/10 border border-amber/25 flex items-center justify-center">
-            <Icon icon="lucide:file-text" class="w-3 h-3 text-amber" />
+          <div class="w-5 h-5 rounded bg-green-700/10 border border-green-700/25 flex items-center justify-center">
+            <Icon icon="lucide:file-text" class="w-3 h-3 text-green-700" />
           </div>
-          <span class="font-semibold text-cream text-sm">{{ mode === 'create' ? 'New Letterhead' : 'Edit Letterhead' }}</span>
-          <span class="text-xs text-cream-faint hidden sm:inline">{{ form.name }}</span>
+          <span class="font-semibold text-gray-1000 text-sm">{{ mode === 'create' ? 'New Letterhead' : 'Edit Letterhead' }}</span>
+          <span class="text-xs text-gray-700 hidden sm:inline">{{ form.name }}</span>
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <button @click="handlePrint" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream rounded-lg transition-colors" title="Print / PDF">
+        <button @click="handlePrint" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 rounded-lg transition-colors" title="Print / PDF">
           <Icon icon="lucide:printer" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> Print / PDF</span>
         </button>
-        <button @click="showShareModal = true" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream rounded-lg transition-colors" title="Share">
+        <button @click="showShareModal = true" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 rounded-lg transition-colors" title="Share">
           <Icon icon="lucide:share-2" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> Share</span>
         </button>
         <button
           @click="handleSave"
           :disabled="getLoader('isSaving')"
-          class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-semibold rounded-lg transition-colors bg-amber hover:bg-amber/90 text-charcoal-900 disabled:opacity-60 disabled:cursor-not-allowed"
+          class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-semibold rounded-lg transition-colors bg-green-700 hover:bg-green-700/90 text-bg-100 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <Icon v-if="getLoader('isSaving')" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
           <Icon v-else icon="lucide:check" class="w-3.5 h-3.5" />
@@ -346,16 +346,16 @@ const handleSave = async () => {
     <div class="flex flex-1 overflow-hidden">
 
       <!-- ── Sidebar ──────────────────────────────────────────────────────────── -->
-      <aside :class="['md:w-[360px] md:shrink-0 border-r border-charcoal-700 bg-charcoal-800/60 flex flex-col overflow-hidden', tab === 'Preview' ? 'hidden md:flex' : 'w-full']">
+      <aside :class="['md:w-[360px] md:shrink-0 border-r border-gray-400 bg-gray-200/60 flex flex-col overflow-hidden', tab === 'Preview' ? 'hidden md:flex' : 'w-full']">
         <!-- Tabs -->
-        <div class="flex border-b border-charcoal-700 shrink-0">
+        <div class="flex border-b border-gray-400 shrink-0">
           <button
             v-for="t in tabs" :key="t"
             @click="tab = t"
             :class="[
               'flex-1 py-2.5 text-xs font-medium transition-colors border-b-2',
               t === 'Preview' ? 'md:hidden' : '',
-              tab === t ? 'border-amber text-amber' : 'border-transparent text-cream-faint hover:text-cream'
+              tab === t ? 'border-green-700 text-green-700' : 'border-transparent text-gray-700 hover:text-gray-1000'
             ]"
           >
             <template v-if="t === 'Preview'">
@@ -372,37 +372,37 @@ const handleSave = async () => {
 
             <!-- Client presets -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Quick-fill from Clients</p>
-              <div v-if="isDraftLoading" class="flex items-center gap-2 text-xs text-cream-faint py-2">
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Quick-fill from Clients</p>
+              <div v-if="isDraftLoading" class="flex items-center gap-2 text-xs text-gray-700 py-2">
                 <Icon icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" /> Loading clients…
               </div>
-              <div v-else-if="clientPresets.length === 0" class="text-xs text-cream-faint py-2">
-                No clients yet. <a class="text-amber underline" href="/app/clients/create">Add one</a>
+              <div v-else-if="clientPresets.length === 0" class="text-xs text-gray-700 py-2">
+                No clients yet. <a class="text-green-700 underline" href="/app/clients/create">Add one</a>
               </div>
               <div v-else class="space-y-2 max-h-48 overflow-y-auto">
                 <button
                   v-for="client in clientPresets" :key="client.id"
                   @click="fillCompany(client)"
-                  class="w-full text-left p-3 rounded-lg border border-charcoal-600 bg-charcoal-700/40 hover:border-amber/50 hover:bg-charcoal-700 transition-colors group"
+                  class="w-full text-left p-3 rounded-lg border border-gray-500 bg-gray-400/40 hover:border-green-700/50 hover:bg-gray-400 transition-colors group"
                 >
-                  <p class="text-xs font-medium text-cream group-hover:text-amber transition-colors">{{ client.company ?? client.name }}</p>
-                  <p class="text-[10px] text-cream-faint mt-0.5">{{ client.email ?? '—' }}</p>
+                  <p class="text-xs font-medium text-gray-1000 group-hover:text-green-700 transition-colors">{{ client.company ?? client.name }}</p>
+                  <p class="text-[10px] text-gray-700 mt-0.5">{{ client.email ?? '—' }}</p>
                 </button>
               </div>
             </div>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
             <!-- Logo upload -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Company Logo</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Company Logo</p>
               <div v-if="form.logoUrl" class="mb-2 flex items-center gap-3">
-                <img :src="form.logoUrl" alt="Logo" class="h-10 w-auto rounded border border-charcoal-600 bg-charcoal-700 object-contain p-1" />
-                <button @click="form.logoUrl = ''" class="text-xs text-cream-faint hover:text-red-400 transition-colors flex items-center gap-1">
+                <img :src="form.logoUrl" alt="Logo" class="h-10 w-auto rounded border border-gray-500 bg-gray-400 object-contain p-1" />
+                <button @click="form.logoUrl = ''" class="text-xs text-gray-700 hover:text-red-400 transition-colors flex items-center gap-1">
                   <Icon icon="lucide:trash-2" class="w-3 h-3" /> Remove
                 </button>
               </div>
-              <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-dashed border-charcoal-600 hover:border-amber/50 text-xs text-cream-faint hover:text-cream transition-colors">
+              <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-dashed border-gray-500 hover:border-green-700/50 text-xs text-gray-700 hover:text-gray-1000 transition-colors">
                 <Icon v-if="isUploadingLogo" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
                 <Icon v-else icon="lucide:upload" class="w-3.5 h-3.5" />
                 {{ form.logoUrl ? 'Replace logo' : 'Upload logo' }}
@@ -413,7 +413,7 @@ const handleSave = async () => {
                 <button
                   v-for="logo in savedLogos" :key="logo.id"
                   @click="form.logoUrl = logo.url"
-                  :class="['rounded border p-0.5 transition-colors', form.logoUrl === logo.url ? 'border-amber' : 'border-charcoal-600 hover:border-amber/50']"
+                  :class="['rounded border p-0.5 transition-colors', form.logoUrl === logo.url ? 'border-green-700' : 'border-gray-500 hover:border-green-700/50']"
                   title="Use this logo"
                 >
                   <img :src="logo.url" class="h-8 w-auto max-w-[60px] object-contain" />
@@ -421,58 +421,58 @@ const handleSave = async () => {
               </div>
             </div>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
             <!-- Fields -->
             <div class="space-y-3">
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Company Name</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Company Name</label>
                 <input v-model="form.company" class="app-inp text-sm" placeholder="ACME STUDIO" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Tagline / Role</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Tagline / Role</label>
                 <input v-model="form.tagline" class="app-inp text-sm" placeholder="Creative Agency & Digital Studio" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Email</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Email</label>
                 <input v-model="form.email" type="email" class="app-inp text-sm" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Phone</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Phone</label>
                 <input v-model="form.phone" class="app-inp text-sm" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Website</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Website</label>
                 <input v-model="form.website" class="app-inp text-sm" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Address</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Address</label>
                 <textarea v-model="form.address" class="app-inp text-sm resize-none" rows="3" />
               </div>
               <div class="grid grid-cols-2 gap-2">
                 <div class="space-y-1">
-                  <label class="text-[10px] uppercase tracking-wider text-cream-faint">Reg. Number</label>
+                  <label class="text-[10px] uppercase tracking-wider text-gray-700">Reg. Number</label>
                   <input v-model="form.regNumber" class="app-inp text-sm font-mono" placeholder="12345678" />
                 </div>
                 <div class="space-y-1">
-                  <label class="text-[10px] uppercase tracking-wider text-cream-faint">VAT Number</label>
+                  <label class="text-[10px] uppercase tracking-wider text-gray-700">VAT Number</label>
                   <input v-model="form.vatNumber" class="app-inp text-sm font-mono" placeholder="GB123456789" />
                 </div>
               </div>
             </div>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
             <!-- Signature -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Signature Image</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Signature Image</p>
               <div v-if="form.signatureUrl" class="mb-2 flex items-center gap-3">
-                <img :src="form.signatureUrl" alt="Sig" class="h-10 w-auto rounded border border-charcoal-600 bg-charcoal-700 object-contain p-1" />
-                <button @click="form.signatureUrl = ''" class="text-xs text-cream-faint hover:text-red-400 transition-colors flex items-center gap-1">
+                <img :src="form.signatureUrl" alt="Sig" class="h-10 w-auto rounded border border-gray-500 bg-gray-400 object-contain p-1" />
+                <button @click="form.signatureUrl = ''" class="text-xs text-gray-700 hover:text-red-400 transition-colors flex items-center gap-1">
                   <Icon icon="lucide:trash-2" class="w-3 h-3" /> Remove
                 </button>
               </div>
-              <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-dashed border-charcoal-600 hover:border-amber/50 text-xs text-cream-faint hover:text-cream transition-colors">
+              <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-dashed border-gray-500 hover:border-green-700/50 text-xs text-gray-700 hover:text-gray-1000 transition-colors">
                 <Icon v-if="isUploadingSig" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
                 <Icon v-else icon="lucide:pen-line" class="w-3.5 h-3.5" />
                 {{ form.signatureUrl ? 'Replace signature' : 'Upload signature' }}
@@ -483,7 +483,7 @@ const handleSave = async () => {
                 <button
                   v-for="sig in savedSignatures" :key="sig.id"
                   @click="form.signatureUrl = sig.url"
-                  :class="['rounded border p-0.5 transition-colors', form.signatureUrl === sig.url ? 'border-amber' : 'border-charcoal-600 hover:border-amber/50']"
+                  :class="['rounded border p-0.5 transition-colors', form.signatureUrl === sig.url ? 'border-green-700' : 'border-gray-500 hover:border-green-700/50']"
                   title="Use this signature"
                 >
                   <img :src="sig.url" class="h-8 w-auto max-w-[80px] object-contain" />
@@ -495,51 +495,51 @@ const handleSave = async () => {
           <!-- ══════════════════════════ CONTENT TAB ══════════════════════════ -->
           <template v-if="tab === 'Content'">
             <div class="space-y-1">
-              <label class="text-[10px] uppercase tracking-wider text-cream-faint">Template Name</label>
+              <label class="text-[10px] uppercase tracking-wider text-gray-700">Template Name</label>
               <input v-model="form.name" class="app-inp text-sm" placeholder="Agency Proposal" />
             </div>
             <div class="space-y-1">
-              <label class="text-[10px] uppercase tracking-wider text-cream-faint">Subject / Re:</label>
+              <label class="text-[10px] uppercase tracking-wider text-gray-700">Subject / Re:</label>
               <input v-model="form.subject" class="app-inp text-sm" placeholder="Re: Project Engagement" />
             </div>
             <div class="space-y-1">
-              <label class="text-[10px] uppercase tracking-wider text-cream-faint">Salutation</label>
+              <label class="text-[10px] uppercase tracking-wider text-gray-700">Salutation</label>
               <input v-model="form.salutation" class="app-inp text-sm" placeholder="Dear [Client Name]," />
             </div>
             <div class="space-y-1">
-              <label class="text-[10px] uppercase tracking-wider text-cream-faint">Body Text</label>
+              <label class="text-[10px] uppercase tracking-wider text-gray-700">Body Text</label>
               <textarea v-model="form.body" class="app-inp text-sm resize-none" rows="10" placeholder="Letter body…" />
             </div>
             <div class="space-y-1">
-              <label class="text-[10px] uppercase tracking-wider text-cream-faint">Closing</label>
+              <label class="text-[10px] uppercase tracking-wider text-gray-700">Closing</label>
               <input v-model="form.closing" class="app-inp text-sm" placeholder="Yours sincerely," />
             </div>
             <div class="grid grid-cols-2 gap-2">
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Signer Name</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Signer Name</label>
                 <input v-model="form.signerName" class="app-inp text-sm" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Signer Title</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Signer Title</label>
                 <input v-model="form.signerTitle" class="app-inp text-sm" />
               </div>
             </div>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
-            <p class="text-[10px] uppercase tracking-wider text-cream-faint">Footer Columns</p>
-            <p class="text-[10px] text-cream-faint/60">Use <code class="text-amber">&#123;page&#125;</code> and <code class="text-amber">&#123;total&#125;</code> for page numbers</p>
+            <p class="text-[10px] uppercase tracking-wider text-gray-700">Footer Columns</p>
+            <p class="text-[10px] text-gray-700/60">Use <code class="text-green-700">&#123;page&#125;</code> and <code class="text-green-700">&#123;total&#125;</code> for page numbers</p>
             <div class="space-y-2">
               <div class="space-y-1">
-                <label class="text-[10px] text-cream-faint">Left</label>
+                <label class="text-[10px] text-gray-700">Left</label>
                 <input v-model="form.footerLeft" class="app-inp text-sm" :placeholder="form.website || 'www.yourstudio.com'" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] text-cream-faint">Center</label>
+                <label class="text-[10px] text-gray-700">Center</label>
                 <input v-model="form.footerCenter" class="app-inp text-sm" :placeholder="form.company || 'Company Name'" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] text-cream-faint">Right</label>
+                <label class="text-[10px] text-gray-700">Right</label>
                 <input v-model="form.footerRight" class="app-inp text-sm" placeholder="Page {page} of {total}" />
               </div>
             </div>
@@ -550,14 +550,14 @@ const handleSave = async () => {
 
             <!-- Theme picker -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Theme</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Theme</p>
               <div class="grid grid-cols-3 gap-2">
                 <button
                   v-for="th in themes" :key="th.id"
                   @click="form.theme = th.id as any"
                   :class="[
                     'p-2 rounded-lg border text-left transition-all',
-                    form.theme === th.id ? 'border-amber bg-amber/10' : 'border-charcoal-600 bg-charcoal-700/30 hover:border-charcoal-500'
+                    form.theme === th.id ? 'border-green-700 bg-green-700/10' : 'border-gray-500 bg-gray-400/30 hover:border-gray-500'
                   ]"
                 >
                   <!-- Mini preview -->
@@ -572,40 +572,40 @@ const handleSave = async () => {
                     </div>
                     <div v-if="th.id === 'legal'" class="absolute bottom-0 left-0 right-0 h-1" :style="{ backgroundColor: form.accentColor }"></div>
                   </div>
-                  <p :class="['text-[9px] font-semibold leading-tight', form.theme === th.id ? 'text-amber' : 'text-cream-muted']">{{ th.label }}</p>
+                  <p :class="['text-[9px] font-semibold leading-tight', form.theme === th.id ? 'text-green-700' : 'text-gray-900']">{{ th.label }}</p>
                 </button>
               </div>
             </div>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
             <!-- Accent color -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Accent Color</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Accent Color</p>
               <div class="flex items-center gap-2 mb-2">
-                <input type="color" v-model="form.accentColor" class="w-9 h-9 rounded cursor-pointer border border-charcoal-600 bg-charcoal-800 p-0.5" />
+                <input type="color" v-model="form.accentColor" class="w-9 h-9 rounded cursor-pointer border border-gray-500 bg-gray-200 p-0.5" />
                 <input v-model="form.accentColor" class="app-inp text-sm flex-1 font-mono" />
               </div>
               <!-- Brand colors from org -->
               <template v-if="orgBrandColors.length">
-                <p class="text-[9px] uppercase tracking-wider text-cream-faint/60 mb-1.5">Brand</p>
+                <p class="text-[9px] uppercase tracking-wider text-gray-700/60 mb-1.5">Brand</p>
                 <div class="flex gap-1.5 flex-wrap mb-2">
                   <button
                     v-for="c in orgBrandColors" :key="c"
                     @click="form.accentColor = c"
                     class="w-6 h-6 rounded-full border-2 transition-transform hover:scale-110"
-                    :class="form.accentColor === c ? 'border-cream' : 'border-transparent'"
+                    :class="form.accentColor === c ? 'border-gray-1000' : 'border-transparent'"
                     :style="{ background: c }"
                   />
                 </div>
-                <p class="text-[9px] uppercase tracking-wider text-cream-faint/60 mb-1.5">Palette</p>
+                <p class="text-[9px] uppercase tracking-wider text-gray-700/60 mb-1.5">Palette</p>
               </template>
               <div class="flex gap-1.5 flex-wrap">
                 <button
                   v-for="c in accentPresets" :key="c"
                   @click="form.accentColor = c"
                   class="w-6 h-6 rounded-full border-2 transition-transform hover:scale-110"
-                  :class="form.accentColor === c ? 'border-cream' : 'border-transparent'"
+                  :class="form.accentColor === c ? 'border-gray-1000' : 'border-transparent'"
                   :style="{ background: c }"
                 />
               </div>
@@ -613,7 +613,7 @@ const handleSave = async () => {
 
             <!-- Font -->
             <div class="space-y-1">
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint">Font Family</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700">Font Family</p>
               <select v-model="form.fontFamily" class="app-select text-sm">
                 <option v-for="f in fonts" :key="f.value" :value="f.value">{{ f.label }}</option>
               </select>
@@ -621,24 +621,24 @@ const handleSave = async () => {
 
             <!-- Header layout -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Header Layout</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Header Layout</p>
               <div class="grid grid-cols-4 gap-1.5">
                 <button
                   v-for="layout in (['left','center','right','split'] as const)" :key="layout"
                   @click="form.headerLayout = layout"
                   :class="[
                     'py-2 rounded border text-[9px] font-medium capitalize transition-colors',
-                    form.headerLayout === layout ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500'
+                    form.headerLayout === layout ? 'border-green-700 bg-green-700/10 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500'
                   ]"
                 >{{ layout }}</button>
               </div>
             </div>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
             <!-- Stamp -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-2">Stamp</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Stamp</p>
               <div class="grid grid-cols-3 gap-1.5">
                 <!-- None option -->
                 <button
@@ -646,7 +646,7 @@ const handleSave = async () => {
                   @click="form.stamp = ''"
                   :class="[
                     'py-1.5 rounded border text-xs font-semibold transition-colors',
-                    form.stamp === '' ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500'
+                    form.stamp === '' ? 'border-green-700 bg-green-700/10 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500'
                   ]"
                 >None</button>
                 <!-- Org stamps from draft-data -->
@@ -656,7 +656,7 @@ const handleSave = async () => {
                   @click="form.stamp = s.text"
                   :class="[
                     'py-1.5 rounded border text-xs font-semibold transition-colors',
-                    form.stamp === s.text ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 hover:border-charcoal-500'
+                    form.stamp === s.text ? 'border-green-700 bg-green-700/10 text-green-700' : 'border-gray-500 hover:border-gray-500'
                   ]"
                   :style="form.stamp !== s.text ? { color: s.color + 'cc', borderColor: s.color + '40' } : {}"
                 >{{ s.text }}</button>
@@ -666,35 +666,35 @@ const handleSave = async () => {
             <!-- Watermark -->
             <div class="space-y-2">
               <div class="flex items-center justify-between">
-                <p class="text-[10px] uppercase tracking-wider text-cream-faint">Watermark</p>
+                <p class="text-[10px] uppercase tracking-wider text-gray-700">Watermark</p>
                 <label class="flex items-center gap-1.5 cursor-pointer">
-                  <span class="text-[10px] text-cream-faint">{{ form.showWatermark ? 'Visible' : 'Hidden' }}</span>
+                  <span class="text-[10px] text-gray-700">{{ form.showWatermark ? 'Visible' : 'Hidden' }}</span>
                   <div class="relative">
                     <input type="checkbox" v-model="form.showWatermark" class="sr-only" />
-                    <div :class="['w-8 h-4 rounded-full transition-colors', form.showWatermark ? 'bg-amber' : 'bg-charcoal-600']"></div>
+                    <div :class="['w-8 h-4 rounded-full transition-colors', form.showWatermark ? 'bg-green-700' : 'bg-gray-500']"></div>
                     <div :class="['absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all', form.showWatermark ? 'left-4' : 'left-0.5']"></div>
                   </div>
                 </label>
               </div>
               <input v-model="form.watermark" class="app-inp text-sm" placeholder="CONFIDENTIAL" />
               <div class="flex items-center gap-2">
-                <input type="color" v-model="form.watermarkColor" class="w-8 h-8 rounded cursor-pointer border border-charcoal-600 bg-charcoal-800 p-0.5 shrink-0" />
-                <span class="text-xs text-cream-faint">Watermark color</span>
+                <input type="color" v-model="form.watermarkColor" class="w-8 h-8 rounded cursor-pointer border border-gray-500 bg-gray-200 p-0.5 shrink-0" />
+                <span class="text-xs text-gray-700">Watermark color</span>
               </div>
             </div>
 
-            <div class="h-px bg-charcoal-700"></div>
+            <div class="h-px bg-gray-400"></div>
 
             <!-- Show / hide toggles -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-cream-faint mb-3">Show / Hide</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-3">Show / Hide</p>
               <div class="space-y-2.5">
                 <div v-for="field in toggleFields" :key="field.key" class="flex items-center justify-between">
-                  <span class="text-xs text-cream-muted">{{ field.label }}</span>
+                  <span class="text-xs text-gray-900">{{ field.label }}</span>
                   <label class="flex items-center cursor-pointer">
                     <div class="relative">
                       <input type="checkbox" v-model="(form as any)[field.key]" class="sr-only" />
-                      <div :class="['w-8 h-4 rounded-full transition-colors', (form as any)[field.key] ? 'bg-amber' : 'bg-charcoal-600']"></div>
+                      <div :class="['w-8 h-4 rounded-full transition-colors', (form as any)[field.key] ? 'bg-green-700' : 'bg-gray-500']"></div>
                       <div :class="['absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all', (form as any)[field.key] ? 'left-4' : 'left-0.5']"></div>
                     </div>
                   </label>
@@ -707,30 +707,30 @@ const handleSave = async () => {
           <template v-if="tab === 'Settings'">
             <div class="space-y-3">
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Template Name</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Template Name</label>
                 <input v-model="form.name" class="app-inp text-sm" placeholder="Agency Proposal" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Date</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Date</label>
                 <input v-model="form.date" type="date" class="app-inp text-sm" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Reference Number</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Reference Number</label>
                 <input v-model="form.refNumber" class="app-inp text-sm font-mono" placeholder="REF-001" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Paper Size</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Paper Size</label>
                 <select v-model="form.paperSize" class="app-select text-sm">
                   <option>A4</option><option>Letter</option><option>Legal</option>
                 </select>
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-cream-faint">Orientation</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">Orientation</label>
                 <div class="grid grid-cols-2 gap-2">
                   <button
                     v-for="o in (['portrait','landscape'] as const)" :key="o"
                     @click="form.orientation = o"
-                    :class="['py-1.5 rounded border text-xs capitalize transition-colors', form.orientation === o ? 'border-amber bg-amber/10 text-amber' : 'border-charcoal-600 text-cream-faint hover:border-charcoal-500']"
+                    :class="['py-1.5 rounded border text-xs capitalize transition-colors', form.orientation === o ? 'border-green-700 bg-green-700/10 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500']"
                   >{{ o }}</button>
                 </div>
               </div>
@@ -741,14 +741,14 @@ const handleSave = async () => {
       </aside>
 
       <!-- ── Preview ──────────────────────────────────────────────────────────── -->
-      <main :class="['flex-col flex-1 bg-charcoal-900/50 overflow-y-auto items-center', tab === 'Preview' ? 'flex' : 'hidden md:flex']">
+      <main :class="['flex-col flex-1 bg-gray-100/50 overflow-y-auto items-center', tab === 'Preview' ? 'flex' : 'hidden md:flex']">
 
         <!-- Zoom bar -->
-        <div class="sticky top-0 z-10 w-full flex items-center justify-end gap-2 px-6 py-2 bg-charcoal-900/80 backdrop-blur-sm border-b border-charcoal-800">
-          <span class="text-xs text-cream-faint mr-2">{{ Math.round(zoom * 100) }}%</span>
-          <button @click="zoomOut" class="p-1.5 rounded bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream transition-colors"><Icon icon="lucide:minus" class="w-3.5 h-3.5" /></button>
-          <button @click="zoomIn"  class="p-1.5 rounded bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream transition-colors"><Icon icon="lucide:plus" class="w-3.5 h-3.5" /></button>
-          <button @click="zoomFit" class="px-2.5 py-1 rounded bg-charcoal-700 hover:bg-charcoal-600 border border-charcoal-600 text-cream-muted hover:text-cream text-xs transition-colors">Fit</button>
+        <div class="sticky top-0 z-10 w-full flex items-center justify-end gap-2 px-6 py-2 bg-gray-100/80 backdrop-blur-sm border-b border-gray-300">
+          <span class="text-xs text-gray-700 mr-2">{{ Math.round(zoom * 100) }}%</span>
+          <button @click="zoomOut" class="p-1.5 rounded bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 transition-colors"><Icon icon="lucide:minus" class="w-3.5 h-3.5" /></button>
+          <button @click="zoomIn"  class="p-1.5 rounded bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 transition-colors"><Icon icon="lucide:plus" class="w-3.5 h-3.5" /></button>
+          <button @click="zoomFit" class="px-2.5 py-1 rounded bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 text-xs transition-colors">Fit</button>
         </div>
 
         <!-- Document -->

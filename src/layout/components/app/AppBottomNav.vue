@@ -59,23 +59,23 @@ async function handleLogout() {
     <Transition name="slide-up">
       <div
         v-if="showMore"
-        class="fixed bottom-16 left-0 right-0 z-50 bg-charcoal-800 border-t border-charcoal-700 rounded-t-2xl shadow-2xl max-h-[72vh] flex flex-col"
+        class="fixed bottom-16 left-0 right-0 z-50 bg-gray-200 border-t border-gray-400 rounded-t-2xl shadow-2xl max-h-[72vh] flex flex-col"
       >
         <!-- Handle -->
         <div class="flex justify-center pt-3 pb-2 shrink-0">
-          <div class="w-10 h-1 rounded-full bg-charcoal-600" />
+          <div class="w-10 h-1 rounded-full bg-gray-500" />
         </div>
 
         <!-- User info -->
-        <div class="flex items-center gap-3 px-5 py-3 border-b border-charcoal-700/60 shrink-0">
-          <div class="w-9 h-9 rounded-full bg-amber flex items-center justify-center text-xs font-bold text-charcoal-900 shrink-0">
+        <div class="flex items-center gap-3 px-5 py-3 border-b border-gray-400/60 shrink-0">
+          <div class="w-9 h-9 rounded-full bg-green-700 flex items-center justify-center text-xs font-bold text-bg-100 shrink-0">
             {{ (authStore.getUser?.first_name?.[0] ?? '').toUpperCase() }}{{ (authStore.getUser?.last_name?.[0] ?? '').toUpperCase() }}
           </div>
           <div class="min-w-0">
-            <div class="text-sm font-medium text-cream truncate capitalize">
+            <div class="text-sm font-medium text-gray-1000 truncate capitalize">
               {{ authStore.getUser?.first_name }} {{ authStore.getUser?.last_name }}
             </div>
-            <div class="text-xs text-cream-faint truncate">{{ authStore.getCurrentOrganization?.name }}</div>
+            <div class="text-xs text-gray-700 truncate">{{ authStore.getCurrentOrganization?.name }}</div>
           </div>
         </div>
 
@@ -86,7 +86,7 @@ async function handleLogout() {
             :key="item.to"
             :class="[
               'flex flex-col items-center gap-1.5 p-3 rounded-xl transition-colors',
-              isActive(item.to) ? 'bg-amber/10 text-amber' : 'text-cream-muted hover:bg-charcoal-700 hover:text-cream',
+              isActive(item.to) ? 'bg-green-700/10 text-green-700' : 'text-gray-900 hover:bg-gray-400 hover:text-gray-1000',
             ]"
             @click="navigate(item.to)"
           >
@@ -96,7 +96,7 @@ async function handleLogout() {
         </div>
 
         <!-- Sign out -->
-        <div class="px-3 pb-4 pt-2 border-t border-charcoal-700/60 shrink-0">
+        <div class="px-3 pb-4 pt-2 border-t border-gray-400/60 shrink-0">
           <button
             :disabled="isLoggingOut"
             class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-red-400 hover:bg-red-500/10 transition-colors text-sm font-medium disabled:opacity-50"
@@ -111,12 +111,12 @@ async function handleLogout() {
     </Transition>
 
     <!-- Bottom bar -->
-    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-dark-light border-t border-charcoal-700 flex items-stretch h-16 bottom-nav-safe">
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-bg-200 border-t border-gray-400 flex items-stretch h-16 bottom-nav-safe">
 
       <!-- Dashboard -->
       <RouterLink
         :to="{ name: 'dashboard' }"
-        :class="['flex-1 flex flex-col items-center justify-center gap-1 transition-colors', isActive('/app/dashboard') ? 'text-amber' : 'text-cream-faint']"
+        :class="['flex-1 flex flex-col items-center justify-center gap-1 transition-colors', isActive('/app/dashboard') ? 'text-green-700' : 'text-gray-700']"
       >
         <Icon icon="lucide:layout-dashboard" class="w-5 h-5" />
         <span class="text-[10px] font-medium">Home</span>
@@ -126,7 +126,7 @@ async function handleLogout() {
       <RouterLink
         v-if="can('invoices.read')"
         :to="{ name: 'invoices' }"
-        :class="['flex-1 flex flex-col items-center justify-center gap-1 transition-colors', isActive('/app/invoices') ? 'text-amber' : 'text-cream-faint']"
+        :class="['flex-1 flex flex-col items-center justify-center gap-1 transition-colors', isActive('/app/invoices') ? 'text-green-700' : 'text-gray-700']"
       >
         <Icon icon="lucide:file-text" class="w-5 h-5" />
         <span class="text-[10px] font-medium">Invoices</span>
@@ -137,10 +137,10 @@ async function handleLogout() {
         <RouterLink
           v-if="can('invoices.create')"
           :to="{ name: 'invoices.create' }"
-          class="w-12 h-12 -mt-5 rounded-full bg-amber hover:bg-amber-light flex items-center justify-center shadow-lg shadow-amber/30 transition-colors"
+          class="w-12 h-12 -mt-5 rounded-full bg-green-700 hover:bg-green-800 flex items-center justify-center shadow-lg shadow-green-700/30 transition-colors"
           aria-label="New Invoice"
         >
-          <Icon icon="lucide:plus" class="w-5 h-5 text-charcoal-900" />
+          <Icon icon="lucide:plus" class="w-5 h-5 text-bg-100" />
         </RouterLink>
       </div>
 
@@ -148,7 +148,7 @@ async function handleLogout() {
       <RouterLink
         v-if="can('clients.read')"
         :to="{ name: 'clients' }"
-        :class="['flex-1 flex flex-col items-center justify-center gap-1 transition-colors', isActive('/app/clients') ? 'text-amber' : 'text-cream-faint']"
+        :class="['flex-1 flex flex-col items-center justify-center gap-1 transition-colors', isActive('/app/clients') ? 'text-green-700' : 'text-gray-700']"
       >
         <Icon icon="lucide:users" class="w-5 h-5" />
         <span class="text-[10px] font-medium">Clients</span>
@@ -156,7 +156,7 @@ async function handleLogout() {
 
       <!-- More -->
       <button
-        :class="['flex-1 flex flex-col items-center justify-center gap-1 transition-colors', showMore ? 'text-amber' : 'text-cream-faint']"
+        :class="['flex-1 flex flex-col items-center justify-center gap-1 transition-colors', showMore ? 'text-green-700' : 'text-gray-700']"
         @click="showMore = !showMore"
       >
         <Icon icon="lucide:grid-2x2" class="w-5 h-5" />

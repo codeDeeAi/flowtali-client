@@ -95,7 +95,7 @@ const kpiCards = computed(() => {
 
 // ─── Top clients ──────────────────────────────────────────────────────────────
 
-const clientColors = ['#e8a83e', '#60a5fa', '#4ade80', '#a78bfa', '#f87171', '#38bdf8', '#fb923c', '#f472b6']
+const clientColors = ['#00c853', '#60a5fa', '#4ade80', '#a78bfa', '#f87171', '#38bdf8', '#fb923c', '#f472b6']
 
 const topClients = computed(() => {
   const clients = data.value?.top_clients ?? []
@@ -220,38 +220,38 @@ const receiptVolumeBars = computed(() => {
 
     <!-- Upgrade wall -->
     <div v-if="!canAccess" class="flex flex-col items-center justify-center py-24 text-center">
-      <div class="w-14 h-14 rounded-2xl bg-amber/10 border border-amber/20 flex items-center justify-center mb-5">
-        <Icon icon="lucide:bar-chart-2" class="w-7 h-7 text-amber" />
+      <div class="w-14 h-14 rounded-2xl bg-green-700/10 border border-green-700/20 flex items-center justify-center mb-5">
+        <Icon icon="lucide:bar-chart-2" class="w-7 h-7 text-green-700" />
       </div>
-      <h2 class="text-xl font-semibold text-cream mb-2">Analytics requires Business</h2>
-      <p class="text-cream-muted text-sm max-w-sm mb-6">Revenue charts, client breakdowns, invoice analytics, and performance metrics are available on the Business plan.</p>
+      <h2 class="text-xl font-semibold text-gray-1000 mb-2">Analytics requires Business</h2>
+      <p class="text-gray-900 text-sm max-w-sm mb-6">Revenue charts, client breakdowns, invoice analytics, and performance metrics are available on the Business plan.</p>
       <button @click="router.push({ name: 'billing' })"
-        class="px-6 py-2.5 rounded-lg bg-amber hover:bg-amber-light text-charcoal-900 text-sm font-semibold transition-colors">
+        class="px-6 py-2.5 rounded-lg bg-green-700 hover:bg-green-800 text-bg-100 text-sm font-semibold transition-colors">
         Upgrade to Business
       </button>
     </div>
 
     <!-- Loading -->
     <div v-else-if="isLoading" class="flex items-center justify-center py-20">
-      <Icon icon="lucide:loader-2" class="w-7 h-7 text-amber animate-spin" />
+      <Icon icon="lucide:loader-2" class="w-7 h-7 text-green-700 animate-spin" />
     </div>
 
     <template v-else-if="data">
 
       <!-- KPI cards -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div v-for="kpi in kpiCards" :key="kpi.label" class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+        <div v-for="kpi in kpiCards" :key="kpi.label" class="bg-gray-200 border border-gray-400 rounded-xl p-5">
           <div class="flex items-center justify-between mb-3">
-            <div class="w-8 h-8 rounded-lg bg-amber/10 flex items-center justify-center">
-              <Icon :icon="kpi.icon" class="w-4 h-4 text-amber" />
+            <div class="w-8 h-8 rounded-lg bg-green-700/10 flex items-center justify-center">
+              <Icon :icon="kpi.icon" class="w-4 h-4 text-green-700" />
             </div>
             <span v-if="kpi.change" :class="['text-xs font-semibold', kpi.positive ? 'text-green-400' : 'text-red-400']">
               {{ kpi.change }}
             </span>
           </div>
-          <div class="font-display text-2xl font-semibold text-cream">{{ kpi.value }}</div>
-          <div class="text-xs text-cream-faint mt-1">{{ kpi.label }}</div>
-          <div v-if="!isAll" class="text-[10px] text-cream-faint/60 mt-0.5">vs last period</div>
+          <div class="font-sans text-2xl font-semibold text-gray-1000">{{ kpi.value }}</div>
+          <div class="text-xs text-gray-700 mt-1">{{ kpi.label }}</div>
+          <div v-if="!isAll" class="text-[10px] text-gray-700/60 mt-0.5">vs last period</div>
         </div>
       </div>
 
@@ -259,66 +259,66 @@ const receiptVolumeBars = computed(() => {
       <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
 
         <!-- Revenue trend (line chart) -->
-        <div class="xl:col-span-2 bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+        <div class="xl:col-span-2 bg-gray-200 border border-gray-400 rounded-xl p-5">
           <div class="mb-4">
-            <h3 class="text-sm font-semibold text-cream">Revenue Trend</h3>
-            <p class="text-xs text-cream-faint mt-0.5">Monthly billed vs collected</p>
+            <h3 class="text-sm font-semibold text-gray-1000">Revenue Trend</h3>
+            <p class="text-xs text-gray-700 mt-0.5">Monthly billed vs collected</p>
           </div>
           <svg :viewBox="`0 0 ${chartW} ${chartH + 20}`" class="w-full" style="height: 180px;">
             <defs>
               <linearGradient id="areaAmber" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#e8a83e" stop-opacity="0.25"/>
-                <stop offset="100%" stop-color="#e8a83e" stop-opacity="0"/>
+                <stop offset="0%" stop-color="#00c853" stop-opacity="0.25"/>
+                <stop offset="100%" stop-color="#00c853" stop-opacity="0"/>
               </linearGradient>
               <linearGradient id="areaGreen" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stop-color="#4ade80" stop-opacity="0.15"/>
                 <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
               </linearGradient>
             </defs>
-            <line v-for="y in trendGridLines" :key="y" x1="0" :y1="y" :x2="chartW" :y2="y" stroke="#222228" stroke-width="1"/>
+            <line v-for="y in trendGridLines" :key="y" x1="0" :y1="y" :x2="chartW" :y2="y" stroke="#292929" stroke-width="1"/>
             <polygon :points="`0,${chartH} ${billedPolyline} ${chartW},${chartH}`" fill="url(#areaAmber)"/>
             <polygon :points="`0,${chartH} ${collectedPolyline} ${chartW},${chartH}`" fill="url(#areaGreen)"/>
-            <polyline :points="billedPolyline"    fill="none" stroke="#e8a83e" stroke-width="2" stroke-linejoin="round"/>
+            <polyline :points="billedPolyline"    fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
             <polyline :points="collectedPolyline" fill="none" stroke="#4ade80" stroke-width="2" stroke-linejoin="round"/>
-            <text v-for="lbl in trendLabels" :key="lbl.x" :x="lbl.x" :y="chartH + 16" text-anchor="middle" fill="#6b6560" font-size="9" font-family="DM Sans">{{ lbl.label }}</text>
+            <text v-for="lbl in trendLabels" :key="lbl.x" :x="lbl.x" :y="chartH + 16" text-anchor="middle" fill="#a0a0a0" font-size="9" font-family="Geist Sans">{{ lbl.label }}</text>
           </svg>
           <div class="flex items-center gap-4 mt-2">
-            <div class="flex items-center gap-1.5 text-xs text-cream-muted"><div class="w-3 h-0.5 bg-amber rounded"></div>Billed</div>
-            <div class="flex items-center gap-1.5 text-xs text-cream-muted"><div class="w-3 h-0.5 bg-green-400 rounded"></div>Collected</div>
+            <div class="flex items-center gap-1.5 text-xs text-gray-900"><div class="w-3 h-0.5 bg-green-700 rounded"></div>Billed</div>
+            <div class="flex items-center gap-1.5 text-xs text-gray-900"><div class="w-3 h-0.5 bg-green-400 rounded"></div>Collected</div>
           </div>
         </div>
 
         <!-- Top clients -->
-        <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
-          <h3 class="text-sm font-semibold text-cream mb-1">Top Clients</h3>
-          <p class="text-xs text-cream-faint mb-5">By revenue this period</p>
+        <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
+          <h3 class="text-sm font-semibold text-gray-1000 mb-1">Top Clients</h3>
+          <p class="text-xs text-gray-700 mb-5">By revenue this period</p>
           <div v-if="topClients.length > 0" class="space-y-4">
             <div v-for="client in topClients" :key="client.name">
               <div class="flex items-center justify-between mb-1.5">
-                <span class="text-xs text-cream-muted truncate max-w-[140px]">{{ client.name }}</span>
-                <span class="text-xs font-mono font-medium text-cream shrink-0 ml-2">{{ client.revenue }}</span>
+                <span class="text-xs text-gray-900 truncate max-w-[140px]">{{ client.name }}</span>
+                <span class="text-xs font-mono font-medium text-gray-1000 shrink-0 ml-2">{{ client.revenue }}</span>
               </div>
-              <div class="h-1.5 bg-charcoal-700 rounded-full overflow-hidden">
+              <div class="h-1.5 bg-gray-400 rounded-full overflow-hidden">
                 <div class="h-full rounded-full transition-all duration-700" :style="{ width: `${client.pct}%`, backgroundColor: client.color }" />
               </div>
             </div>
           </div>
-          <p v-else class="text-xs text-cream-faint/60 mt-4">No paid invoices this period</p>
+          <p v-else class="text-xs text-gray-700/60 mt-4">No paid invoices this period</p>
         </div>
       </div>
 
       <!-- Bar chart – Monthly invoice volume -->
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
-        <h3 class="text-sm font-semibold text-cream mb-1">Monthly Invoice Volume</h3>
-        <p class="text-xs text-cream-faint mb-4">Number of invoices issued per month</p>
+      <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
+        <h3 class="text-sm font-semibold text-gray-1000 mb-1">Monthly Invoice Volume</h3>
+        <p class="text-xs text-gray-700 mb-4">Number of invoices issued per month</p>
         <svg :viewBox="`0 0 ${barChartW} ${barChartH + 14}`" class="w-full" style="height: 140px;">
           <defs>
             <linearGradient id="volBar" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#e8a83e" stop-opacity="0.9"/>
-              <stop offset="100%" stop-color="#e8a83e" stop-opacity="0.2"/>
+              <stop offset="0%" stop-color="#00c853" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#00c853" stop-opacity="0.2"/>
             </linearGradient>
           </defs>
-          <line v-for="y in barGridLines" :key="y" x1="0" :y1="y" :x2="barChartW" :y2="y" stroke="#222228" stroke-width="1"/>
+          <line v-for="y in barGridLines" :key="y" x1="0" :y1="y" :x2="barChartW" :y2="y" stroke="#292929" stroke-width="1"/>
           <rect
             v-for="bar in volumeBars" :key="bar.lx"
             :x="bar.x"
@@ -328,7 +328,7 @@ const receiptVolumeBars = computed(() => {
             rx="4"
             fill="url(#volBar)"
           />
-          <text v-for="bar in volumeBars" :key="`lbl-${bar.lx}`" v-show="bar.showLabel" :x="bar.lx" :y="barChartH + 12" text-anchor="middle" fill="#6b6560" font-size="9" font-family="DM Sans">{{ bar.label }}</text>
+          <text v-for="bar in volumeBars" :key="`lbl-${bar.lx}`" v-show="bar.showLabel" :x="bar.lx" :y="barChartH + 12" text-anchor="middle" fill="#a0a0a0" font-size="9" font-family="Geist Sans">{{ bar.label }}</text>
         </svg>
       </div>
 
@@ -337,55 +337,55 @@ const receiptVolumeBars = computed(() => {
         <div
           v-for="[status, meta] in Object.entries(data.status_breakdown)"
           :key="status"
-          class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-4"
+          class="bg-gray-200 border border-gray-400 rounded-xl p-4"
         >
-          <div class="text-[10px] font-semibold uppercase tracking-wider text-cream-faint mb-2">{{ status }}</div>
-          <div class="text-xl font-semibold text-cream font-display">{{ meta.count }}</div>
-          <div v-if="meta.amount > 0" class="text-xs text-cream-faint mt-0.5">{{ fmtCurrency(meta.amount) }}</div>
+          <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-700 mb-2">{{ status }}</div>
+          <div class="text-xl font-semibold text-gray-1000 font-sans">{{ meta.count }}</div>
+          <div v-if="meta.amount > 0" class="text-xs text-gray-700 mt-0.5">{{ fmtCurrency(meta.amount) }}</div>
         </div>
       </div>
 
       <!-- ─── Receipts Section ───────────────────────────────────────────────── -->
-      <div class="border-t border-charcoal-700/50 pt-5">
-        <h2 class="text-sm font-semibold text-cream mb-1">Receipts</h2>
-        <p class="text-xs text-cream-faint mb-4">Receipts issued in this period</p>
+      <div class="border-t border-gray-400/50 pt-5">
+        <h2 class="text-sm font-semibold text-gray-1000 mb-1">Receipts</h2>
+        <p class="text-xs text-gray-700 mb-4">Receipts issued in this period</p>
 
         <!-- Receipt stat cards -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
-            <div class="w-8 h-8 rounded-lg bg-amber/10 flex items-center justify-center mb-3">
-              <svg class="w-4 h-4 text-amber" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8M16 12H8M11 16H8"/></svg>
+          <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
+            <div class="w-8 h-8 rounded-lg bg-green-700/10 flex items-center justify-center mb-3">
+              <svg class="w-4 h-4 text-green-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8M16 12H8M11 16H8"/></svg>
             </div>
-            <div class="font-display text-2xl font-semibold text-cream">{{ data.receipt_stats.total }}</div>
-            <div class="text-xs text-cream-faint mt-1">Total Receipts</div>
+            <div class="font-sans text-2xl font-semibold text-gray-1000">{{ data.receipt_stats.total }}</div>
+            <div class="text-xs text-gray-700 mt-1">Total Receipts</div>
           </div>
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+          <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
             <div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center mb-3">
               <svg class="w-4 h-4 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
-            <div class="font-display text-2xl font-semibold text-cream">{{ data.receipt_stats.breakdown.finalized.count }}</div>
-            <div class="text-xs text-cream-faint mt-1">Finalized</div>
+            <div class="font-sans text-2xl font-semibold text-gray-1000">{{ data.receipt_stats.breakdown.finalized.count }}</div>
+            <div class="text-xs text-gray-700 mt-1">Finalized</div>
           </div>
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
-            <div class="w-8 h-8 rounded-lg bg-charcoal-600/50 flex items-center justify-center mb-3">
-              <svg class="w-4 h-4 text-cream-faint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
+            <div class="w-8 h-8 rounded-lg bg-gray-500/50 flex items-center justify-center mb-3">
+              <svg class="w-4 h-4 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
             </div>
-            <div class="font-display text-2xl font-semibold text-cream">{{ data.receipt_stats.breakdown.draft.count }}</div>
-            <div class="text-xs text-cream-faint mt-1">Drafts</div>
+            <div class="font-sans text-2xl font-semibold text-gray-1000">{{ data.receipt_stats.breakdown.draft.count }}</div>
+            <div class="text-xs text-gray-700 mt-1">Drafts</div>
           </div>
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+          <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
             <div class="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center mb-3">
               <svg class="w-4 h-4 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
             </div>
-            <div class="font-display text-2xl font-semibold text-cream">{{ data.receipt_stats.breakdown.void.count }}</div>
-            <div class="text-xs text-cream-faint mt-1">Void</div>
+            <div class="font-sans text-2xl font-semibold text-gray-1000">{{ data.receipt_stats.breakdown.void.count }}</div>
+            <div class="text-xs text-gray-700 mt-1">Void</div>
           </div>
         </div>
 
         <!-- Monthly receipt volume bar chart -->
-        <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
-          <h3 class="text-sm font-semibold text-cream mb-1">Monthly Receipt Volume</h3>
-          <p class="text-xs text-cream-faint mb-4">Number of receipts issued per month</p>
+        <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
+          <h3 class="text-sm font-semibold text-gray-1000 mb-1">Monthly Receipt Volume</h3>
+          <p class="text-xs text-gray-700 mb-4">Number of receipts issued per month</p>
           <template v-if="receiptVolumeMax > 0">
             <svg :viewBox="`0 0 ${barChartW} ${barChartH + 14}`" class="w-full" style="height: 140px;">
               <defs>
@@ -394,23 +394,23 @@ const receiptVolumeBars = computed(() => {
                   <stop offset="100%" stop-color="#34d399" stop-opacity="0.2"/>
                 </linearGradient>
               </defs>
-              <line v-for="y in barGridLines" :key="y" x1="0" :y1="y" :x2="barChartW" :y2="y" stroke="#222228" stroke-width="1"/>
+              <line v-for="y in barGridLines" :key="y" x1="0" :y1="y" :x2="barChartW" :y2="y" stroke="#292929" stroke-width="1"/>
               <rect
                 v-for="bar in receiptVolumeBars" :key="bar.lx"
                 :x="bar.x" :y="bar.y" :width="bar.w" :height="bar.h"
                 rx="4" fill="url(#recBar)"
               />
-              <text v-for="bar in receiptVolumeBars" :key="`rl-${bar.lx}`" v-show="bar.showLabel" :x="bar.lx" :y="barChartH + 12" text-anchor="middle" fill="#6b6560" font-size="9" font-family="DM Sans">{{ bar.label }}</text>
+              <text v-for="bar in receiptVolumeBars" :key="`rl-${bar.lx}`" v-show="bar.showLabel" :x="bar.lx" :y="barChartH + 12" text-anchor="middle" fill="#a0a0a0" font-size="9" font-family="Geist Sans">{{ bar.label }}</text>
             </svg>
           </template>
-          <p v-else class="text-xs text-cream-faint/60 py-8 text-center">No receipts issued this period</p>
+          <p v-else class="text-xs text-gray-700/60 py-8 text-center">No receipts issued this period</p>
         </div>
       </div>
 
     </template>
 
     <!-- Empty state before data loads -->
-    <div v-else class="flex items-center justify-center py-20 text-cream-faint text-sm">
+    <div v-else class="flex items-center justify-center py-20 text-gray-700 text-sm">
       No analytics data available.
     </div>
 

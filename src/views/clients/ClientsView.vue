@@ -28,7 +28,7 @@ const initials = (name: string) =>
   name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
 
 const avatarColor = (id: string) => {
-  const colors = ['#60a5fa', '#a78bfa', '#f87171', '#4ade80', '#e8a83e', '#38bdf8', '#fb923c', '#c084fc'];
+  const colors = ['#60a5fa', '#a78bfa', '#f87171', '#4ade80', '#00c853', '#38bdf8', '#fb923c', '#c084fc'];
   const idx = id.charCodeAt(id.length - 1) % colors.length;
   return colors[idx];
 };
@@ -49,8 +49,8 @@ const clientTypeBadge = (type: string) => {
     organization: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
     individual: 'bg-green-500/10 text-green-400 border-green-500/20',
     freelancer: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-    agency: 'bg-amber/10 text-amber border-amber/20',
-    other: 'bg-charcoal-600 text-cream-muted border-charcoal-500',
+    agency: 'bg-green-700/10 text-green-700 border-green-700/20',
+    other: 'bg-gray-500 text-gray-900 border-gray-500',
   };
   return 'text-[10px] font-semibold px-1.5 py-0.5 rounded-full border ' + (map[type] ?? map.other);
 };
@@ -104,7 +104,7 @@ const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params:
         </div>
         <button
           @click="goToCreate"
-          class="flex items-center gap-2 bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-xs px-3 py-2 rounded-lg transition-colors"
+          class="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs px-3 py-2 rounded-lg transition-colors"
         >
           <Icon icon="lucide:user-plus" class="w-3.5 h-3.5" />
           <span class="hidden sm:inline">Add Client</span>
@@ -114,7 +114,7 @@ const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params:
       <div class="flex items-center gap-2">
         <!-- Search -->
         <div class="relative flex-1">
-          <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream-faint" />
+          <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-700" />
           <input
             v-model="searchInput"
             type="search"
@@ -125,17 +125,17 @@ const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params:
           />
         </div>
         <!-- View toggle -->
-        <div class="flex items-center bg-charcoal-800 border border-charcoal-700 rounded-lg p-0.5 shrink-0">
+        <div class="flex items-center bg-gray-200 border border-gray-400 rounded-lg p-0.5 shrink-0">
           <button
             @click="viewMode = 'grid'"
-            :class="['p-2 rounded-md transition-colors', viewMode === 'grid' ? 'bg-charcoal-600 text-cream' : 'text-cream-faint hover:text-cream']"
+            :class="['p-2 rounded-md transition-colors', viewMode === 'grid' ? 'bg-gray-500 text-gray-1000' : 'text-gray-700 hover:text-gray-1000']"
             title="Grid view"
           >
             <Icon icon="lucide:layout-grid" class="w-4 h-4" />
           </button>
           <button
             @click="viewMode = 'list'"
-            :class="['p-2 rounded-md transition-colors', viewMode === 'list' ? 'bg-charcoal-600 text-cream' : 'text-cream-faint hover:text-cream']"
+            :class="['p-2 rounded-md transition-colors', viewMode === 'list' ? 'bg-gray-500 text-gray-1000' : 'text-gray-700 hover:text-gray-1000']"
             title="List view"
           >
             <Icon icon="lucide:list" class="w-4 h-4" />
@@ -146,16 +146,16 @@ const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params:
 
     <!-- Loading -->
     <div v-if="isLoading" class="flex items-center justify-center py-20">
-      <Icon icon="lucide:loader-2" class="w-6 h-6 text-cream-faint animate-spin" />
+      <Icon icon="lucide:loader-2" class="w-6 h-6 text-gray-700 animate-spin" />
     </div>
 
     <!-- Empty state -->
     <div v-else-if="clients.length === 0" class="flex flex-col items-center justify-center py-20 text-center">
-      <div class="w-12 h-12 rounded-full bg-charcoal-700 flex items-center justify-center mb-4">
-        <Icon icon="lucide:users" class="w-6 h-6 text-cream-faint" />
+      <div class="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center mb-4">
+        <Icon icon="lucide:users" class="w-6 h-6 text-gray-700" />
       </div>
-      <p class="text-cream-faint text-sm">No clients found</p>
-      <p class="text-cream-faint/60 text-xs mt-1">{{ searchQuery ? 'Try adjusting your search query' : 'Add your first client to get started' }}</p>
+      <p class="text-gray-700 text-sm">No clients found</p>
+      <p class="text-gray-700/60 text-xs mt-1">{{ searchQuery ? 'Try adjusting your search query' : 'Add your first client to get started' }}</p>
     </div>
 
     <!-- Grid view -->
@@ -163,25 +163,25 @@ const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params:
       <div
         v-for="client in clients" :key="client.id"
         @click="goToView(client.id)"
-        class="bg-charcoal-800 border border-charcoal-700 hover:border-charcoal-500 rounded-xl p-5 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 cursor-pointer group"
+        class="bg-gray-200 border border-gray-400 hover:border-gray-500 rounded-xl p-5 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 cursor-pointer group"
       >
         <!-- Header -->
         <div class="flex items-center gap-3 mb-4">
           <div
-            class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-charcoal-900 shrink-0"
+            class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-bg-100 shrink-0"
             :style="{ backgroundColor: avatarColor(client.id) }"
           >
             {{ initials(client.full_name) }}
           </div>
           <div class="flex-1 min-w-0">
-            <div class="text-sm font-semibold text-cream truncate">{{ client.full_name }}</div>
-            <div class="text-xs text-cream-faint truncate">{{ client.company ?? '—' }}</div>
+            <div class="text-sm font-semibold text-gray-1000 truncate">{{ client.full_name }}</div>
+            <div class="text-xs text-gray-700 truncate">{{ client.company ?? '—' }}</div>
           </div>
           <div class="flex items-center gap-1.5">
             <span :class="clientTypeBadge(client.client_type)">{{ clientTypeLabel(client.client_type) }}</span>
             <button
               @click.stop="goToEdit(client.id)"
-              class="opacity-0 group-hover:opacity-100 p-1 rounded-md hover:bg-charcoal-600 text-cream-faint hover:text-cream transition-all"
+              class="opacity-0 group-hover:opacity-100 p-1 rounded-md hover:bg-gray-500 text-gray-700 hover:text-gray-1000 transition-all"
               title="Edit client"
             >
               <Icon icon="lucide:pencil" class="w-3 h-3" />
@@ -191,11 +191,11 @@ const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params:
 
         <!-- Contact info -->
         <div class="space-y-1.5">
-          <div class="flex items-center gap-2 text-xs text-cream-faint">
+          <div class="flex items-center gap-2 text-xs text-gray-700">
             <Icon icon="lucide:mail" class="w-3.5 h-3.5 shrink-0" />
             <span class="truncate">{{ client.email ?? '—' }}</span>
           </div>
-          <div class="flex items-center gap-2 text-xs text-cream-faint">
+          <div class="flex items-center gap-2 text-xs text-gray-700">
             <Icon icon="lucide:phone" class="w-3.5 h-3.5 shrink-0" />
             <span>{{ primaryPhone(client) }}</span>
           </div>
@@ -204,9 +204,9 @@ const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params:
     </div>
 
     <!-- List view -->
-    <div v-else class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden">
+    <div v-else class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden">
       <!-- Table header -->
-      <div class="grid grid-cols-[2fr_2fr_1fr_auto] gap-4 px-4 py-3 border-b border-charcoal-700 text-[11px] font-medium text-cream-faint uppercase tracking-wide">
+      <div class="grid grid-cols-[2fr_2fr_1fr_auto] gap-4 px-4 py-3 border-b border-gray-400 text-[11px] font-medium text-gray-700 uppercase tracking-wide">
         <span>Client</span>
         <span>Contact</span>
         <span>Type</span>
@@ -217,29 +217,29 @@ const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params:
       <div
         v-for="(client, i) in clients" :key="client.id"
         @click="goToView(client.id)"
-        :class="['grid grid-cols-[2fr_2fr_1fr_auto] gap-4 px-4 py-3.5 items-center hover:bg-charcoal-700/40 transition-colors cursor-pointer group', i !== clients.length - 1 ? 'border-b border-charcoal-700/60' : '']"
+        :class="['grid grid-cols-[2fr_2fr_1fr_auto] gap-4 px-4 py-3.5 items-center hover:bg-gray-400/40 transition-colors cursor-pointer group', i !== clients.length - 1 ? 'border-b border-gray-400/60' : '']"
       >
         <!-- Client name + company -->
         <div class="flex items-center gap-3 min-w-0">
           <div
-            class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-charcoal-900 shrink-0"
+            class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-bg-100 shrink-0"
             :style="{ backgroundColor: avatarColor(client.id) }"
           >
             {{ initials(client.full_name) }}
           </div>
           <div class="min-w-0">
-            <div class="text-sm font-medium text-cream truncate">{{ client.full_name }}</div>
-            <div class="text-xs text-cream-faint truncate">{{ client.company ?? '—' }}</div>
+            <div class="text-sm font-medium text-gray-1000 truncate">{{ client.full_name }}</div>
+            <div class="text-xs text-gray-700 truncate">{{ client.company ?? '—' }}</div>
           </div>
         </div>
 
         <!-- Contact -->
         <div class="min-w-0 space-y-0.5">
-          <div class="flex items-center gap-1.5 text-xs text-cream-faint">
+          <div class="flex items-center gap-1.5 text-xs text-gray-700">
             <Icon icon="lucide:mail" class="w-3 h-3 shrink-0" />
             <span class="truncate">{{ client.email ?? '—' }}</span>
           </div>
-          <div class="flex items-center gap-1.5 text-xs text-cream-faint">
+          <div class="flex items-center gap-1.5 text-xs text-gray-700">
             <Icon icon="lucide:phone" class="w-3 h-3 shrink-0" />
             <span>{{ primaryPhone(client) }}</span>
           </div>
@@ -254,7 +254,7 @@ const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params:
         <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             @click.stop="goToEdit(client.id)"
-            class="p-1.5 rounded-md hover:bg-charcoal-600 text-cream-faint hover:text-cream transition-colors"
+            class="p-1.5 rounded-md hover:bg-gray-500 text-gray-700 hover:text-gray-1000 transition-colors"
             title="Edit client"
           >
             <Icon icon="lucide:pencil" class="w-3.5 h-3.5" />

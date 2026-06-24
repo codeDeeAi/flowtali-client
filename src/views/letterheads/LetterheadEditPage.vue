@@ -47,7 +47,7 @@ onMounted(async () => {
       showRef:          lh.show_ref,
       theme:            lh.theme,
       accentColor:      lh.accent_color,
-      fontFamily:       lh.font_family ?? "'DM Sans', sans-serif",
+      fontFamily:       lh.font_family ?? "var(--font-sans)",
       headerLayout:     lh.header_layout,
       watermark:        lh.watermark ?? '',
       showWatermark:    lh.show_watermark,
@@ -71,13 +71,13 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="isLoading" class="flex items-center justify-center h-screen bg-charcoal-900">
-    <Icon icon="lucide:loader-2" class="w-6 h-6 text-cream-faint animate-spin" />
+  <div v-if="isLoading" class="flex items-center justify-center h-screen bg-gray-100">
+    <Icon icon="lucide:loader-2" class="w-6 h-6 text-gray-700 animate-spin" />
   </div>
 
-  <div v-else-if="notFound" class="flex flex-col items-center justify-center h-screen bg-charcoal-900">
-    <p class="text-cream-faint">Letterhead not found</p>
-    <button @click="$router.push({ name: 'letterheads' })" class="mt-4 text-amber text-sm hover:underline">
+  <div v-else-if="notFound" class="flex flex-col items-center justify-center h-screen bg-gray-100">
+    <p class="text-gray-700">Letterhead not found</p>
+    <button @click="$router.push({ name: 'letterheads' })" class="mt-4 text-green-700 text-sm hover:underline">
       Back to letterheads
     </button>
   </div>

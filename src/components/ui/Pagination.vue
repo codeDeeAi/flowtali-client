@@ -43,9 +43,9 @@ const go = (page: number) => {
 <template>
   <div v-if="total > 0" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
     <!-- Count label -->
-    <p class="text-xs text-cream-faint">
-      Showing <span class="text-cream font-medium">{{ from }}–{{ to }}</span> of
-      <span class="text-cream font-medium">{{ total }}</span>
+    <p class="text-xs text-gray-700">
+      Showing <span class="text-gray-1000 font-medium">{{ from }}–{{ to }}</span> of
+      <span class="text-gray-1000 font-medium">{{ total }}</span>
     </p>
 
     <!-- Controls -->
@@ -54,7 +54,7 @@ const go = (page: number) => {
       <button
         @click="go(modelValue - 1)"
         :disabled="modelValue === 1"
-        class="flex items-center justify-center w-9 h-9 md:w-7 md:h-7 rounded-lg border border-charcoal-600 bg-charcoal-800 text-cream-faint transition-colors disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:border-charcoal-500 hover:enabled:text-cream"
+        class="flex items-center justify-center w-9 h-9 md:w-7 md:h-7 rounded-lg border border-gray-500 bg-gray-200 text-gray-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:border-gray-500 hover:enabled:text-gray-1000"
       >
         <Icon icon="lucide:chevron-left" class="w-3.5 h-3.5" />
       </button>
@@ -63,7 +63,7 @@ const go = (page: number) => {
       <template v-for="(p, i) in pages" :key="i">
         <span
           v-if="p === '...'"
-          class="flex items-center justify-center w-9 h-9 md:w-7 md:h-7 text-xs text-cream-faint select-none"
+          class="flex items-center justify-center w-9 h-9 md:w-7 md:h-7 text-xs text-gray-700 select-none"
         >…</span>
         <button
           v-else
@@ -71,8 +71,8 @@ const go = (page: number) => {
           :class="[
             'flex items-center justify-center w-9 h-9 md:w-7 md:h-7 rounded-lg border text-xs font-medium transition-colors',
             p === modelValue
-              ? 'border-amber bg-amber text-charcoal-900 font-semibold'
-              : 'border-charcoal-600 bg-charcoal-800 text-cream-faint hover:border-charcoal-500 hover:text-cream',
+              ? 'border-green-700 bg-green-700 text-bg-100 font-semibold'
+              : 'border-gray-500 bg-gray-200 text-gray-700 hover:border-gray-500 hover:text-gray-1000',
           ]"
         >{{ p }}</button>
       </template>
@@ -81,7 +81,7 @@ const go = (page: number) => {
       <button
         @click="go(modelValue + 1)"
         :disabled="modelValue === totalPages"
-        class="flex items-center justify-center w-9 h-9 md:w-7 md:h-7 rounded-lg border border-charcoal-600 bg-charcoal-800 text-cream-faint transition-colors disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:border-charcoal-500 hover:enabled:text-cream"
+        class="flex items-center justify-center w-9 h-9 md:w-7 md:h-7 rounded-lg border border-gray-500 bg-gray-200 text-gray-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:border-gray-500 hover:enabled:text-gray-1000"
       >
         <Icon icon="lucide:chevron-right" class="w-3.5 h-3.5" />
       </button>

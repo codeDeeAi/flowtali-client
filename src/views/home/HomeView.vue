@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useSeo } from '@/composables/useSeo'
 import { useHead } from '@unhead/vue'
 import { SubscriptionService, type ISubscriptionPlan } from '@/services/subscription.service'
+import { TestimonialService, type ITestimonial } from '@/services/testimonial.service'
 
 useSeo({
   title: 'Flowtali — Invoices, Receipts, Projects & Letterheads for Freelancers',
@@ -89,8 +90,8 @@ const letterheadFeatures = [
 ];
 
 const lhTemplatePreviews = [
-  { name: 'Classic', color: '#E8A83E', font: "'Cormorant Garamond',serif", tagline: 'Timeless & professional', preview: 'Dear Mr. Johnson, We are pleased to confirm our engagement for the Q1 brand identity project. This proposal outlines scope, deliverables, and timeline…' },
-  { name: 'Modern', color: '#4f86c6', font: "'DM Sans',sans-serif", tagline: 'Clean & contemporary', preview: 'Subject: Project Kickoff — Q1 2025. Following our initial call, we are delighted to present the formal engagement letter for review…' },
+  { name: 'Classic', color: '#00c853', font: "var(--font-sans)", tagline: 'Timeless & professional', preview: 'Dear Mr. Johnson, We are pleased to confirm our engagement for the Q1 brand identity project. This proposal outlines scope, deliverables, and timeline…' },
+  { name: 'Modern', color: '#4f86c6', font: "var(--font-sans)", tagline: 'Clean & contemporary', preview: 'Subject: Project Kickoff — Q1 2025. Following our initial call, we are delighted to present the formal engagement letter for review…' },
   { name: 'Minimal', color: '#5ab88a', font: "'Lato',sans-serif", tagline: 'Simple & elegant', preview: 'Hello, Thank you for choosing us for this project. Please find below the terms and conditions of our engagement…' },
   { name: 'Bold', color: '#e05a5a', font: "'Montserrat',sans-serif", tagline: 'Strong & impactful', preview: 'Dear Client, We write to formally confirm the commencement of the brand refresh initiative scheduled to begin…' },
 ];
@@ -151,6 +152,13 @@ onMounted(async () => {
   } finally {
     plansLoading.value = false;
   }
+
+  try {
+    const res = await TestimonialService.list();
+    testimonials.value = res.data.data;
+  } catch {
+    // keep fallback data
+  }
 });
 
 const embedFeatures = [
@@ -160,14 +168,13 @@ const embedFeatures = [
   { title: 'Event callbacks', desc: 'React to actions inside the embed with ft.on("invoice.created", cb) — perfect for syncing with your own system.', icon: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>' },
 ]
 
-const testimonials = [
-  { name: 'Amara Osei', role: 'UX Designer, Lagos', quote: 'The Projects feature changed everything. I can see every invoice, receipt, and file for a client in one place. No more hunting through folders.', hue: 180 },
-  { name: 'Luca Ferretti', role: 'Freelance Developer', quote: 'Real-time preview is genius. I see exactly what my client gets before I export. No more surprise layout issues.', hue: 220 },
-  { name: 'Priya Nair', role: 'Brand Consultant', quote: 'Invoice, receipt, and letterhead in one place — it saves me so much time. My clients always comment on how polished everything looks.', hue: 260 },
-  { name: 'Kofi Acheampong', role: 'Motion Designer', quote: 'The payment receipt feature is so useful. I send a stamped receipt the moment a client pays — looks completely professional.', hue: 140 },
-  { name: 'Sofia Martínez', role: 'Copywriter & Strategist', quote: 'Multi-currency support is perfect for my international clients. Flowtali handles all the formatting automatically.', hue: 30 },
-  { name: 'James Thornton', role: 'Photography Studio', quote: 'Team roles let me give my assistant access to receipts without touching billing. That level of control in a tool this clean is rare.', hue: 200 },
-];
+const testimonials = ref<ITestimonial[]>([]);
+
+function avatarHue(id: string): number {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) hash = id.charCodeAt(i) + ((hash << 5) - hash);
+  return Math.abs(hash) % 360;
+}
 
 const openFaq = ref<number | null>(null);
 const faqs = [
@@ -193,22 +200,22 @@ const scrollTo = (id: string) => {
   <section class="relative min-h-screen grid-texture flex items-center overflow-hidden pt-16">
     <div
       class="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] rounded-full opacity-20 pointer-events-none"
-      style="background:radial-gradient(ellipse,rgba(232,168,62,0.3) 0%,transparent 70%)"></div>
+      style="background:radial-gradient(ellipse,rgba(0,200,83,0.3) 0%,transparent 70%)"></div>
     <div class="orbit w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
     <div class="orbit w-[900px] h-[900px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-      style="border-color:rgba(232,168,62,0.04)"></div>
+      style="border-color:rgba(0,200,83,0.04)"></div>
     <div class="max-w-7xl mx-auto px-6 py-24 w-full">
       <div class="grid lg:grid-cols-2 gap-16 items-center">
         <div class="stagger">
           <div class="badge mb-6 opacity-0 animate-fade-up">
-            <span class="w-1.5 h-1.5 rounded-full bg-amber inline-block"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-green-700 inline-block"></span>
             Invoices · Receipts · Projects · Letterheads
           </div>
           <h1
-            class="font-display text-5xl sm:text-6xl lg:text-7xl font-semibold leading-[1.05] text-cream mb-6 opacity-0 animate-fade-up">
+            class="font-sans text-5xl sm:text-6xl lg:text-7xl font-semibold leading-[1.05] text-gray-1000 mb-6 opacity-0 animate-fade-up">
             Run your freelance<br />business from one<br /><em class="shimmer-text not-italic">beautiful platform</em>
           </h1>
-          <p class="text-cream-muted text-lg leading-relaxed max-w-md mb-10 opacity-0 animate-fade-up">
+          <p class="text-gray-900 text-lg leading-relaxed max-w-md mb-10 opacity-0 animate-fade-up">
             Flowtali gives freelancers and studios everything they need — stunning invoices, payment receipts, branded
             letterheads, and project tracking — all with live preview, instant PDF, zero friction.
           </p>
@@ -221,17 +228,6 @@ const scrollTo = (id: string) => {
               </svg>
             </button>
           </div>
-          <div class="flex items-center gap-6 mt-10 opacity-0 animate-fade-up">
-            <div class="flex -space-x-2">
-              <div v-for="i in 4" :key="i"
-                class="w-8 h-8 rounded-full border-2 border-charcoal-800 flex items-center justify-center text-xs font-bold"
-                :style="`background:hsl(${i * 40 + 180},35%,35%)`">{{ ['AK', 'MB', 'OI', 'TL'][i - 1] }}</div>
-            </div>
-            <div>
-              <div class="flex text-amber text-sm">★★★★★</div>
-              <div class="text-cream-faint text-xs mt-0.5">Loved by 4,200+ freelancers</div>
-            </div>
-          </div>
         </div>
 
         <!-- Floating mockups: Invoice + Letterhead stacked -->
@@ -241,16 +237,16 @@ const scrollTo = (id: string) => {
             <div class="inv-mockup p-5 w-[340px] ml-auto">
               <div class="flex justify-between items-start mb-3">
                 <div>
-                  <div class="text-xs font-bold text-amber">ACME STUDIO</div>
+                  <div class="text-xs font-bold text-green-700">ACME STUDIO</div>
                   <div class="text-[9px] text-gray-400">Creative Agency</div>
                 </div>
                 <div class="text-right">
-                  <div class="text-xl font-bold text-gray-800" style="font-family:'Cormorant Garamond',serif">INVOICE
+                  <div class="text-xl font-bold text-gray-800" style="font-family:var(--font-sans)">INVOICE
                   </div>
                   <div class="text-[9px] text-gray-400">INV-0042</div>
                 </div>
               </div>
-              <div class="h-px bg-amber/30 mb-3"></div>
+              <div class="h-px bg-green-700/30 mb-3"></div>
               <table class="w-full text-[9px] mb-3">
                 <tbody>
                   <tr v-for="item in mockItems" :key="item.name" class="border-b border-gray-100">
@@ -262,7 +258,7 @@ const scrollTo = (id: string) => {
               <div class="flex justify-end">
                 <div class="text-right">
                   <div class="text-xs text-gray-400">Total</div>
-                  <div class="text-lg font-bold text-amber" style="font-family:'Cormorant Garamond',serif">$8,550.00
+                  <div class="text-lg font-bold text-green-700" style="font-family:var(--font-sans)">$8,550.00
                   </div>
                 </div>
               </div>
@@ -272,10 +268,10 @@ const scrollTo = (id: string) => {
           <div class="absolute -bottom-8 -left-10 w-[280px]"
             style="animation:float 7s ease-in-out infinite;animation-delay:1.2s">
             <div class="lh-mockup p-5">
-              <div class="h-1 rounded-full mb-3" style="background:#E8A83E"></div>
+              <div class="h-1 rounded-full mb-3" style="background:#00c853"></div>
               <div class="flex justify-between items-start mb-4">
                 <div>
-                  <div class="text-sm font-bold text-gray-800" style="font-family:'Playfair Display',serif">ACME STUDIO
+                  <div class="text-sm font-bold text-gray-800" style="font-family:var(--font-sans)">ACME STUDIO
                   </div>
                   <div class="text-[9px] text-gray-400">Creative Agency · San Francisco</div>
                 </div>
@@ -290,10 +286,10 @@ const scrollTo = (id: string) => {
           </div>
           <!-- Floating badges -->
           <div
-            class="absolute -right-4 top-2 bg-charcoal-800 border border-charcoal-600 rounded-xl px-3 py-2.5 shadow-2xl"
+            class="absolute -right-4 top-2 bg-gray-200 border border-gray-500 rounded-xl px-3 py-2.5 shadow-2xl"
             style="animation:float 5s ease-in-out infinite;animation-delay:.5s">
-            <div class="text-xs text-cream-faint mb-0.5">Letterhead exported</div>
-            <div class="text-sm font-semibold text-amber flex items-center gap-1.5">
+            <div class="text-xs text-gray-700 mb-0.5">Letterhead exported</div>
+            <div class="text-sm font-semibold text-green-700 flex items-center gap-1.5">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                 <polyline points="7 10 12 15 17 10" />
@@ -307,19 +303,19 @@ const scrollTo = (id: string) => {
     <div class="absolute bottom-0 left-0 right-0">
       <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
         class="w-full h-16">
-        <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="#18181c" opacity="0.5" />
+        <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="#1a1a1a" opacity="0.5" />
       </svg>
     </div>
   </section>
 
   <!-- SOCIAL PROOF BAR -->
-  <section class="py-14 bg-charcoal-800/40 border-y border-charcoal-700/30">
+  <section class="py-14 bg-gray-200/40 border-y border-gray-400/30">
     <div class="max-w-6xl mx-auto px-6">
-      <p class="text-center text-cream-faint text-sm mb-8 tracking-widest uppercase font-mono">Trusted by freelancers at
+      <p class="text-center text-gray-700 text-sm mb-8 tracking-widest uppercase font-mono">Trusted by freelancers at
       </p>
       <div class="flex flex-wrap justify-center items-center gap-8 md:gap-14 opacity-40">
         <div v-for="brand in brands" :key="brand"
-          class="font-display text-xl text-cream-muted tracking-widest font-light">{{ brand }}</div>
+          class="font-sans text-xl text-gray-900 tracking-widest font-light">{{ brand }}</div>
       </div>
     </div>
   </section>
@@ -328,62 +324,62 @@ const scrollTo = (id: string) => {
   <section id="products" class="py-28 relative overflow-hidden">
     <div
       class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] pointer-events-none opacity-5"
-      style="background:radial-gradient(ellipse,rgba(232,168,62,1) 0%,transparent 70%)"></div>
+      style="background:radial-gradient(ellipse,rgba(0,200,83,1) 0%,transparent 70%)"></div>
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-20">
         <div class="badge inline-flex mb-5">Four tools, one platform</div>
-        <h2 class="font-display text-5xl md:text-6xl font-semibold text-cream leading-tight">
-          Everything you need to<br /><em class="text-amber not-italic">run your business</em>
+        <h2 class="font-sans text-5xl md:text-6xl font-semibold text-gray-1000 leading-tight">
+          Everything you need to<br /><em class="text-green-700 not-italic">run your business</em>
         </h2>
-        <p class="text-cream-muted text-lg mt-5 max-w-xl mx-auto">Invoices, receipts, projects, and letterheads — all in one seamless workspace built for freelancers and small teams.</p>
+        <p class="text-gray-900 text-lg mt-5 max-w-xl mx-auto">Invoices, receipts, projects, and letterheads — all in one seamless workspace built for freelancers and small teams.</p>
       </div>
 
       <div class="grid lg:grid-cols-2 gap-8">
         <!-- Invoice Product Card -->
         <router-link :to="{ name: 'signup' }"
-          class="bg-charcoal-800/60 border border-charcoal-700/40 rounded-3xl p-8 card-glow transition-all duration-300 hover:border-amber-border hover:-translate-y-1 cursor-pointer group">
+          class="bg-gray-200/60 border border-gray-400/40 rounded-3xl p-8 card-glow transition-all duration-300 hover:border-green-400 hover:-translate-y-1 cursor-pointer group">
           <div class="flex items-center gap-3 mb-6">
-            <div class="w-10 h-10 rounded-xl bg-amber-dim border border-amber-border flex items-center justify-center">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8A83E" stroke-width="1.8">
+            <div class="w-10 h-10 rounded-xl bg-green-100 border border-green-400 flex items-center justify-center">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <rect x="3" y="3" width="18" height="18" rx="2" />
                 <path d="M7 8h10M7 12h6M7 16h4" />
               </svg>
             </div>
             <div>
-              <div class="text-cream font-semibold">Invoice Generator</div>
-              <div class="text-cream-faint text-xs">Get paid faster</div>
+              <div class="text-gray-1000 font-semibold">Invoice Generator</div>
+              <div class="text-gray-700 text-xs">Get paid faster</div>
             </div>
           </div>
           <!-- Mini invoice preview -->
           <div class="bg-white rounded-xl p-5 mb-6 shadow-2xl">
             <div class="flex justify-between items-start mb-3">
-              <div class="text-xs font-bold text-amber" style="font-family:'DM Sans',sans-serif">ACME STUDIO</div>
+              <div class="text-xs font-bold text-green-700" style="font-family:var(--font-sans)">ACME STUDIO</div>
               <div class="text-right">
-                <div class="text-xl font-semibold text-gray-800" style="font-family:'Cormorant Garamond',serif">INVOICE
+                <div class="text-xl font-semibold text-gray-800" style="font-family:var(--font-sans)">INVOICE
                 </div>
                 <div class="text-gray-400 text-[9px]">INV-0042</div>
               </div>
             </div>
-            <div class="h-0.5 bg-amber/30 mb-3 rounded"></div>
+            <div class="h-0.5 bg-green-700/30 mb-3 rounded"></div>
             <div class="space-y-1.5 mb-3">
               <div v-for="item in mockItems" :key="item.name" class="flex justify-between text-[10px]">
                 <span class="text-gray-600">{{ item.name }}</span>
                 <span class="text-gray-800 font-medium">${{ item.amount }}</span>
               </div>
             </div>
-            <div class="flex justify-end"><span class="text-lg font-bold text-amber"
-                style="font-family:'Cormorant Garamond',serif">$8,550.00</span></div>
+            <div class="flex justify-end"><span class="text-lg font-bold text-green-700"
+                style="font-family:var(--font-sans)">$8,550.00</span></div>
           </div>
-          <h3 class="font-display text-2xl font-semibold text-cream mb-3">Beautiful invoices in minutes</h3>
-          <p class="text-cream-muted text-sm leading-relaxed mb-5">Live preview, custom branding, multi-currency, tax &
+          <h3 class="font-sans text-2xl font-semibold text-gray-1000 mb-3">Beautiful invoices in minutes</h3>
+          <p class="text-gray-900 text-sm leading-relaxed mb-5">Live preview, custom branding, multi-currency, tax &
             discounts, logo upload, stamp customization — everything you need to send polished invoices.</p>
           <div class="flex flex-wrap gap-2">
             <span v-for="tag in ['Live Preview', 'PDF Export', 'Multi-Currency', 'Custom Stamp', 'Logo Upload']"
               :key="tag"
-              class="text-xs px-2.5 py-1 rounded-full bg-charcoal-700/80 border border-charcoal-600/50 text-cream-muted">{{
+              class="text-xs px-2.5 py-1 rounded-full bg-gray-400/80 border border-gray-500/50 text-gray-900">{{
                 tag }}</span>
           </div>
-          <div class="mt-6 flex items-center gap-2 text-amber text-sm font-medium group-hover:gap-3 transition-all">
+          <div class="mt-6 flex items-center gap-2 text-green-700 text-sm font-medium group-hover:gap-3 transition-all">
             Try Invoice Generator <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2">
               <path d="M5 12h14M12 5l7 7-7 7" />
@@ -393,11 +389,11 @@ const scrollTo = (id: string) => {
 
         <!-- Letterhead Product Card -->
         <router-link :to="{ name: 'signup' }"
-          class="bg-charcoal-800/60 border border-charcoal-700/40 rounded-3xl p-8 card-glow transition-all duration-300 hover:border-amber-border hover:-translate-y-1 cursor-pointer group relative overflow-hidden">
+          class="bg-gray-200/60 border border-gray-400/40 rounded-3xl p-8 card-glow transition-all duration-300 hover:border-green-400 hover:-translate-y-1 cursor-pointer group relative overflow-hidden">
           <div class="absolute top-4 right-4 badge text-xs">New ✦</div>
           <div class="flex items-center gap-3 mb-6">
-            <div class="w-10 h-10 rounded-xl bg-amber-dim border border-amber-border flex items-center justify-center">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8A83E" stroke-width="1.8">
+            <div class="w-10 h-10 rounded-xl bg-green-100 border border-green-400 flex items-center justify-center">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
                 <line x1="16" y1="13" x2="8" y2="13" />
@@ -406,22 +402,22 @@ const scrollTo = (id: string) => {
               </svg>
             </div>
             <div>
-              <div class="text-cream font-semibold">Letterhead Generator</div>
-              <div class="text-cream-faint text-xs">Make every letter count</div>
+              <div class="text-gray-1000 font-semibold">Letterhead Generator</div>
+              <div class="text-gray-700 text-xs">Make every letter count</div>
             </div>
           </div>
           <!-- Mini letterhead preview -->
           <div class="bg-white rounded-xl overflow-hidden mb-6 shadow-2xl">
-            <div class="h-1.5 bg-amber"></div>
+            <div class="h-1.5 bg-green-700"></div>
             <div class="p-5">
               <div class="flex justify-between items-start mb-3">
                 <div>
-                  <div class="text-sm font-bold text-gray-800" style="font-family:'Playfair Display',serif">ACME STUDIO
+                  <div class="text-sm font-bold text-gray-800" style="font-family:var(--font-sans)">ACME STUDIO
                   </div>
                   <div class="text-[8px] text-gray-400">San Francisco · hello@acme.studio</div>
                 </div>
-                <div class="w-8 h-8 rounded-full bg-amber/20 flex items-center justify-center"><span
-                    class="text-amber text-xs font-bold">A</span></div>
+                <div class="w-8 h-8 rounded-full bg-green-700/20 flex items-center justify-center"><span
+                    class="text-green-700 text-xs font-bold">A</span></div>
               </div>
               <div class="h-px bg-gray-100 mb-3"></div>
               <div class="text-[8px] text-gray-500 leading-relaxed">Dear Mr. Johnson,<br /><br />We are pleased to
@@ -432,17 +428,17 @@ const scrollTo = (id: string) => {
               <div class="text-[7px] text-gray-400 text-center">123 Design St, SF CA 94105 · acme.studio</div>
             </div>
           </div>
-          <h3 class="font-display text-2xl font-semibold text-cream mb-3">Letterheads that command respect</h3>
-          <p class="text-cream-muted text-sm leading-relaxed mb-5">8 elegant layout templates, full brand customization,
+          <h3 class="font-sans text-2xl font-semibold text-gray-1000 mb-3">Letterheads that command respect</h3>
+          <p class="text-gray-900 text-sm leading-relaxed mb-5">8 elegant layout templates, full brand customization,
             logo & signature upload, custom color themes, watermarks, footer details — all with live preview and PDF
             export.</p>
           <div class="flex flex-wrap gap-2">
             <span v-for="tag in ['8 Templates', 'Logo & Signature', 'Custom Theme', 'Watermark', 'Footer Details']"
               :key="tag"
-              class="text-xs px-2.5 py-1 rounded-full bg-charcoal-700/80 border border-charcoal-600/50 text-cream-muted">{{
+              class="text-xs px-2.5 py-1 rounded-full bg-gray-400/80 border border-gray-500/50 text-gray-900">{{
                 tag }}</span>
           </div>
-          <div class="mt-6 flex items-center gap-2 text-amber text-sm font-medium group-hover:gap-3 transition-all">
+          <div class="mt-6 flex items-center gap-2 text-green-700 text-sm font-medium group-hover:gap-3 transition-all">
             Try Letterhead Generator <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2">
               <path d="M5 12h14M12 5l7 7-7 7" />
@@ -452,25 +448,25 @@ const scrollTo = (id: string) => {
 
         <!-- Receipt Product Card -->
         <router-link :to="{ name: 'signup' }"
-          class="bg-charcoal-800/60 border border-charcoal-700/40 rounded-3xl p-8 card-glow transition-all duration-300 hover:border-amber-border hover:-translate-y-1 cursor-pointer group relative overflow-hidden">
+          class="bg-gray-200/60 border border-gray-400/40 rounded-3xl p-8 card-glow transition-all duration-300 hover:border-green-400 hover:-translate-y-1 cursor-pointer group relative overflow-hidden">
           <div class="absolute top-4 right-4 badge text-xs">New ✦</div>
           <div class="flex items-center gap-3 mb-6">
-            <div class="w-10 h-10 rounded-xl bg-amber-dim border border-amber-border flex items-center justify-center">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8A83E" stroke-width="1.8">
+            <div class="w-10 h-10 rounded-xl bg-green-100 border border-green-400 flex items-center justify-center">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1z"/>
                 <path d="M14 8H8M14 12H8M11 16H8"/>
               </svg>
             </div>
             <div>
-              <div class="text-cream font-semibold">Receipt Generator</div>
-              <div class="text-cream-faint text-xs">Confirm every payment</div>
+              <div class="text-gray-1000 font-semibold">Receipt Generator</div>
+              <div class="text-gray-700 text-xs">Confirm every payment</div>
             </div>
           </div>
           <!-- Mini receipt preview -->
           <div class="bg-white rounded-xl p-5 mb-6 shadow-2xl">
             <div class="flex justify-between items-start mb-3">
               <div>
-                <div class="text-xs font-bold text-amber" style="font-family:'DM Sans',sans-serif">PAYMENT RECEIPT</div>
+                <div class="text-xs font-bold text-green-700" style="font-family:var(--font-sans)">PAYMENT RECEIPT</div>
                 <div class="text-gray-400 text-[9px]">REC-0018</div>
               </div>
               <div class="text-right">
@@ -481,7 +477,7 @@ const scrollTo = (id: string) => {
             <div class="h-0.5 bg-green-100 mb-3 rounded"></div>
             <div class="flex justify-between items-center mb-2">
               <span class="text-[9px] text-gray-500">Amount Received</span>
-              <span class="text-sm font-bold text-green-600" style="font-family:'Cormorant Garamond',serif">$4,200.00</span>
+              <span class="text-sm font-bold text-green-600" style="font-family:var(--font-sans)">$4,200.00</span>
             </div>
             <div class="flex justify-between items-center mb-3">
               <span class="text-[9px] text-gray-500">Payment Method</span>
@@ -491,14 +487,14 @@ const scrollTo = (id: string) => {
               <span class="text-[9px] font-bold text-green-600 tracking-wider">✓ PAYMENT CONFIRMED</span>
             </div>
           </div>
-          <h3 class="font-display text-2xl font-semibold text-cream mb-3">Receipts clients can trust</h3>
-          <p class="text-cream-muted text-sm leading-relaxed mb-5">Generate professional payment receipts, attach them to invoices, link them to projects, and export stamped PDFs — all with the same live preview experience.</p>
+          <h3 class="font-sans text-2xl font-semibold text-gray-1000 mb-3">Receipts clients can trust</h3>
+          <p class="text-gray-900 text-sm leading-relaxed mb-5">Generate professional payment receipts, attach them to invoices, link them to projects, and export stamped PDFs — all with the same live preview experience.</p>
           <div class="flex flex-wrap gap-2">
             <span v-for="tag in ['Linked to Invoices', 'Project Tracking', 'PDF Export', 'Payment Stamps', 'Multi-Currency']"
               :key="tag"
-              class="text-xs px-2.5 py-1 rounded-full bg-charcoal-700/80 border border-charcoal-600/50 text-cream-muted">{{ tag }}</span>
+              class="text-xs px-2.5 py-1 rounded-full bg-gray-400/80 border border-gray-500/50 text-gray-900">{{ tag }}</span>
           </div>
-          <div class="mt-6 flex items-center gap-2 text-amber text-sm font-medium group-hover:gap-3 transition-all">
+          <div class="mt-6 flex items-center gap-2 text-green-700 text-sm font-medium group-hover:gap-3 transition-all">
             Try Receipt Generator <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
@@ -507,18 +503,18 @@ const scrollTo = (id: string) => {
 
         <!-- Projects Product Card -->
         <router-link :to="{ name: 'signup' }"
-          class="bg-charcoal-800/60 border border-charcoal-700/40 rounded-3xl p-8 card-glow transition-all duration-300 hover:border-amber-border hover:-translate-y-1 cursor-pointer group relative overflow-hidden">
+          class="bg-gray-200/60 border border-gray-400/40 rounded-3xl p-8 card-glow transition-all duration-300 hover:border-green-400 hover:-translate-y-1 cursor-pointer group relative overflow-hidden">
           <div class="absolute top-4 right-4 badge text-xs">New ✦</div>
           <div class="flex items-center gap-3 mb-6">
-            <div class="w-10 h-10 rounded-xl bg-amber-dim border border-amber-border flex items-center justify-center">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8A83E" stroke-width="1.8">
+            <div class="w-10 h-10 rounded-xl bg-green-100 border border-green-400 flex items-center justify-center">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
                 <path d="M12 11v6M8 13v4M16 9v8"/>
               </svg>
             </div>
             <div>
-              <div class="text-cream font-semibold">Project Management</div>
-              <div class="text-cream-faint text-xs">Track every engagement</div>
+              <div class="text-gray-1000 font-semibold">Project Management</div>
+              <div class="text-gray-700 text-xs">Track every engagement</div>
             </div>
           </div>
           <!-- Mini project preview -->
@@ -536,7 +532,7 @@ const scrollTo = (id: string) => {
             </div>
             <div class="mb-2">
               <div class="flex justify-between text-[8px] text-gray-400 mb-1"><span>Received</span><span>$8,400 (70%)</span></div>
-              <div class="h-1.5 bg-gray-100 rounded-full"><div class="h-1.5 bg-amber rounded-full" style="width:70%"></div></div>
+              <div class="h-1.5 bg-gray-100 rounded-full"><div class="h-1.5 bg-green-700 rounded-full" style="width:70%"></div></div>
             </div>
             <div class="flex gap-2 mt-3">
               <span class="text-[8px] px-1.5 py-0.5 bg-gray-50 rounded border border-gray-100 text-gray-500">3 Invoices</span>
@@ -544,14 +540,14 @@ const scrollTo = (id: string) => {
               <span class="text-[8px] px-1.5 py-0.5 bg-gray-50 rounded border border-gray-100 text-gray-500">1 Letterhead</span>
             </div>
           </div>
-          <h3 class="font-display text-2xl font-semibold text-cream mb-3">Every project, fully in view</h3>
-          <p class="text-cream-muted text-sm leading-relaxed mb-5">Link invoices, receipts, and letterheads to a project. Track contract value, payment progress, upload files, log notes, and see a full activity timeline per engagement.</p>
+          <h3 class="font-sans text-2xl font-semibold text-gray-1000 mb-3">Every project, fully in view</h3>
+          <p class="text-gray-900 text-sm leading-relaxed mb-5">Link invoices, receipts, and letterheads to a project. Track contract value, payment progress, upload files, log notes, and see a full activity timeline per engagement.</p>
           <div class="flex flex-wrap gap-2">
             <span v-for="tag in ['Linked Documents', 'Payment Progress', 'Activity Timeline', 'File Uploads', 'Client Tracking']"
               :key="tag"
-              class="text-xs px-2.5 py-1 rounded-full bg-charcoal-700/80 border border-charcoal-600/50 text-cream-muted">{{ tag }}</span>
+              class="text-xs px-2.5 py-1 rounded-full bg-gray-400/80 border border-gray-500/50 text-gray-900">{{ tag }}</span>
           </div>
-          <div class="mt-6 flex items-center gap-2 text-amber text-sm font-medium group-hover:gap-3 transition-all">
+          <div class="mt-6 flex items-center gap-2 text-green-700 text-sm font-medium group-hover:gap-3 transition-all">
             Try Project Management <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
@@ -568,23 +564,23 @@ const scrollTo = (id: string) => {
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-20">
         <div class="badge inline-flex mb-5">Features</div>
-        <h2 class="font-display text-5xl md:text-6xl font-semibold text-cream leading-tight">
-          Everything you need to<br /><em class="text-amber not-italic">look like a pro</em>
+        <h2 class="font-sans text-5xl md:text-6xl font-semibold text-gray-1000 leading-tight">
+          Everything you need to<br /><em class="text-green-700 not-italic">look like a pro</em>
         </h2>
-        <p class="text-cream-muted text-lg mt-5 max-w-xl mx-auto">Invoices, receipts, projects, letterheads, branding, team roles — built for freelancers who want results without complexity.</p>
+        <p class="text-gray-900 text-lg mt-5 max-w-xl mx-auto">Invoices, receipts, projects, letterheads, branding, team roles — built for freelancers who want results without complexity.</p>
       </div>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div v-for="feature in features" :key="feature.title"
-          class="bg-charcoal-800/60 border border-charcoal-700/40 rounded-2xl p-6 card-glow transition-all duration-300 hover:border-amber-border hover:-translate-y-1">
+          class="bg-gray-200/60 border border-gray-400/40 rounded-2xl p-6 card-glow transition-all duration-300 hover:border-green-400 hover:-translate-y-1">
           <div class="feature-icon mb-5">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E8A83E" stroke-width="1.8"
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
               v-html="feature.icon"></svg>
           </div>
           <div v-if="feature.isNew"
-            class="inline-block text-[10px] font-semibold text-amber bg-amber-dim border border-amber-border rounded-full px-2 py-0.5 mb-2">
+            class="inline-block text-[10px] font-semibold text-green-700 bg-green-100 border border-green-400 rounded-full px-2 py-0.5 mb-2">
             New</div>
-          <h3 class="font-display text-xl font-semibold text-cream mb-2">{{ feature.title }}</h3>
-          <p class="text-cream-muted text-sm leading-relaxed">{{ feature.desc }}</p>
+          <h3 class="font-sans text-xl font-semibold text-gray-1000 mb-2">{{ feature.title }}</h3>
+          <p class="text-gray-900 text-sm leading-relaxed">{{ feature.desc }}</p>
         </div>
       </div>
     </div>
@@ -595,25 +591,25 @@ const scrollTo = (id: string) => {
   <!-- LETTERHEAD SPOTLIGHT SECTION -->
   <section class="py-28 relative overflow-hidden">
     <div class="absolute right-0 top-0 w-1/2 h-full pointer-events-none opacity-5"
-      style="background:radial-gradient(ellipse at right center,rgba(232,168,62,1) 0%,transparent 70%)"></div>
+      style="background:radial-gradient(ellipse at right center,rgba(0,200,83,1) 0%,transparent 70%)"></div>
     <div class="max-w-7xl mx-auto px-6">
       <div class="grid lg:grid-cols-2 gap-20 items-center">
         <div>
           <div class="badge inline-flex mb-5">Letterhead Generator</div>
-          <h2 class="font-display text-5xl font-semibold text-cream leading-tight mb-6">
-            Every letter should<br />make a<em class="text-amber not-italic"> lasting impression</em>
+          <h2 class="font-sans text-5xl font-semibold text-gray-1000 leading-tight mb-6">
+            Every letter should<br />make a<em class="text-green-700 not-italic"> lasting impression</em>
           </h2>
-          <p class="text-cream-muted text-base leading-relaxed mb-8">Whether it's a proposal, engagement letter, or
+          <p class="text-gray-900 text-base leading-relaxed mb-8">Whether it's a proposal, engagement letter, or
             formal notice — Flowtali's letterhead generator gives you professional-grade stationery in seconds. Pick a
             layout, drop in your logo, and export a pixel-perfect PDF.</p>
           <div class="flex flex-col gap-4 mb-8">
             <div v-for="lf in letterheadFeatures" :key="lf" class="flex items-center gap-3">
               <div class="check-icon flex-shrink-0">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#E8A83E" stroke-width="3">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
-              <span class="text-cream-muted text-sm">{{ lf }}</span>
+              <span class="text-gray-900 text-sm">{{ lf }}</span>
             </div>
           </div>
           <router-link :to="{ name: 'signup' }" class="btn-primary text-base px-7 py-3.5">
@@ -655,28 +651,28 @@ const scrollTo = (id: string) => {
     <div class="max-w-6xl mx-auto px-6">
       <div class="text-center mb-16">
         <div class="badge inline-flex mb-5">Pricing</div>
-        <h2 class="font-display text-5xl md:text-6xl font-semibold text-cream mb-4">Simple, honest pricing</h2>
-        <p class="text-cream-muted text-lg">All tools included in every plan. No hidden fees.</p>
+        <h2 class="font-sans text-5xl md:text-6xl font-semibold text-gray-1000 mb-4">Simple, honest pricing</h2>
+        <p class="text-gray-900 text-lg">All tools included in every plan. No hidden fees.</p>
         <div class="flex flex-wrap items-center justify-center gap-6 mt-8">
           <!-- Billing interval toggle -->
           <div class="flex items-center gap-4">
-            <span class="text-sm" :class="billing === 'monthly' ? 'text-cream' : 'text-cream-faint'">Monthly</span>
+            <span class="text-sm" :class="billing === 'monthly' ? 'text-gray-1000' : 'text-gray-700'">Monthly</span>
             <button class="relative w-12 h-6 rounded-full transition-colors duration-300"
-              :class="billing === 'annual' ? 'bg-amber' : 'bg-charcoal-600'"
+              :class="billing === 'annual' ? 'bg-green-700' : 'bg-gray-500'"
               @click="billing = billing === 'monthly' ? 'annual' : 'monthly'">
               <span class="absolute top-0.5 left-0 w-5 h-5 rounded-full bg-white transition-transform duration-300 shadow"
                 :class="billing === 'annual' ? 'translate-x-6' : 'translate-x-0.5'"></span>
             </button>
-            <span class="text-sm" :class="billing === 'annual' ? 'text-cream' : 'text-cream-faint'">
+            <span class="text-sm" :class="billing === 'annual' ? 'text-gray-1000' : 'text-gray-700'">
               Annual
-              <span v-if="annualDiscount > 0" class="text-amber text-xs font-semibold ml-1">-{{ annualDiscount }}%</span>
+              <span v-if="annualDiscount > 0" class="text-green-700 text-xs font-semibold ml-1">-{{ annualDiscount }}%</span>
             </span>
           </div>
           <!-- Currency toggle -->
-          <div class="flex items-center gap-1 bg-charcoal-800/60 border border-charcoal-700/40 rounded-full px-1 py-1">
+          <div class="flex items-center gap-1 bg-gray-200/60 border border-gray-400/40 rounded-full px-1 py-1">
             <button v-for="c in (['USD', 'NGN'] as const)" :key="c"
               class="px-4 py-1 rounded-full text-sm font-medium transition-all duration-200"
-              :class="currency === c ? 'bg-amber text-charcoal-900' : 'text-cream-faint hover:text-cream'"
+              :class="currency === c ? 'bg-green-700 text-bg-100' : 'text-gray-700 hover:text-gray-1000'"
               @click="currency = c">
               {{ c === 'USD' ? '$ USD' : '₦ NGN' }}
             </button>
@@ -685,31 +681,31 @@ const scrollTo = (id: string) => {
       </div>
       <!-- Loading skeleton -->
       <div v-if="plansLoading" class="grid md:grid-cols-3 gap-6">
-        <div v-for="i in 3" :key="i" class="rounded-2xl p-7 bg-charcoal-800/60 border border-charcoal-700/40 animate-pulse">
-          <div class="h-3 bg-charcoal-700 rounded mb-3 w-16"></div>
-          <div class="h-9 bg-charcoal-700 rounded mb-2 w-28"></div>
-          <div class="h-3 bg-charcoal-700 rounded mb-6 w-full"></div>
-          <div class="h-10 bg-charcoal-700 rounded mb-6"></div>
+        <div v-for="i in 3" :key="i" class="rounded-2xl p-7 bg-gray-200/60 border border-gray-400/40 animate-pulse">
+          <div class="h-3 bg-gray-400 rounded mb-3 w-16"></div>
+          <div class="h-9 bg-gray-400 rounded mb-2 w-28"></div>
+          <div class="h-3 bg-gray-400 rounded mb-6 w-full"></div>
+          <div class="h-10 bg-gray-400 rounded mb-6"></div>
           <div class="space-y-2.5">
-            <div v-for="j in 5" :key="j" class="h-3 bg-charcoal-700 rounded w-full"></div>
+            <div v-for="j in 5" :key="j" class="h-3 bg-gray-400 rounded w-full"></div>
           </div>
         </div>
       </div>
       <div v-else class="grid md:grid-cols-3 gap-6 items-start">
         <div v-for="plan in displayPlans" :key="plan.name"
           class="rounded-2xl p-7 transition-all duration-300 hover:-translate-y-1"
-          :class="plan.featured ? 'pricing-featured amber-glow' : 'bg-charcoal-800/60 border border-charcoal-700/40 card-glow'">
+          :class="plan.featured ? 'pricing-featured accent-glow' : 'bg-gray-200/60 border border-gray-400/40 card-glow'">
           <div class="flex items-start justify-between mb-6">
             <div>
-              <div class="text-cream-faint text-sm font-medium mb-1">{{ plan.name }}</div>
-              <div class="font-display text-4xl font-semibold text-cream">
-                {{ plan.priceDisplay }}<span class="text-lg text-cream-faint font-normal font-sans">/mo</span>
+              <div class="text-gray-700 text-sm font-medium mb-1">{{ plan.name }}</div>
+              <div class="font-sans text-4xl font-semibold text-gray-1000">
+                {{ plan.priceDisplay }}<span class="text-lg text-gray-700 font-normal font-sans">/mo</span>
               </div>
-              <div v-if="plan.billedNote" class="text-amber text-xs mt-1">{{ plan.billedNote }}</div>
+              <div v-if="plan.billedNote" class="text-green-700 text-xs mt-1">{{ plan.billedNote }}</div>
             </div>
             <div v-if="plan.featured" class="badge text-xs">Most popular</div>
           </div>
-          <p class="text-cream-muted text-sm mb-6 leading-relaxed">{{ plan.desc }}</p>
+          <p class="text-gray-900 text-sm mb-6 leading-relaxed">{{ plan.desc }}</p>
           <router-link :to="{ name: 'signup' }"
             :class="plan.featured ? 'btn-primary w-full text-sm py-3' : 'btn-ghost w-full text-sm py-3'">
             {{ plan.cta }}
@@ -717,40 +713,41 @@ const scrollTo = (id: string) => {
           <div class="section-divider my-6"></div>
           <div class="flex flex-col gap-3">
             <div v-for="item in plan.features" :key="item" class="check-item">
-              <div class="check-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#E8A83E"
+              <div class="check-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                   stroke-width="3">
                   <polyline points="20 6 9 17 4 12" />
                 </svg></div>
-              <span class="text-cream-muted text-sm">{{ item }}</span>
+              <span class="text-gray-900 text-sm">{{ item }}</span>
             </div>
           </div>
         </div>
       </div>
-      <p class="text-center text-cream-faint text-sm mt-8">All plans include Invoice Generator, Receipt Generator, Project Management, and Letterhead Generator. Cancel anytime.</p>
+      <p class="text-center text-gray-700 text-sm mt-8">All plans include Invoice Generator, Receipt Generator, Project Management, and Letterhead Generator. Cancel anytime.</p>
     </div>
   </section>
 
   <div class="section-divider max-w-5xl mx-auto"></div>
 
   <!-- TESTIMONIALS -->
-  <section id="testimonials" class="py-28 relative overflow-hidden">
+  <section v-if="testimonials.length" id="testimonials" class="py-28 relative overflow-hidden">
     <div class="absolute left-0 top-1/2 -translate-y-1/2 w-80 h-80 rounded-full opacity-10 pointer-events-none"
-      style="background:radial-gradient(circle,rgba(232,168,62,0.4) 0%,transparent 70%)"></div>
+      style="background:radial-gradient(circle,rgba(0,200,83,0.4) 0%,transparent 70%)"></div>
     <div class="max-w-6xl mx-auto px-6">
       <div class="text-center mb-16">
         <div class="badge inline-flex mb-5">Reviews</div>
-        <h2 class="font-display text-5xl font-semibold text-cream">Freelancers love Flowtali</h2>
+        <h2 class="font-sans text-5xl font-semibold text-gray-1000">Our customers love Flowtali</h2>
       </div>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <div v-for="t in testimonials" :key="t.name" class="testimonial-card card-glow transition-all duration-300">
-          <div class="flex text-amber text-sm mb-4">★★★★★</div>
-          <p class="text-cream text-sm leading-relaxed mb-5 font-light italic">"{{ t.quote }}"</p>
+        <div v-for="t in testimonials" :key="t.id" class="testimonial-card card-glow transition-all duration-300">
+          <div class="flex text-green-700 text-sm mb-4">{{ '★'.repeat(t.rating) }}</div>
+          <p class="text-gray-1000 text-sm leading-relaxed mb-5 font-light italic">"{{ t.content }}"</p>
           <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-charcoal-900"
-              :style="`background:hsl(${t.hue},55%,60%)`">{{ t.name[0] }}</div>
+            <img v-if="t.author_avatar" :src="t.author_avatar" :alt="t.author_name" class="w-9 h-9 rounded-full object-cover" />
+            <div v-else class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-bg-100"
+              :style="`background:hsl(${avatarHue(t.id)},55%,60%)`">{{ t.author_name[0] }}</div>
             <div>
-              <div class="text-cream text-sm font-medium">{{ t.name }}</div>
-              <div class="text-cream-faint text-xs">{{ t.role }}</div>
+              <div class="text-gray-1000 text-sm font-medium">{{ t.author_name }}</div>
+              <div v-if="t.author_role" class="text-gray-700 text-xs">{{ t.author_role }}</div>
             </div>
           </div>
         </div>
@@ -763,18 +760,18 @@ const scrollTo = (id: string) => {
   <!-- EMBED SDK -->
   <section id="embed-sdk" class="py-28 relative overflow-hidden">
     <div class="absolute left-0 top-1/2 -translate-y-1/2 w-96 h-96 rounded-full opacity-10 pointer-events-none"
-      style="background:radial-gradient(circle,rgba(232,168,62,0.5) 0%,transparent 70%)"></div>
+      style="background:radial-gradient(circle,rgba(0,200,83,0.5) 0%,transparent 70%)"></div>
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-16">
         <div class="badge inline-flex mb-5 items-center gap-1.5">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
           Embed SDK
         </div>
-        <h2 class="font-display text-5xl md:text-6xl font-semibold text-cream leading-tight">
-          Flowtali in <em class="text-amber not-italic">your</em> product
+        <h2 class="font-sans text-5xl md:text-6xl font-semibold text-gray-1000 leading-tight">
+          Flowtali in <em class="text-green-700 not-italic">your</em> product
         </h2>
-        <p class="text-cream-muted text-lg mt-5 max-w-2xl mx-auto">Embed invoices, projects, receipts, and more directly in your own SaaS — with one script tag, a permission-scoped token, and a fully brandable iframe.</p>
-        <router-link :to="{ name: 'docs.embed' }" class="inline-flex items-center gap-2 mt-6 text-sm text-amber hover:underline">
+        <p class="text-gray-900 text-lg mt-5 max-w-2xl mx-auto">Embed invoices, projects, receipts, and more directly in your own SaaS — with one script tag, a permission-scoped token, and a fully brandable iframe.</p>
+        <router-link :to="{ name: 'docs.embed' }" class="inline-flex items-center gap-2 mt-6 text-sm text-green-700 hover:underline">
           Read the docs
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </router-link>
@@ -783,50 +780,50 @@ const scrollTo = (id: string) => {
       <div class="grid lg:grid-cols-2 gap-12 items-center">
         <!-- Code snippet -->
         <div class="relative">
-          <div class="bg-charcoal-950 border border-charcoal-700/50 rounded-2xl overflow-hidden shadow-2xl">
-            <div class="bg-charcoal-800/60 border-b border-charcoal-700/40 px-5 py-3 flex items-center gap-2">
+          <div class="bg-bg-100 border border-gray-400/50 rounded-2xl overflow-hidden shadow-2xl">
+            <div class="bg-gray-200/60 border-b border-gray-400/40 px-5 py-3 flex items-center gap-2">
               <div class="w-3 h-3 rounded-full bg-red-500/40"></div>
               <div class="w-3 h-3 rounded-full bg-yellow-500/40"></div>
               <div class="w-3 h-3 rounded-full bg-green-500/40"></div>
-              <span class="ml-3 text-cream-faint text-xs font-mono">app.js</span>
+              <span class="ml-3 text-gray-700 text-xs font-mono">app.js</span>
             </div>
-            <pre class="p-5 text-xs font-mono leading-relaxed overflow-x-auto"><code class="text-cream-muted"><span class="text-cream-faint">// 1. Add the script</span>
+            <pre class="p-5 text-xs font-mono leading-relaxed overflow-x-auto"><code class="text-gray-900"><span class="text-gray-700">// 1. Add the script</span>
 &lt;script src="flowtali.com/sdk/flowtali.js"&gt;&lt;/script&gt;
 
-<span class="text-cream-faint">// 2. Init with your publishable key + branding</span>
-<span class="text-cream">const ft = Flowtali.init(<span class="text-amber">'pk_live_...'</span>, {
-  appearance: { primaryColor: <span class="text-amber">'#6366f1'</span> }
+<span class="text-gray-700">// 2. Init with your publishable key + branding</span>
+<span class="text-gray-1000">const ft = Flowtali.init(<span class="text-green-700">'pk_live_...'</span>, {
+  appearance: { primaryColor: <span class="text-green-700">'#6366f1'</span> }
 })</span>
 
-<span class="text-cream-faint">// 3. Mount any view with a user token</span>
-<span class="text-cream">ft.mount(<span class="text-amber">'#container'</span>, {
-  view: <span class="text-amber">'invoices'</span>,
+<span class="text-gray-700">// 3. Mount any view with a user token</span>
+<span class="text-gray-1000">ft.mount(<span class="text-green-700">'#container'</span>, {
+  view: <span class="text-green-700">'invoices'</span>,
   token: userEmbedToken,
 })
 
-ft.on(<span class="text-amber">'invoice.created'</span>, (inv) =&gt; {
+ft.on(<span class="text-green-700">'invoice.created'</span>, (inv) =&gt; {
   syncToYourSystem(inv.id)
 })</span></code></pre>
           </div>
           <div class="absolute -bottom-6 -right-6 w-48 h-48 rounded-full pointer-events-none"
-            style="background:radial-gradient(circle,rgba(232,168,62,0.12) 0%,transparent 70%)"></div>
+            style="background:radial-gradient(circle,rgba(0,200,83,0.12) 0%,transparent 70%)"></div>
         </div>
 
         <!-- Feature list -->
         <div class="flex flex-col gap-5">
           <div v-for="item in embedFeatures" :key="item.title"
-            class="bg-charcoal-800/50 border border-charcoal-700/40 rounded-xl p-5 flex items-start gap-4 hover:border-amber-border transition-colors">
-            <div class="w-9 h-9 rounded-lg bg-amber/10 border border-amber/15 flex items-center justify-center flex-shrink-0">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E8A83E" stroke-width="1.8" v-html="item.icon"></svg>
+            class="bg-gray-200/50 border border-gray-400/40 rounded-xl p-5 flex items-start gap-4 hover:border-green-400 transition-colors">
+            <div class="w-9 h-9 rounded-lg bg-green-700/10 border border-green-700/15 flex items-center justify-center flex-shrink-0">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" v-html="item.icon"></svg>
             </div>
             <div>
-              <div class="text-cream text-sm font-medium mb-0.5">{{ item.title }}</div>
-              <div class="text-cream-muted text-xs leading-relaxed">{{ item.desc }}</div>
+              <div class="text-gray-1000 text-sm font-medium mb-0.5">{{ item.title }}</div>
+              <div class="text-gray-900 text-xs leading-relaxed">{{ item.desc }}</div>
             </div>
           </div>
 
           <router-link :to="{ name: 'docs.embed' }"
-            class="mt-2 inline-flex items-center justify-center gap-2 bg-amber text-charcoal-900 font-semibold text-sm px-6 py-3 rounded-lg hover:bg-amber-light transition-colors self-start">
+            class="mt-2 inline-flex items-center justify-center gap-2 bg-green-700 text-bg-100 font-semibold text-sm px-6 py-3 rounded-lg hover:bg-green-800 transition-colors self-start">
             View full docs
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </router-link>
@@ -842,20 +839,20 @@ ft.on(<span class="text-amber">'invoice.created'</span>, (inv) =&gt; {
     <div class="max-w-3xl mx-auto px-6">
       <div class="text-center mb-16">
         <div class="badge inline-flex mb-5">FAQ</div>
-        <h2 class="font-display text-5xl font-semibold text-cream">Common questions</h2>
+        <h2 class="font-sans text-5xl font-semibold text-gray-1000">Common questions</h2>
       </div>
-      <div class="flex flex-col divide-y divide-charcoal-700/40">
+      <div class="flex flex-col divide-y divide-gray-400/40">
         <div v-for="(faq, i) in faqs" :key="i" class="py-5">
           <button class="w-full flex items-center justify-between text-left gap-4 cursor-pointer"
             @click="openFaq = openFaq === i ? null : i">
-            <span class="text-cream font-medium">{{ faq.q }}</span>
-            <svg class="w-5 h-5 text-amber flex-shrink-0 transition-transform duration-200"
+            <span class="text-gray-1000 font-medium">{{ faq.q }}</span>
+            <svg class="w-5 h-5 text-green-700 flex-shrink-0 transition-transform duration-200"
               :class="openFaq === i ? 'rotate-45' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2">
               <path d="M12 5v14M5 12h14" />
             </svg>
           </button>
-          <div v-show="openFaq === i" class="pt-3 text-cream-muted text-sm leading-relaxed">{{ faq.a }}</div>
+          <div v-show="openFaq === i" class="pt-3 text-gray-900 text-sm leading-relaxed">{{ faq.a }}</div>
         </div>
       </div>
     </div>
@@ -865,11 +862,11 @@ ft.on(<span class="text-amber">'invoice.created'</span>, (inv) =&gt; {
   <section class="py-20 relative overflow-hidden">
     <div class="absolute inset-0 grid-texture opacity-50"></div>
     <div class="absolute inset-0"
-      style="background:radial-gradient(ellipse at 50% 50%,rgba(232,168,62,0.12) 0%,transparent 70%)"></div>
+      style="background:radial-gradient(ellipse at 50% 50%,rgba(0,200,83,0.12) 0%,transparent 70%)"></div>
     <div class="relative max-w-4xl mx-auto px-6 text-center">
-      <h2 class="font-display text-5xl md:text-6xl font-semibold text-cream mb-5 leading-tight">Ready to run your<em
+      <h2 class="font-sans text-5xl md:text-6xl font-semibold text-gray-1000 mb-5 leading-tight">Ready to run your<em
           class="shimmer-text not-italic"> business better?</em></h2>
-      <p class="text-cream-muted text-lg mb-10">Join 4,200+ freelancers who trust Flowtali for invoices, receipts, projects, and letterheads.</p>
+      <p class="text-gray-900 text-lg mb-10">Join 4,200+ freelancers who trust Flowtali for invoices, receipts, projects, and letterheads.</p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <router-link :to="{ name: 'signup' }" class="btn-primary text-base px-8 py-4">Start free — no credit
           card</router-link>

@@ -8,6 +8,7 @@ import { useAuthStore } from '@/stores/auth'
 import { AuthService } from '@/services/auth.service'
 import InputField from '@/components/form/InputField.vue'
 import BasicAlert from '@/components/alerts/BasicAlert.vue'
+import FlowtaliLogo from '@/components/ui/FlowtaliLogo.vue'
 import type { ILoginData } from '@/types/auth.types'
 
 const route = useRoute()
@@ -84,10 +85,10 @@ onMounted(() => {
 
       <!-- Auto-verify in progress -->
       <div v-if="verifyMode && isAutoVerifying" class="text-center py-8">
-        <svg class="animate-spin w-10 h-10 text-amber mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg class="animate-spin w-10 h-10 text-green-700 mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" />
         </svg>
-        <p class="text-cream-faint">Signing you in…</p>
+        <p class="text-gray-700">Signing you in…</p>
       </div>
 
       <!-- Verify error -->
@@ -97,8 +98,8 @@ onMounted(() => {
             <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
         </div>
-        <h2 class="font-display text-2xl font-semibold text-cream mb-2">Link expired</h2>
-        <p class="text-cream-muted text-sm mb-6">{{ verifyError }}</p>
+        <h2 class="font-sans text-2xl font-semibold text-gray-1000 mb-2">Link expired</h2>
+        <p class="text-gray-900 text-sm mb-6">{{ verifyError }}</p>
         <router-link :to="{ name: 'auth.magic-login' }" class="btn-primary text-sm px-6 py-2.5 inline-block">
           Request a new link
         </router-link>
@@ -106,25 +107,19 @@ onMounted(() => {
 
       <!-- Request form -->
       <div v-else-if="!sent">
-        <router-link :to="{ name: 'signin' }" class="flex items-center gap-2 text-cream-faint text-sm mb-7 hover:text-cream">
+        <router-link :to="{ name: 'signin' }" class="flex items-center gap-2 text-gray-700 text-sm mb-7 hover:text-gray-1000">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
           Back to sign in
         </router-link>
 
-        <div class="flex items-center gap-2.5 mb-2">
-          <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-amber to-amber-light flex items-center justify-center">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0a0a0b" stroke-width="2.5">
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <path d="M7 8h10M7 12h6M7 16h4" />
-            </svg>
-          </div>
-          <span class="font-display font-semibold text-lg text-cream">Flowtali</span>
+        <div class="mb-2">
+          <FlowtaliLogo variant="full" :size="22" />
         </div>
 
-        <h1 class="font-display text-3xl font-semibold text-cream mt-5 mb-1">Sign in without password</h1>
-        <p class="text-cream-faint text-sm mb-7">We'll send a one-click sign-in link to your email.</p>
+        <h1 class="font-sans text-3xl font-semibold text-gray-1000 mt-5 mb-1">Sign in without password</h1>
+        <p class="text-gray-700 text-sm mb-7">We'll send a one-click sign-in link to your email.</p>
 
         <BasicAlert type="danger" class="mb-4" v-if="getError('general').value">
           <span>{{ getError('general').value }}</span>
@@ -160,15 +155,15 @@ onMounted(() => {
 
       <!-- Sent success -->
       <div v-else class="text-center py-4">
-        <div class="w-16 h-16 rounded-full bg-amber-dim border border-amber-border flex items-center justify-center mx-auto mb-5">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E8A83E" stroke-width="2">
+        <div class="w-16 h-16 rounded-full bg-green-100 border border-green-400 flex items-center justify-center mx-auto mb-5">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
             <polyline points="22,6 12,13 2,6" />
           </svg>
         </div>
-        <h2 class="font-display text-2xl font-semibold text-cream mb-2">Check your email</h2>
-        <p class="text-cream-muted text-sm mb-6">
-          If an account exists for <span class="text-amber">{{ email }}</span>, a magic link has been sent. It expires in 15 minutes.
+        <h2 class="font-sans text-2xl font-semibold text-gray-1000 mb-2">Check your email</h2>
+        <p class="text-gray-900 text-sm mb-6">
+          If an account exists for <span class="text-green-700">{{ email }}</span>, a magic link has been sent. It expires in 15 minutes.
         </p>
         <router-link :to="{ name: 'signin' }" class="btn-ghost text-sm px-6 py-2.5">
           Back to sign in

@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { SharedLinksService } from '@/services/shared-links.service'
+import FlowtaliLogo from '@/components/ui/FlowtaliLogo.vue'
 import type { ILetterhead } from '@/services/letterhead.service'
 
 const route = useRoute()
@@ -71,12 +72,7 @@ const formatDate = (d: string | null) => {
 
     <!-- Top bar -->
     <header class="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shrink-0 print:hidden">
-      <div class="flex items-center gap-2">
-        <div class="w-6 h-6 rounded-md bg-amber-400 flex items-center justify-center">
-          <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h10M7 12h6M7 16h4"/></svg>
-        </div>
-        <span class="text-sm font-bold text-gray-800" style="font-family:'DM Sans',sans-serif">Flowtali</span>
-      </div>
+      <FlowtaliLogo variant="full" :size="16" theme="light" />
       <button v-if="letterhead" @click="printPage()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 border border-gray-200 text-gray-600 rounded-lg transition-colors">
         <Icon icon="lucide:printer" class="w-3.5 h-3.5" /> Print / PDF
       </button>
@@ -102,8 +98,8 @@ const formatDate = (d: string | null) => {
     <div v-else-if="locked" class="flex-1 flex items-center justify-center p-6">
       <div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-8 w-full max-w-sm space-y-5">
         <div class="text-center">
-          <div class="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center mx-auto mb-3">
-            <Icon icon="lucide:lock" class="w-6 h-6 text-amber-500" />
+          <div class="w-12 h-12 rounded-xl bg-green-700-50 border border-green-700-200 flex items-center justify-center mx-auto mb-3">
+            <Icon icon="lucide:lock" class="w-6 h-6 text-green-700-500" />
           </div>
           <h2 class="text-base font-semibold text-gray-800">Access Required</h2>
           <p class="text-sm text-gray-500 mt-1">Enter the access code to view this letterhead</p>
@@ -116,14 +112,14 @@ const formatDate = (d: string | null) => {
             type="text"
             placeholder="e.g. ABC123"
             :disabled="codeLoading"
-            class="w-full px-3 py-2.5 text-sm font-mono border border-gray-300 rounded-lg focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 text-gray-800 tracking-widest uppercase disabled:opacity-60"
+            class="w-full px-3 py-2.5 text-sm font-mono border border-gray-300 rounded-lg focus:outline-none focus:border-green-700-400 focus:ring-2 focus:ring-amber-400/20 text-gray-800 tracking-widest uppercase disabled:opacity-60"
           />
           <p v-if="codeError" class="text-xs text-red-500">{{ codeError }}</p>
         </div>
         <button
           @click="submitCode"
           :disabled="codeLoading || !codeInput.trim()"
-          class="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-semibold bg-amber-400 hover:bg-amber-500 disabled:opacity-60 text-white rounded-lg transition-colors"
+          class="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-semibold bg-green-700-400 hover:bg-green-700-500 disabled:opacity-60 text-white rounded-lg transition-colors"
         >
           <Icon v-if="codeLoading" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
           {{ codeLoading ? 'Verifying…' : 'View Letterhead' }}
@@ -142,7 +138,7 @@ const formatDate = (d: string | null) => {
       <div
         v-if="letterhead.theme === 'classic' || !letterhead.theme"
         class="print-document w-full max-w-2xl bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden relative"
-        :style="{ fontFamily: letterhead.font_family || 'DM Sans, sans-serif', color: '#1f2937', fontSize: '13px', minHeight: '1100px' }"
+        :style="{ fontFamily: letterhead.font_family || 'Geist Sans, sans-serif', color: '#1f2937', fontSize: '13px', minHeight: '1100px' }"
       >
         <div v-if="letterhead.show_top_bar" class="h-1.5 w-full" :style="{ backgroundColor: letterhead.accent_color }"></div>
         <div v-if="letterhead.show_watermark && letterhead.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
@@ -196,7 +192,7 @@ const formatDate = (d: string | null) => {
       <div
         v-else-if="letterhead.theme === 'modern'"
         class="print-document w-full max-w-2xl bg-white rounded-xl shadow-xl overflow-hidden relative flex"
-        :style="{ fontFamily: letterhead.font_family || 'DM Sans, sans-serif', color: '#1f2937', fontSize: '13px', minHeight: '1100px' }"
+        :style="{ fontFamily: letterhead.font_family || 'Geist Sans, sans-serif', color: '#1f2937', fontSize: '13px', minHeight: '1100px' }"
       >
         <div v-if="letterhead.show_watermark && letterhead.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
           <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: letterhead.watermark_color }">{{ letterhead.watermark }}</span>
@@ -248,7 +244,7 @@ const formatDate = (d: string | null) => {
       <div
         v-else-if="letterhead.theme === 'minimal'"
         class="print-document w-full max-w-2xl bg-white rounded-xl shadow-xl overflow-hidden relative"
-        :style="{ fontFamily: letterhead.font_family || 'DM Sans, sans-serif', color: '#1f2937', fontSize: '13px', minHeight: '1100px' }"
+        :style="{ fontFamily: letterhead.font_family || 'Geist Sans, sans-serif', color: '#1f2937', fontSize: '13px', minHeight: '1100px' }"
       >
         <div v-if="letterhead.show_watermark && letterhead.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
           <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: letterhead.watermark_color }">{{ letterhead.watermark }}</span>
@@ -285,7 +281,7 @@ const formatDate = (d: string | null) => {
       <div
         v-else-if="letterhead.theme === 'bold'"
         class="print-document w-full max-w-2xl bg-white rounded-xl shadow-xl overflow-hidden relative"
-        :style="{ fontFamily: letterhead.font_family || 'DM Sans, sans-serif', color: '#1f2937', fontSize: '13px', minHeight: '1100px' }"
+        :style="{ fontFamily: letterhead.font_family || 'Geist Sans, sans-serif', color: '#1f2937', fontSize: '13px', minHeight: '1100px' }"
       >
         <div v-if="letterhead.show_watermark && letterhead.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
           <span class="text-8xl font-black tracking-widest opacity-[0.04] whitespace-nowrap" :style="{ color: letterhead.watermark_color }">{{ letterhead.watermark }}</span>
@@ -380,7 +376,7 @@ const formatDate = (d: string | null) => {
       <div
         v-else
         class="print-document w-full max-w-2xl bg-white rounded-xl shadow-xl overflow-hidden relative"
-        :style="{ fontFamily: letterhead.font_family || 'DM Sans, sans-serif', color: '#1f2937', fontSize: '13px', minHeight: '1100px' }"
+        :style="{ fontFamily: letterhead.font_family || 'Geist Sans, sans-serif', color: '#1f2937', fontSize: '13px', minHeight: '1100px' }"
       >
         <div v-if="letterhead.show_top_bar" class="h-2 w-full" :style="{ backgroundColor: letterhead.accent_color }"></div>
         <div v-if="letterhead.show_watermark && letterhead.watermark" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">

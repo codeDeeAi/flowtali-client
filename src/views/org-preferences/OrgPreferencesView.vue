@@ -605,11 +605,11 @@ onMounted(loadApiKeys)
 
     <!-- Loading skeleton -->
     <div v-if="loading" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <div v-for="i in 4" :key="i" class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 animate-pulse">
-        <div class="h-4 bg-charcoal-700 rounded w-32 mb-4"></div>
+      <div v-for="i in 4" :key="i" class="bg-gray-200 border border-gray-400 rounded-xl p-5 animate-pulse">
+        <div class="h-4 bg-gray-400 rounded w-32 mb-4"></div>
         <div class="space-y-2">
-          <div class="h-10 bg-charcoal-700 rounded"></div>
-          <div class="h-10 bg-charcoal-700 rounded w-3/4"></div>
+          <div class="h-10 bg-gray-400 rounded"></div>
+          <div class="h-10 bg-gray-400 rounded w-3/4"></div>
         </div>
       </div>
     </div>
@@ -617,11 +617,11 @@ onMounted(loadApiKeys)
     <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
       <!-- ── Saved Stamps ────────────────────────────────────────────────── -->
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+      <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-semibold text-cream">Saved Stamps</h3>
+          <h3 class="text-sm font-semibold text-gray-1000">Saved Stamps</h3>
           <button
-            class="flex items-center gap-1.5 text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-2.5 py-1.5 rounded-md transition-colors"
+            class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1.5 rounded-md transition-colors"
             @click="openAddStamp"
           >
             <Icon icon="lucide:plus" class="w-3 h-3" /> Add Stamp
@@ -631,7 +631,7 @@ onMounted(loadApiKeys)
         <div class="grid grid-cols-3 gap-3">
           <div
             v-for="(stamp, i) in stamps" :key="i"
-            class="group relative flex flex-col items-center gap-2 p-3 border border-charcoal-700 hover:border-charcoal-500 rounded-lg cursor-pointer transition-colors"
+            class="group relative flex flex-col items-center gap-2 p-3 border border-gray-400 hover:border-gray-500 rounded-lg cursor-pointer transition-colors"
             @click="openEditStamp(i)"
           >
             <div
@@ -641,51 +641,51 @@ onMounted(loadApiKeys)
             >
               {{ stamp.text }}
             </div>
-            <span class="text-[10px] text-cream-faint">{{ stamp.text }}</span>
+            <span class="text-[10px] text-gray-700">{{ stamp.text }}</span>
             <button
-              class="absolute top-1 right-1 w-5 h-5 hidden group-hover:flex items-center justify-center rounded text-cream-faint hover:text-red-400 hover:bg-red-500/10 transition-colors"
+              class="absolute top-1 right-1 w-5 h-5 hidden group-hover:flex items-center justify-center rounded text-gray-700 hover:text-red-400 hover:bg-red-500/10 transition-colors"
               @click.stop="deleteStamp(i)"
             >
               <Icon icon="lucide:x" class="w-3 h-3" />
             </button>
           </div>
-          <div v-if="!stamps.length" class="col-span-3 text-center py-6 text-xs text-cream-faint">
+          <div v-if="!stamps.length" class="col-span-3 text-center py-6 text-xs text-gray-700">
             No stamps yet.
           </div>
         </div>
 
         <Transition name="slide-down">
-          <div v-if="showStampForm" class="mt-4 p-4 bg-charcoal-900 border border-charcoal-600 rounded-lg space-y-3">
+          <div v-if="showStampForm" class="mt-4 p-4 bg-gray-100 border border-gray-500 rounded-lg space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-cream">{{ editStampIndex !== null ? 'Edit' : 'New' }} Stamp</span>
-              <button class="text-cream-faint hover:text-cream" @click="showStampForm = false">
+              <span class="text-xs font-medium text-gray-1000">{{ editStampIndex !== null ? 'Edit' : 'New' }} Stamp</span>
+              <button class="text-gray-700 hover:text-gray-1000" @click="showStampForm = false">
                 <Icon icon="lucide:x" class="w-4 h-4" />
               </button>
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div class="col-span-2">
-                <label class="text-xs text-cream-faint mb-1 block">Label</label>
+                <label class="text-xs text-gray-700 mb-1 block">Label</label>
                 <input v-model="stampForm.text" type="text" maxlength="20" placeholder="e.g. PAID" class="app-inp w-full text-sm uppercase" />
               </div>
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Border & Text Color</label>
+                <label class="text-xs text-gray-700 mb-1 block">Border & Text Color</label>
                 <div class="flex items-center gap-2">
-                  <input v-model="stampForm.color" type="color" class="w-8 h-8 rounded cursor-pointer bg-transparent border border-charcoal-600" />
+                  <input v-model="stampForm.color" type="color" class="w-8 h-8 rounded cursor-pointer bg-transparent border border-gray-500" />
                   <input v-model="stampForm.color" type="text" maxlength="7" placeholder="#4ade80" class="app-inp flex-1 text-xs font-mono" />
                 </div>
               </div>
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Fill Color</label>
+                <label class="text-xs text-gray-700 mb-1 block">Fill Color</label>
                 <div class="flex items-center gap-2">
-                  <input v-model="stampForm.text_color" type="color" class="w-8 h-8 rounded cursor-pointer bg-transparent border border-charcoal-600" />
+                  <input v-model="stampForm.text_color" type="color" class="w-8 h-8 rounded cursor-pointer bg-transparent border border-gray-500" />
                   <input v-model="stampForm.text_color" type="text" maxlength="7" placeholder="#ffffff" class="app-inp flex-1 text-xs font-mono" />
                 </div>
               </div>
             </div>
             <div class="flex justify-end gap-2 pt-1">
-              <button class="text-xs text-cream-muted hover:text-cream px-3 py-1.5 rounded-md hover:bg-charcoal-700 transition-colors" @click="showStampForm = false">Cancel</button>
+              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showStampForm = false">Cancel</button>
               <button
-                class="text-xs bg-amber hover:bg-amber-light text-charcoal-900 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
+                class="text-xs bg-green-700 hover:bg-green-800 text-bg-100 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                 :disabled="stampSaving || !stampForm.text.trim()"
                 @click="saveStamp"
               >{{ stampSaving ? 'Saving…' : 'Save' }}</button>
@@ -695,11 +695,11 @@ onMounted(loadApiKeys)
       </div>
 
       <!-- ── Saved Signatures ──────────────────────────────────────────────── -->
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+      <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-semibold text-cream">Saved Signatures</h3>
+          <h3 class="text-sm font-semibold text-gray-1000">Saved Signatures</h3>
           <button
-            class="flex items-center gap-1.5 text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-2.5 py-1.5 rounded-md transition-colors"
+            class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1.5 rounded-md transition-colors"
             @click="openSigForm"
           >
             <Icon icon="lucide:upload" class="w-3 h-3" /> Upload
@@ -707,46 +707,46 @@ onMounted(loadApiKeys)
         </div>
 
         <div class="space-y-3">
-          <div v-for="sig in signatures" :key="sig.id" class="flex items-center gap-3 p-3 border border-charcoal-700 rounded-lg">
-            <div class="w-20 h-9 bg-charcoal-900 border border-charcoal-600 rounded flex items-center justify-center shrink-0 overflow-hidden">
+          <div v-for="sig in signatures" :key="sig.id" class="flex items-center gap-3 p-3 border border-gray-400 rounded-lg">
+            <div class="w-20 h-9 bg-gray-100 border border-gray-500 rounded flex items-center justify-center shrink-0 overflow-hidden">
               <img :src="sig.url" :alt="sig.extras.name" class="max-w-full max-h-full object-contain" />
             </div>
             <div class="flex-1 min-w-0">
-              <div class="text-sm font-medium text-cream truncate">{{ sig.extras.name }}</div>
-              <div class="text-xs text-cream-faint truncate">{{ sig.extras.role }}</div>
+              <div class="text-sm font-medium text-gray-1000 truncate">{{ sig.extras.name }}</div>
+              <div class="text-xs text-gray-700 truncate">{{ sig.extras.role }}</div>
             </div>
             <button
-              class="w-7 h-7 flex items-center justify-center rounded-md text-cream-faint hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-40"
+              class="w-7 h-7 flex items-center justify-center rounded-md text-gray-700 hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-40"
               :disabled="deletingId === sig.id"
               @click="deleteSignature(sig.id)"
             >
               <Icon :icon="deletingId === sig.id ? 'lucide:loader-circle' : 'lucide:trash-2'" class="w-3.5 h-3.5" :class="{ 'animate-spin': deletingId === sig.id }" />
             </button>
           </div>
-          <div v-if="!signatures.length && !showSigForm" class="text-center py-4 text-xs text-cream-faint">No signatures yet.</div>
+          <div v-if="!signatures.length && !showSigForm" class="text-center py-4 text-xs text-gray-700">No signatures yet.</div>
         </div>
 
         <Transition name="slide-down">
-          <div v-if="showSigForm" class="mt-4 p-4 bg-charcoal-900 border border-charcoal-600 rounded-lg space-y-3">
+          <div v-if="showSigForm" class="mt-4 p-4 bg-gray-100 border border-gray-500 rounded-lg space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-cream">Upload Signature</span>
-              <button class="text-cream-faint hover:text-cream" @click="closeSigForm">
+              <span class="text-xs font-medium text-gray-1000">Upload Signature</span>
+              <button class="text-gray-700 hover:text-gray-1000" @click="closeSigForm">
                 <Icon icon="lucide:x" class="w-4 h-4" />
               </button>
             </div>
 
             <!-- File drop zone — upload happens immediately on selection -->
             <div>
-              <label class="text-xs text-cream-faint mb-1 block">Signature Image</label>
+              <label class="text-xs text-gray-700 mb-1 block">Signature Image</label>
               <div
                 class="relative border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors"
-                :class="sigUploadError ? 'border-red-500/50 hover:border-red-500/70' : 'border-charcoal-600 hover:border-charcoal-500'"
+                :class="sigUploadError ? 'border-red-500/50 hover:border-red-500/70' : 'border-gray-500 hover:border-gray-500'"
                 @click="sigFileRef?.click()"
               >
                 <!-- Uploading spinner -->
                 <div v-if="sigUploading" class="flex flex-col items-center gap-2">
-                  <Icon icon="lucide:loader-circle" class="w-6 h-6 text-amber animate-spin" />
-                  <span class="text-xs text-cream-faint">Uploading…</span>
+                  <Icon icon="lucide:loader-circle" class="w-6 h-6 text-green-700 animate-spin" />
+                  <span class="text-xs text-gray-700">Uploading…</span>
                 </div>
                 <!-- Preview after upload -->
                 <div v-else-if="sigPreview && sigMediaId" class="flex flex-col items-center gap-1.5">
@@ -771,11 +771,11 @@ onMounted(loadApiKeys)
                 <div v-else-if="sigUploadError" class="flex flex-col items-center gap-1">
                   <Icon icon="lucide:alert-circle" class="w-5 h-5 text-red-400" />
                   <span class="text-xs text-red-400">{{ sigUploadError }}</span>
-                  <span class="text-[10px] text-cream-faint">Click to try again</span>
+                  <span class="text-[10px] text-gray-700">Click to try again</span>
                 </div>
                 <!-- Empty state -->
-                <div v-else class="text-xs text-cream-faint">
-                  <Icon icon="lucide:image-up" class="w-5 h-5 mx-auto mb-1 text-cream-muted" />
+                <div v-else class="text-xs text-gray-700">
+                  <Icon icon="lucide:image-up" class="w-5 h-5 mx-auto mb-1 text-gray-900" />
                   Click to select — uploads immediately (PNG, JPG, WebP · max 5 MB)
                 </div>
                 <input ref="sigFileRef" type="file" accept="image/*" class="hidden" @change="onSigFileChange" />
@@ -785,19 +785,19 @@ onMounted(loadApiKeys)
             <!-- Name + role — fill while image uploads -->
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Full Name</label>
+                <label class="text-xs text-gray-700 mb-1 block">Full Name</label>
                 <input v-model="sigForm.name" type="text" placeholder="Ada Lovelace" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Role / Title</label>
+                <label class="text-xs text-gray-700 mb-1 block">Role / Title</label>
                 <input v-model="sigForm.role" type="text" placeholder="Creative Director" class="app-inp w-full text-sm" />
               </div>
             </div>
 
             <div class="flex justify-end gap-2 pt-1">
-              <button class="text-xs text-cream-muted hover:text-cream px-3 py-1.5 rounded-md hover:bg-charcoal-700 transition-colors" @click="closeSigForm">Cancel</button>
+              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="closeSigForm">Cancel</button>
               <button
-                class="flex items-center gap-1.5 text-xs bg-amber hover:bg-amber-light text-charcoal-900 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
+                class="flex items-center gap-1.5 text-xs bg-green-700 hover:bg-green-800 text-bg-100 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                 :disabled="sigSubmitting || sigUploading || !sigMediaId || !sigForm.name.trim() || !sigForm.role.trim()"
                 @click="submitSignature"
               >
@@ -810,11 +810,11 @@ onMounted(loadApiKeys)
       </div>
 
       <!-- ── Brand Colors ──────────────────────────────────────────────────── -->
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+      <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-semibold text-cream">Brand Colors</h3>
+          <h3 class="text-sm font-semibold text-gray-1000">Brand Colors</h3>
           <button
-            class="flex items-center gap-1.5 text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-2.5 py-1.5 rounded-md transition-colors"
+            class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1.5 rounded-md transition-colors"
             @click="openAddColor"
           >
             <Icon icon="lucide:plus" class="w-3 h-3" /> Add Color
@@ -824,49 +824,49 @@ onMounted(loadApiKeys)
         <div class="flex flex-wrap gap-3">
           <div
             v-for="(color, i) in brandColors" :key="i"
-            class="group relative flex items-center gap-2.5 px-3 py-2 border border-charcoal-700 rounded-lg hover:border-charcoal-500 transition-colors cursor-pointer"
+            class="group relative flex items-center gap-2.5 px-3 py-2 border border-gray-400 rounded-lg hover:border-gray-500 transition-colors cursor-pointer"
             @click="openEditColor(i)"
           >
             <div class="w-5 h-5 rounded shrink-0" :style="{ backgroundColor: color.hex, border: '1px solid rgba(255,255,255,0.1)' }"></div>
             <div>
-              <div class="text-xs font-medium text-cream">{{ color.name }}</div>
-              <div class="text-[10px] font-mono text-cream-faint">{{ color.hex }}</div>
+              <div class="text-xs font-medium text-gray-1000">{{ color.name }}</div>
+              <div class="text-[10px] font-mono text-gray-700">{{ color.hex }}</div>
             </div>
             <button
-              class="absolute -top-1.5 -right-1.5 w-4 h-4 hidden group-hover:flex items-center justify-center rounded-full bg-charcoal-700 text-cream-faint hover:text-red-400 transition-colors"
+              class="absolute -top-1.5 -right-1.5 w-4 h-4 hidden group-hover:flex items-center justify-center rounded-full bg-gray-400 text-gray-700 hover:text-red-400 transition-colors"
               @click.stop="deleteColor(i)"
             >
               <Icon icon="lucide:x" class="w-2.5 h-2.5" />
             </button>
           </div>
-          <div v-if="!brandColors.length" class="w-full text-center py-4 text-xs text-cream-faint">No brand colors yet.</div>
+          <div v-if="!brandColors.length" class="w-full text-center py-4 text-xs text-gray-700">No brand colors yet.</div>
         </div>
 
         <Transition name="slide-down">
-          <div v-if="showColorForm" class="mt-4 p-4 bg-charcoal-900 border border-charcoal-600 rounded-lg space-y-3">
+          <div v-if="showColorForm" class="mt-4 p-4 bg-gray-100 border border-gray-500 rounded-lg space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-cream">{{ editColorIndex !== null ? 'Edit' : 'New' }} Color</span>
-              <button class="text-cream-faint hover:text-cream" @click="showColorForm = false">
+              <span class="text-xs font-medium text-gray-1000">{{ editColorIndex !== null ? 'Edit' : 'New' }} Color</span>
+              <button class="text-gray-700 hover:text-gray-1000" @click="showColorForm = false">
                 <Icon icon="lucide:x" class="w-4 h-4" />
               </button>
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Color Name</label>
+                <label class="text-xs text-gray-700 mb-1 block">Color Name</label>
                 <input v-model="colorForm.name" type="text" placeholder="Brand Gold" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Hex Value</label>
+                <label class="text-xs text-gray-700 mb-1 block">Hex Value</label>
                 <div class="flex items-center gap-2">
-                  <input v-model="colorForm.hex" type="color" class="w-8 h-8 rounded cursor-pointer bg-transparent border border-charcoal-600 shrink-0" />
-                  <input v-model="colorForm.hex" type="text" maxlength="7" placeholder="#E8A83E" class="app-inp flex-1 text-xs font-mono" />
+                  <input v-model="colorForm.hex" type="color" class="w-8 h-8 rounded cursor-pointer bg-transparent border border-gray-500 shrink-0" />
+                  <input v-model="colorForm.hex" type="text" maxlength="7" placeholder="#00c853" class="app-inp flex-1 text-xs font-mono" />
                 </div>
               </div>
             </div>
             <div class="flex justify-end gap-2 pt-1">
-              <button class="text-xs text-cream-muted hover:text-cream px-3 py-1.5 rounded-md hover:bg-charcoal-700 transition-colors" @click="showColorForm = false">Cancel</button>
+              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showColorForm = false">Cancel</button>
               <button
-                class="text-xs bg-amber hover:bg-amber-light text-charcoal-900 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
+                class="text-xs bg-green-700 hover:bg-green-800 text-bg-100 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                 :disabled="colorSaving || !colorForm.name.trim() || !colorForm.hex.trim()"
                 @click="saveColor"
               >{{ colorSaving ? 'Saving…' : 'Save' }}</button>
@@ -876,11 +876,11 @@ onMounted(loadApiKeys)
       </div>
 
       <!-- ── Organization Logos ────────────────────────────────────────────── -->
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5">
+      <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-semibold text-cream">Organization Logos</h3>
+          <h3 class="text-sm font-semibold text-gray-1000">Organization Logos</h3>
           <button
-            class="flex items-center gap-1.5 text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-2.5 py-1.5 rounded-md transition-colors"
+            class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1.5 rounded-md transition-colors"
             @click="openLogoForm"
           >
             <Icon icon="lucide:upload" class="w-3 h-3" /> Upload
@@ -888,48 +888,48 @@ onMounted(loadApiKeys)
         </div>
 
         <div class="space-y-3">
-          <div v-for="logo in orgLogos" :key="logo.id" class="flex items-center gap-3 p-3 border border-charcoal-700 rounded-lg">
+          <div v-for="logo in orgLogos" :key="logo.id" class="flex items-center gap-3 p-3 border border-gray-400 rounded-lg">
             <div class="w-14 h-9 bg-white rounded flex items-center justify-center shrink-0 overflow-hidden p-1">
               <img :src="logo.url" :alt="logo.extras.label" class="max-w-full max-h-full object-contain" />
             </div>
             <div class="flex-1 min-w-0">
-              <div class="text-sm font-medium text-cream truncate">{{ logo.extras.label }}</div>
-              <div class="text-xs text-cream-faint">
+              <div class="text-sm font-medium text-gray-1000 truncate">{{ logo.extras.label }}</div>
+              <div class="text-xs text-gray-700">
                 {{ logo.extras.mime_type?.replace('image/', '').toUpperCase() ?? 'Image' }}
                 <template v-if="logo.extras.size"> · {{ Math.round((logo.extras.size as number) / 1024) }} KB</template>
               </div>
             </div>
             <button
-              class="w-7 h-7 flex items-center justify-center rounded-md text-cream-faint hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-40"
+              class="w-7 h-7 flex items-center justify-center rounded-md text-gray-700 hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-40"
               :disabled="deletingId === logo.id"
               @click="deleteLogo(logo.id)"
             >
               <Icon :icon="deletingId === logo.id ? 'lucide:loader-circle' : 'lucide:trash-2'" class="w-3.5 h-3.5" :class="{ 'animate-spin': deletingId === logo.id }" />
             </button>
           </div>
-          <div v-if="!orgLogos.length && !showLogoForm" class="text-center py-4 text-xs text-cream-faint">No logos uploaded yet.</div>
+          <div v-if="!orgLogos.length && !showLogoForm" class="text-center py-4 text-xs text-gray-700">No logos uploaded yet.</div>
         </div>
 
         <Transition name="slide-down">
-          <div v-if="showLogoForm" class="mt-4 p-4 bg-charcoal-900 border border-charcoal-600 rounded-lg space-y-3">
+          <div v-if="showLogoForm" class="mt-4 p-4 bg-gray-100 border border-gray-500 rounded-lg space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-cream">Upload Logo</span>
-              <button class="text-cream-faint hover:text-cream" @click="closeLogoForm">
+              <span class="text-xs font-medium text-gray-1000">Upload Logo</span>
+              <button class="text-gray-700 hover:text-gray-1000" @click="closeLogoForm">
                 <Icon icon="lucide:x" class="w-4 h-4" />
               </button>
             </div>
 
             <!-- File drop zone — upload happens immediately on selection -->
             <div>
-              <label class="text-xs text-cream-faint mb-1 block">Logo File</label>
+              <label class="text-xs text-gray-700 mb-1 block">Logo File</label>
               <div
                 class="relative border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors"
-                :class="logoUploadError ? 'border-red-500/50 hover:border-red-500/70' : 'border-charcoal-600 hover:border-charcoal-500'"
+                :class="logoUploadError ? 'border-red-500/50 hover:border-red-500/70' : 'border-gray-500 hover:border-gray-500'"
                 @click="logoFileRef?.click()"
               >
                 <div v-if="logoUploading" class="flex flex-col items-center gap-2">
-                  <Icon icon="lucide:loader-circle" class="w-6 h-6 text-amber animate-spin" />
-                  <span class="text-xs text-cream-faint">Uploading…</span>
+                  <Icon icon="lucide:loader-circle" class="w-6 h-6 text-green-700 animate-spin" />
+                  <span class="text-xs text-gray-700">Uploading…</span>
                 </div>
                 <div v-else-if="logoPreview && logoMediaId" class="flex flex-col items-center gap-1.5">
                   <div class="relative inline-flex">
@@ -952,10 +952,10 @@ onMounted(loadApiKeys)
                 <div v-else-if="logoUploadError" class="flex flex-col items-center gap-1">
                   <Icon icon="lucide:alert-circle" class="w-5 h-5 text-red-400" />
                   <span class="text-xs text-red-400">{{ logoUploadError }}</span>
-                  <span class="text-[10px] text-cream-faint">Click to try again</span>
+                  <span class="text-[10px] text-gray-700">Click to try again</span>
                 </div>
-                <div v-else class="text-xs text-cream-faint">
-                  <Icon icon="lucide:image-up" class="w-5 h-5 mx-auto mb-1 text-cream-muted" />
+                <div v-else class="text-xs text-gray-700">
+                  <Icon icon="lucide:image-up" class="w-5 h-5 mx-auto mb-1 text-gray-900" />
                   Click to select — uploads immediately (PNG, JPG, WebP · max 10 MB)
                 </div>
                 <input ref="logoFileRef" type="file" accept="image/*" class="hidden" @change="onLogoFileChange" />
@@ -964,14 +964,14 @@ onMounted(loadApiKeys)
 
             <!-- Label — fill while image uploads -->
             <div>
-              <label class="text-xs text-cream-faint mb-1 block">Label</label>
+              <label class="text-xs text-gray-700 mb-1 block">Label</label>
               <input v-model="logoForm.label" type="text" placeholder="e.g. Primary Logo (Light)" class="app-inp w-full text-sm" />
             </div>
 
             <div class="flex justify-end gap-2 pt-1">
-              <button class="text-xs text-cream-muted hover:text-cream px-3 py-1.5 rounded-md hover:bg-charcoal-700 transition-colors" @click="closeLogoForm">Cancel</button>
+              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="closeLogoForm">Cancel</button>
               <button
-                class="flex items-center gap-1.5 text-xs bg-amber hover:bg-amber-light text-charcoal-900 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
+                class="flex items-center gap-1.5 text-xs bg-green-700 hover:bg-green-800 text-bg-100 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                 :disabled="logoSubmitting || logoUploading || !logoMediaId || !logoForm.label.trim()"
                 @click="submitLogo"
               >
@@ -984,14 +984,14 @@ onMounted(loadApiKeys)
       </div>
 
       <!-- ── Invoice Quick-Fill Profiles ─────────────────────────────────── -->
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 lg:col-span-2">
+      <div class="bg-gray-200 border border-gray-400 rounded-xl p-5 lg:col-span-2">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h3 class="text-sm font-semibold text-cream">Invoice Quick-Fill Profiles</h3>
-            <p class="text-[11px] text-cream-faint mt-0.5">Saved "From" presets — load any profile when creating an invoice to pre-fill your details.</p>
+            <h3 class="text-sm font-semibold text-gray-1000">Invoice Quick-Fill Profiles</h3>
+            <p class="text-[11px] text-gray-700 mt-0.5">Saved "From" presets — load any profile when creating an invoice to pre-fill your details.</p>
           </div>
           <button
-            class="flex items-center gap-1.5 text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-2.5 py-1.5 rounded-md transition-colors shrink-0"
+            class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1.5 rounded-md transition-colors shrink-0"
             @click="openAddProfile"
           >
             <Icon icon="lucide:plus" class="w-3 h-3" /> Add Profile
@@ -1001,74 +1001,74 @@ onMounted(loadApiKeys)
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
           <div
             v-for="(profile, i) in invoiceProfiles" :key="profile.id"
-            class="group relative flex flex-col gap-1.5 p-3.5 border border-charcoal-700 hover:border-charcoal-500 rounded-lg cursor-pointer transition-colors"
+            class="group relative flex flex-col gap-1.5 p-3.5 border border-gray-400 hover:border-gray-500 rounded-lg cursor-pointer transition-colors"
             @click="openEditProfile(i)"
           >
             <div class="flex items-start justify-between gap-2">
               <div class="min-w-0">
-                <div class="text-sm font-semibold text-cream truncate">{{ profile.name }}</div>
-                <div v-if="profile.tagline" class="text-[11px] text-cream-faint truncate">{{ profile.tagline }}</div>
+                <div class="text-sm font-semibold text-gray-1000 truncate">{{ profile.name }}</div>
+                <div v-if="profile.tagline" class="text-[11px] text-gray-700 truncate">{{ profile.tagline }}</div>
               </div>
               <button
-                class="w-5 h-5 hidden group-hover:flex items-center justify-center rounded text-cream-faint hover:text-red-400 hover:bg-red-500/10 transition-colors shrink-0"
+                class="w-5 h-5 hidden group-hover:flex items-center justify-center rounded text-gray-700 hover:text-red-400 hover:bg-red-500/10 transition-colors shrink-0"
                 @click.stop="deleteProfile(i)"
               >
                 <Icon icon="lucide:x" class="w-3 h-3" />
               </button>
             </div>
-            <div class="grid grid-cols-1 gap-0.5 text-[11px] text-cream-faint">
+            <div class="grid grid-cols-1 gap-0.5 text-[11px] text-gray-700">
               <span v-if="profile.email" class="flex items-center gap-1 truncate"><Icon icon="lucide:mail" class="w-3 h-3 shrink-0" />{{ profile.email }}</span>
               <span v-if="profile.phone" class="flex items-center gap-1 truncate"><Icon icon="lucide:phone" class="w-3 h-3 shrink-0" />{{ profile.phone }}</span>
               <span v-if="profile.website" class="flex items-center gap-1 truncate"><Icon icon="lucide:globe" class="w-3 h-3 shrink-0" />{{ profile.website }}</span>
             </div>
           </div>
-          <div v-if="!invoiceProfiles.length" class="col-span-full text-center py-6 text-xs text-cream-faint">
+          <div v-if="!invoiceProfiles.length" class="col-span-full text-center py-6 text-xs text-gray-700">
             No profiles yet. Add one to speed up invoice creation.
           </div>
         </div>
 
         <Transition name="slide-down">
-          <div v-if="showProfileForm" class="mt-4 p-4 bg-charcoal-900 border border-charcoal-600 rounded-lg space-y-3">
+          <div v-if="showProfileForm" class="mt-4 p-4 bg-gray-100 border border-gray-500 rounded-lg space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-cream">{{ editProfileIndex !== null ? 'Edit' : 'New' }} Profile</span>
-              <button class="text-cream-faint hover:text-cream" @click="showProfileForm = false">
+              <span class="text-xs font-medium text-gray-1000">{{ editProfileIndex !== null ? 'Edit' : 'New' }} Profile</span>
+              <button class="text-gray-700 hover:text-gray-1000" @click="showProfileForm = false">
                 <Icon icon="lucide:x" class="w-4 h-4" />
               </button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div class="sm:col-span-2">
-                <label class="text-xs text-cream-faint mb-1 block">Profile Name <span class="text-red-400">*</span></label>
+                <label class="text-xs text-gray-700 mb-1 block">Profile Name <span class="text-red-400">*</span></label>
                 <input v-model="profileForm.name" type="text" placeholder="e.g. Acme Design Studio" class="app-inp w-full text-sm" />
               </div>
               <div class="sm:col-span-2">
-                <label class="text-xs text-cream-faint mb-1 block">Tagline / Role</label>
+                <label class="text-xs text-gray-700 mb-1 block">Tagline / Role</label>
                 <input v-model="profileForm.tagline" type="text" placeholder="e.g. Creative Agency & Digital Studio" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Email</label>
+                <label class="text-xs text-gray-700 mb-1 block">Email</label>
                 <input v-model="profileForm.email" type="email" placeholder="hello@studio.com" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Phone</label>
+                <label class="text-xs text-gray-700 mb-1 block">Phone</label>
                 <input v-model="profileForm.phone" type="text" placeholder="+1 415 555 0199" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Website</label>
+                <label class="text-xs text-gray-700 mb-1 block">Website</label>
                 <input v-model="profileForm.website" type="text" placeholder="www.studio.com" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Logo URL</label>
+                <label class="text-xs text-gray-700 mb-1 block">Logo URL</label>
                 <input v-model="profileForm.logo_url" type="text" placeholder="https://…" class="app-inp w-full text-sm" />
               </div>
               <div class="sm:col-span-2">
-                <label class="text-xs text-cream-faint mb-1 block">Address</label>
+                <label class="text-xs text-gray-700 mb-1 block">Address</label>
                 <textarea v-model="profileForm.address" rows="2" placeholder="123 Design Street, San Francisco CA 94105" class="app-inp w-full text-sm resize-none"></textarea>
               </div>
             </div>
             <div class="flex justify-end gap-2 pt-1">
-              <button class="text-xs text-cream-muted hover:text-cream px-3 py-1.5 rounded-md hover:bg-charcoal-700 transition-colors" @click="showProfileForm = false">Cancel</button>
+              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showProfileForm = false">Cancel</button>
               <button
-                class="text-xs bg-amber hover:bg-amber-light text-charcoal-900 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
+                class="text-xs bg-green-700 hover:bg-green-800 text-bg-100 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                 :disabled="profileSaving || !profileForm.name.trim()"
                 @click="saveProfile"
               >{{ profileSaving ? 'Saving…' : 'Save Profile' }}</button>
@@ -1078,14 +1078,14 @@ onMounted(loadApiKeys)
       </div>
 
       <!-- ── Bank Accounts ────────────────────────────────────────────────── -->
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 lg:col-span-2">
+      <div class="bg-gray-200 border border-gray-400 rounded-xl p-5 lg:col-span-2">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h3 class="text-sm font-semibold text-cream">Bank Accounts</h3>
-            <p class="text-[11px] text-cream-faint mt-0.5">Saved bank details — select one when creating an invoice to pre-fill payment info.</p>
+            <h3 class="text-sm font-semibold text-gray-1000">Bank Accounts</h3>
+            <p class="text-[11px] text-gray-700 mt-0.5">Saved bank details — select one when creating an invoice to pre-fill payment info.</p>
           </div>
           <button
-            class="flex items-center gap-1.5 text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-2.5 py-1.5 rounded-md transition-colors shrink-0"
+            class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1.5 rounded-md transition-colors shrink-0"
             @click="openAddBank"
           >
             <Icon icon="lucide:plus" class="w-3 h-3" /> Add Account
@@ -1095,83 +1095,83 @@ onMounted(loadApiKeys)
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
           <div
             v-for="(bank, i) in bankAccounts" :key="bank.id"
-            class="group relative flex flex-col gap-1.5 p-3.5 border border-charcoal-700 hover:border-charcoal-500 rounded-lg cursor-pointer transition-colors"
+            class="group relative flex flex-col gap-1.5 p-3.5 border border-gray-400 hover:border-gray-500 rounded-lg cursor-pointer transition-colors"
             @click="openEditBank(i)"
           >
             <div class="flex items-start justify-between gap-2">
               <div class="min-w-0">
-                <div class="text-sm font-semibold text-cream truncate">{{ bank.label }}</div>
-                <div v-if="bank.bank_name" class="text-[11px] text-cream-faint truncate">{{ bank.bank_name }}</div>
+                <div class="text-sm font-semibold text-gray-1000 truncate">{{ bank.label }}</div>
+                <div v-if="bank.bank_name" class="text-[11px] text-gray-700 truncate">{{ bank.bank_name }}</div>
               </div>
               <button
-                class="w-5 h-5 hidden group-hover:flex items-center justify-center rounded text-cream-faint hover:text-red-400 hover:bg-red-500/10 transition-colors shrink-0"
+                class="w-5 h-5 hidden group-hover:flex items-center justify-center rounded text-gray-700 hover:text-red-400 hover:bg-red-500/10 transition-colors shrink-0"
                 @click.stop="deleteBank(i)"
               >
                 <Icon icon="lucide:x" class="w-3 h-3" />
               </button>
             </div>
-            <div class="grid grid-cols-1 gap-0.5 text-[11px] font-mono text-cream-faint">
+            <div class="grid grid-cols-1 gap-0.5 text-[11px] font-mono text-gray-700">
               <span v-if="bank.account_name">{{ bank.account_name }}</span>
               <span v-if="bank.account_number">Acct: {{ bank.account_number }}</span>
               <span v-if="bank.iban">IBAN: {{ bank.iban }}</span>
               <span v-if="bank.sort_code">Sort: {{ bank.sort_code }}</span>
             </div>
           </div>
-          <div v-if="!bankAccounts.length" class="col-span-full text-center py-6 text-xs text-cream-faint">
+          <div v-if="!bankAccounts.length" class="col-span-full text-center py-6 text-xs text-gray-700">
             No bank accounts yet.
           </div>
         </div>
 
         <Transition name="slide-down">
-          <div v-if="showBankForm" class="mt-4 p-4 bg-charcoal-900 border border-charcoal-600 rounded-lg space-y-3">
+          <div v-if="showBankForm" class="mt-4 p-4 bg-gray-100 border border-gray-500 rounded-lg space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-cream">{{ editBankIndex !== null ? 'Edit' : 'New' }} Bank Account</span>
-              <button class="text-cream-faint hover:text-cream" @click="showBankForm = false">
+              <span class="text-xs font-medium text-gray-1000">{{ editBankIndex !== null ? 'Edit' : 'New' }} Bank Account</span>
+              <button class="text-gray-700 hover:text-gray-1000" @click="showBankForm = false">
                 <Icon icon="lucide:x" class="w-4 h-4" />
               </button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Label <span class="text-red-400">*</span></label>
+                <label class="text-xs text-gray-700 mb-1 block">Label <span class="text-red-400">*</span></label>
                 <input v-model="bankForm.label" type="text" placeholder="e.g. Main GBP Account" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Currency</label>
+                <label class="text-xs text-gray-700 mb-1 block">Currency</label>
                 <input v-model="bankForm.currency" type="text" placeholder="GBP / USD / EUR" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Bank Name</label>
+                <label class="text-xs text-gray-700 mb-1 block">Bank Name</label>
                 <input v-model="bankForm.bank_name" type="text" placeholder="Barclays" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Account Name</label>
+                <label class="text-xs text-gray-700 mb-1 block">Account Name</label>
                 <input v-model="bankForm.account_name" type="text" placeholder="Acme Ltd." class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Account Number</label>
+                <label class="text-xs text-gray-700 mb-1 block">Account Number</label>
                 <input v-model="bankForm.account_number" type="text" placeholder="12345678" class="app-inp w-full text-sm font-mono" />
               </div>
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Sort Code</label>
+                <label class="text-xs text-gray-700 mb-1 block">Sort Code</label>
                 <input v-model="bankForm.sort_code" type="text" placeholder="20-00-00" class="app-inp w-full text-sm font-mono" />
               </div>
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">IBAN</label>
+                <label class="text-xs text-gray-700 mb-1 block">IBAN</label>
                 <input v-model="bankForm.iban" type="text" placeholder="GB00 BARC 2000 0055 5555 55" class="app-inp w-full text-sm font-mono" />
               </div>
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">SWIFT / BIC</label>
+                <label class="text-xs text-gray-700 mb-1 block">SWIFT / BIC</label>
                 <input v-model="bankForm.swift" type="text" placeholder="BARCGB22" class="app-inp w-full text-sm font-mono" />
               </div>
               <div class="sm:col-span-2">
-                <label class="text-xs text-cream-faint mb-1 block">Notes</label>
+                <label class="text-xs text-gray-700 mb-1 block">Notes</label>
                 <input v-model="bankForm.notes" type="text" placeholder="e.g. USD transfers only" class="app-inp w-full text-sm" />
               </div>
             </div>
             <div class="flex justify-end gap-2 pt-1">
-              <button class="text-xs text-cream-muted hover:text-cream px-3 py-1.5 rounded-md hover:bg-charcoal-700 transition-colors" @click="showBankForm = false">Cancel</button>
+              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showBankForm = false">Cancel</button>
               <button
-                class="text-xs bg-amber hover:bg-amber-light text-charcoal-900 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
+                class="text-xs bg-green-700 hover:bg-green-800 text-bg-100 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                 :disabled="bankSaving || !bankForm.label.trim()"
                 @click="saveBank"
               >{{ bankSaving ? 'Saving…' : 'Save Account' }}</button>
@@ -1181,14 +1181,14 @@ onMounted(loadApiKeys)
       </div>
 
       <!-- ── Payment Links ──────────────────────────────────────────────────── -->
-      <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 lg:col-span-2">
+      <div class="bg-gray-200 border border-gray-400 rounded-xl p-5 lg:col-span-2">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h3 class="text-sm font-semibold text-cream">Payment Links</h3>
-            <p class="text-[11px] text-cream-faint mt-0.5">Saved payment links (PayPal, Stripe, etc.) — reuse them on invoices and letterheads.</p>
+            <h3 class="text-sm font-semibold text-gray-1000">Payment Links</h3>
+            <p class="text-[11px] text-gray-700 mt-0.5">Saved payment links (PayPal, Stripe, etc.) — reuse them on invoices and letterheads.</p>
           </div>
           <button
-            class="flex items-center gap-1.5 text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-2.5 py-1.5 rounded-md transition-colors shrink-0"
+            class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1.5 rounded-md transition-colors shrink-0"
             @click="openAddPaymentLink"
           >
             <Icon icon="lucide:plus" class="w-3 h-3" /> Add Link
@@ -1198,53 +1198,53 @@ onMounted(loadApiKeys)
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
           <div
             v-for="(link, i) in paymentLinks" :key="link.id"
-            class="group relative flex items-center gap-3 p-3.5 border border-charcoal-700 hover:border-charcoal-500 rounded-lg cursor-pointer transition-colors"
+            class="group relative flex items-center gap-3 p-3.5 border border-gray-400 hover:border-gray-500 rounded-lg cursor-pointer transition-colors"
             @click="openEditPaymentLink(i)"
           >
-            <div class="w-8 h-8 rounded-lg bg-charcoal-700 flex items-center justify-center shrink-0">
-              <Icon icon="lucide:link" class="w-4 h-4 text-amber" />
+            <div class="w-8 h-8 rounded-lg bg-gray-400 flex items-center justify-center shrink-0">
+              <Icon icon="lucide:link" class="w-4 h-4 text-green-700" />
             </div>
             <div class="flex-1 min-w-0">
-              <div class="text-sm font-semibold text-cream truncate">{{ link.label }}</div>
-              <div class="text-[11px] text-cream-faint truncate">
-                <span class="text-amber/80 font-medium">{{ link.type }}</span>
+              <div class="text-sm font-semibold text-gray-1000 truncate">{{ link.label }}</div>
+              <div class="text-[11px] text-gray-700 truncate">
+                <span class="text-green-700/80 font-medium">{{ link.type }}</span>
                 <span class="mx-1">·</span>
                 <span class="font-mono">{{ link.value }}</span>
               </div>
             </div>
             <button
-              class="w-5 h-5 hidden group-hover:flex items-center justify-center rounded text-cream-faint hover:text-red-400 hover:bg-red-500/10 transition-colors shrink-0"
+              class="w-5 h-5 hidden group-hover:flex items-center justify-center rounded text-gray-700 hover:text-red-400 hover:bg-red-500/10 transition-colors shrink-0"
               @click.stop="deletePaymentLink(i)"
             >
               <Icon icon="lucide:x" class="w-3 h-3" />
             </button>
           </div>
-          <div v-if="!paymentLinks.length" class="col-span-full text-center py-6 text-xs text-cream-faint">
+          <div v-if="!paymentLinks.length" class="col-span-full text-center py-6 text-xs text-gray-700">
             No payment links yet.
           </div>
         </div>
 
         <Transition name="slide-down">
-          <div v-if="showPaymentLinkForm" class="mt-4 p-4 bg-charcoal-900 border border-charcoal-600 rounded-lg space-y-3">
+          <div v-if="showPaymentLinkForm" class="mt-4 p-4 bg-gray-100 border border-gray-500 rounded-lg space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-cream">{{ editPaymentLinkIndex !== null ? 'Edit' : 'New' }} Payment Link</span>
-              <button class="text-cream-faint hover:text-cream" @click="showPaymentLinkForm = false">
+              <span class="text-xs font-medium text-gray-1000">{{ editPaymentLinkIndex !== null ? 'Edit' : 'New' }} Payment Link</span>
+              <button class="text-gray-700 hover:text-gray-1000" @click="showPaymentLinkForm = false">
                 <Icon icon="lucide:x" class="w-4 h-4" />
               </button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Label <span class="text-red-400">*</span></label>
+                <label class="text-xs text-gray-700 mb-1 block">Label <span class="text-red-400">*</span></label>
                 <input v-model="paymentLinkForm.label" type="text" placeholder="e.g. PayPal (Business)" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Type <span class="text-red-400">*</span></label>
+                <label class="text-xs text-gray-700 mb-1 block">Type <span class="text-red-400">*</span></label>
                 <select v-model="paymentLinkForm.type" class="app-select w-full text-sm">
                   <option v-for="t in paymentLinkTypes" :key="t">{{ t }}</option>
                 </select>
               </div>
               <div class="sm:col-span-2">
-                <label class="text-xs text-cream-faint mb-1 block">Link / Username <span class="text-red-400">*</span></label>
+                <label class="text-xs text-gray-700 mb-1 block">Link / Username <span class="text-red-400">*</span></label>
                 <input
                   v-model="paymentLinkForm.value"
                   type="text"
@@ -1254,9 +1254,9 @@ onMounted(loadApiKeys)
               </div>
             </div>
             <div class="flex justify-end gap-2 pt-1">
-              <button class="text-xs text-cream-muted hover:text-cream px-3 py-1.5 rounded-md hover:bg-charcoal-700 transition-colors" @click="showPaymentLinkForm = false">Cancel</button>
+              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showPaymentLinkForm = false">Cancel</button>
               <button
-                class="text-xs bg-amber hover:bg-amber-light text-charcoal-900 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
+                class="text-xs bg-green-700 hover:bg-green-800 text-bg-100 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                 :disabled="paymentLinkSaving || !paymentLinkForm.label.trim() || !paymentLinkForm.value.trim()"
                 @click="savePaymentLink"
               >{{ paymentLinkSaving ? 'Saving…' : 'Save Link' }}</button>
@@ -1266,14 +1266,14 @@ onMounted(loadApiKeys)
       </div>
 
       <!-- ── API Keys ──────────────────────────────────────────────────────── -->
-      <div v-if="isBusinessOrg" class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-5 lg:col-span-2">
+      <div v-if="isBusinessOrg" class="bg-gray-200 border border-gray-400 rounded-xl p-5 lg:col-span-2">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h3 class="text-sm font-semibold text-cream">API Keys</h3>
-            <p class="text-xs text-cream-faint mt-0.5">Use these keys to embed Flowtali in your own product. Keep secret keys server-side only.</p>
+            <h3 class="text-sm font-semibold text-gray-1000">API Keys</h3>
+            <p class="text-xs text-gray-700 mt-0.5">Use these keys to embed Flowtali in your own product. Keep secret keys server-side only.</p>
           </div>
           <button
-            class="flex items-center gap-1.5 text-xs text-cream-muted hover:text-cream bg-charcoal-700 hover:bg-charcoal-600 px-2.5 py-1.5 rounded-md transition-colors"
+            class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1.5 rounded-md transition-colors"
             @click="openApiKeyForm"
           >
             <Icon icon="lucide:plus" class="w-3 h-3" /> New Key
@@ -1282,11 +1282,11 @@ onMounted(loadApiKeys)
 
         <!-- Loading -->
         <div v-if="apiKeysLoading" class="space-y-2">
-          <div v-for="i in 2" :key="i" class="h-12 bg-charcoal-700 rounded-lg animate-pulse" />
+          <div v-for="i in 2" :key="i" class="h-12 bg-gray-400 rounded-lg animate-pulse" />
         </div>
 
         <!-- Empty -->
-        <div v-else-if="!apiKeys.length && !showApiKeyForm" class="text-center py-8 text-xs text-cream-faint">
+        <div v-else-if="!apiKeys.length && !showApiKeyForm" class="text-center py-8 text-xs text-gray-700">
           No API keys yet. Create one to start embedding Flowtali.
         </div>
 
@@ -1295,21 +1295,21 @@ onMounted(loadApiKeys)
           <div
             v-for="key in apiKeys" :key="key.id"
             class="flex items-center gap-3 p-3 border rounded-lg transition-colors"
-            :class="key.is_active ? 'border-charcoal-700 bg-charcoal-900/40' : 'border-charcoal-700/40 bg-charcoal-900/20 opacity-60'"
+            :class="key.is_active ? 'border-gray-400 bg-gray-100/40' : 'border-gray-400/40 bg-gray-100/20 opacity-60'"
           >
             <!-- Status dot -->
-            <div class="w-2 h-2 rounded-full flex-shrink-0" :class="key.is_active ? 'bg-green-400' : 'bg-cream-faint'" />
+            <div class="w-2 h-2 rounded-full flex-shrink-0" :class="key.is_active ? 'bg-green-400' : 'bg-gray-1000-faint'" />
 
             <!-- Info -->
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-xs font-medium text-cream truncate">{{ key.name }}</span>
-                <span v-if="!key.is_active" class="text-[10px] bg-charcoal-700 text-cream-faint px-1.5 py-0.5 rounded">Revoked</span>
+                <span class="text-xs font-medium text-gray-1000 truncate">{{ key.name }}</span>
+                <span v-if="!key.is_active" class="text-[10px] bg-gray-400 text-gray-700 px-1.5 py-0.5 rounded">Revoked</span>
               </div>
               <div class="flex items-center gap-3 mt-0.5 flex-wrap">
-                <code class="text-[11px] text-cream-faint font-mono">{{ maskKey(key.publishable_key) }}</code>
-                <span v-if="key.last_used_at" class="text-[10px] text-cream-faint">Last used {{ new Date(key.last_used_at).toLocaleDateString() }}</span>
-                <span v-else class="text-[10px] text-cream-faint">Never used</span>
+                <code class="text-[11px] text-gray-700 font-mono">{{ maskKey(key.publishable_key) }}</code>
+                <span v-if="key.last_used_at" class="text-[10px] text-gray-700">Last used {{ new Date(key.last_used_at).toLocaleDateString() }}</span>
+                <span v-else class="text-[10px] text-gray-700">Never used</span>
               </div>
             </div>
 
@@ -1317,7 +1317,7 @@ onMounted(loadApiKeys)
             <div class="flex items-center gap-1 flex-shrink-0">
               <button
                 v-if="key.is_active"
-                class="text-[11px] text-cream-muted hover:text-amber px-2 py-1 rounded hover:bg-charcoal-700 transition-colors disabled:opacity-40"
+                class="text-[11px] text-gray-900 hover:text-green-700 px-2 py-1 rounded hover:bg-gray-400 transition-colors disabled:opacity-40"
                 :disabled="apiKeyActionId === key.id"
                 @click="revokeApiKey(key.id)"
                 title="Revoke key"
@@ -1326,7 +1326,7 @@ onMounted(loadApiKeys)
                 <span v-else>Revoke</span>
               </button>
               <button
-                class="text-[11px] text-red-400/70 hover:text-red-400 px-2 py-1 rounded hover:bg-charcoal-700 transition-colors disabled:opacity-40"
+                class="text-[11px] text-red-400/70 hover:text-red-400 px-2 py-1 rounded hover:bg-gray-400 transition-colors disabled:opacity-40"
                 :disabled="apiKeyActionId === key.id"
                 @click="deleteApiKey(key.id)"
                 title="Delete key"
@@ -1340,10 +1340,10 @@ onMounted(loadApiKeys)
 
         <!-- Create form -->
         <Transition name="slide-down">
-          <div v-if="showApiKeyForm" class="mt-3 p-4 bg-charcoal-900 border border-charcoal-600 rounded-lg space-y-3">
+          <div v-if="showApiKeyForm" class="mt-3 p-4 bg-gray-100 border border-gray-500 rounded-lg space-y-3">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Key name <span class="text-red-400">*</span></label>
+                <label class="text-xs text-gray-700 mb-1 block">Key name <span class="text-red-400">*</span></label>
                 <input
                   v-model="apiKeyFormName"
                   type="text"
@@ -1353,7 +1353,7 @@ onMounted(loadApiKeys)
                 />
               </div>
               <div>
-                <label class="text-xs text-cream-faint mb-1 block">Allowed domains <span class="text-cream-faint/50">(optional, comma-separated)</span></label>
+                <label class="text-xs text-gray-700 mb-1 block">Allowed domains <span class="text-gray-700/50">(optional, comma-separated)</span></label>
                 <input
                   v-model="apiKeyFormDomains"
                   type="text"
@@ -1363,9 +1363,9 @@ onMounted(loadApiKeys)
               </div>
             </div>
             <div class="flex justify-end gap-2 pt-1">
-              <button class="text-xs text-cream-muted hover:text-cream px-3 py-1.5 rounded-md hover:bg-charcoal-700 transition-colors" @click="showApiKeyForm = false">Cancel</button>
+              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showApiKeyForm = false">Cancel</button>
               <button
-                class="text-xs bg-amber hover:bg-amber-light text-charcoal-900 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
+                class="text-xs bg-green-700 hover:bg-green-800 text-bg-100 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                 :disabled="apiKeySaving || !apiKeyFormName.trim()"
                 @click="createApiKey"
               >
@@ -1377,10 +1377,10 @@ onMounted(loadApiKeys)
         </Transition>
 
         <!-- Docs link -->
-        <div class="mt-3 flex items-center gap-1.5 text-[11px] text-cream-faint">
+        <div class="mt-3 flex items-center gap-1.5 text-[11px] text-gray-700">
           <Icon icon="lucide:book-open" class="w-3 h-3" />
           <span>New to the Embed SDK?</span>
-          <router-link to="/docs/embed" class="text-amber hover:underline">Read the docs →</router-link>
+          <router-link to="/docs/embed" class="text-green-700 hover:underline">Read the docs →</router-link>
         </div>
       </div>
 
@@ -1390,34 +1390,34 @@ onMounted(loadApiKeys)
     <Teleport to="body">
       <Transition name="fade">
         <div v-if="newSecretModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div class="bg-charcoal-800 border border-charcoal-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+          <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 w-full max-w-md shadow-2xl">
             <!-- Header -->
             <div class="flex items-start gap-3 mb-5">
-              <div class="w-9 h-9 rounded-lg bg-amber/10 border border-amber/20 flex items-center justify-center flex-shrink-0">
-                <Icon icon="lucide:key" class="w-4 h-4 text-amber" />
+              <div class="w-9 h-9 rounded-lg bg-green-700/10 border border-green-700/20 flex items-center justify-center flex-shrink-0">
+                <Icon icon="lucide:key" class="w-4 h-4 text-green-700" />
               </div>
               <div>
-                <h3 class="text-cream font-semibold text-sm">Save your secret key</h3>
-                <p class="text-cream-faint text-xs mt-0.5">This is the only time you'll see it. Copy it now and store it securely on your server.</p>
+                <h3 class="text-gray-1000 font-semibold text-sm">Save your secret key</h3>
+                <p class="text-gray-700 text-xs mt-0.5">This is the only time you'll see it. Copy it now and store it securely on your server.</p>
               </div>
             </div>
 
             <!-- Keys display -->
             <div class="space-y-3 mb-5">
               <div>
-                <div class="text-[10px] text-cream-faint uppercase tracking-wider mb-1">Publishable key (safe for frontend)</div>
-                <div class="flex items-center gap-2 bg-charcoal-900 border border-charcoal-600 rounded-lg px-3 py-2">
-                  <code class="text-xs text-cream font-mono flex-1 break-all">{{ newSecretModal.key.publishable_key }}</code>
+                <div class="text-[10px] text-gray-700 uppercase tracking-wider mb-1">Publishable key (safe for frontend)</div>
+                <div class="flex items-center gap-2 bg-gray-100 border border-gray-500 rounded-lg px-3 py-2">
+                  <code class="text-xs text-gray-1000 font-mono flex-1 break-all">{{ newSecretModal.key.publishable_key }}</code>
                 </div>
               </div>
               <div>
-                <div class="text-[10px] text-amber uppercase tracking-wider mb-1 flex items-center gap-1">
+                <div class="text-[10px] text-green-700 uppercase tracking-wider mb-1 flex items-center gap-1">
                   <Icon icon="lucide:alert-triangle" class="w-3 h-3" /> Secret key (server-side only — shown once)
                 </div>
-                <div class="flex items-center gap-2 bg-charcoal-900 border border-amber/30 rounded-lg px-3 py-2">
-                  <code class="text-xs text-cream font-mono flex-1 break-all">{{ newSecretModal.secret }}</code>
+                <div class="flex items-center gap-2 bg-gray-100 border border-green-700/30 rounded-lg px-3 py-2">
+                  <code class="text-xs text-gray-1000 font-mono flex-1 break-all">{{ newSecretModal.secret }}</code>
                   <button
-                    class="flex-shrink-0 text-xs text-cream-muted hover:text-amber transition-colors"
+                    class="flex-shrink-0 text-xs text-gray-900 hover:text-green-700 transition-colors"
                     @click="copySecret(newSecretModal!.secret)"
                     :title="secretCopied ? 'Copied!' : 'Copy'"
                   >
@@ -1428,7 +1428,7 @@ onMounted(loadApiKeys)
             </div>
 
             <button
-              class="w-full bg-amber hover:bg-amber-light text-charcoal-900 font-semibold text-sm py-2.5 rounded-lg transition-colors"
+              class="w-full bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-sm py-2.5 rounded-lg transition-colors"
               @click="newSecretModal = null; secretCopied = false"
             >
               I've saved my secret key
