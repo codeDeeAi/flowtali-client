@@ -97,7 +97,7 @@ function isExpired(link: IInvoiceSharedLink) {
 }
 function linkStatusLabel(link: IInvoiceSharedLink) {
   if (!link.is_active) return { text: 'Revoked', cls: 'text-red-400 bg-red-500/10 border-red-500/20' }
-  if (isExpired(link)) return { text: 'Expired', cls: 'text-gray-400 bg-gray-400 border-gray-500' }
+  if (isExpired(link)) return { text: 'Expired', cls: 'text-amber-400 bg-amber-500/10 border-amber-500/20' }
   return { text: 'Active', cls: 'text-green-400 bg-green-500/10 border-green-500/20' }
 }
 function expiryLabel(link: IInvoiceSharedLink) {
