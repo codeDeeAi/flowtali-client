@@ -36,6 +36,7 @@ onMounted(async () => {
     const data = res.data.data;
     clients.value    = data.clients as any ?? [];
     currencies.value = data.currencies as any ?? currencies.value;
+    if (data.default_currency) form.value.currency = data.default_currency;
   } catch {
     // non-critical, form still works
   } finally {

@@ -112,6 +112,7 @@ onMounted(async () => {
       if (props.mode === 'create' && !props.initialData && draftData.value?.organization) {
         const org = draftData.value.organization
         if (org.name && !form.value.fromName) form.value.fromName = org.name
+        if (org.default_currency) form.value.currency = org.default_currency
       }
     } catch {}
     finally { isDraftLoading.value = false }

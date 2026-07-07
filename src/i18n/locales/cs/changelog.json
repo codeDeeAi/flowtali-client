@@ -1,0 +1,18 @@
+{
+  "seo": {
+    "title": "Seznam změn",
+    "description": "Podívejte se, co je nového ve Flowtali — aktualizace produktu, nové funkce a vylepšení."
+  },
+  "badge": "Aktualizace produktu",
+  "title": "Seznam změn",
+  "subtitle": "Nové funkce, vylepšení a opravy — v chronologickém pořadí.",
+  "badges": {
+    "latest": "Nejnovější",
+    "launch": "Spuštění"
+  },
+  "types": {
+    "new": "Nové",
+    "improved": "Vylepšeno",
+    "fix": "Oprava"
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "seo": {
+    "title": "Zásady ochrany soukromí",
+    "description": "Přečtěte si zásady ochrany soukromí Flowtali, abyste pochopili, jak shromažďujeme, používáme a chráníme vaše data."
+  },
+  "title": "Zásady ochrany soukromí",
+  "lastUpdated": "Naposledy aktualizováno: 20. května 2026",
+  "s1": {
+    "h": "1. Úvod",
+    "p1": "Flowtali („my“, „naše“ nebo „nás“) se zavazuje chránit vaše osobní údaje. Tyto zásady ochrany soukromí vysvětlují, jak shromažďujeme, používáme, zveřejňujeme a chráníme vaše data, když používáte naši platformu na flowtali.com („Služba“).",
+    "p2": "Používáním Flowtali souhlasíte se shromažďováním a používáním informací v souladu s těmito zásadami."
+  },
+  "s2": {
+    "h": "2. Jaké informace shromažďujeme",
+    "sub1": "Informace o účtu",
+    "p1": "Při registraci shromažďujeme vaše jméno, e-mailovou adresu a heslo (uloženo jako bezpečný hash). Volitelně můžete poskytnout profilovou fotografii a telefonní číslo.",
+    "sub2": "Data organizace",
+    "p2": "Když vytvoříte organizaci, ukládáme název organizace, logo, barvy značky a veškerá data klientů nebo členů, která na platformu přidáte.",
+    "sub3": "Data o používání",
+    "p3": "Automaticky shromažďujeme informace o tom, jak se Službou interagujete, včetně časů přístupu, zobrazených stránek, informací o zařízení a IP adres.",
+    "sub4": "Nahrané soubory",
+    "p4": "Soubory, které nahrajete (loga, podpisy, přílohy dokumentů), jsou bezpečně uloženy na cloudové infrastruktuře. Obsah vašich dokumentů nečteme."
+  },
+  "s3": {
+    "h": "3. Jak vaše informace používáme",
+    "items": [
+      "K poskytování, provozování a údržbě Služby",
+      "K ověření vaší totožnosti a správě vašeho účtu",
+      "K odesílání transakčních e-mailů (obnovení hesla, ověření e-mailu, jednorázová hesla)",
+      "Ke zlepšování Služby prostřednictvím anonymizovaných analýz používání",
+      "K plnění právních povinností a vymáhání našich Podmínek služby"
+    ],
+    "note": "Vaše osobní údaje neprodáváme, nepronajímáme ani nesdílíme s třetími stranami pro marketingové účely."
+  },
+  "s4": {
+    "h": "4. Ukládání a zabezpečení dat",
+    "p1": "Vaše data jsou uložena na zabezpečených, šifrovaných serverech. Používáme bezpečnostní opatření odpovídající oborovým standardům, včetně šifrování TLS při přenosu, hashovaných hesel (bcrypt) a autentizace založené na tokenech (Laravel Sanctum).",
+    "p2": "Přístupové tokeny vyprší po 24 hodinách. Aktivní relace můžete kdykoli zobrazit a odvolat v nastavení svého profilu.",
+    "p3": "Ačkoli bezpečnost bereme vážně, žádná metoda přenosu přes internet není 100% bezpečná. Absolutní bezpečnost nemůžeme zaručit."
+  },
+  "s5": {
+    "h": "5. Uchovávání dat",
+    "p1": "Data vašeho účtu uchováváme, dokud je váš účet aktivní. Odstraněné hlavičkové papíry jsou měkce odstraněny a trvale vymazány po 30 dnech. Smazání svého účtu a všech souvisejících dat můžete kdykoli požádat kontaktováním podpory."
+  },
+  "s6": {
+    "h": "6. Cookies",
+    "p1": "Flowtali používá minimum cookies nezbytných pro autentizaci a správu relací. Nepoužíváme reklamní ani sledovací cookies. Cookies můžete zakázat v nastavení prohlížeče, což však může ovlivnit funkčnost Služby."
+  },
+  "s7": {
+    "h": "7. Služby třetích stran",
+    "p1": "Můžeme používat následující služby třetích stran:",
+    "items": [
+      { "label": "Cloudové úložiště (AWS S3)", "desc": "pro ukládání nahraných souborů" },
+      { "label": "Poskytovatel e-mailu", "desc": "pro odesílání transakčních e-mailů" },
+      { "label": "Google OAuth", "desc": "pokud se rozhodnete přihlásit přes Google" }
+    ],
+    "note": "Každá služba má vlastní zásady ochrany soukromí upravující používání vašich dat."
+  },
+  "s8": {
+    "h": "8. Vaše práva",
+    "p1": "V závislosti na vaší jurisdikci můžete mít právo:",
+    "items": [
+      "Získat přístup k osobním údajům, které o vás uchováváme",
+      "Požádat o opravu nepřesných dat",
+      "Požádat o smazání svého účtu a dat",
+      "Vznést námitku proti určitému zpracování nebo je omezit",
+      "Přenositelnost dat (obdržet svá data ve strojově čitelném formátu)"
+    ],
+    "notePre": "Pro uplatnění těchto práv nás kontaktujte na"
+  },
+  "s9": {
+    "h": "9. Soukromí dětí",
+    "p1": "Flowtali není určeno osobám mladším 16 let. Vědomě neshromažďujeme osobní údaje od dětí. Pokud se domníváte, že jsme takové informace neúmyslně shromáždili, kontaktujte nás prosím okamžitě."
+  },
+  "s10": {
+    "h": "10. Změny těchto zásad",
+    "p1": "Tyto zásady ochrany soukromí můžeme čas od času aktualizovat. O významných změnách vás budeme informovat e-mailem nebo výrazným oznámením v aplikaci. Pokračování v používání Služby po změnách představuje váš souhlas s aktualizovanými zásadami."
+  },
+  "s11": {
+    "h": "11. Kontaktujte nás",
+    "p1": "Máte-li dotazy k těmto zásadám ochrany soukromí, kontaktujte nás prosím:",
+    "emailLabel": "E-mail:"
+  }
+}

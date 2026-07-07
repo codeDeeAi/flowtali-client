@@ -1,0 +1,19 @@
+{
+  "tagline": "Factures et en-têtes professionnels pour freelances et petites entreprises. Soyez payé plus vite, communiquez mieux.",
+  "products": "Produits",
+  "invoiceGenerator": "Générateur de factures",
+  "letterheadGenerator": "Générateur d'en-têtes",
+  "pricing": "Tarifs",
+  "changelog": "Nouveautés",
+  "developers": "Développeurs",
+  "embedSdk": "Embed SDK",
+  "apiKeys": "Clés API",
+  "events": "Événements",
+  "company": "Entreprise",
+  "about": "À propos",
+  "privacy": "Confidentialité",
+  "terms": "Conditions",
+  "contact": "Contact",
+  "copyright": "© {year} Flowtali. Tous droits réservés.",
+  "language": "Langue"
+}

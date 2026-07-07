@@ -1,0 +1,18 @@
+{
+  "seo": {
+    "title": "Journal des modifications",
+    "description": "Découvrez les nouveautés de Flowtali — mises à jour du produit, nouvelles fonctionnalités et améliorations."
+  },
+  "badge": "Mises à jour du produit",
+  "title": "Journal des modifications",
+  "subtitle": "Nouvelles fonctionnalités, améliorations et corrections — par ordre chronologique.",
+  "badges": {
+    "latest": "Dernière",
+    "launch": "Lancement"
+  },
+  "types": {
+    "new": "Nouveau",
+    "improved": "Amélioré",
+    "fix": "Correction"
+  }
+}

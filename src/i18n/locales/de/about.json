@@ -1,0 +1,32 @@
+{
+  "seo": {
+    "title": "Über Flowtali",
+    "description": "Flowtali ist ein Dokumentenwerkzeug für Freelancer und kleine Teams. Erstellen Sie professionelle Rechnungen und Briefköpfe mit Echtzeit-Vorschau und PDF-Export mit einem Klick."
+  },
+  "badge": "Unsere Geschichte",
+  "heroTitleLine1": "Dokumente, die so gut aussehen",
+  "heroTitleLine2": "wie die Arbeit dahinter",
+  "heroSubtitle": "Flowtali wurde für Freelancer und kleine Teams gebaut, denen der erste Eindruck wichtig ist – denn eine gepflegte Rechnung oder ein Briefkopf sagt alles, bevor Sie ein Wort sagen.",
+  "missionTitle": "Warum wir Flowtali gebaut haben",
+  "missionP1": "Zu viele großartige Freelancer versendeten Rechnungen aus Google Docs oder Briefköpfe, die in Word zusammengeschustert wurden – und man sah es. Kunden bemerkten es. Abschlüsse wurden schwieriger.",
+  "missionP2": "Wir haben Flowtali gebaut, um diese Lücke zu schließen. Rechnungs- und Briefkopf-Werkzeuge auf Profiniveau, zugänglich für Solo-Designer, Berater oder ein 5-köpfiges Studio – nicht nur für das Großunternehmen mit Designteam.",
+  "missionP3a": "Jede Vorlage, jede Einstellung, jede Funktion wurde mit einer Frage im Kopf entworfen:",
+  "missionP3Quote": "„Würde ein Kunde dem vertrauen?“",
+  "missionP3b": "Lautet die Antwort ja, geht es live. Wenn nicht, dann nicht.",
+  "stats": [
+    { "value": "6", "label": "Briefkopf-Themen" },
+    { "value": "11+", "label": "Unterstützte Währungen" },
+    { "value": "100%", "label": "Browserbasiert" },
+    { "value": "∞", "label": "Freigabelinks pro Dokument" }
+  ],
+  "valuesTitle": "Woran wir glauben",
+  "values": [
+    { "title": "Was Sie sehen, ist, was sie bekommen", "desc": "Die Live-Vorschau ist das Herzstück von Flowtali. Keine Überraschungen nach dem Export – Ihr Dokument sieht auf dem Bildschirm genauso aus wie im Druck." },
+    { "title": "Tempo ohne Kompromisse", "desc": "Ein erster Entwurf in unter zwei Minuten. Kein Herumfummeln an Rändern oder Tabellenformatierung. Einfach ausfüllen, ansehen, teilen." },
+    { "title": "Ihre Daten bleiben Ihre", "desc": "Wir lesen Ihre Dokumente nicht, verkaufen Ihre Daten nicht und geben sie nicht an Dritte weiter. Verschlüsselt bei der Übertragung, zugriffskontrolliert von Ihnen." }
+  ],
+  "ctaTitle": "Bereit loszulegen?",
+  "ctaSubtitle": "Schließen Sie sich Tausenden von Freelancern und kleinen Unternehmen an, die bessere Dokumente versenden.",
+  "ctaPrimary": "Kostenloses Konto erstellen",
+  "ctaSecondary": "Kontakt aufnehmen"
+}

@@ -1,0 +1,22 @@
+{
+  "badge": "Nous contacter",
+  "title": "Nous serions ravis de vous lire",
+  "subtitle": "Une question, une demande de fonctionnalité ou simplement envie de dire bonjour ? Écrivez-nous — nous lisons chaque message.",
+  "emailUs": "Écrivez-nous",
+  "emailUsSub": "Nous répondons généralement sous 24 heures",
+  "copy": "Copier",
+  "copied": "Copié",
+  "responseTime": "Délai de réponse",
+  "responseTimeSub": "Heures ouvrables, lun – ven",
+  "responseBodyPre": "Nous nous efforçons de répondre à toutes les demandes sous",
+  "responseBodyStrong": "un jour ouvré",
+  "responseBodyPost": ". Pour les problèmes urgents, veuillez inclure « URGENT » dans l'objet de votre message.",
+  "helpTitle": "Comment pouvons-nous aider ?",
+  "helpItems": [
+    { "title": "Demandes de fonctionnalités", "desc": "Une idée qui rendrait Flowtali meilleur ? Nous adorons entendre nos utilisateurs." },
+    { "title": "Signalements de bogues", "desc": "Quelque chose ne fonctionne pas ? Dites-nous exactement ce qui s'est passé et nous le corrigerons vite." },
+    { "title": "Questions générales", "desc": "Pas sûr de comment quelque chose fonctionne ? Nous vous guiderons." },
+    { "title": "Équipe et facturation", "desc": "Questions sur votre forfait, vos factures ou l'accès de l'équipe." }
+  ],
+  "sendEmail": "Envoyez-nous un e-mail"
+}

@@ -1,0 +1,103 @@
+{
+  "seo": {
+    "title": "Nutzungsbedingungen",
+    "description": "Lesen Sie die Nutzungsbedingungen von Flowtali — die Regeln und Bedingungen für die Nutzung unserer Plattform."
+  },
+  "title": "Nutzungsbedingungen",
+  "lastUpdated": "Zuletzt aktualisiert: 20. Mai 2026",
+  "s1": {
+    "h": "1. Annahme der Bedingungen",
+    "p1": "Durch den Zugriff auf oder die Nutzung von Flowtali („Dienst“) erklären Sie sich mit diesen Nutzungsbedingungen einverstanden. Wenn Sie diesen Bedingungen nicht zustimmen, nutzen Sie den Dienst nicht. Diese Bedingungen gelten für alle Nutzer, einschließlich Einzelpersonen und Organisationskonten."
+  },
+  "s2": {
+    "h": "2. Beschreibung des Dienstes",
+    "p1": "Flowtali ist eine Plattform zur Verwaltung von Dokumenten und Briefköpfen, die es Nutzern ermöglicht, professionelle Briefköpfe und zugehörige Dokumente innerhalb von Organisationen zu erstellen, zu speichern und zu teilen. Zu den Funktionen gehören:",
+    "items": [
+      "Erstellung und Verwaltung von Briefköpfen",
+      "Kunden- und Kontaktverwaltung",
+      "Erstellung von Freigabelinks mit optionalen Zugangscodes",
+      "Verwaltung von Teammitgliedern mit rollenbasiertem Zugriff",
+      "Datei-Uploads für Logos, Signaturen und Dokumente"
+    ]
+  },
+  "s3": {
+    "h": "3. Konten & Registrierung",
+    "p1": "Um den Dienst zu nutzen, müssen Sie ein Konto erstellen. Sie erklären sich damit einverstanden:",
+    "items": [
+      "Genaue, aktuelle und vollständige Angaben zu machen",
+      "Die Sicherheit Ihrer Kontoanmeldedaten zu wahren",
+      "Uns unverzüglich über jeden unbefugten Zugriff auf Ihr Konto zu informieren",
+      "Für alle Aktivitäten verantwortlich zu sein, die unter Ihrem Konto stattfinden"
+    ],
+    "note": "Sie müssen mindestens 16 Jahre alt sein, um ein Konto zu erstellen. Mit der Erstellung eines Kontos versichern Sie, dass Sie diese Voraussetzung erfüllen."
+  },
+  "s4": {
+    "h": "4. Zulässige Nutzung",
+    "p1": "Sie erklären sich damit einverstanden, den Dienst nicht zu nutzen, um:",
+    "items": [
+      "Inhalte hochzuladen, zu veröffentlichen oder zu übertragen, die illegal oder betrügerisch sind oder Rechte Dritter verletzen",
+      "Sich als eine Person oder Einrichtung auszugeben oder Ihre Zugehörigkeit zu einer Einrichtung falsch darzustellen",
+      "Malware, Spam oder andere schädliche Software zu verbreiten",
+      "Zu versuchen, unbefugten Zugriff auf einen Teil des Dienstes oder die Daten anderer Nutzer zu erlangen",
+      "Den Dienst in einer Weise zu nutzen, die seine Infrastruktur deaktivieren, überlasten oder beeinträchtigen könnte",
+      "Daten aus dem Dienst zu scrapen, zu crawlen oder systematisch zu extrahieren"
+    ],
+    "note": "Wir behalten uns das Recht vor, Konten, die gegen diese Bedingungen verstoßen, ohne Vorankündigung zu kündigen."
+  },
+  "s5": {
+    "h": "5. Organisationen & Teams",
+    "p1": "Wenn Sie eine Organisation auf Flowtali erstellen, werden Sie zum Organisationsinhaber. Als Inhaber sind Sie verantwortlich für:",
+    "items": [
+      "Die Verwaltung von Mitgliedereinladungen und Rollenzuweisungen",
+      "Alle von Ihren Organisationsmitgliedern erstellten oder hochgeladenen Inhalte",
+      "Die Sicherstellung, dass Mitglieder diese Nutzungsbedingungen einhalten"
+    ],
+    "note": "In Ihre Organisation eingeladene Mitglieder haben Zugriff auf Ressourcen basierend auf den von Ihnen zugewiesenen Rollen. Sie können Mitglieder jederzeit entfernen."
+  },
+  "s6": {
+    "h": "6. Geistiges Eigentum",
+    "p1": "Sie behalten das Eigentum an allen Inhalten, die Sie über den Dienst hochladen oder erstellen, einschließlich Briefköpfen, Logos und Dokumenten („Nutzerinhalte“). Durch das Hochladen von Inhalten gewähren Sie Flowtali eine nicht-exklusive, weltweite, gebührenfreie Lizenz zum Speichern, Anzeigen und Übertragen Ihrer Nutzerinhalte ausschließlich zum Zweck der Bereitstellung des Dienstes.",
+    "p2": "Flowtali besitzt alle geistigen Eigentumsrechte am Dienst selbst, einschließlich seiner Software, seines Designs und seiner Marke. Sie dürfen den Dienst oder seine Komponenten ohne unsere ausdrückliche schriftliche Genehmigung nicht reproduzieren, ändern oder verbreiten."
+  },
+  "s7": {
+    "h": "7. Freigabelinks",
+    "p1": "Der Dienst ermöglicht es Ihnen, teilbare Links für Briefköpfe zu erstellen. Sie sind allein für die über diese Links geteilten Inhalte verantwortlich. Private Links mit Zugangscodes bieten eine zusätzliche Sicherheitsebene, aber Sie erkennen an, dass:",
+    "items": [
+      "Zugangscodes vertraulich behandelt werden sollten",
+      "Wir nicht für unbefugten Zugriff verantwortlich sind, der aus kompromittierten Zugangscodes resultiert",
+      "Sie Links widerrufen sollten, wenn sie nicht mehr benötigt werden"
+    ]
+  },
+  "s8": {
+    "h": "8. Abonnement & Zahlungen",
+    "p1": "Flowtali kann kostenlose und kostenpflichtige Abonnementstufen anbieten. Mit dem Abonnieren eines kostenpflichtigen Plans erklären Sie sich bereit, alle anfallenden Gebühren zu zahlen. Alle Gebühren sind nicht erstattungsfähig, außer wo gesetzlich vorgeschrieben. Wir behalten uns das Recht vor, die Preise mit einer Frist von 30 Tagen zu ändern.",
+    "p2": "Nichtzahlung kann zur Sperrung oder Kündigung Ihres Kontos und der zugehörigen Daten führen."
+  },
+  "s9": {
+    "h": "9. Haftungsausschluss & Haftungsbeschränkung",
+    "p1": "Der Dienst wird „wie besehen“ ohne jegliche Gewährleistung bereitgestellt. Wir garantieren nicht, dass der Dienst fehlerfrei, ununterbrochen oder frei von Sicherheitslücken ist.",
+    "p2": "Soweit gesetzlich zulässig, haftet Flowtali nicht für indirekte, zufällige, besondere, Folge- oder Strafschäden, einschließlich Verlust von Daten, Umsatz oder Firmenwert, die aus Ihrer Nutzung oder Unfähigkeit zur Nutzung des Dienstes entstehen."
+  },
+  "s10": {
+    "h": "10. Kündigung",
+    "p1": "Sie können Ihr Konto jederzeit in Ihren Profileinstellungen schließen. Wir können Ihren Zugriff sperren oder kündigen, wenn Sie gegen diese Bedingungen verstoßen. Nach der Kündigung:",
+    "items": [
+      "Wird Ihr Zugriff auf den Dienst sofort widerrufen",
+      "Werden Ihre Daten 30 Tage lang aufbewahrt und dann endgültig gelöscht",
+      "Können Sie durch Kontaktaufnahme mit dem Support eine sofortige Löschung anfordern"
+    ]
+  },
+  "s11": {
+    "h": "11. Geltendes Recht",
+    "p1": "Diese Bedingungen unterliegen dem geltenden Recht und werden entsprechend ausgelegt. Alle Streitigkeiten, die sich aus diesen Bedingungen ergeben, werden durch verbindliche Schiedsverfahren oder vor den Gerichten der zuständigen Rechtsordnung beigelegt."
+  },
+  "s12": {
+    "h": "12. Änderungen der Bedingungen",
+    "p1": "Wir behalten uns das Recht vor, diese Bedingungen jederzeit zu ändern. Wir benachrichtigen Sie über wesentliche Änderungen per E-Mail oder durch einen Hinweis in der App. Die fortgesetzte Nutzung des Dienstes nach Änderungen gilt als Ihre Zustimmung. Wenn Sie mit den überarbeiteten Bedingungen nicht einverstanden sind, müssen Sie die Nutzung des Dienstes einstellen."
+  },
+  "s13": {
+    "h": "13. Kontakt",
+    "p1": "Bei Fragen zu diesen Bedingungen kontaktieren Sie bitte:",
+    "emailLabel": "E-Mail:"
+  }
+}

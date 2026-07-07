@@ -1,0 +1,167 @@
+{
+  "seo": {
+    "title": "Flowtali — Invoices, Receipts, Projects & Letterheads for Freelancers",
+    "description": "Create professional invoices, payment receipts, and branded letterheads — then organize everything under projects. Multi-currency, real-time preview, PDF export, client management, and team roles. Free to start."
+  },
+  "hero": {
+    "badge": "Invoices · Receipts · Projects · Letterheads",
+    "titleLine1": "Run your freelance",
+    "titleLine2": "business from one",
+    "titleEm": "beautiful platform",
+    "subtitle": "Flowtali gives freelancers and studios everything they need — stunning invoices, payment receipts, branded letterheads, and project tracking — all with live preview, instant PDF, zero friction.",
+    "ctaPrimary": "Start for free",
+    "ctaSecondary": "See what's inside",
+    "letterheadExported": "Letterhead exported"
+  },
+  "socialProof": {
+    "trustedBy": "Trusted by freelancers at"
+  },
+  "products": {
+    "badge": "Four tools, one platform",
+    "titleLine1": "Everything you need to",
+    "titleEm": "run your business",
+    "subtitle": "Invoices, receipts, projects, and letterheads — all in one seamless workspace built for freelancers and small teams.",
+    "new": "New ✦",
+    "invoice": {
+      "name": "Invoice Generator",
+      "tagline": "Get paid faster",
+      "heading": "Beautiful invoices in minutes",
+      "desc": "Live preview, custom branding, multi-currency, tax & discounts, logo upload, stamp customization — everything you need to send polished invoices.",
+      "tags": ["Live Preview", "PDF Export", "Multi-Currency", "Custom Stamp", "Logo Upload"],
+      "cta": "Try Invoice Generator"
+    },
+    "letterhead": {
+      "name": "Letterhead Generator",
+      "tagline": "Make every letter count",
+      "heading": "Letterheads that command respect",
+      "desc": "8 elegant layout templates, full brand customization, logo & signature upload, custom color themes, watermarks, footer details — all with live preview and PDF export.",
+      "tags": ["8 Templates", "Logo & Signature", "Custom Theme", "Watermark", "Footer Details"],
+      "cta": "Try Letterhead Generator"
+    },
+    "receipt": {
+      "name": "Receipt Generator",
+      "tagline": "Confirm every payment",
+      "heading": "Receipts clients can trust",
+      "desc": "Generate professional payment receipts, attach them to invoices, link them to projects, and export stamped PDFs — all with the same live preview experience.",
+      "tags": ["Linked to Invoices", "Project Tracking", "PDF Export", "Payment Stamps", "Multi-Currency"],
+      "cta": "Try Receipt Generator"
+    },
+    "project": {
+      "name": "Project Management",
+      "tagline": "Track every engagement",
+      "heading": "Every project, fully in view",
+      "desc": "Link invoices, receipts, and letterheads to a project. Track contract value, payment progress, upload files, log notes, and see a full activity timeline per engagement.",
+      "tags": ["Linked Documents", "Payment Progress", "Activity Timeline", "File Uploads", "Client Tracking"],
+      "cta": "Try Project Management"
+    }
+  },
+  "features": {
+    "badge": "Features",
+    "titleLine1": "Everything you need to",
+    "titleEm": "look like a pro",
+    "subtitle": "Invoices, receipts, projects, letterheads, branding, team roles — built for freelancers who want results without complexity.",
+    "new": "New",
+    "items": [
+      { "title": "Live Preview", "desc": "See invoices and letterheads update in real time as you type. Zero guessing — what you see is exactly what your client receives." },
+      { "title": "PDF Export", "desc": "Export pixel-perfect PDFs with one click. Print-ready invoices, receipts, and branded letterheads — ready to send in seconds." },
+      { "title": "Receipt Tracking", "desc": "Generate professional payment receipts in seconds. Attach to invoices, link to projects, and keep a clear record of every payment received." },
+      { "title": "Project Management", "desc": "Group invoices, receipts, letterheads, and files under a single project. Track contract value, payment progress, and client in one place." },
+      { "title": "Letterhead Generator", "desc": "8 elegant templates for formal letters, proposals, and engagements. Full branding — logo, signature, colors, watermark, and footer." },
+      { "title": "Custom Branding", "desc": "Upload your logo and signature, pick accent colors, choose fonts. Every document looks unmistakably yours." },
+      { "title": "Multi-Currency", "desc": "Invoice and receipt clients globally in USD, EUR, GBP, NGN, and 7+ currencies. Automatic symbols and formatting per locale." },
+      { "title": "Team Roles & Permissions", "desc": "Invite team members and control exactly what they can access. Granular permissions for invoices, receipts, projects, clients, and more." },
+      { "title": "Watermarks & Stamps", "desc": "Add custom watermarks to letterheads and status stamps to invoices. CONFIDENTIAL, APPROVED, DRAFT — or any text you need." }
+    ]
+  },
+  "letterheadSpotlight": {
+    "badge": "Letterhead Generator",
+    "titleLine1": "Every letter should",
+    "titleLine2": "make a",
+    "titleEm": " lasting impression",
+    "desc": "Whether it's a proposal, engagement letter, or formal notice — Flowtali's letterhead generator gives you professional-grade stationery in seconds. Pick a layout, drop in your logo, and export a pixel-perfect PDF.",
+    "features": [
+      "5 stunning layout templates: Classic, Modern, Minimal, Bold Header, Split Panel",
+      "Upload your logo and signature image",
+      "Custom accent colors + 10 preset palettes",
+      "6 professional font families",
+      "Optional watermark text (CONFIDENTIAL, DRAFT…)",
+      "Recipient block, reference line, and footer customization",
+      "One-click PDF export — print-ready every time"
+    ],
+    "cta": "Open Letterhead Generator",
+    "templates": [
+      { "tagline": "Timeless & professional", "preview": "Dear Mr. Johnson, We are pleased to confirm our engagement for the Q1 brand identity project. This proposal outlines scope, deliverables, and timeline…" },
+      { "tagline": "Clean & contemporary", "preview": "Subject: Project Kickoff — Q1 2025. Following our initial call, we are delighted to present the formal engagement letter for review…" },
+      { "tagline": "Simple & elegant", "preview": "Hello, Thank you for choosing us for this project. Please find below the terms and conditions of our engagement…" },
+      { "tagline": "Strong & impactful", "preview": "Dear Client, We write to formally confirm the commencement of the brand refresh initiative scheduled to begin…" }
+    ]
+  },
+  "pricing": {
+    "badge": "Pricing",
+    "title": "Simple, honest pricing",
+    "subtitle": "All tools included in every plan. No hidden fees.",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "mostPopular": "Most popular",
+    "perMonth": "/mo",
+    "billedNote": "Billed {amount}/year",
+    "footnote": "All plans include Invoice Generator, Receipt Generator, Project Management, and Letterhead Generator. Cancel anytime.",
+    "plans": {
+      "starter": {
+        "desc": "Perfect for freelancers starting out.",
+        "cta": "Start free",
+        "features": ["5 invoices + 3 letterheads/month", "10 receipts/month", "1 active project", "Basic templates", "PDF export", "Flowtali branding"]
+      },
+      "pro": {
+        "desc": "For active freelancers who need full power.",
+        "cta": "Get started",
+        "features": ["Unlimited invoices, receipts & letterheads", "Unlimited projects", "All 8 letterhead templates", "Custom branding & logo", "All currencies", "Stamp + watermark", "Remove Flowtali branding", "Priority support"]
+      },
+      "business": {
+        "desc": "For studios and small teams.",
+        "cta": "Get started",
+        "features": ["Everything in Pro", "Up to 5 team members", "Team roles & permissions", "Project activity timeline", "Invoice analytics", "Dedicated support"]
+      }
+    }
+  },
+  "testimonials": {
+    "badge": "Reviews",
+    "title": "Our customers love Flowtali"
+  },
+  "embed": {
+    "badge": "Embed SDK",
+    "titlePre": "Flowtali in",
+    "titleEm": "your",
+    "titlePost": "product",
+    "subtitle": "Embed invoices, projects, receipts, and more directly in your own SaaS — with one script tag, a permission-scoped token, and a fully brandable iframe.",
+    "readDocs": "Read the docs",
+    "viewDocs": "View full docs",
+    "features": [
+      { "title": "All views, one SDK", "desc": "Embed invoices, projects, receipts, clients, preferences, analytics, and more. Pass a single view param to switch." },
+      { "title": "Permission-scoped tokens", "desc": "Issue short-lived JWTs for each user with exactly the permissions they need — invoices.read, invoices.create, and more." },
+      { "title": "Runtime theming", "desc": "Match your brand with primaryColor, fontFamily, borderRadius, and more — passed as a plain JS object." },
+      { "title": "Event callbacks", "desc": "React to actions inside the embed with ft.on(\"invoice.created\", cb) — perfect for syncing with your own system." }
+    ]
+  },
+  "faq": {
+    "badge": "FAQ",
+    "title": "Common questions",
+    "items": [
+      { "q": "What is Project Management in Flowtali?", "a": "Projects let you group all your work for a client under one place — attach invoices, payment receipts, and letterheads, track contract value vs. payments received, upload project files, add notes, and monitor an activity timeline. Everything for a job in one view." },
+      { "q": "How does Receipt Tracking work?", "a": "After creating an invoice, you can generate a payment receipt for any amount received. Receipts can be linked directly to a project, exported as a PDF, and stamped (e.g. PAID). They appear on both the project overview and the dedicated Receipts section." },
+      { "q": "How do Team Roles & Permissions work?", "a": "Business plans can invite team members and assign granular permissions — for example, a member can create invoices but not delete projects, or view receipts without editing clients. Roles are managed per organisation from the Members settings page." },
+      { "q": "What is the Letterhead Generator?", "a": "The Letterhead Generator lets you create professional branded letterheads for formal letters, proposals, and engagement letters. Choose from 8 templates, upload your logo and signature, set your colors and font, add a watermark, and export a pixel-perfect PDF." },
+      { "q": "Is Flowtali really free to start?", "a": "Yes — the Starter plan is free forever. You get invoices, receipts, 1 active project, and 3 letterheads per month, PDF exports, and core templates at no cost." },
+      { "q": "Can I use my own logo and signature?", "a": "Absolutely. Pro and Business plans support full branding: upload your logo, signature image, set any accent color, and choose your font style across all documents." },
+      { "q": "What currencies are supported?", "a": "USD, EUR, GBP, NGN, CAD, AUD, JPY, INR, ZAR, CHF, and AED — with correct symbols and formatting for every invoice and receipt." },
+      { "q": "Can I cancel my subscription anytime?", "a": "Yes. Cancel at any time from account settings. You keep access until the end of your billing period." }
+    ]
+  },
+  "cta": {
+    "titlePre": "Ready to run your",
+    "titleEm": " business better?",
+    "subtitle": "Join 4,200+ freelancers who trust Flowtali for invoices, receipts, projects, and letterheads.",
+    "primary": "Start free — no credit card",
+    "secondary": "Explore all features →"
+  }
+}

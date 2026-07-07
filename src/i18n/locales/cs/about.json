@@ -1,0 +1,32 @@
+{
+  "seo": {
+    "title": "O Flowtali",
+    "description": "Flowtali je nástroj na dokumenty vytvořený pro freelancery a malé týmy. Vytvářejte profesionální faktury a hlavičkové papíry s náhledem v reálném čase a exportem do PDF jedním kliknutím."
+  },
+  "badge": "Náš příběh",
+  "heroTitleLine1": "Dokumenty, které vypadají tak dobře",
+  "heroTitleLine2": "jako práce, která za nimi stojí",
+  "heroSubtitle": "Flowtali bylo vytvořeno pro freelancery a malé týmy, kterým záleží na prvním dojmu — protože uhlazená faktura nebo hlavičkový papír řekne vše dřív, než pronesete slovo.",
+  "missionTitle": "Proč jsme vytvořili Flowtali",
+  "missionP1": "Příliš mnoho skvělých freelancerů posílalo faktury poskládané v Google Docs nebo hlavičkové papíry slepené ve Wordu — a bylo to znát. Klienti si toho všímali. Zakázky se uzavíraly hůř.",
+  "missionP2": "Vytvořili jsme Flowtali, abychom tuto mezeru zaplnili. Nástroje na faktury a hlavičkové papíry profesionální úrovně, dostupné sólo designérovi, konzultantovi nebo pětičlennému studiu — ne jen firmě s vlastním design týmem.",
+  "missionP3a": "Každá šablona, každé nastavení, každá funkce byly navrženy s jedinou otázkou na mysli:",
+  "missionP3Quote": "„Věřil by tomu klient?“",
+  "missionP3b": "Pokud je odpověď ano, jde to ven. Pokud ne, tak ne.",
+  "stats": [
+    { "value": "6", "label": "Motivů hlavičkových papírů" },
+    { "value": "11+", "label": "Podporovaných měn" },
+    { "value": "100%", "label": "V prohlížeči" },
+    { "value": "∞", "label": "Sdílených odkazů na dokument" }
+  ],
+  "valuesTitle": "V co věříme",
+  "values": [
+    { "title": "Co vidíte, to dostanou", "desc": "Náhled v reálném čase je srdcem Flowtali. Žádná překvapení po exportu — váš dokument vypadá na obrazovce přesně stejně jako vytištěný." },
+    { "title": "Rychlost bez kompromisů", "desc": "První koncept za méně než dvě minuty. Žádné piplání s okraji nebo formátováním tabulek. Stačí vyplnit, zobrazit náhled, sdílet." },
+    { "title": "Vaše data zůstávají vaše", "desc": "Nečteme vaše dokumenty, neprodáváme vaše data ani je nesdílíme s třetími stranami. Šifrováno při přenosu, přístup řídíte vy." }
+  ],
+  "ctaTitle": "Připraveni začít?",
+  "ctaSubtitle": "Připojte se k tisícům freelancerů a malých firem, které posílají lepší dokumenty.",
+  "ctaPrimary": "Vytvořit účet zdarma",
+  "ctaSecondary": "Ozvěte se nám"
+}

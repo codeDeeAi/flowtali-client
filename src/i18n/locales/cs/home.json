@@ -1,0 +1,167 @@
+{
+  "seo": {
+    "title": "Flowtali — Faktury, účtenky, projekty a hlavičkové papíry pro freelancery",
+    "description": "Vytvářejte profesionální faktury, potvrzení o platbě a značkové hlavičkové papíry — a vše organizujte v projektech. Více měn, náhled v reálném čase, export do PDF, správa klientů a týmové role. Začněte zdarma."
+  },
+  "hero": {
+    "badge": "Faktury · Účtenky · Projekty · Hlavičkové papíry",
+    "titleLine1": "Řiďte své freelance",
+    "titleLine2": "podnikání z jedné",
+    "titleEm": "krásné platformy",
+    "subtitle": "Flowtali dává freelancerům a studiím vše, co potřebují — skvělé faktury, potvrzení o platbě, značkové hlavičkové papíry a sledování projektů — vše s náhledem v reálném čase, okamžitým PDF a nulovým třením.",
+    "ctaPrimary": "Začít zdarma",
+    "ctaSecondary": "Podívejte se, co je uvnitř",
+    "letterheadExported": "Hlavičkový papír exportován"
+  },
+  "socialProof": {
+    "trustedBy": "Důvěřují freelanceři ve firmách"
+  },
+  "products": {
+    "badge": "Čtyři nástroje, jedna platforma",
+    "titleLine1": "Vše, co potřebujete k",
+    "titleEm": "řízení svého podnikání",
+    "subtitle": "Faktury, účtenky, projekty a hlavičkové papíry — vše v jednom plynulém pracovním prostoru vytvořeném pro freelancery a malé týmy.",
+    "new": "Nové ✦",
+    "invoice": {
+      "name": "Generátor faktur",
+      "tagline": "Získejte platbu rychleji",
+      "heading": "Krásné faktury během minut",
+      "desc": "Náhled v reálném čase, vlastní branding, více měn, daně a slevy, nahrání loga, přizpůsobení razítka — vše, co potřebujete k odesílání uhlazených faktur.",
+      "tags": ["Náhled v reálném čase", "Export do PDF", "Více měn", "Vlastní razítko", "Nahrání loga"],
+      "cta": "Vyzkoušet generátor faktur"
+    },
+    "letterhead": {
+      "name": "Generátor hlavičkových papírů",
+      "tagline": "Ať každý dopis stojí za to",
+      "heading": "Hlavičkové papíry, které vzbuzují respekt",
+      "desc": "8 elegantních šablon rozvržení, plné přizpůsobení značky, nahrání loga a podpisu, vlastní barevná témata, vodoznaky, detaily zápatí — vše s náhledem v reálném čase a exportem do PDF.",
+      "tags": ["8 šablon", "Logo a podpis", "Vlastní téma", "Vodoznak", "Detaily zápatí"],
+      "cta": "Vyzkoušet generátor hlavičkových papírů"
+    },
+    "receipt": {
+      "name": "Generátor účtenek",
+      "tagline": "Potvrďte každou platbu",
+      "heading": "Účtenky, kterým klienti věří",
+      "desc": "Vytvářejte profesionální potvrzení o platbě, připojujte je k fakturám, propojujte je s projekty a exportujte orazítkovaná PDF — vše se stejným náhledem v reálném čase.",
+      "tags": ["Propojeno s fakturami", "Sledování projektů", "Export do PDF", "Razítka plateb", "Více měn"],
+      "cta": "Vyzkoušet generátor účtenek"
+    },
+    "project": {
+      "name": "Správa projektů",
+      "tagline": "Sledujte každou zakázku",
+      "heading": "Každý projekt zcela na očích",
+      "desc": "Propojte faktury, účtenky a hlavičkové papíry s projektem. Sledujte hodnotu smlouvy, průběh plateb, nahrávejte soubory, zapisujte poznámky a sledujte úplnou časovou osu aktivit u každé zakázky.",
+      "tags": ["Propojené dokumenty", "Průběh plateb", "Časová osa aktivit", "Nahrávání souborů", "Sledování klientů"],
+      "cta": "Vyzkoušet správu projektů"
+    }
+  },
+  "features": {
+    "badge": "Funkce",
+    "titleLine1": "Vše, co potřebujete, abyste",
+    "titleEm": "vypadali jako profík",
+    "subtitle": "Faktury, účtenky, projekty, hlavičkové papíry, branding, týmové role — vytvořeno pro freelancery, kteří chtějí výsledky bez složitosti.",
+    "new": "Nové",
+    "items": [
+      { "title": "Náhled v reálném čase", "desc": "Sledujte, jak se faktury a hlavičkové papíry aktualizují v reálném čase, jak píšete. Žádné hádání — co vidíte, přesně to váš klient dostane." },
+      { "title": "Export do PDF", "desc": "Exportujte pixelově přesná PDF jedním kliknutím. Faktury, účtenky a značkové hlavičkové papíry připravené k tisku — připraveny k odeslání během sekund." },
+      { "title": "Sledování účtenek", "desc": "Vytvářejte profesionální potvrzení o platbě během sekund. Připojte je k fakturám, propojte s projekty a mějte přehled o každé přijaté platbě." },
+      { "title": "Správa projektů", "desc": "Seskupte faktury, účtenky, hlavičkové papíry a soubory do jednoho projektu. Sledujte hodnotu smlouvy, průběh plateb a klienta na jednom místě." },
+      { "title": "Generátor hlavičkových papírů", "desc": "8 elegantních šablon pro formální dopisy, nabídky a zakázky. Plný branding — logo, podpis, barvy, vodoznak a zápatí." },
+      { "title": "Vlastní branding", "desc": "Nahrajte své logo a podpis, vyberte akcentové barvy a písma. Každý dokument vypadá nezaměnitelně jako váš." },
+      { "title": "Více měn", "desc": "Fakturujte a účtujte klientům po celém světě v USD, EUR, GBP, NGN a více než 7 měnách. Automatické symboly a formátování podle regionu." },
+      { "title": "Týmové role a oprávnění", "desc": "Pozvěte členy týmu a přesně řiďte, k čemu mají přístup. Podrobná oprávnění pro faktury, účtenky, projekty, klienty a další." },
+      { "title": "Vodoznaky a razítka", "desc": "Přidejte vlastní vodoznaky na hlavičkové papíry a stavová razítka na faktury. DŮVĚRNÉ, SCHVÁLENO, KONCEPT — nebo jakýkoli text, který potřebujete." }
+    ]
+  },
+  "letterheadSpotlight": {
+    "badge": "Generátor hlavičkových papírů",
+    "titleLine1": "Každý dopis by měl",
+    "titleLine2": "zanechat",
+    "titleEm": " trvalý dojem",
+    "desc": "Ať už jde o nabídku, zakázkový dopis nebo formální oznámení — generátor hlavičkových papírů Flowtali vám poskytne papírnictví profesionální kvality během sekund. Vyberte rozvržení, vložte logo a exportujte pixelově přesné PDF.",
+    "features": [
+      "5 úchvatných šablon rozvržení: Klasická, Moderní, Minimální, Výrazné záhlaví, Rozdělený panel",
+      "Nahrajte své logo a obrázek podpisu",
+      "Vlastní akcentové barvy + 10 přednastavených palet",
+      "6 profesionálních rodin písem",
+      "Volitelný text vodoznaku (DŮVĚRNÉ, KONCEPT…)",
+      "Blok příjemce, referenční řádek a přizpůsobení zápatí",
+      "Export do PDF jedním kliknutím — pokaždé připraveno k tisku"
+    ],
+    "cta": "Otevřít generátor hlavičkových papírů",
+    "templates": [
+      { "tagline": "Nadčasové a profesionální", "preview": "Vážený pane Johnsone, s potěšením potvrzujeme naši zakázku na projekt firemní identity v 1. čtvrtletí. Tato nabídka popisuje rozsah, výstupy a harmonogram…" },
+      { "tagline": "Čisté a moderní", "preview": "Předmět: Zahájení projektu — Q1 2025. Po našem prvním hovoru vám s radostí předkládáme formální zakázkový dopis k posouzení…" },
+      { "tagline": "Jednoduché a elegantní", "preview": "Dobrý den, děkujeme, že jste si nás vybrali pro tento projekt. Níže naleznete podmínky naší zakázky…" },
+      { "tagline": "Silné a působivé", "preview": "Vážený kliente, formálně potvrzujeme zahájení iniciativy obnovy značky, která má začít…" }
+    ]
+  },
+  "pricing": {
+    "badge": "Ceník",
+    "title": "Jednoduché, poctivé ceny",
+    "subtitle": "Všechny nástroje zahrnuty v každém plánu. Žádné skryté poplatky.",
+    "monthly": "Měsíčně",
+    "annual": "Ročně",
+    "mostPopular": "Nejoblíbenější",
+    "perMonth": "/měs.",
+    "billedNote": "Účtováno {amount}/rok",
+    "footnote": "Všechny plány zahrnují generátor faktur, generátor účtenek, správu projektů a generátor hlavičkových papírů. Zrušitelné kdykoli.",
+    "plans": {
+      "starter": {
+        "desc": "Ideální pro freelancery, kteří začínají.",
+        "cta": "Začít zdarma",
+        "features": ["5 faktur + 3 hlavičkové papíry/měsíc", "10 účtenek/měsíc", "1 aktivní projekt", "Základní šablony", "Export do PDF", "Branding Flowtali"]
+      },
+      "pro": {
+        "desc": "Pro aktivní freelancery, kteří potřebují plný výkon.",
+        "cta": "Začít",
+        "features": ["Neomezené faktury, účtenky a hlavičkové papíry", "Neomezené projekty", "Všech 8 šablon hlavičkových papírů", "Vlastní branding a logo", "Všechny měny", "Razítko + vodoznak", "Odebrat branding Flowtali", "Přednostní podpora"]
+      },
+      "business": {
+        "desc": "Pro studia a malé týmy.",
+        "cta": "Začít",
+        "features": ["Vše z Pro", "Až 5 členů týmu", "Týmové role a oprávnění", "Časová osa aktivit projektu", "Analýzy faktur", "Vyhrazená podpora"]
+      }
+    }
+  },
+  "testimonials": {
+    "badge": "Recenze",
+    "title": "Naši zákazníci milují Flowtali"
+  },
+  "embed": {
+    "badge": "Embed SDK",
+    "titlePre": "Flowtali ve",
+    "titleEm": "vašem",
+    "titlePost": "produktu",
+    "subtitle": "Vložte faktury, projekty, účtenky a další přímo do vlastního SaaS — pomocí jedné značky skriptu, tokenu omezeného oprávněními a plně brandovatelného iframu.",
+    "readDocs": "Přečíst dokumentaci",
+    "viewDocs": "Zobrazit celou dokumentaci",
+    "features": [
+      { "title": "Všechna zobrazení, jedno SDK", "desc": "Vložte faktury, projekty, účtenky, klienty, předvolby, analýzy a další. Přepínejte pomocí jediného parametru view." },
+      { "title": "Tokeny omezené oprávněními", "desc": "Vydávejte krátkodobé JWT pro každého uživatele přesně s oprávněními, která potřebují — invoices.read, invoices.create a další." },
+      { "title": "Theming za běhu", "desc": "Sladěte se svou značkou pomocí primaryColor, fontFamily, borderRadius a dalších — předaných jako prostý JS objekt." },
+      { "title": "Zpětná volání událostí", "desc": "Reagujte na akce uvnitř vloženého obsahu pomocí ft.on(\"invoice.created\", cb) — ideální pro synchronizaci s vlastním systémem." }
+    ]
+  },
+  "faq": {
+    "badge": "FAQ",
+    "title": "Časté dotazy",
+    "items": [
+      { "q": "Co je správa projektů ve Flowtali?", "a": "Projekty vám umožňují seskupit veškerou práci pro klienta na jednom místě — připojit faktury, potvrzení o platbě a hlavičkové papíry, sledovat hodnotu smlouvy vůči přijatým platbám, nahrávat soubory projektu, přidávat poznámky a sledovat časovou osu aktivit. Vše pro zakázku v jednom pohledu." },
+      { "q": "Jak funguje sledování účtenek?", "a": "Po vytvoření faktury můžete vygenerovat potvrzení o platbě pro jakoukoli přijatou částku. Účtenky lze propojit přímo s projektem, exportovat jako PDF a orazítkovat (např. ZAPLACENO). Objevují se jak v přehledu projektu, tak ve vyhrazené sekci Účtenky." },
+      { "q": "Jak fungují týmové role a oprávnění?", "a": "Plány Business mohou pozvat členy týmu a přidělit podrobná oprávnění — například člen může vytvářet faktury, ale nemazat projekty, nebo prohlížet účtenky bez úprav klientů. Role se spravují za organizaci na stránce nastavení Členové." },
+      { "q": "Co je generátor hlavičkových papírů?", "a": "Generátor hlavičkových papírů vám umožní vytvářet profesionální značkové hlavičkové papíry pro formální dopisy, nabídky a zakázkové dopisy. Vyberte z 8 šablon, nahrajte logo a podpis, nastavte barvy a písmo, přidejte vodoznak a exportujte pixelově přesné PDF." },
+      { "q": "Je Flowtali opravdu zdarma na začátek?", "a": "Ano — plán Starter je zdarma navždy. Získáte faktury, účtenky, 1 aktivní projekt a 3 hlavičkové papíry měsíčně, exporty do PDF a základní šablony zdarma." },
+      { "q": "Mohu použít vlastní logo a podpis?", "a": "Rozhodně. Plány Pro a Business podporují plný branding: nahrajte své logo, obrázek podpisu, nastavte libovolnou akcentovou barvu a vyberte styl písma napříč všemi dokumenty." },
+      { "q": "Jaké měny jsou podporovány?", "a": "USD, EUR, GBP, NGN, CAD, AUD, JPY, INR, ZAR, CHF a AED — se správnými symboly a formátováním pro každou fakturu a účtenku." },
+      { "q": "Mohu své předplatné kdykoli zrušit?", "a": "Ano. Zrušte kdykoli v nastavení účtu. Přístup si ponecháte do konce svého zúčtovacího období." }
+    ]
+  },
+  "cta": {
+    "titlePre": "Připraveni řídit své",
+    "titleEm": " podnikání lépe?",
+    "subtitle": "Připojte se k více než 4 200 freelancerům, kteří důvěřují Flowtali pro faktury, účtenky, projekty a hlavičkové papíry.",
+    "primary": "Začít zdarma — bez platební karty",
+    "secondary": "Prozkoumat všechny funkce →"
+  }
+}

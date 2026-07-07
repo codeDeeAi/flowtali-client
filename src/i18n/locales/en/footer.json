@@ -1,0 +1,19 @@
+{
+  "tagline": "Professional invoices and letterheads for freelancers and small businesses. Get paid faster, communicate better.",
+  "products": "Products",
+  "invoiceGenerator": "Invoice Generator",
+  "letterheadGenerator": "Letterhead Generator",
+  "pricing": "Pricing",
+  "changelog": "Changelog",
+  "developers": "Developers",
+  "embedSdk": "Embed SDK",
+  "apiKeys": "API Keys",
+  "events": "Events",
+  "company": "Company",
+  "about": "About",
+  "privacy": "Privacy",
+  "terms": "Terms",
+  "contact": "Contact",
+  "copyright": "© {year} Flowtali. All rights reserved.",
+  "language": "Language"
+}

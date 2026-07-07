@@ -1,0 +1,84 @@
+{
+  "seo": {
+    "title": "Politique de confidentialité",
+    "description": "Lisez la politique de confidentialité de Flowtali pour comprendre comment nous collectons, utilisons et protégeons vos données."
+  },
+  "title": "Politique de confidentialité",
+  "lastUpdated": "Dernière mise à jour : 20 mai 2026",
+  "s1": {
+    "h": "1. Introduction",
+    "p1": "Flowtali (« nous », « notre » ou « nos ») s'engage à protéger vos informations personnelles. Cette politique de confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos données lorsque vous utilisez notre plateforme sur flowtali.com (le « Service »).",
+    "p2": "En utilisant Flowtali, vous acceptez la collecte et l'utilisation des informations conformément à cette politique."
+  },
+  "s2": {
+    "h": "2. Informations que nous collectons",
+    "sub1": "Informations de compte",
+    "p1": "Lors de votre inscription, nous collectons votre nom, votre adresse e-mail et votre mot de passe (stocké sous forme de hachage sécurisé). Vous pouvez facultativement fournir une photo de profil et un numéro de téléphone.",
+    "sub2": "Données de l'organisation",
+    "p2": "Lorsque vous créez une organisation, nous stockons le nom de l'organisation, le logo, les couleurs de la marque et toutes les données de clients ou de membres que vous ajoutez à la plateforme.",
+    "sub3": "Données d'utilisation",
+    "p3": "Nous collectons automatiquement des informations sur la façon dont vous interagissez avec le Service, notamment les heures d'accès, les pages consultées, les informations sur l'appareil et les adresses IP.",
+    "sub4": "Fichiers téléversés",
+    "p4": "Les fichiers que vous téléversez (logos, signatures, pièces jointes de documents) sont stockés en toute sécurité sur une infrastructure cloud. Nous ne lisons pas le contenu de vos documents."
+  },
+  "s3": {
+    "h": "3. Comment nous utilisons vos informations",
+    "items": [
+      "Pour fournir, exploiter et maintenir le Service",
+      "Pour authentifier votre identité et gérer votre compte",
+      "Pour envoyer des e-mails transactionnels (réinitialisations de mot de passe, vérification d'e-mail, codes OTP)",
+      "Pour améliorer le Service grâce à des analyses d'utilisation anonymisées",
+      "Pour respecter les obligations légales et faire appliquer nos Conditions d'utilisation"
+    ],
+    "note": "Nous ne vendons, ne louons ni ne partageons vos données personnelles avec des tiers à des fins de marketing."
+  },
+  "s4": {
+    "h": "4. Stockage et sécurité des données",
+    "p1": "Vos données sont stockées sur des serveurs sécurisés et chiffrés. Nous utilisons des mesures de sécurité conformes aux normes du secteur, notamment le chiffrement TLS en transit, les mots de passe hachés (bcrypt) et l'authentification par jeton (Laravel Sanctum).",
+    "p2": "Les jetons d'accès expirent après 24 heures. Vous pouvez consulter et révoquer les sessions actives à tout moment depuis les paramètres de votre profil.",
+    "p3": "Bien que nous prenions la sécurité au sérieux, aucune méthode de transmission sur Internet n'est sûre à 100 %. Nous ne pouvons pas garantir une sécurité absolue."
+  },
+  "s5": {
+    "h": "5. Conservation des données",
+    "p1": "Nous conservons les données de votre compte tant que votre compte est actif. Les en-têtes supprimés sont supprimés de manière réversible et définitivement purgés après 30 jours. Vous pouvez demander la suppression de votre compte et de toutes les données associées à tout moment en contactant le support."
+  },
+  "s6": {
+    "h": "6. Cookies",
+    "p1": "Flowtali utilise un minimum de cookies nécessaires à l'authentification et à la gestion de session. Nous n'utilisons pas de cookies publicitaires ou de suivi. Vous pouvez désactiver les cookies dans les paramètres de votre navigateur, bien que cela puisse affecter le fonctionnement du Service."
+  },
+  "s7": {
+    "h": "7. Services tiers",
+    "p1": "Nous pouvons utiliser les services tiers suivants :",
+    "items": [
+      { "label": "Stockage cloud (AWS S3)", "desc": "pour stocker les fichiers téléversés" },
+      { "label": "Fournisseur d'e-mail", "desc": "pour envoyer des e-mails transactionnels" },
+      { "label": "Google OAuth", "desc": "si vous choisissez de vous connecter avec Google" }
+    ],
+    "note": "Chaque service dispose de sa propre politique de confidentialité régissant l'utilisation de vos données."
+  },
+  "s8": {
+    "h": "8. Vos droits",
+    "p1": "Selon votre juridiction, vous pouvez avoir le droit de :",
+    "items": [
+      "Accéder aux données personnelles que nous détenons à votre sujet",
+      "Demander la correction de données inexactes",
+      "Demander la suppression de votre compte et de vos données",
+      "Vous opposer à certains traitements ou les restreindre",
+      "Portabilité des données (recevoir vos données dans un format lisible par machine)"
+    ],
+    "notePre": "Pour exercer ces droits, contactez-nous à"
+  },
+  "s9": {
+    "h": "9. Confidentialité des enfants",
+    "p1": "Flowtali ne s'adresse pas aux personnes de moins de 16 ans. Nous ne collectons pas sciemment d'informations personnelles auprès d'enfants. Si vous pensez que nous avons collecté par inadvertance de telles informations, veuillez nous contacter immédiatement."
+  },
+  "s10": {
+    "h": "10. Modifications de cette politique",
+    "p1": "Nous pouvons mettre à jour cette politique de confidentialité de temps à autre. Nous vous informerons des changements importants par e-mail ou par un avis visible dans l'application. La poursuite de l'utilisation du Service après les modifications constitue votre acceptation de la politique mise à jour."
+  },
+  "s11": {
+    "h": "11. Nous contacter",
+    "p1": "Si vous avez des questions sur cette politique de confidentialité, veuillez nous contacter :",
+    "emailLabel": "E-mail :"
+  }
+}

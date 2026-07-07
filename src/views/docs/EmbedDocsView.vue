@@ -1,13 +1,33 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useSeo } from '@/composables/useSeo'
 import FlowtaliLogo from '@/components/ui/FlowtaliLogo.vue'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
+
+const { t, tm, rt } = useI18n()
 
 useSeo({
-  title: 'Embed SDK Docs — Flowtali',
-  description: 'Learn how to embed Flowtali invoices, projects, receipts, and more in your own product using the Flowtali Embed SDK.',
+  title: t('docs.seo.title'),
+  description: t('docs.seo.description'),
   canonical: 'https://flowtali.com/docs/embed',
+  localePath: '/docs/embed',
 })
+
+// Resolve a dotted-key description map (keys like "invoices.read") from i18n.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function descMap(key: string) {
+  return computed<Record<string, string>>(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const raw = tm(key) as Record<string, any>
+    const out: Record<string, string> = {}
+    for (const k in raw) out[k] = rt(raw[k])
+    return out
+  })
+}
+const permDescs = descMap('docs.permissions.descs')
+const viewDescs = descMap('docs.views.descs')
+const eventDescs = descMap('docs.events.descs')
 
 const activeSection = ref('overview')
 
@@ -123,9 +143,12 @@ function scrollTo(id: string) {
             <FlowtaliLogo variant="full" :size="20" />
           </router-link>
           <span class="text-gray-500">/</span>
-          <span class="text-gray-900 text-sm">Embed SDK Docs</span>
+          <span class="text-gray-900 text-sm">{{ t('docs.breadcrumb') }}</span>
         </div>
-        <router-link to="/app/dashboard" class="text-xs text-green-700 hover:underline">Open app →</router-link>
+        <div class="flex items-center gap-4">
+          <LanguageSwitcher />
+          <router-link to="/app/dashboard" class="text-xs text-green-700 hover:underline">{{ t('docs.openApp') }}</router-link>
+        </div>
       </div>
     </header>
 
@@ -133,12 +156,12 @@ function scrollTo(id: string) {
 
       <!-- Sidebar -->
       <aside class="hidden lg:block w-52 flex-shrink-0 sticky top-24 h-fit">
-        <p class="text-gray-700 text-xs font-semibold uppercase tracking-widest mb-4">On this page</p>
+        <p class="text-gray-700 text-xs font-semibold uppercase tracking-widest mb-4">{{ t('docs.onThisPage') }}</p>
         <nav class="flex flex-col gap-1">
           <button v-for="s in sections" :key="s.id" @click="scrollTo(s.id)"
             class="text-left text-sm px-3 py-1.5 rounded-lg transition-colors"
             :class="activeSection === s.id ? 'text-green-700 bg-green-700/8' : 'text-gray-900 hover:text-gray-1000'">
-            {{ s.label }}
+            {{ t('docs.sections.' + s.id) }}
           </button>
         </nav>
       </aside>
@@ -148,51 +171,51 @@ function scrollTo(id: string) {
 
         <!-- ── Overview ─────────────────────────────────────────────────────── -->
         <section id="overview" class="mb-16 scroll-mt-24">
-          <div class="inline-flex items-center gap-2 bg-green-700/10 border border-green-700/20 text-green-700 text-xs font-medium px-3 py-1 rounded-full mb-5">New in v1.5</div>
-          <h1 class="font-sans text-4xl md:text-5xl font-semibold text-gray-1000 mb-4">Embed SDK</h1>
+          <div class="inline-flex items-center gap-2 bg-green-700/10 border border-green-700/20 text-green-700 text-xs font-medium px-3 py-1 rounded-full mb-5">{{ t('docs.overview.badge') }}</div>
+          <h1 class="font-sans text-4xl md:text-5xl font-semibold text-gray-1000 mb-4">{{ t('docs.overview.title') }}</h1>
           <p class="text-gray-900 text-lg leading-relaxed mb-6">
-            The Flowtali Embed SDK lets you embed any Flowtali view — invoices, projects, receipts, clients, letterheads, preferences, and more — directly in your own website or SaaS product. Your users get the full Flowtali experience without leaving your platform.
+            {{ t('docs.overview.intro') }}
           </p>
           <div class="grid sm:grid-cols-3 gap-4 mt-8">
             <div class="bg-gray-200/60 border border-gray-400/40 rounded-xl p-4">
               <div class="text-green-700 text-lg mb-2">⚡</div>
-              <div class="text-gray-1000 text-sm font-medium mb-1">One script tag</div>
-              <div class="text-gray-900 text-xs leading-relaxed">Drop in a single JS file and call three lines of code.</div>
+              <div class="text-gray-1000 text-sm font-medium mb-1">{{ t('docs.overview.card1Title') }}</div>
+              <div class="text-gray-900 text-xs leading-relaxed">{{ t('docs.overview.card1Desc') }}</div>
             </div>
             <div class="bg-gray-200/60 border border-gray-400/40 rounded-xl p-4">
               <div class="text-green-700 text-lg mb-2">🔐</div>
-              <div class="text-gray-1000 text-sm font-medium mb-1">JWT-based auth</div>
-              <div class="text-gray-900 text-xs leading-relaxed">Your backend issues short-lived tokens. No shared passwords.</div>
+              <div class="text-gray-1000 text-sm font-medium mb-1">{{ t('docs.overview.card2Title') }}</div>
+              <div class="text-gray-900 text-xs leading-relaxed">{{ t('docs.overview.card2Desc') }}</div>
             </div>
             <div class="bg-gray-200/60 border border-gray-400/40 rounded-xl p-4">
               <div class="text-green-700 text-lg mb-2">🎨</div>
-              <div class="text-gray-1000 text-sm font-medium mb-1">Fully themeable</div>
-              <div class="text-gray-900 text-xs leading-relaxed">Match your brand with colors, fonts, and border radius.</div>
+              <div class="text-gray-1000 text-sm font-medium mb-1">{{ t('docs.overview.card3Title') }}</div>
+              <div class="text-gray-900 text-xs leading-relaxed">{{ t('docs.overview.card3Desc') }}</div>
             </div>
           </div>
         </section>
 
         <!-- ── Quick start ──────────────────────────────────────────────────── -->
         <section id="quickstart" class="mb-16 scroll-mt-24">
-          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">Quick start</h2>
-          <p class="text-gray-900 text-sm mb-8">Get an invoice list embedded in under 10 minutes.</p>
+          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">{{ t('docs.quickstart.title') }}</h2>
+          <p class="text-gray-900 text-sm mb-8">{{ t('docs.quickstart.subtitle') }}</p>
 
           <!-- Step 1 -->
           <div class="mb-8">
             <div class="flex items-center gap-3 mb-3">
               <div class="w-6 h-6 rounded-full bg-green-700/20 text-green-700 text-xs font-bold flex items-center justify-center flex-shrink-0">1</div>
-              <h3 class="text-gray-1000 font-medium">Generate an API key in Flowtali</h3>
+              <h3 class="text-gray-1000 font-medium">{{ t('docs.quickstart.step1Title') }}</h3>
             </div>
-            <p class="text-gray-900 text-sm ml-9">Go to <strong class="text-gray-1000">Org Settings → API Keys</strong> and create a new key. You'll receive a <code class="ci">pk_live_</code> (publishable) and a <code class="ci">sk_live_</code> (secret) key. Store the secret key securely — it is shown only once.</p>
+            <p class="text-gray-900 text-sm ml-9" v-html="t('docs.quickstart.step1Body')"></p>
           </div>
 
           <!-- Step 2 -->
           <div class="mb-8">
             <div class="flex items-center gap-3 mb-3">
               <div class="w-6 h-6 rounded-full bg-green-700/20 text-green-700 text-xs font-bold flex items-center justify-center flex-shrink-0">2</div>
-              <h3 class="text-gray-1000 font-medium">Generate an embed token from your backend</h3>
+              <h3 class="text-gray-1000 font-medium">{{ t('docs.quickstart.step2Title') }}</h3>
             </div>
-            <p class="text-gray-900 text-sm ml-9 mb-4">When one of your users logs in, your server calls the Flowtali API to mint a short-lived token for them. The <code class="ci">sk_live_</code> key must never leave your server.</p>
+            <p class="text-gray-900 text-sm ml-9 mb-4" v-html="t('docs.quickstart.step2Body')"></p>
 
             <div class="ml-9">
               <div id="cb-backend" class="code-block">
@@ -279,9 +302,9 @@ resp, _ := http.DefaultClient.Do(req)
           <div class="mb-8">
             <div class="flex items-center gap-3 mb-3">
               <div class="w-6 h-6 rounded-full bg-green-700/20 text-green-700 text-xs font-bold flex items-center justify-center flex-shrink-0">3</div>
-              <h3 class="text-gray-1000 font-medium">Add the SDK and mount the embed</h3>
+              <h3 class="text-gray-1000 font-medium">{{ t('docs.quickstart.step3Title') }}</h3>
             </div>
-            <p class="text-gray-900 text-sm ml-9 mb-4">Pass the token from Step 2 to the SDK. Pick whichever framework you're using below.</p>
+            <p class="text-gray-900 text-sm ml-9 mb-4">{{ t('docs.quickstart.step3Body') }}</p>
 
             <div class="ml-9">
               <div id="cb-frontend" class="code-block">
@@ -420,45 +443,45 @@ onUnmounted(() => ft?.destroy())
 
         <!-- ── Authentication ───────────────────────────────────────────────── -->
         <section id="auth" class="mb-16 scroll-mt-24">
-          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">Authentication</h2>
-          <p class="text-gray-900 text-sm mb-6">The embed uses a two-key system, the same model as Stripe.</p>
+          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">{{ t('docs.auth.title') }}</h2>
+          <p class="text-gray-900 text-sm mb-6">{{ t('docs.auth.subtitle') }}</p>
 
           <div class="bg-gray-200/50 border border-gray-400/40 rounded-xl p-5 mb-6">
             <div class="grid sm:grid-cols-2 gap-6">
               <div>
-                <div class="text-xs font-semibold text-green-700 uppercase tracking-wider mb-2">Publishable key <code class="ci">pk_live_</code></div>
-                <p class="text-gray-900 text-sm leading-relaxed">Safe for frontend / browser code. Passed to <code class="ci">Flowtali.init()</code>. Identifies your organization but cannot generate tokens or access data directly.</p>
+                <div class="text-xs font-semibold text-green-700 uppercase tracking-wider mb-2">{{ t('docs.auth.pubKeyLabel') }} <code class="ci">pk_live_</code></div>
+                <p class="text-gray-900 text-sm leading-relaxed" v-html="t('docs.auth.pubKeyDesc')"></p>
               </div>
               <div>
-                <div class="text-xs font-semibold text-red-400/80 uppercase tracking-wider mb-2">Secret key <code class="ci">sk_live_</code></div>
-                <p class="text-gray-900 text-sm leading-relaxed">Server-side only. Never ship this in frontend code or commit it to git. Used to call <code class="ci">POST /orgs/{'{org}'}/embed/token</code> and generate per-user embed tokens.</p>
+                <div class="text-xs font-semibold text-red-400/80 uppercase tracking-wider mb-2">{{ t('docs.auth.secretKeyLabel') }} <code class="ci">sk_live_</code></div>
+                <p class="text-gray-900 text-sm leading-relaxed">{{ t('docs.auth.secretKeyDescPre') }} <code class="ci">POST /orgs/{org}/embed/token</code> {{ t('docs.auth.secretKeyDescPost') }}</p>
               </div>
             </div>
           </div>
 
           <div class="bg-green-700/5 border border-green-700/20 rounded-xl px-4 py-3 flex gap-3 text-sm">
             <svg class="w-4 h-4 text-green-700 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z"/></svg>
-            <span class="text-gray-900">Embed tokens are rate-limited to <strong class="text-gray-1000">30 generations per minute</strong> per IP and expire after a maximum of 24 hours (<code class="ci">expires_in</code> max is <code class="ci">86400</code>).</span>
+            <span class="text-gray-900" v-html="t('docs.auth.rateLimit')"></span>
           </div>
         </section>
 
         <!-- ── Permissions ──────────────────────────────────────────────────── -->
         <section id="permissions" class="mb-16 scroll-mt-24">
-          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">Permissions</h2>
-          <p class="text-gray-900 text-sm mb-4">Each embed token carries a <code class="ci">permissions</code> array. The embed blocks any action not explicitly granted — even if the UI renders the option. Grant only what each user actually needs.</p>
+          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">{{ t('docs.permissions.title') }}</h2>
+          <p class="text-gray-900 text-sm mb-4" v-html="t('docs.permissions.intro')"></p>
 
           <div class="bg-gray-200/50 border border-gray-400/40 rounded-xl overflow-hidden">
             <table class="w-full text-sm">
               <thead>
                 <tr class="border-b border-gray-400/40">
-                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider w-56">Permission</th>
-                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider">What it allows</th>
+                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider w-56">{{ t('docs.permissions.thPermission') }}</th>
+                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider">{{ t('docs.permissions.thAllows') }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-400/20">
                 <tr v-for="p in allPermissions" :key="p.perm">
                   <td class="px-4 py-2.5"><code class="ci">{{ p.perm }}</code></td>
-                  <td class="px-4 py-2.5 text-gray-900">{{ p.desc }}</td>
+                  <td class="px-4 py-2.5 text-gray-900">{{ permDescs[p.perm] }}</td>
                 </tr>
               </tbody>
             </table>
@@ -467,11 +490,11 @@ onUnmounted(() => ft?.destroy())
 
         <!-- ── Available views ─────────────────────────────────────────────── -->
         <section id="views" class="mb-16 scroll-mt-24">
-          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">Available views</h2>
-          <p class="text-gray-900 text-sm mb-4">Pass any of these as the <code class="ci">view</code> param to <code class="ci">ft.mount()</code> or <code class="ci">ft.open()</code>. For views with a dynamic ID, pass the ID via <code class="ci">params</code>.</p>
+          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">{{ t('docs.views.title') }}</h2>
+          <p class="text-gray-900 text-sm mb-4" v-html="t('docs.views.intro')"></p>
 
           <div id="cb-views" class="code-block mb-5">
-            <div class="code-lang-row"><span>Example</span><button @click="copyCode('cb-views')" class="copy-btn" title="Copy"><svg v-if="copiedBlock !== 'cb-views'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button></div>
+            <div class="code-lang-row"><span>{{ t('docs.views.exampleLabel') }}</span><button @click="copyCode('cb-views')" class="copy-btn" title="Copy"><svg v-if="copiedBlock !== 'cb-views'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button></div>
             <pre v-pre class="code-pre"><code>// Static view
 ft.mount('#container', { view: 'invoices', token })
 
@@ -484,16 +507,16 @@ ft.mount('#container', { view: 'projects/PROJ_ID/edit', token })</code></pre>
             <table class="w-full text-sm">
               <thead>
                 <tr class="border-b border-gray-400/40">
-                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider">view</th>
-                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider hidden sm:table-cell">Permission</th>
-                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider hidden md:table-cell">Description</th>
+                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider">{{ t('docs.views.thView') }}</th>
+                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider hidden sm:table-cell">{{ t('docs.views.thPermission') }}</th>
+                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider hidden md:table-cell">{{ t('docs.views.thDescription') }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-400/20">
                 <tr v-for="v in allViews" :key="v.view">
                   <td class="px-4 py-2.5"><code class="ci text-xs">{{ v.view }}</code></td>
                   <td class="px-4 py-2.5 hidden sm:table-cell"><code class="ci text-xs">{{ v.perm }}</code></td>
-                  <td class="px-4 py-2.5 text-gray-900 text-xs hidden md:table-cell">{{ v.desc }}</td>
+                  <td class="px-4 py-2.5 text-gray-900 text-xs hidden md:table-cell">{{ viewDescs[v.view] }}</td>
                 </tr>
               </tbody>
             </table>
@@ -502,11 +525,11 @@ ft.mount('#container', { view: 'projects/PROJ_ID/edit', token })</code></pre>
 
         <!-- ── Appearance ──────────────────────────────────────────────────── -->
         <section id="appearance" class="mb-16 scroll-mt-24">
-          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">Appearance / theming</h2>
-          <p class="text-gray-900 text-sm mb-6">Pass an <code class="ci">appearance</code> object to <code class="ci">Flowtali.init()</code> to apply your brand globally, or override per-mount call.</p>
+          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">{{ t('docs.appearance.title') }}</h2>
+          <p class="text-gray-900 text-sm mb-6" v-html="t('docs.appearance.intro')"></p>
 
           <div id="cb-appear-global" class="code-block mb-4">
-            <div class="code-lang-row"><span>Global (all mounts from this instance)</span><button @click="copyCode('cb-appear-global')" class="copy-btn" title="Copy"><svg v-if="copiedBlock !== 'cb-appear-global'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button></div>
+            <div class="code-lang-row"><span>{{ t('docs.appearance.globalLabel') }}</span><button @click="copyCode('cb-appear-global')" class="copy-btn" title="Copy"><svg v-if="copiedBlock !== 'cb-appear-global'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button></div>
             <pre v-pre class="code-pre"><code>const ft = Flowtali.init('pk_live_...', {
   appearance: {
     primaryColor:    '#6366f1',       // buttons, links, focus rings (default: #00c853)
@@ -519,7 +542,7 @@ ft.mount('#container', { view: 'projects/PROJ_ID/edit', token })</code></pre>
           </div>
 
           <div id="cb-appear-mount" class="code-block">
-            <div class="code-lang-row"><span>Per-mount override</span><button @click="copyCode('cb-appear-mount')" class="copy-btn" title="Copy"><svg v-if="copiedBlock !== 'cb-appear-mount'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button></div>
+            <div class="code-lang-row"><span>{{ t('docs.appearance.mountLabel') }}</span><button @click="copyCode('cb-appear-mount')" class="copy-btn" title="Copy"><svg v-if="copiedBlock !== 'cb-appear-mount'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button></div>
             <pre v-pre class="code-pre"><code>ft.mount('#container', {
   view: 'invoices',
   token: embedToken,
@@ -530,26 +553,24 @@ ft.mount('#container', { view: 'projects/PROJ_ID/edit', token })</code></pre>
 
         <!-- ── Events ──────────────────────────────────────────────────────── -->
         <section id="events" class="mb-16 scroll-mt-24">
-          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">Events</h2>
-          <p class="text-gray-900 text-sm mb-6">
-            Listen for actions inside the embed with <code class="ci">ft.on()</code>. Events fire after successful mutations — not on validation errors or cancelled actions. Use them to sync your own system, show toasts, or update UI state.
-          </p>
+          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-2">{{ t('docs.events.title') }}</h2>
+          <p class="text-gray-900 text-sm mb-6" v-html="t('docs.events.intro')"></p>
 
           <!-- Full event reference -->
-          <h3 class="text-gray-1000 font-medium text-sm mb-3">All events</h3>
+          <h3 class="text-gray-1000 font-medium text-sm mb-3">{{ t('docs.events.allHeading') }}</h3>
           <div class="bg-gray-200/50 border border-gray-400/40 rounded-xl overflow-hidden mb-8">
             <table class="w-full text-sm">
               <thead>
                 <tr class="border-b border-gray-400/40">
-                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider w-48">Event</th>
-                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider hidden sm:table-cell">Fired when</th>
-                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider hidden lg:table-cell">Payload shape</th>
+                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider w-48">{{ t('docs.events.thEvent') }}</th>
+                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider hidden sm:table-cell">{{ t('docs.events.thFiredWhen') }}</th>
+                  <th class="text-left px-4 py-2.5 text-gray-700 text-xs uppercase tracking-wider hidden lg:table-cell">{{ t('docs.events.thPayload') }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-400/20">
                 <tr v-for="e in allEvents" :key="e.event">
                   <td class="px-4 py-2.5"><code class="ci text-xs">{{ e.event }}</code></td>
-                  <td class="px-4 py-2.5 text-gray-900 text-xs hidden sm:table-cell">{{ e.desc }}</td>
+                  <td class="px-4 py-2.5 text-gray-900 text-xs hidden sm:table-cell">{{ eventDescs[e.event] }}</td>
                   <td class="px-4 py-2.5 hidden lg:table-cell"><code class="ci text-xs">{{ e.payload }}</code></td>
                 </tr>
               </tbody>
@@ -557,7 +578,7 @@ ft.mount('#container', { view: 'projects/PROJ_ID/edit', token })</code></pre>
           </div>
 
           <!-- Framework examples -->
-          <h3 class="text-gray-1000 font-medium text-sm mb-4">Framework examples</h3>
+          <h3 class="text-gray-1000 font-medium text-sm mb-4">{{ t('docs.events.frameworkHeading') }}</h3>
           <div id="cb-events" class="code-block">
             <div class="flex items-center justify-between px-3 pt-2 pb-0 border-b border-gray-400/60">
               <div class="flex items-center gap-1">
@@ -713,48 +734,48 @@ onUnmounted(() => ft?.destroy())
 
         <!-- ── SDK reference ───────────────────────────────────────────────── -->
         <section id="reference" class="mb-16 scroll-mt-24">
-          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-6">SDK reference</h2>
+          <h2 class="font-sans text-3xl font-semibold text-gray-1000 mb-6">{{ t('docs.reference.title') }}</h2>
 
           <div class="flex flex-col gap-7">
             <div class="border border-gray-400/40 rounded-xl p-5">
               <h3 class="font-mono text-sm text-gray-1000 font-semibold mb-1">Flowtali.init(publishableKey, options?)</h3>
-              <p class="text-gray-900 text-xs mb-3">Initializes the SDK. Returns a <code class="ci">FlowtaliInstance</code>.</p>
-              <table class="w-full text-xs"><thead><tr class="border-b border-gray-400/30"><th class="text-left py-1.5 pr-3 text-gray-700 uppercase tracking-wider">Option</th><th class="text-left py-1.5 pr-3 text-gray-700 uppercase tracking-wider">Type</th><th class="text-left py-1.5 text-gray-700 uppercase tracking-wider">Description</th></tr></thead>
+              <p class="text-gray-900 text-xs mb-3" v-html="t('docs.reference.initDesc')"></p>
+              <table class="w-full text-xs"><thead><tr class="border-b border-gray-400/30"><th class="text-left py-1.5 pr-3 text-gray-700 uppercase tracking-wider">{{ t('docs.reference.thOption') }}</th><th class="text-left py-1.5 pr-3 text-gray-700 uppercase tracking-wider">{{ t('docs.reference.thType') }}</th><th class="text-left py-1.5 text-gray-700 uppercase tracking-wider">{{ t('docs.reference.thDescription') }}</th></tr></thead>
               <tbody class="divide-y divide-gray-400/20">
-                <tr><td class="py-1.5 pr-3"><code class="ci">appearance</code></td><td class="py-1.5 pr-3 text-gray-900">object</td><td class="py-1.5 text-gray-900">Default theme applied to all mounts from this instance.</td></tr>
+                <tr><td class="py-1.5 pr-3"><code class="ci">appearance</code></td><td class="py-1.5 pr-3 text-gray-900">object</td><td class="py-1.5 text-gray-900">{{ t('docs.reference.initAppearanceDesc') }}</td></tr>
               </tbody></table>
             </div>
 
             <div class="border border-gray-400/40 rounded-xl p-5">
               <h3 class="font-mono text-sm text-gray-1000 font-semibold mb-1">ft.mount(selector, options)</h3>
-              <p class="text-gray-900 text-xs mb-3">Mounts the embed inside a container. <code class="ci">selector</code> can be a CSS string or a DOM element.</p>
-              <table class="w-full text-xs"><thead><tr class="border-b border-gray-400/30"><th class="text-left py-1.5 pr-3 text-gray-700 uppercase tracking-wider">Option</th><th class="text-left py-1.5 pr-3 text-gray-700 uppercase tracking-wider">Type</th><th class="text-left py-1.5 text-gray-700 uppercase tracking-wider">Description</th></tr></thead>
+              <p class="text-gray-900 text-xs mb-3" v-html="t('docs.reference.mountDesc')"></p>
+              <table class="w-full text-xs"><thead><tr class="border-b border-gray-400/30"><th class="text-left py-1.5 pr-3 text-gray-700 uppercase tracking-wider">{{ t('docs.reference.thOption') }}</th><th class="text-left py-1.5 pr-3 text-gray-700 uppercase tracking-wider">{{ t('docs.reference.thType') }}</th><th class="text-left py-1.5 text-gray-700 uppercase tracking-wider">{{ t('docs.reference.thDescription') }}</th></tr></thead>
               <tbody class="divide-y divide-gray-400/20">
-                <tr><td class="py-1.5 pr-3"><code class="ci">view</code></td><td class="py-1.5 pr-3 text-gray-900">string</td><td class="py-1.5 text-gray-900">Which view to render. See Available views.</td></tr>
-                <tr><td class="py-1.5 pr-3"><code class="ci">token</code></td><td class="py-1.5 pr-3 text-gray-900">string</td><td class="py-1.5 text-gray-900">Short-lived embed JWT from your backend.</td></tr>
-                <tr><td class="py-1.5 pr-3"><code class="ci">params</code></td><td class="py-1.5 pr-3 text-gray-900">object</td><td class="py-1.5 text-gray-900">Optional query params forwarded to the view (e.g. <code class="ci">{ filter: 'unpaid' }</code>).</td></tr>
-                <tr><td class="py-1.5 pr-3"><code class="ci">appearance</code></td><td class="py-1.5 pr-3 text-gray-900">object</td><td class="py-1.5 text-gray-900">Per-mount theme override, merged over init appearance.</td></tr>
+                <tr><td class="py-1.5 pr-3"><code class="ci">view</code></td><td class="py-1.5 pr-3 text-gray-900">string</td><td class="py-1.5 text-gray-900">{{ t('docs.reference.mountViewDesc') }}</td></tr>
+                <tr><td class="py-1.5 pr-3"><code class="ci">token</code></td><td class="py-1.5 pr-3 text-gray-900">string</td><td class="py-1.5 text-gray-900">{{ t('docs.reference.mountTokenDesc') }}</td></tr>
+                <tr><td class="py-1.5 pr-3"><code class="ci">params</code></td><td class="py-1.5 pr-3 text-gray-900">object</td><td class="py-1.5 text-gray-900">{{ t('docs.reference.mountParamsDesc') }} <code class="ci">{ filter: 'unpaid' }</code>.</td></tr>
+                <tr><td class="py-1.5 pr-3"><code class="ci">appearance</code></td><td class="py-1.5 pr-3 text-gray-900">object</td><td class="py-1.5 text-gray-900">{{ t('docs.reference.mountAppearanceDesc') }}</td></tr>
               </tbody></table>
             </div>
 
             <div class="border border-gray-400/40 rounded-xl p-5">
               <h3 class="font-mono text-sm text-gray-1000 font-semibold mb-1">ft.open(options)</h3>
-              <p class="text-gray-900 text-xs">Same as <code class="ci">mount()</code> but renders inside a centered overlay modal with a backdrop and close button. Accepts the same options.</p>
+              <p class="text-gray-900 text-xs" v-html="t('docs.reference.openDesc')"></p>
             </div>
 
             <div class="border border-gray-400/40 rounded-xl p-5">
               <h3 class="font-mono text-sm text-gray-1000 font-semibold mb-1">ft.on(event, handler) / ft.off(event, handler)</h3>
-              <p class="text-gray-900 text-xs">Subscribe / unsubscribe to embed events. Use <code class="ci">'*'</code> to catch all events — handler receives <code class="ci">(eventName, data)</code>.</p>
+              <p class="text-gray-900 text-xs" v-html="t('docs.reference.onDesc')"></p>
             </div>
 
             <div class="border border-gray-400/40 rounded-xl p-5">
               <h3 class="font-mono text-sm text-gray-1000 font-semibold mb-1">ft.destroy()</h3>
-              <p class="text-gray-900 text-xs">Removes the iframe or modal and clears all state. Call this in your component's unmount / cleanup hook to avoid memory leaks.</p>
+              <p class="text-gray-900 text-xs">{{ t('docs.reference.destroyDesc') }}</p>
             </div>
 
             <div class="border border-gray-400/40 rounded-xl p-5">
               <h3 class="font-mono text-sm text-gray-1000 font-semibold mb-1">Flowtali.config({ baseUrl })</h3>
-              <p class="text-gray-900 text-xs">Override the Flowtali base URL before calling <code class="ci">init()</code>. Useful for staging environments or self-hosted deployments.</p>
+              <p class="text-gray-900 text-xs" v-html="t('docs.reference.configDesc')"></p>
             </div>
           </div>
         </section>
@@ -766,7 +787,7 @@ onUnmounted(() => ft?.destroy())
     <Transition name="toast">
       <div v-if="copiedBlock" class="copy-toast">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        Copied to clipboard
+        {{ t('docs.copiedToast') }}
       </div>
     </Transition>
 

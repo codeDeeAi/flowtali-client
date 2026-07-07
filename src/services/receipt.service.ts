@@ -95,6 +95,7 @@ export interface IReceiptDraftData {
   organization: {
     id: string
     name: string
+    default_currency: string
     brand_colors: string[]
     stamps: Array<{ text: string; color: string; text_color?: string }>
     invoice_profiles: Array<{

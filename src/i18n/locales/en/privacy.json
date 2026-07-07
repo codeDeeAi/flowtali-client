@@ -1,0 +1,84 @@
+{
+  "seo": {
+    "title": "Privacy Policy",
+    "description": "Read the Flowtali Privacy Policy to understand how we collect, use, and protect your data."
+  },
+  "title": "Privacy Policy",
+  "lastUpdated": "Last updated: May 20, 2026",
+  "s1": {
+    "h": "1. Introduction",
+    "p1": "Flowtali (\"we\", \"our\", or \"us\") is committed to protecting your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your data when you use our platform at flowtali.com (the \"Service\").",
+    "p2": "By using Flowtali, you agree to the collection and use of information in accordance with this policy."
+  },
+  "s2": {
+    "h": "2. Information We Collect",
+    "sub1": "Account Information",
+    "p1": "When you register, we collect your name, email address, and password (stored as a secure hash). You may optionally provide a profile photo and phone number.",
+    "sub2": "Organization Data",
+    "p2": "When you create an organization, we store the organization name, logo, brand colors, and any client or member data you add to the platform.",
+    "sub3": "Usage Data",
+    "p3": "We automatically collect information about how you interact with the Service, including access times, pages viewed, device information, and IP addresses.",
+    "sub4": "Uploaded Files",
+    "p4": "Files you upload (logos, signatures, document attachments) are stored securely on cloud infrastructure. We do not read the contents of your documents."
+  },
+  "s3": {
+    "h": "3. How We Use Your Information",
+    "items": [
+      "To provide, operate, and maintain the Service",
+      "To authenticate your identity and manage your account",
+      "To send transactional emails (password resets, email verification, OTPs)",
+      "To improve the Service through anonymized usage analytics",
+      "To comply with legal obligations and enforce our Terms of Service"
+    ],
+    "note": "We do not sell, rent, or share your personal data with third parties for marketing purposes."
+  },
+  "s4": {
+    "h": "4. Data Storage & Security",
+    "p1": "Your data is stored on secure, encrypted servers. We use industry-standard security measures including TLS encryption in transit, hashed passwords (bcrypt), and token-based authentication (Laravel Sanctum).",
+    "p2": "Access tokens expire after 24 hours. You can view and revoke active sessions at any time from your profile settings.",
+    "p3": "While we take security seriously, no method of transmission over the internet is 100% secure. We cannot guarantee absolute security."
+  },
+  "s5": {
+    "h": "5. Data Retention",
+    "p1": "We retain your account data for as long as your account is active. Deleted letterheads are soft-deleted and permanently purged after 30 days. You may request deletion of your account and all associated data at any time by contacting support."
+  },
+  "s6": {
+    "h": "6. Cookies",
+    "p1": "Flowtali uses minimal cookies necessary for authentication and session management. We do not use advertising or tracking cookies. You can disable cookies in your browser settings, though this may affect the functionality of the Service."
+  },
+  "s7": {
+    "h": "7. Third-Party Services",
+    "p1": "We may use the following third-party services:",
+    "items": [
+      { "label": "Cloud Storage (AWS S3)", "desc": "for storing uploaded files" },
+      { "label": "Email Provider", "desc": "for sending transactional emails" },
+      { "label": "Google OAuth", "desc": "if you choose to sign in with Google" }
+    ],
+    "note": "Each service has its own privacy policy governing their use of your data."
+  },
+  "s8": {
+    "h": "8. Your Rights",
+    "p1": "Depending on your jurisdiction, you may have the right to:",
+    "items": [
+      "Access the personal data we hold about you",
+      "Request correction of inaccurate data",
+      "Request deletion of your account and data",
+      "Object to or restrict certain processing",
+      "Data portability (receive your data in a machine-readable format)"
+    ],
+    "notePre": "To exercise these rights, contact us at"
+  },
+  "s9": {
+    "h": "9. Children's Privacy",
+    "p1": "Flowtali is not directed to individuals under the age of 16. We do not knowingly collect personal information from children. If you believe we have inadvertently collected such information, please contact us immediately."
+  },
+  "s10": {
+    "h": "10. Changes to This Policy",
+    "p1": "We may update this Privacy Policy from time to time. We will notify you of significant changes by email or a prominent notice in the app. Continued use of the Service after changes constitutes your acceptance of the updated policy."
+  },
+  "s11": {
+    "h": "11. Contact Us",
+    "p1": "If you have questions about this Privacy Policy, please contact us:",
+    "emailLabel": "Email:"
+  }
+}

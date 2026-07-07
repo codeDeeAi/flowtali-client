@@ -1,0 +1,22 @@
+{
+  "badge": "Ozvěte se nám",
+  "title": "Rádi si od vás přečteme",
+  "subtitle": "Máte dotaz, nápad na funkci nebo chcete jen pozdravit? Napište nám — čteme každou zprávu.",
+  "emailUs": "Napište nám",
+  "emailUsSub": "Obvykle odpovídáme do 24 hodin",
+  "copy": "Kopírovat",
+  "copied": "Zkopírováno",
+  "responseTime": "Doba odezvy",
+  "responseTimeSub": "Pracovní doba, po – pá",
+  "responseBodyPre": "Snažíme se odpovědět na všechny dotazy do",
+  "responseBodyStrong": "jednoho pracovního dne",
+  "responseBodyPost": ". U naléhavých záležitostí prosím uveďte do předmětu „URGENT“.",
+  "helpTitle": "S čím vám můžeme pomoci?",
+  "helpItems": [
+    { "title": "Návrhy funkcí", "desc": "Máte nápad, který by Flowtali vylepšil? Rádi slyšíme od uživatelů." },
+    { "title": "Hlášení chyb", "desc": "Našli jste něco rozbitého? Řekněte nám přesně, co se stalo, a rychle to opravíme." },
+    { "title": "Obecné dotazy", "desc": "Nejste si jistí, jak něco funguje? Provedeme vás tím." },
+    { "title": "Tým a fakturace", "desc": "Dotazy k vašemu plánu, fakturám nebo přístupu týmu." }
+  ],
+  "sendEmail": "Pošlete nám e-mail"
+}

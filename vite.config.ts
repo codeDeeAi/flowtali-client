@@ -5,6 +5,7 @@ import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -12,6 +13,13 @@ export default defineConfig({
     vue(),
     vueDevTools(),
     tailwindcss(),
+    VueI18nPlugin({
+      include: [fileURLToPath(new URL('./src/i18n/locales/**', import.meta.url))],
+      // Some doc/legal strings intentionally contain inline HTML (rendered via
+      // v-html). Allow it in messages instead of erroring on detection.
+      strictMessage: false,
+      escapeHtml: false,
+    }),
     VitePWA({
       registerType: 'prompt',
       includeAssets: [

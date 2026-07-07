@@ -1,0 +1,32 @@
+{
+  "seo": {
+    "title": "À propos de Flowtali",
+    "description": "Flowtali est un outil de documents conçu pour les freelances et les petites équipes. Créez des factures et des en-têtes professionnels avec aperçu en temps réel et export PDF en un clic."
+  },
+  "badge": "Notre histoire",
+  "heroTitleLine1": "Des documents aussi soignés",
+  "heroTitleLine2": "que le travail qui les sous-tend",
+  "heroSubtitle": "Flowtali a été conçu pour les freelances et les petites équipes soucieux de la première impression — car une facture ou un en-tête soigné dit tout avant même que vous ne prononciez un mot.",
+  "missionTitle": "Pourquoi nous avons créé Flowtali",
+  "missionP1": "Trop de freelances talentueux envoyaient des factures bricolées dans Google Docs ou des en-têtes assemblés dans Word — et ça se voyait. Les clients le remarquaient. Les contrats étaient plus durs à conclure.",
+  "missionP2": "Nous avons créé Flowtali pour combler cet écart. Des outils de factures et d'en-têtes de qualité professionnelle, accessibles à un designer indépendant, un consultant ou un studio de 5 personnes — pas seulement à la grande entreprise avec une équipe de design.",
+  "missionP3a": "Chaque modèle, chaque réglage, chaque fonctionnalité a été conçu avec une question en tête :",
+  "missionP3Quote": "« Un client ferait-il confiance à cela ? »",
+  "missionP3b": "Si la réponse est oui, ça part en production. Sinon, non.",
+  "stats": [
+    { "value": "6", "label": "Thèmes d'en-tête" },
+    { "value": "11+", "label": "Devises prises en charge" },
+    { "value": "100%", "label": "Dans le navigateur" },
+    { "value": "∞", "label": "Liens de partage par document" }
+  ],
+  "valuesTitle": "Ce en quoi nous croyons",
+  "values": [
+    { "title": "Ce que vous voyez est ce qu'ils reçoivent", "desc": "L'aperçu en direct est au cœur de Flowtali. Aucune surprise après l'export — votre document est identique à l'écran et à l'impression." },
+    { "title": "La rapidité sans compromis", "desc": "Un premier brouillon en moins de deux minutes. Pas de bricolage de marges ni de mise en forme de tableaux. Il suffit de remplir, prévisualiser, partager." },
+    { "title": "Vos données restent les vôtres", "desc": "Nous ne lisons pas vos documents, ne vendons pas vos données et ne les partageons pas avec des tiers. Chiffrées en transit, l'accès contrôlé par vous." }
+  ],
+  "ctaTitle": "Prêt à commencer ?",
+  "ctaSubtitle": "Rejoignez des milliers de freelances et de petites entreprises qui envoient de meilleurs documents.",
+  "ctaPrimary": "Créer un compte gratuit",
+  "ctaSecondary": "Nous contacter"
+}

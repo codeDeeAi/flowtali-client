@@ -1,0 +1,103 @@
+{
+  "seo": {
+    "title": "Conditions d'utilisation",
+    "description": "Lisez les conditions d'utilisation de Flowtali — les règles et conditions qui régissent votre utilisation de notre plateforme."
+  },
+  "title": "Conditions d'utilisation",
+  "lastUpdated": "Dernière mise à jour : 20 mai 2026",
+  "s1": {
+    "h": "1. Acceptation des conditions",
+    "p1": "En accédant à Flowtali (« Service ») ou en l'utilisant, vous acceptez d'être lié par ces conditions d'utilisation. Si vous n'acceptez pas ces conditions, n'utilisez pas le Service. Ces conditions s'appliquent à tous les utilisateurs, y compris les particuliers et les comptes d'organisation."
+  },
+  "s2": {
+    "h": "2. Description du service",
+    "p1": "Flowtali est une plateforme de gestion de documents et d'en-têtes qui permet aux utilisateurs de créer, stocker et partager des en-têtes professionnels et des documents connexes au sein d'organisations. Les fonctionnalités comprennent :",
+    "items": [
+      "Création et gestion d'en-têtes",
+      "Gestion des clients et des contacts",
+      "Génération de liens partagés avec codes d'accès optionnels",
+      "Gestion des membres d'équipe avec accès basé sur les rôles",
+      "Téléversements de fichiers pour logos, signatures et documents"
+    ]
+  },
+  "s3": {
+    "h": "3. Comptes et inscription",
+    "p1": "Pour utiliser le Service, vous devez créer un compte. Vous acceptez de :",
+    "items": [
+      "Fournir des informations exactes, à jour et complètes",
+      "Maintenir la sécurité de vos identifiants de compte",
+      "Nous informer immédiatement de tout accès non autorisé à votre compte",
+      "Être responsable de toute activité effectuée sous votre compte"
+    ],
+    "note": "Vous devez avoir au moins 16 ans pour créer un compte. En créant un compte, vous déclarez remplir cette condition."
+  },
+  "s4": {
+    "h": "4. Utilisation acceptable",
+    "p1": "Vous acceptez de ne pas utiliser le Service pour :",
+    "items": [
+      "Téléverser, publier ou transmettre du contenu illégal, frauduleux ou portant atteinte aux droits de tiers",
+      "Vous faire passer pour une personne ou une entité ou déformer votre affiliation à une entité",
+      "Distribuer des logiciels malveillants, du spam ou d'autres logiciels nuisibles",
+      "Tenter d'obtenir un accès non autorisé à une partie du Service ou aux données d'autres utilisateurs",
+      "Utiliser le Service d'une manière qui pourrait désactiver, surcharger ou compromettre son infrastructure",
+      "Extraire, explorer ou récupérer systématiquement des données du Service"
+    ],
+    "note": "Nous nous réservons le droit de résilier sans préavis les comptes qui enfreignent ces conditions."
+  },
+  "s5": {
+    "h": "5. Organisations et équipes",
+    "p1": "Lorsque vous créez une organisation sur Flowtali, vous devenez le propriétaire de l'organisation. En tant que propriétaire, vous êtes responsable de :",
+    "items": [
+      "La gestion des invitations de membres et des attributions de rôles",
+      "Tout contenu créé ou téléversé par les membres de votre organisation",
+      "Veiller à ce que les membres respectent ces conditions d'utilisation"
+    ],
+    "note": "Les membres invités dans votre organisation auront accès aux ressources en fonction des rôles que vous attribuez. Vous pouvez retirer des membres à tout moment."
+  },
+  "s6": {
+    "h": "6. Propriété intellectuelle",
+    "p1": "Vous conservez la propriété de tout le contenu que vous téléversez ou créez via le Service, y compris les en-têtes, logos et documents (« Contenu utilisateur »). En téléversant du contenu, vous accordez à Flowtali une licence non exclusive, mondiale et libre de redevance pour stocker, afficher et transmettre votre Contenu utilisateur uniquement aux fins de la fourniture du Service.",
+    "p2": "Flowtali détient tous les droits de propriété intellectuelle sur le Service lui-même, y compris son logiciel, sa conception et sa marque. Vous ne pouvez pas reproduire, modifier ou distribuer le Service ou ses composants sans notre autorisation écrite expresse."
+  },
+  "s7": {
+    "h": "7. Liens partagés",
+    "p1": "Le Service vous permet de générer des liens partageables pour les en-têtes. Vous êtes seul responsable du contenu partagé via ces liens. Les liens privés avec codes d'accès offrent une couche de sécurité supplémentaire, mais vous reconnaissez que :",
+    "items": [
+      "Les codes d'accès doivent rester confidentiels",
+      "Nous ne sommes pas responsables des accès non autorisés résultant de codes d'accès compromis",
+      "Vous devez révoquer les liens lorsqu'ils ne sont plus nécessaires"
+    ]
+  },
+  "s8": {
+    "h": "8. Abonnement et paiements",
+    "p1": "Flowtali peut proposer des niveaux d'abonnement gratuits et payants. En vous abonnant à un forfait payant, vous acceptez de payer tous les frais applicables. Tous les frais sont non remboursables, sauf lorsque la loi l'exige. Nous nous réservons le droit de modifier les tarifs moyennant un préavis de 30 jours.",
+    "p2": "Le non-paiement peut entraîner la suspension ou la résiliation de votre compte et des données associées."
+  },
+  "s9": {
+    "h": "9. Avertissements et limitation de responsabilité",
+    "p1": "Le Service est fourni « tel quel » sans garantie d'aucune sorte. Nous ne garantissons pas que le Service sera exempt d'erreurs, ininterrompu ou exempt de vulnérabilités de sécurité.",
+    "p2": "Dans toute la mesure permise par la loi, Flowtali ne saurait être tenu responsable de tout dommage indirect, accessoire, spécial, consécutif ou punitif, y compris la perte de données, de revenus ou de clientèle, découlant de votre utilisation ou de votre incapacité à utiliser le Service."
+  },
+  "s10": {
+    "h": "10. Résiliation",
+    "p1": "Vous pouvez fermer votre compte à tout moment depuis les paramètres de votre profil. Nous pouvons suspendre ou résilier votre accès si vous enfreignez ces conditions. En cas de résiliation :",
+    "items": [
+      "Votre accès au Service sera immédiatement révoqué",
+      "Vos données seront conservées pendant 30 jours puis définitivement supprimées",
+      "Vous pouvez demander une suppression immédiate en contactant le support"
+    ]
+  },
+  "s11": {
+    "h": "11. Droit applicable",
+    "p1": "Ces conditions sont régies et interprétées conformément au droit applicable. Tout litige découlant de ces conditions sera résolu par arbitrage exécutoire ou devant les tribunaux de la juridiction applicable."
+  },
+  "s12": {
+    "h": "12. Modifications des conditions",
+    "p1": "Nous nous réservons le droit de modifier ces conditions à tout moment. Nous vous informerons des changements importants par e-mail ou par un avis dans l'application. La poursuite de l'utilisation du Service après les modifications constitue votre acceptation. Si vous n'acceptez pas les conditions révisées, vous devez cesser d'utiliser le Service."
+  },
+  "s13": {
+    "h": "13. Contact",
+    "p1": "Pour toute question concernant ces conditions, veuillez contacter :",
+    "emailLabel": "E-mail :"
+  }
+}

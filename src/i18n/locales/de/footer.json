@@ -1,0 +1,19 @@
+{
+  "tagline": "Professionelle Rechnungen und Briefköpfe für Freelancer und kleine Unternehmen. Schneller bezahlt werden, besser kommunizieren.",
+  "products": "Produkte",
+  "invoiceGenerator": "Rechnungsgenerator",
+  "letterheadGenerator": "Briefkopf-Generator",
+  "pricing": "Preise",
+  "changelog": "Änderungen",
+  "developers": "Entwickler",
+  "embedSdk": "Embed SDK",
+  "apiKeys": "API-Schlüssel",
+  "events": "Ereignisse",
+  "company": "Unternehmen",
+  "about": "Über uns",
+  "privacy": "Datenschutz",
+  "terms": "AGB",
+  "contact": "Kontakt",
+  "copyright": "© {year} Flowtali. Alle Rechte vorbehalten.",
+  "language": "Sprache"
+}

@@ -1,34 +1,22 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
 import FlowtaliLogo from '@/components/ui/FlowtaliLogo.vue';
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue';
 
+const { t } = useI18n();
 const authStore = useAuthStore();
 const isLoggedIn = computed(() => authStore.isLoggedIn);
 
-const pages = [
-  {
-    id: 'products',
-    name: 'Products'
-  },
-  {
-    id: 'features',
-    name: 'Features'
-  },
-  {
-    id: 'pricing',
-    name: 'Pricing'
-  },
-  {
-    id: 'testimonials',
-    name: 'Reviews'
-  },
-  {
-    id: 'faq',
-    name: 'FAQ'
-  }
-];
+const pages = computed(() => [
+  { id: 'products', name: t('nav.products') },
+  { id: 'features', name: t('nav.features') },
+  { id: 'pricing', name: t('nav.pricing') },
+  { id: 'testimonials', name: t('nav.reviews') },
+  { id: 'faq', name: t('nav.faq') },
+]);
 
 const route = useRoute();
 const router = useRouter();
@@ -76,15 +64,16 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
       </router-link>
       <div class="hidden md:flex items-center gap-8">
         <span v-for="page in pages" :key="page.id" class="nav-link" @click="scrollTo(page.id)">{{ page.name }}</span>
-        <router-link :to="{ name: 'docs.embed' }" class="nav-link">Developers</router-link>
+        <router-link :to="{ name: 'docs.embed' }" class="nav-link">{{ t('nav.developers') }}</router-link>
       </div>
       <div class="hidden md:flex items-center gap-3">
+        <LanguageSwitcher />
         <template v-if="isLoggedIn">
-          <router-link :to="{ name: 'dashboard' }" class="btn-primary text-sm px-5 py-2.5">Dashboard</router-link>
+          <router-link :to="{ name: 'dashboard' }" class="btn-primary text-sm px-5 py-2.5">{{ t('nav.dashboard') }}</router-link>
         </template>
         <template v-else>
-          <router-link :to="{ name: 'signin' }" class="btn-ghost text-sm px-4 py-2">Log in</router-link>
-          <router-link :to="{ name: 'signup' }" class="btn-primary text-sm px-5 py-2.5">Get started free</router-link>
+          <router-link :to="{ name: 'signin' }" class="btn-ghost text-sm px-4 py-2">{{ t('nav.login') }}</router-link>
+          <router-link :to="{ name: 'signup' }" class="btn-primary text-sm px-5 py-2.5">{{ t('nav.getStartedFree') }}</router-link>
         </template>
       </div>
       <button class="md:hidden p-2 text-gray-900" @click="mobileMenuOpen = true">
@@ -114,15 +103,18 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
         class="text-gray-900 text-xl font-light cursor-pointer hover:text-gray-1000"
         @click="scrollTo(page.id); mobileMenuOpen = false">{{ page.name }}</span>
       <router-link :to="{ name: 'docs.embed' }" @click="mobileMenuOpen = false"
-        class="text-gray-900 text-xl font-light hover:text-gray-1000 transition-colors">Developers</router-link>
+        class="text-gray-900 text-xl font-light hover:text-gray-1000 transition-colors">{{ t('nav.developers') }}</router-link>
     </div>
     <div class="mt-auto flex flex-col gap-3">
+      <div class="flex justify-center pb-2">
+        <LanguageSwitcher />
+      </div>
       <template v-if="isLoggedIn">
-        <router-link :to="{ name: 'dashboard' }" class="btn-primary w-full py-3">Dashboard</router-link>
+        <router-link :to="{ name: 'dashboard' }" class="btn-primary w-full py-3">{{ t('nav.dashboard') }}</router-link>
       </template>
       <template v-else>
-        <router-link :to="{ name: 'signin' }" class="btn-ghost w-full py-3">Log in</router-link>
-        <router-link :to="{ name: 'signup' }" class="btn-primary w-full py-3">Get started free</router-link>
+        <router-link :to="{ name: 'signin' }" class="btn-ghost w-full py-3">{{ t('nav.login') }}</router-link>
+        <router-link :to="{ name: 'signup' }" class="btn-primary w-full py-3">{{ t('nav.getStartedFree') }}</router-link>
       </template>
     </div>
   </div>

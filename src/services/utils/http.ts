@@ -1,6 +1,7 @@
 import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useEmbedAuthStore } from '@/stores/embedAuth'
+import { useLocaleStore } from '@/stores/locale'
 import { httpStatus } from '@/types/httpstatus'
 import axios, { type AxiosInstance } from 'axios'
 
@@ -16,6 +17,9 @@ const http: AxiosInstance = axios.create({
 
 http.interceptors.request.use(
   (config) => {
+    // Tell the API which language to localize server-driven content in.
+    config.headers['Accept-Language'] = useLocaleStore().current
+
     const embedStore = useEmbedAuthStore()
 
     // In embed mode: inject the embed token and rewrite org API URLs to the embed prefix.

@@ -1,0 +1,103 @@
+{
+  "seo": {
+    "title": "Terms of Service",
+    "description": "Read the Flowtali Terms of Service — the rules and conditions that govern your use of our platform."
+  },
+  "title": "Terms of Service",
+  "lastUpdated": "Last updated: May 20, 2026",
+  "s1": {
+    "h": "1. Acceptance of Terms",
+    "p1": "By accessing or using Flowtali (\"Service\"), you agree to be bound by these Terms of Service. If you do not agree to these terms, do not use the Service. These terms apply to all users, including individuals and organization accounts."
+  },
+  "s2": {
+    "h": "2. Description of Service",
+    "p1": "Flowtali is a document and letterhead management platform that allows users to create, store, and share professional letterheads and related documents within organizations. Features include:",
+    "items": [
+      "Letterhead creation and management",
+      "Client and contact management",
+      "Shared link generation with optional access codes",
+      "Team member management with role-based access",
+      "File uploads for logos, signatures, and documents"
+    ]
+  },
+  "s3": {
+    "h": "3. Accounts & Registration",
+    "p1": "To use the Service, you must create an account. You agree to:",
+    "items": [
+      "Provide accurate, current, and complete information",
+      "Maintain the security of your account credentials",
+      "Notify us immediately of any unauthorized access to your account",
+      "Be responsible for all activity that occurs under your account"
+    ],
+    "note": "You must be at least 16 years of age to create an account. By creating an account, you represent that you meet this requirement."
+  },
+  "s4": {
+    "h": "4. Acceptable Use",
+    "p1": "You agree not to use the Service to:",
+    "items": [
+      "Upload, post, or transmit content that is illegal, fraudulent, or infringes on third-party rights",
+      "Impersonate any person or entity or misrepresent your affiliation with any entity",
+      "Distribute malware, spam, or other harmful software",
+      "Attempt to gain unauthorized access to any portion of the Service or other users' data",
+      "Use the Service in any way that could disable, overburden, or impair its infrastructure",
+      "Scrape, crawl, or systematically extract data from the Service"
+    ],
+    "note": "We reserve the right to terminate accounts that violate these terms without notice."
+  },
+  "s5": {
+    "h": "5. Organizations & Teams",
+    "p1": "When you create an organization on Flowtali, you become the Organization Owner. As Owner, you are responsible for:",
+    "items": [
+      "Managing member invitations and role assignments",
+      "All content created or uploaded by your organization members",
+      "Ensuring members comply with these Terms of Service"
+    ],
+    "note": "Members invited to your organization will have access to resources based on the roles you assign. You may remove members at any time."
+  },
+  "s6": {
+    "h": "6. Intellectual Property",
+    "p1": "You retain ownership of all content you upload or create through the Service, including letterheads, logos, and documents (\"User Content\"). By uploading content, you grant Flowtali a non-exclusive, worldwide, royalty-free license to store, display, and transmit your User Content solely for the purpose of providing the Service.",
+    "p2": "Flowtali owns all intellectual property rights in the Service itself, including its software, design, and branding. You may not reproduce, modify, or distribute the Service or its components without our express written permission."
+  },
+  "s7": {
+    "h": "7. Shared Links",
+    "p1": "The Service allows you to generate shareable links for letterheads. You are solely responsible for the content shared through these links. Private links with access codes provide an additional layer of security, but you acknowledge that:",
+    "items": [
+      "Access codes should be kept confidential",
+      "We are not responsible for unauthorized access resulting from compromised access codes",
+      "You should revoke links when they are no longer needed"
+    ]
+  },
+  "s8": {
+    "h": "8. Subscription & Payments",
+    "p1": "Flowtali may offer free and paid subscription tiers. By subscribing to a paid plan, you agree to pay all applicable fees. All fees are non-refundable except where required by law. We reserve the right to modify pricing with 30 days' notice.",
+    "p2": "Failure to pay may result in suspension or termination of your account and associated data."
+  },
+  "s9": {
+    "h": "9. Disclaimers & Limitation of Liability",
+    "p1": "The Service is provided \"as is\" without warranties of any kind. We do not guarantee that the Service will be error-free, uninterrupted, or free from security vulnerabilities.",
+    "p2": "To the maximum extent permitted by law, Flowtali shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of data, revenue, or goodwill, arising from your use of or inability to use the Service."
+  },
+  "s10": {
+    "h": "10. Termination",
+    "p1": "You may close your account at any time from your profile settings. We may suspend or terminate your access if you violate these Terms. Upon termination:",
+    "items": [
+      "Your access to the Service will be immediately revoked",
+      "Your data will be retained for 30 days and then permanently deleted",
+      "You may request immediate deletion by contacting support"
+    ]
+  },
+  "s11": {
+    "h": "11. Governing Law",
+    "p1": "These Terms are governed by and construed in accordance with applicable law. Any disputes arising under these Terms shall be resolved through binding arbitration or in the courts of the applicable jurisdiction."
+  },
+  "s12": {
+    "h": "12. Changes to Terms",
+    "p1": "We reserve the right to modify these Terms at any time. We will notify you of significant changes via email or an in-app notice. Continued use of the Service after changes constitutes your acceptance. If you do not agree with the revised Terms, you must discontinue use of the Service."
+  },
+  "s13": {
+    "h": "13. Contact",
+    "p1": "For questions about these Terms, please contact:",
+    "emailLabel": "Email:"
+  }
+}

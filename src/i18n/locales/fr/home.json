@@ -1,0 +1,167 @@
+{
+  "seo": {
+    "title": "Flowtali — Factures, reçus, projets et en-têtes pour freelances",
+    "description": "Créez des factures professionnelles, des reçus de paiement et des en-têtes de marque — puis organisez tout dans des projets. Multidevise, aperçu en temps réel, export PDF, gestion des clients et rôles d'équipe. Gratuit pour commencer."
+  },
+  "hero": {
+    "badge": "Factures · Reçus · Projets · En-têtes",
+    "titleLine1": "Gérez votre activité de",
+    "titleLine2": "freelance depuis une",
+    "titleEm": "belle plateforme",
+    "subtitle": "Flowtali donne aux freelances et aux studios tout ce dont ils ont besoin — des factures superbes, des reçus de paiement, des en-têtes de marque et le suivi de projet — le tout avec aperçu en direct, PDF instantané, zéro friction.",
+    "ctaPrimary": "Commencer gratuitement",
+    "ctaSecondary": "Voir ce qu'il y a dedans",
+    "letterheadExported": "En-tête exporté"
+  },
+  "socialProof": {
+    "trustedBy": "Adopté par des freelances chez"
+  },
+  "products": {
+    "badge": "Quatre outils, une plateforme",
+    "titleLine1": "Tout ce dont vous avez besoin pour",
+    "titleEm": "gérer votre activité",
+    "subtitle": "Factures, reçus, projets et en-têtes — le tout dans un espace de travail fluide conçu pour les freelances et les petites équipes.",
+    "new": "Nouveau ✦",
+    "invoice": {
+      "name": "Générateur de factures",
+      "tagline": "Soyez payé plus vite",
+      "heading": "De belles factures en quelques minutes",
+      "desc": "Aperçu en direct, image de marque personnalisée, multidevise, taxes et remises, téléversement du logo, personnalisation des tampons — tout ce qu'il faut pour envoyer des factures soignées.",
+      "tags": ["Aperçu en direct", "Export PDF", "Multidevise", "Tampon personnalisé", "Téléversement du logo"],
+      "cta": "Essayer le générateur de factures"
+    },
+    "letterhead": {
+      "name": "Générateur d'en-têtes",
+      "tagline": "Faites compter chaque lettre",
+      "heading": "Des en-têtes qui inspirent le respect",
+      "desc": "8 modèles de mise en page élégants, personnalisation complète de la marque, téléversement du logo et de la signature, thèmes de couleurs personnalisés, filigranes, détails de pied de page — le tout avec aperçu en direct et export PDF.",
+      "tags": ["8 modèles", "Logo et signature", "Thème personnalisé", "Filigrane", "Détails du pied de page"],
+      "cta": "Essayer le générateur d'en-têtes"
+    },
+    "receipt": {
+      "name": "Générateur de reçus",
+      "tagline": "Confirmez chaque paiement",
+      "heading": "Des reçus dignes de confiance",
+      "desc": "Générez des reçus de paiement professionnels, joignez-les aux factures, liez-les aux projets et exportez des PDF tamponnés — le tout avec la même expérience d'aperçu en direct.",
+      "tags": ["Liés aux factures", "Suivi de projet", "Export PDF", "Tampons de paiement", "Multidevise"],
+      "cta": "Essayer le générateur de reçus"
+    },
+    "project": {
+      "name": "Gestion de projet",
+      "tagline": "Suivez chaque mission",
+      "heading": "Chaque projet, entièrement visible",
+      "desc": "Liez factures, reçus et en-têtes à un projet. Suivez la valeur du contrat, l'avancement des paiements, téléversez des fichiers, notez des remarques et consultez une chronologie d'activité complète par mission.",
+      "tags": ["Documents liés", "Avancement des paiements", "Chronologie d'activité", "Téléversements de fichiers", "Suivi des clients"],
+      "cta": "Essayer la gestion de projet"
+    }
+  },
+  "features": {
+    "badge": "Fonctionnalités",
+    "titleLine1": "Tout ce dont vous avez besoin pour",
+    "titleEm": "avoir l'air d'un pro",
+    "subtitle": "Factures, reçus, projets, en-têtes, image de marque, rôles d'équipe — conçu pour les freelances qui veulent des résultats sans complexité.",
+    "new": "Nouveau",
+    "items": [
+      { "title": "Aperçu en direct", "desc": "Voyez vos factures et en-têtes se mettre à jour en temps réel à mesure que vous tapez. Aucune surprise — ce que vous voyez est exactement ce que votre client reçoit." },
+      { "title": "Export PDF", "desc": "Exportez des PDF au pixel près en un clic. Factures, reçus et en-têtes de marque prêts à imprimer — prêts à envoyer en quelques secondes." },
+      { "title": "Suivi des reçus", "desc": "Générez des reçus de paiement professionnels en quelques secondes. Joignez-les aux factures, liez-les aux projets et gardez une trace claire de chaque paiement reçu." },
+      { "title": "Gestion de projet", "desc": "Regroupez factures, reçus, en-têtes et fichiers dans un seul projet. Suivez la valeur du contrat, l'avancement des paiements et le client en un seul endroit." },
+      { "title": "Générateur d'en-têtes", "desc": "8 modèles élégants pour lettres formelles, propositions et missions. Image de marque complète — logo, signature, couleurs, filigrane et pied de page." },
+      { "title": "Image de marque personnalisée", "desc": "Téléversez votre logo et votre signature, choisissez des couleurs d'accent et des polices. Chaque document vous ressemble sans équivoque." },
+      { "title": "Multidevise", "desc": "Facturez et encaissez vos clients partout dans le monde en USD, EUR, GBP, NGN et plus de 7 devises. Symboles et mise en forme automatiques selon la région." },
+      { "title": "Rôles et permissions d'équipe", "desc": "Invitez des membres d'équipe et contrôlez exactement ce à quoi ils accèdent. Permissions granulaires pour factures, reçus, projets, clients et plus encore." },
+      { "title": "Filigranes et tampons", "desc": "Ajoutez des filigranes personnalisés aux en-têtes et des tampons de statut aux factures. CONFIDENTIEL, APPROUVÉ, BROUILLON — ou tout texte de votre choix." }
+    ]
+  },
+  "letterheadSpotlight": {
+    "badge": "Générateur d'en-têtes",
+    "titleLine1": "Chaque lettre devrait",
+    "titleLine2": "laisser une",
+    "titleEm": " impression durable",
+    "desc": "Qu'il s'agisse d'une proposition, d'une lettre de mission ou d'un avis formel — le générateur d'en-têtes de Flowtali vous offre une papeterie de qualité professionnelle en quelques secondes. Choisissez une mise en page, ajoutez votre logo et exportez un PDF au pixel près.",
+    "features": [
+      "5 magnifiques modèles de mise en page : Classique, Moderne, Minimal, En-tête audacieux, Panneau divisé",
+      "Téléversez votre logo et votre image de signature",
+      "Couleurs d'accent personnalisées + 10 palettes prédéfinies",
+      "6 familles de polices professionnelles",
+      "Texte de filigrane optionnel (CONFIDENTIEL, BROUILLON…)",
+      "Bloc destinataire, ligne de référence et personnalisation du pied de page",
+      "Export PDF en un clic — prêt à imprimer à chaque fois"
+    ],
+    "cta": "Ouvrir le générateur d'en-têtes",
+    "templates": [
+      { "tagline": "Intemporel et professionnel", "preview": "Cher M. Johnson, nous sommes heureux de confirmer notre mission pour le projet d'identité de marque du T1. Cette proposition présente le périmètre, les livrables et le calendrier…" },
+      { "tagline": "Épuré et contemporain", "preview": "Objet : Lancement du projet — T1 2025. Suite à notre premier échange, nous avons le plaisir de présenter la lettre de mission formelle pour examen…" },
+      { "tagline": "Simple et élégant", "preview": "Bonjour, merci de nous avoir choisis pour ce projet. Vous trouverez ci-dessous les conditions de notre mission…" },
+      { "tagline": "Fort et percutant", "preview": "Cher client, nous confirmons formellement le lancement de l'initiative de refonte de marque prévue pour débuter…" }
+    ]
+  },
+  "pricing": {
+    "badge": "Tarifs",
+    "title": "Des tarifs simples et honnêtes",
+    "subtitle": "Tous les outils inclus dans chaque forfait. Aucuns frais cachés.",
+    "monthly": "Mensuel",
+    "annual": "Annuel",
+    "mostPopular": "Le plus populaire",
+    "perMonth": "/mois",
+    "billedNote": "Facturé {amount}/an",
+    "footnote": "Tous les forfaits incluent le générateur de factures, le générateur de reçus, la gestion de projet et le générateur d'en-têtes. Annulable à tout moment.",
+    "plans": {
+      "starter": {
+        "desc": "Parfait pour les freelances qui démarrent.",
+        "cta": "Commencer gratuitement",
+        "features": ["5 factures + 3 en-têtes/mois", "10 reçus/mois", "1 projet actif", "Modèles de base", "Export PDF", "Marque Flowtali"]
+      },
+      "pro": {
+        "desc": "Pour les freelances actifs qui ont besoin de toute la puissance.",
+        "cta": "Commencer",
+        "features": ["Factures, reçus et en-têtes illimités", "Projets illimités", "Les 8 modèles d'en-têtes", "Image de marque et logo personnalisés", "Toutes les devises", "Tampon + filigrane", "Retirer la marque Flowtali", "Support prioritaire"]
+      },
+      "business": {
+        "desc": "Pour les studios et petites équipes.",
+        "cta": "Commencer",
+        "features": ["Tout de Pro", "Jusqu'à 5 membres d'équipe", "Rôles et permissions d'équipe", "Chronologie d'activité du projet", "Analyses de factures", "Support dédié"]
+      }
+    }
+  },
+  "testimonials": {
+    "badge": "Avis",
+    "title": "Nos clients adorent Flowtali"
+  },
+  "embed": {
+    "badge": "Embed SDK",
+    "titlePre": "Flowtali dans",
+    "titleEm": "votre",
+    "titlePost": "produit",
+    "subtitle": "Intégrez factures, projets, reçus et plus encore directement dans votre propre SaaS — avec une seule balise de script, un jeton limité aux permissions et un iframe entièrement personnalisable.",
+    "readDocs": "Lire la documentation",
+    "viewDocs": "Voir toute la documentation",
+    "features": [
+      { "title": "Toutes les vues, un seul SDK", "desc": "Intégrez factures, projets, reçus, clients, préférences, analyses et plus encore. Changez avec un seul paramètre de vue." },
+      { "title": "Jetons limités aux permissions", "desc": "Émettez des JWT de courte durée pour chaque utilisateur avec exactement les permissions nécessaires — invoices.read, invoices.create et plus." },
+      { "title": "Personnalisation à l'exécution", "desc": "Alignez-vous à votre marque avec primaryColor, fontFamily, borderRadius et plus — passés comme un simple objet JS." },
+      { "title": "Rappels d'événements", "desc": "Réagissez aux actions dans l'intégration avec ft.on(\"invoice.created\", cb) — parfait pour synchroniser avec votre propre système." }
+    ]
+  },
+  "faq": {
+    "badge": "FAQ",
+    "title": "Questions fréquentes",
+    "items": [
+      { "q": "Qu'est-ce que la gestion de projet dans Flowtali ?", "a": "Les projets vous permettent de regrouper tout votre travail pour un client au même endroit — joindre factures, reçus de paiement et en-têtes, suivre la valeur du contrat par rapport aux paiements reçus, téléverser des fichiers de projet, ajouter des notes et surveiller une chronologie d'activité. Tout pour une mission dans une seule vue." },
+      { "q": "Comment fonctionne le suivi des reçus ?", "a": "Après avoir créé une facture, vous pouvez générer un reçu de paiement pour tout montant reçu. Les reçus peuvent être liés directement à un projet, exportés en PDF et tamponnés (par ex. PAYÉ). Ils apparaissent à la fois dans l'aperçu du projet et dans la section Reçus dédiée." },
+      { "q": "Comment fonctionnent les rôles et permissions d'équipe ?", "a": "Les forfaits Business permettent d'inviter des membres d'équipe et d'attribuer des permissions granulaires — par exemple, un membre peut créer des factures mais pas supprimer des projets, ou consulter des reçus sans modifier les clients. Les rôles sont gérés par organisation depuis la page des paramètres Membres." },
+      { "q": "Qu'est-ce que le générateur d'en-têtes ?", "a": "Le générateur d'en-têtes vous permet de créer des en-têtes de marque professionnels pour lettres formelles, propositions et lettres de mission. Choisissez parmi 8 modèles, téléversez votre logo et votre signature, définissez vos couleurs et votre police, ajoutez un filigrane et exportez un PDF au pixel près." },
+      { "q": "Flowtali est-il vraiment gratuit pour commencer ?", "a": "Oui — le forfait Starter est gratuit pour toujours. Vous obtenez des factures, des reçus, 1 projet actif et 3 en-têtes par mois, les exports PDF et les modèles de base sans frais." },
+      { "q": "Puis-je utiliser mon propre logo et ma signature ?", "a": "Absolument. Les forfaits Pro et Business prennent en charge une image de marque complète : téléversez votre logo, votre image de signature, définissez n'importe quelle couleur d'accent et choisissez votre style de police sur tous les documents." },
+      { "q": "Quelles devises sont prises en charge ?", "a": "USD, EUR, GBP, NGN, CAD, AUD, JPY, INR, ZAR, CHF et AED — avec les symboles et la mise en forme corrects pour chaque facture et reçu." },
+      { "q": "Puis-je annuler mon abonnement à tout moment ?", "a": "Oui. Annulez à tout moment depuis les paramètres du compte. Vous conservez l'accès jusqu'à la fin de votre période de facturation." }
+    ]
+  },
+  "cta": {
+    "titlePre": "Prêt à mieux gérer",
+    "titleEm": " votre activité ?",
+    "subtitle": "Rejoignez plus de 4 200 freelances qui font confiance à Flowtali pour leurs factures, reçus, projets et en-têtes.",
+    "primary": "Commencer gratuitement — sans carte bancaire",
+    "secondary": "Explorer toutes les fonctionnalités →"
+  }
+}

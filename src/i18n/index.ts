@@ -1,0 +1,63 @@
+import { createI18n } from 'vue-i18n'
+
+export const SUPPORTED_LOCALES = ['en', 'cs', 'de', 'fr'] as const
+export type Locale = (typeof SUPPORTED_LOCALES)[number]
+
+export const DEFAULT_LOCALE: Locale = 'en'
+
+// Human-readable labels for the language switcher
+export const LOCALE_LABELS: Record<Locale, string> = {
+  en: 'English',
+  cs: 'Čeština',
+  de: 'Deutsch',
+  fr: 'Français',
+}
+
+// Locales other than the default get a URL path prefix (e.g. /de/…).
+// English stays bare (/…).
+export const PREFIXED_LOCALES = SUPPORTED_LOCALES.filter((l) => l !== DEFAULT_LOCALE)
+
+export function isSupportedLocale(value: unknown): value is Locale {
+  return typeof value === 'string' && (SUPPORTED_LOCALES as readonly string[]).includes(value)
+}
+
+/**
+ * Map an arbitrary browser language tag (e.g. "de-AT") to a supported locale,
+ * falling back to the default.
+ */
+export function normalizeLocale(tag: string | null | undefined): Locale {
+  if (!tag) return DEFAULT_LOCALE
+  const base = tag.toLowerCase().split('-')[0]
+  return isSupportedLocale(base) ? base : DEFAULT_LOCALE
+}
+
+// Eagerly load every namespace JSON under ./locales/<locale>/<namespace>.json
+// and assemble the vue-i18n messages object: { en: { home: {...} }, … }.
+type MessageTree = Record<string, unknown>
+type MessageModule = { default: MessageTree }
+const modules = import.meta.glob<MessageModule>('./locales/**/*.json', { eager: true })
+
+const messages: Record<string, MessageTree> = {}
+for (const path in modules) {
+  const match = path.match(/\.\/locales\/([^/]+)\/([^/]+)\.json$/)
+  if (!match) continue
+  const locale = match[1]
+  const namespace = match[2]
+  if (!locale || !namespace || !isSupportedLocale(locale)) continue
+  const mod = modules[path]
+  if (!mod) continue
+  const bucket = (messages[locale] ??= {})
+  bucket[namespace] = mod.default
+}
+
+export const i18n = createI18n({
+  legacy: false,
+  locale: DEFAULT_LOCALE,
+  fallbackLocale: DEFAULT_LOCALE,
+  // Some doc/legal messages contain inline HTML rendered via v-html.
+  warnHtmlMessage: false,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  messages: messages as any,
+})
+
+export const t = i18n.global.t

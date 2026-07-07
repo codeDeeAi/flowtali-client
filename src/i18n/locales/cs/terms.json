@@ -1,0 +1,103 @@
+{
+  "seo": {
+    "title": "Podmínky služby",
+    "description": "Přečtěte si podmínky služby Flowtali — pravidla a podmínky, které upravují používání naší platformy."
+  },
+  "title": "Podmínky služby",
+  "lastUpdated": "Naposledy aktualizováno: 20. května 2026",
+  "s1": {
+    "h": "1. Přijetí podmínek",
+    "p1": "Přístupem ke službě Flowtali („Služba“) nebo jejím používáním souhlasíte s tím, že budete vázáni těmito podmínkami služby. Pokud s těmito podmínkami nesouhlasíte, Službu nepoužívejte. Tyto podmínky se vztahují na všechny uživatele, včetně jednotlivců a organizačních účtů."
+  },
+  "s2": {
+    "h": "2. Popis služby",
+    "p1": "Flowtali je platforma pro správu dokumentů a hlavičkových papírů, která uživatelům umožňuje vytvářet, ukládat a sdílet profesionální hlavičkové papíry a související dokumenty v rámci organizací. Mezi funkce patří:",
+    "items": [
+      "Tvorba a správa hlavičkových papírů",
+      "Správa klientů a kontaktů",
+      "Generování sdílených odkazů s volitelnými přístupovými kódy",
+      "Správa členů týmu s přístupem podle rolí",
+      "Nahrávání souborů pro loga, podpisy a dokumenty"
+    ]
+  },
+  "s3": {
+    "h": "3. Účty a registrace",
+    "p1": "K používání Služby si musíte vytvořit účet. Souhlasíte s tím, že:",
+    "items": [
+      "Poskytnete přesné, aktuální a úplné informace",
+      "Zachováte zabezpečení svých přihlašovacích údajů k účtu",
+      "Nás okamžitě informujete o jakémkoli neoprávněném přístupu k vašemu účtu",
+      "Budete odpovědní za veškerou aktivitu, která pod vaším účtem proběhne"
+    ],
+    "note": "K vytvoření účtu musí být vám alespoň 16 let. Vytvořením účtu prohlašujete, že tento požadavek splňujete."
+  },
+  "s4": {
+    "h": "4. Přijatelné použití",
+    "p1": "Souhlasíte s tím, že nebudete Službu používat k:",
+    "items": [
+      "Nahrávání, zveřejňování nebo přenosu obsahu, který je nezákonný, podvodný nebo porušuje práva třetích stran",
+      "Vydávání se za jakoukoli osobu či subjekt nebo zkreslování vaší příslušnosti k jakémukoli subjektu",
+      "Šíření malwaru, spamu nebo jiného škodlivého softwaru",
+      "Pokusům o získání neoprávněného přístupu k jakékoli části Služby nebo datům jiných uživatelů",
+      "Používání Služby jakýmkoli způsobem, který by mohl deaktivovat, přetížit nebo narušit její infrastrukturu",
+      "Scrapování, procházení nebo systematické extrahování dat ze Služby"
+    ],
+    "note": "Vyhrazujeme si právo ukončit účty, které porušují tyto podmínky, bez upozornění."
+  },
+  "s5": {
+    "h": "5. Organizace a týmy",
+    "p1": "Když ve Flowtali vytvoříte organizaci, stanete se vlastníkem organizace. Jako vlastník jste odpovědní za:",
+    "items": [
+      "Správu pozvánek členů a přidělování rolí",
+      "Veškerý obsah vytvořený nebo nahraný členy vaší organizace",
+      "Zajištění, aby členové dodržovali tyto podmínky služby"
+    ],
+    "note": "Členové pozvaní do vaší organizace budou mít přístup ke zdrojům na základě rolí, které přidělíte. Členy můžete kdykoli odebrat."
+  },
+  "s6": {
+    "h": "6. Duševní vlastnictví",
+    "p1": "Zachováváte si vlastnictví veškerého obsahu, který nahrajete nebo vytvoříte prostřednictvím Služby, včetně hlavičkových papírů, log a dokumentů („Uživatelský obsah“). Nahráním obsahu udělujete Flowtali nevýhradní, celosvětovou, bezplatnou licenci k ukládání, zobrazování a přenosu vašeho Uživatelského obsahu výhradně za účelem poskytování Služby.",
+    "p2": "Flowtali vlastní veškerá práva duševního vlastnictví k samotné Službě, včetně jejího softwaru, designu a značky. Bez našeho výslovného písemného souhlasu nesmíte Službu ani její součásti reprodukovat, upravovat ani distribuovat."
+  },
+  "s7": {
+    "h": "7. Sdílené odkazy",
+    "p1": "Služba vám umožňuje generovat sdílitelné odkazy na hlavičkové papíry. Za obsah sdílený prostřednictvím těchto odkazů nesete výhradní odpovědnost. Soukromé odkazy s přístupovými kódy poskytují další vrstvu zabezpečení, ale berete na vědomí, že:",
+    "items": [
+      "Přístupové kódy by měly zůstat důvěrné",
+      "Neneseme odpovědnost za neoprávněný přístup vyplývající z kompromitovaných přístupových kódů",
+      "Odkazy byste měli zrušit, jakmile již nejsou potřeba"
+    ]
+  },
+  "s8": {
+    "h": "8. Předplatné a platby",
+    "p1": "Flowtali může nabízet bezplatné a placené úrovně předplatného. Přihlášením k placenému plánu souhlasíte s úhradou všech příslušných poplatků. Všechny poplatky jsou nevratné, s výjimkou případů vyžadovaných zákonem. Vyhrazujeme si právo upravit ceny s 30denním předstihem.",
+    "p2": "Nezaplacení může vést k pozastavení nebo ukončení vašeho účtu a souvisejících dat."
+  },
+  "s9": {
+    "h": "9. Vyloučení odpovědnosti a omezení odpovědnosti",
+    "p1": "Služba je poskytována „tak, jak je“, bez jakýchkoli záruk. Nezaručujeme, že Služba bude bez chyb, nepřerušovaná nebo bez bezpečnostních zranitelností.",
+    "p2": "V maximálním rozsahu povoleném zákonem nenese Flowtali odpovědnost za jakékoli nepřímé, náhodné, zvláštní, následné nebo represivní škody, včetně ztráty dat, příjmů nebo dobrého jména, vyplývající z vašeho používání nebo nemožnosti používat Službu."
+  },
+  "s10": {
+    "h": "10. Ukončení",
+    "p1": "Svůj účet můžete kdykoli zavřít v nastavení svého profilu. Můžeme pozastavit nebo ukončit váš přístup, pokud porušíte tyto podmínky. Po ukončení:",
+    "items": [
+      "Bude váš přístup ke Službě okamžitě zrušen",
+      "Vaše data budou uchována po dobu 30 dnů a poté trvale smazána",
+      "Můžete požádat o okamžité smazání kontaktováním podpory"
+    ]
+  },
+  "s11": {
+    "h": "11. Rozhodné právo",
+    "p1": "Tyto podmínky se řídí platným právem a jsou v souladu s ním vykládány. Veškeré spory vyplývající z těchto podmínek budou řešeny závazným rozhodčím řízením nebo u soudů příslušné jurisdikce."
+  },
+  "s12": {
+    "h": "12. Změny podmínek",
+    "p1": "Vyhrazujeme si právo tyto podmínky kdykoli změnit. O významných změnách vás budeme informovat e-mailem nebo oznámením v aplikaci. Pokračování v používání Služby po změnách představuje váš souhlas. Pokud s revidovanými podmínkami nesouhlasíte, musíte používání Služby ukončit."
+  },
+  "s13": {
+    "h": "13. Kontakt",
+    "p1": "S dotazy k těmto podmínkám se prosím obraťte na:",
+    "emailLabel": "E-mail:"
+  }
+}

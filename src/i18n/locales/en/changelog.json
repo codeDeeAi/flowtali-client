@@ -1,0 +1,18 @@
+{
+  "seo": {
+    "title": "Changelog",
+    "description": "See what's new in Flowtali — product updates, new features, and improvements."
+  },
+  "badge": "Product Updates",
+  "title": "Changelog",
+  "subtitle": "New features, improvements, and fixes — in chronological order.",
+  "badges": {
+    "latest": "Latest",
+    "launch": "Launch"
+  },
+  "types": {
+    "new": "New",
+    "improved": "Improved",
+    "fix": "Fix"
+  }
+}

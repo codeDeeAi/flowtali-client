@@ -1,0 +1,167 @@
+{
+  "seo": {
+    "title": "Flowtali — Rechnungen, Quittungen, Projekte & Briefköpfe für Freelancer",
+    "description": "Erstellen Sie professionelle Rechnungen, Zahlungsquittungen und gebrandete Briefköpfe – und organisieren Sie alles in Projekten. Mehrere Währungen, Echtzeit-Vorschau, PDF-Export, Kundenverwaltung und Teamrollen. Kostenlos starten."
+  },
+  "hero": {
+    "badge": "Rechnungen · Quittungen · Projekte · Briefköpfe",
+    "titleLine1": "Führen Sie Ihr Freelance-",
+    "titleLine2": "Business von einer",
+    "titleEm": "schönen Plattform",
+    "subtitle": "Flowtali gibt Freelancern und Studios alles, was sie brauchen – beeindruckende Rechnungen, Zahlungsquittungen, gebrandete Briefköpfe und Projektverfolgung – alles mit Live-Vorschau, sofortigem PDF und null Reibung.",
+    "ctaPrimary": "Kostenlos starten",
+    "ctaSecondary": "Sehen, was drinsteckt",
+    "letterheadExported": "Briefkopf exportiert"
+  },
+  "socialProof": {
+    "trustedBy": "Vertraut von Freelancern bei"
+  },
+  "products": {
+    "badge": "Vier Werkzeuge, eine Plattform",
+    "titleLine1": "Alles, was Sie brauchen, um",
+    "titleEm": "Ihr Business zu führen",
+    "subtitle": "Rechnungen, Quittungen, Projekte und Briefköpfe – alles in einem nahtlosen Arbeitsbereich für Freelancer und kleine Teams.",
+    "new": "Neu ✦",
+    "invoice": {
+      "name": "Rechnungsgenerator",
+      "tagline": "Schneller bezahlt werden",
+      "heading": "Schöne Rechnungen in Minuten",
+      "desc": "Live-Vorschau, individuelles Branding, mehrere Währungen, Steuern & Rabatte, Logo-Upload, Stempel-Anpassung – alles, was Sie brauchen, um edle Rechnungen zu versenden.",
+      "tags": ["Live-Vorschau", "PDF-Export", "Mehrere Währungen", "Eigener Stempel", "Logo-Upload"],
+      "cta": "Rechnungsgenerator testen"
+    },
+    "letterhead": {
+      "name": "Briefkopf-Generator",
+      "tagline": "Jeden Brief zählen lassen",
+      "heading": "Briefköpfe, die Respekt einflößen",
+      "desc": "8 elegante Layout-Vorlagen, vollständige Markenanpassung, Logo- & Signatur-Upload, individuelle Farbthemen, Wasserzeichen, Fußzeilendetails – alles mit Live-Vorschau und PDF-Export.",
+      "tags": ["8 Vorlagen", "Logo & Signatur", "Eigenes Thema", "Wasserzeichen", "Fußzeilendetails"],
+      "cta": "Briefkopf-Generator testen"
+    },
+    "receipt": {
+      "name": "Quittungsgenerator",
+      "tagline": "Jede Zahlung bestätigen",
+      "heading": "Quittungen, denen Kunden vertrauen",
+      "desc": "Erstellen Sie professionelle Zahlungsquittungen, hängen Sie sie an Rechnungen an, verknüpfen Sie sie mit Projekten und exportieren Sie gestempelte PDFs – alles mit derselben Live-Vorschau.",
+      "tags": ["Mit Rechnungen verknüpft", "Projektverfolgung", "PDF-Export", "Zahlungsstempel", "Mehrere Währungen"],
+      "cta": "Quittungsgenerator testen"
+    },
+    "project": {
+      "name": "Projektverwaltung",
+      "tagline": "Jedes Engagement verfolgen",
+      "heading": "Jedes Projekt im vollen Blick",
+      "desc": "Verknüpfen Sie Rechnungen, Quittungen und Briefköpfe mit einem Projekt. Verfolgen Sie Vertragswert, Zahlungsfortschritt, laden Sie Dateien hoch, notieren Sie Anmerkungen und sehen Sie eine vollständige Aktivitätszeitleiste pro Engagement.",
+      "tags": ["Verknüpfte Dokumente", "Zahlungsfortschritt", "Aktivitätszeitleiste", "Datei-Uploads", "Kundenverfolgung"],
+      "cta": "Projektverwaltung testen"
+    }
+  },
+  "features": {
+    "badge": "Funktionen",
+    "titleLine1": "Alles, was Sie brauchen, um",
+    "titleEm": "wie ein Profi zu wirken",
+    "subtitle": "Rechnungen, Quittungen, Projekte, Briefköpfe, Branding, Teamrollen – gebaut für Freelancer, die Ergebnisse ohne Komplexität wollen.",
+    "new": "Neu",
+    "items": [
+      { "title": "Live-Vorschau", "desc": "Sehen Sie, wie Rechnungen und Briefköpfe in Echtzeit aktualisiert werden, während Sie tippen. Kein Rätselraten – was Sie sehen, ist genau das, was Ihr Kunde erhält." },
+      { "title": "PDF-Export", "desc": "Exportieren Sie pixelgenaue PDFs mit einem Klick. Druckfertige Rechnungen, Quittungen und gebrandete Briefköpfe – in Sekunden versandbereit." },
+      { "title": "Quittungsverfolgung", "desc": "Erstellen Sie professionelle Zahlungsquittungen in Sekunden. An Rechnungen anhängen, mit Projekten verknüpfen und jede erhaltene Zahlung klar festhalten." },
+      { "title": "Projektverwaltung", "desc": "Gruppieren Sie Rechnungen, Quittungen, Briefköpfe und Dateien in einem einzigen Projekt. Verfolgen Sie Vertragswert, Zahlungsfortschritt und Kunde an einem Ort." },
+      { "title": "Briefkopf-Generator", "desc": "8 elegante Vorlagen für formelle Briefe, Angebote und Engagements. Vollständiges Branding – Logo, Signatur, Farben, Wasserzeichen und Fußzeile." },
+      { "title": "Individuelles Branding", "desc": "Laden Sie Ihr Logo und Ihre Signatur hoch, wählen Sie Akzentfarben und Schriften. Jedes Dokument sieht unverkennbar nach Ihnen aus." },
+      { "title": "Mehrere Währungen", "desc": "Rechnen Sie Kunden weltweit in USD, EUR, GBP, NGN und über 7 Währungen ab. Automatische Symbole und Formatierung je Region." },
+      { "title": "Teamrollen & Berechtigungen", "desc": "Laden Sie Teammitglieder ein und steuern Sie genau, worauf sie zugreifen können. Granulare Berechtigungen für Rechnungen, Quittungen, Projekte, Kunden und mehr." },
+      { "title": "Wasserzeichen & Stempel", "desc": "Fügen Sie Briefköpfen individuelle Wasserzeichen und Rechnungen Statusstempel hinzu. VERTRAULICH, GENEHMIGT, ENTWURF – oder jeder Text, den Sie brauchen." }
+    ]
+  },
+  "letterheadSpotlight": {
+    "badge": "Briefkopf-Generator",
+    "titleLine1": "Jeder Brief sollte",
+    "titleLine2": "einen",
+    "titleEm": " bleibenden Eindruck hinterlassen",
+    "desc": "Ob Angebot, Engagement-Schreiben oder formelle Mitteilung – der Briefkopf-Generator von Flowtali liefert Ihnen professionelles Briefpapier in Sekunden. Wählen Sie ein Layout, fügen Sie Ihr Logo ein und exportieren Sie ein pixelgenaues PDF.",
+    "features": [
+      "5 beeindruckende Layout-Vorlagen: Klassisch, Modern, Minimal, Bold Header, Split Panel",
+      "Laden Sie Ihr Logo und Ihr Signaturbild hoch",
+      "Individuelle Akzentfarben + 10 voreingestellte Paletten",
+      "6 professionelle Schriftfamilien",
+      "Optionaler Wasserzeichen-Text (VERTRAULICH, ENTWURF…)",
+      "Empfängerblock, Referenzzeile und Fußzeilen-Anpassung",
+      "PDF-Export mit einem Klick – jedes Mal druckfertig"
+    ],
+    "cta": "Briefkopf-Generator öffnen",
+    "templates": [
+      { "tagline": "Zeitlos & professionell", "preview": "Sehr geehrter Herr Johnson, wir freuen uns, unser Engagement für das Marken-Identitätsprojekt im 1. Quartal zu bestätigen. Dieses Angebot beschreibt Umfang, Leistungen und Zeitplan…" },
+      { "tagline": "Klar & zeitgemäß", "preview": "Betreff: Projektstart — Q1 2025. Nach unserem ersten Gespräch freuen wir uns, das formelle Engagement-Schreiben zur Prüfung vorzulegen…" },
+      { "tagline": "Einfach & elegant", "preview": "Hallo, danke, dass Sie uns für dieses Projekt gewählt haben. Nachstehend finden Sie die Bedingungen unseres Engagements…" },
+      { "tagline": "Stark & wirkungsvoll", "preview": "Sehr geehrter Kunde, hiermit bestätigen wir formell den Beginn der Marken-Neugestaltung, die planmäßig starten soll…" }
+    ]
+  },
+  "pricing": {
+    "badge": "Preise",
+    "title": "Einfache, ehrliche Preise",
+    "subtitle": "Alle Werkzeuge in jedem Plan enthalten. Keine versteckten Kosten.",
+    "monthly": "Monatlich",
+    "annual": "Jährlich",
+    "mostPopular": "Am beliebtesten",
+    "perMonth": "/Mon.",
+    "billedNote": "Abgerechnet {amount}/Jahr",
+    "footnote": "Alle Pläne enthalten Rechnungsgenerator, Quittungsgenerator, Projektverwaltung und Briefkopf-Generator. Jederzeit kündbar.",
+    "plans": {
+      "starter": {
+        "desc": "Perfekt für Freelancer am Anfang.",
+        "cta": "Kostenlos starten",
+        "features": ["5 Rechnungen + 3 Briefköpfe/Monat", "10 Quittungen/Monat", "1 aktives Projekt", "Basisvorlagen", "PDF-Export", "Flowtali-Branding"]
+      },
+      "pro": {
+        "desc": "Für aktive Freelancer, die volle Leistung brauchen.",
+        "cta": "Loslegen",
+        "features": ["Unbegrenzte Rechnungen, Quittungen & Briefköpfe", "Unbegrenzte Projekte", "Alle 8 Briefkopf-Vorlagen", "Individuelles Branding & Logo", "Alle Währungen", "Stempel + Wasserzeichen", "Flowtali-Branding entfernen", "Prioritäts-Support"]
+      },
+      "business": {
+        "desc": "Für Studios und kleine Teams.",
+        "cta": "Loslegen",
+        "features": ["Alles in Pro", "Bis zu 5 Teammitglieder", "Teamrollen & Berechtigungen", "Projekt-Aktivitätszeitleiste", "Rechnungsanalysen", "Dedizierter Support"]
+      }
+    }
+  },
+  "testimonials": {
+    "badge": "Bewertungen",
+    "title": "Unsere Kunden lieben Flowtali"
+  },
+  "embed": {
+    "badge": "Embed SDK",
+    "titlePre": "Flowtali in",
+    "titleEm": "Ihrem",
+    "titlePost": "Produkt",
+    "subtitle": "Betten Sie Rechnungen, Projekte, Quittungen und mehr direkt in Ihr eigenes SaaS ein – mit einem Script-Tag, einem berechtigungsbeschränkten Token und einem vollständig brandbaren iframe.",
+    "readDocs": "Dokumentation lesen",
+    "viewDocs": "Vollständige Doku ansehen",
+    "features": [
+      { "title": "Alle Ansichten, ein SDK", "desc": "Betten Sie Rechnungen, Projekte, Quittungen, Kunden, Einstellungen, Analysen und mehr ein. Wechseln Sie mit einem einzigen View-Parameter." },
+      { "title": "Berechtigungsbeschränkte Tokens", "desc": "Vergeben Sie kurzlebige JWTs für jeden Nutzer mit genau den Berechtigungen, die er braucht – invoices.read, invoices.create und mehr." },
+      { "title": "Laufzeit-Theming", "desc": "Passen Sie an Ihre Marke an mit primaryColor, fontFamily, borderRadius und mehr – als einfaches JS-Objekt übergeben." },
+      { "title": "Event-Callbacks", "desc": "Reagieren Sie auf Aktionen im Embed mit ft.on(\"invoice.created\", cb) – perfekt zur Synchronisierung mit Ihrem eigenen System." }
+    ]
+  },
+  "faq": {
+    "badge": "FAQ",
+    "title": "Häufige Fragen",
+    "items": [
+      { "q": "Was ist Projektverwaltung in Flowtali?", "a": "Mit Projekten gruppieren Sie Ihre gesamte Arbeit für einen Kunden an einem Ort – Rechnungen, Zahlungsquittungen und Briefköpfe anhängen, Vertragswert gegen erhaltene Zahlungen verfolgen, Projektdateien hochladen, Notizen hinzufügen und eine Aktivitätszeitleiste überwachen. Alles für einen Auftrag in einer Ansicht." },
+      { "q": "Wie funktioniert die Quittungsverfolgung?", "a": "Nach dem Erstellen einer Rechnung können Sie für jeden erhaltenen Betrag eine Zahlungsquittung erstellen. Quittungen lassen sich direkt mit einem Projekt verknüpfen, als PDF exportieren und stempeln (z. B. BEZAHLT). Sie erscheinen sowohl in der Projektübersicht als auch im eigenen Quittungsbereich." },
+      { "q": "Wie funktionieren Teamrollen & Berechtigungen?", "a": "Business-Pläne können Teammitglieder einladen und granulare Berechtigungen zuweisen – ein Mitglied kann z. B. Rechnungen erstellen, aber keine Projekte löschen, oder Quittungen ansehen, ohne Kunden zu bearbeiten. Rollen werden pro Organisation auf der Seite „Mitglieder“ verwaltet." },
+      { "q": "Was ist der Briefkopf-Generator?", "a": "Mit dem Briefkopf-Generator erstellen Sie professionelle gebrandete Briefköpfe für formelle Briefe, Angebote und Engagement-Schreiben. Wählen Sie aus 8 Vorlagen, laden Sie Logo und Signatur hoch, legen Sie Farben und Schrift fest, fügen Sie ein Wasserzeichen hinzu und exportieren Sie ein pixelgenaues PDF." },
+      { "q": "Ist Flowtali wirklich kostenlos zum Start?", "a": "Ja – der Starter-Plan ist für immer kostenlos. Sie erhalten Rechnungen, Quittungen, 1 aktives Projekt und 3 Briefköpfe pro Monat, PDF-Exporte und Kernvorlagen ohne Kosten." },
+      { "q": "Kann ich mein eigenes Logo und meine Signatur verwenden?", "a": "Absolut. Pro- und Business-Pläne unterstützen vollständiges Branding: Laden Sie Ihr Logo und Signaturbild hoch, wählen Sie eine beliebige Akzentfarbe und Ihren Schriftstil für alle Dokumente." },
+      { "q": "Welche Währungen werden unterstützt?", "a": "USD, EUR, GBP, NGN, CAD, AUD, JPY, INR, ZAR, CHF und AED – mit korrekten Symbolen und Formatierung für jede Rechnung und Quittung." },
+      { "q": "Kann ich mein Abonnement jederzeit kündigen?", "a": "Ja. Kündigen Sie jederzeit in den Kontoeinstellungen. Sie behalten den Zugriff bis zum Ende Ihres Abrechnungszeitraums." }
+    ]
+  },
+  "cta": {
+    "titlePre": "Bereit, Ihr",
+    "titleEm": " Business besser zu führen?",
+    "subtitle": "Schließen Sie sich über 4.200 Freelancern an, die Flowtali für Rechnungen, Quittungen, Projekte und Briefköpfe vertrauen.",
+    "primary": "Kostenlos starten – keine Kreditkarte",
+    "secondary": "Alle Funktionen entdecken →"
+  }
+}

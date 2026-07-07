@@ -1,0 +1,84 @@
+{
+  "seo": {
+    "title": "Datenschutzrichtlinie",
+    "description": "Lesen Sie die Datenschutzrichtlinie von Flowtali, um zu verstehen, wie wir Ihre Daten erheben, verwenden und schützen."
+  },
+  "title": "Datenschutzrichtlinie",
+  "lastUpdated": "Zuletzt aktualisiert: 20. Mai 2026",
+  "s1": {
+    "h": "1. Einleitung",
+    "p1": "Flowtali („wir“, „unser“ oder „uns“) verpflichtet sich zum Schutz Ihrer personenbezogenen Daten. Diese Datenschutzrichtlinie erläutert, wie wir Ihre Daten erheben, verwenden, offenlegen und schützen, wenn Sie unsere Plattform unter flowtali.com (den „Dienst“) nutzen.",
+    "p2": "Durch die Nutzung von Flowtali stimmen Sie der Erhebung und Verwendung von Informationen gemäß dieser Richtlinie zu."
+  },
+  "s2": {
+    "h": "2. Welche Informationen wir erheben",
+    "sub1": "Kontoinformationen",
+    "p1": "Bei der Registrierung erheben wir Ihren Namen, Ihre E-Mail-Adresse und Ihr Passwort (als sicherer Hash gespeichert). Optional können Sie ein Profilfoto und eine Telefonnummer angeben.",
+    "sub2": "Organisationsdaten",
+    "p2": "Wenn Sie eine Organisation erstellen, speichern wir den Organisationsnamen, das Logo, die Markenfarben sowie alle Kunden- oder Mitgliederdaten, die Sie der Plattform hinzufügen.",
+    "sub3": "Nutzungsdaten",
+    "p3": "Wir erheben automatisch Informationen darüber, wie Sie mit dem Dienst interagieren, einschließlich Zugriffszeiten, aufgerufener Seiten, Geräteinformationen und IP-Adressen.",
+    "sub4": "Hochgeladene Dateien",
+    "p4": "Von Ihnen hochgeladene Dateien (Logos, Signaturen, Dokumentanhänge) werden sicher auf Cloud-Infrastruktur gespeichert. Wir lesen den Inhalt Ihrer Dokumente nicht."
+  },
+  "s3": {
+    "h": "3. Wie wir Ihre Informationen verwenden",
+    "items": [
+      "Um den Dienst bereitzustellen, zu betreiben und zu pflegen",
+      "Um Ihre Identität zu authentifizieren und Ihr Konto zu verwalten",
+      "Um transaktionale E-Mails zu versenden (Passwort-Zurücksetzungen, E-Mail-Verifizierung, OTPs)",
+      "Um den Dienst durch anonymisierte Nutzungsanalysen zu verbessern",
+      "Um rechtliche Verpflichtungen einzuhalten und unsere Nutzungsbedingungen durchzusetzen"
+    ],
+    "note": "Wir verkaufen, vermieten oder teilen Ihre personenbezogenen Daten nicht zu Marketingzwecken mit Dritten."
+  },
+  "s4": {
+    "h": "4. Datenspeicherung & Sicherheit",
+    "p1": "Ihre Daten werden auf sicheren, verschlüsselten Servern gespeichert. Wir verwenden branchenübliche Sicherheitsmaßnahmen, einschließlich TLS-Verschlüsselung bei der Übertragung, gehashter Passwörter (bcrypt) und tokenbasierter Authentifizierung (Laravel Sanctum).",
+    "p2": "Zugriffstokens laufen nach 24 Stunden ab. Sie können aktive Sitzungen jederzeit in Ihren Profileinstellungen einsehen und widerrufen.",
+    "p3": "Obwohl wir Sicherheit ernst nehmen, ist keine Übertragungsmethode über das Internet zu 100 % sicher. Wir können keine absolute Sicherheit garantieren."
+  },
+  "s5": {
+    "h": "5. Datenaufbewahrung",
+    "p1": "Wir bewahren Ihre Kontodaten so lange auf, wie Ihr Konto aktiv ist. Gelöschte Briefköpfe werden vorläufig gelöscht und nach 30 Tagen endgültig entfernt. Sie können die Löschung Ihres Kontos und aller zugehörigen Daten jederzeit anfordern, indem Sie den Support kontaktieren."
+  },
+  "s6": {
+    "h": "6. Cookies",
+    "p1": "Flowtali verwendet minimale Cookies, die für Authentifizierung und Sitzungsverwaltung erforderlich sind. Wir verwenden keine Werbe- oder Tracking-Cookies. Sie können Cookies in Ihren Browsereinstellungen deaktivieren, was jedoch die Funktionalität des Dienstes beeinträchtigen kann."
+  },
+  "s7": {
+    "h": "7. Drittanbieterdienste",
+    "p1": "Wir verwenden möglicherweise die folgenden Drittanbieterdienste:",
+    "items": [
+      { "label": "Cloud-Speicher (AWS S3)", "desc": "zum Speichern hochgeladener Dateien" },
+      { "label": "E-Mail-Anbieter", "desc": "zum Versenden transaktionaler E-Mails" },
+      { "label": "Google OAuth", "desc": "falls Sie sich mit Google anmelden" }
+    ],
+    "note": "Jeder Dienst hat seine eigene Datenschutzrichtlinie, die die Verwendung Ihrer Daten regelt."
+  },
+  "s8": {
+    "h": "8. Ihre Rechte",
+    "p1": "Je nach Rechtsordnung haben Sie möglicherweise das Recht:",
+    "items": [
+      "Auf die personenbezogenen Daten zuzugreifen, die wir über Sie speichern",
+      "Die Berichtigung unrichtiger Daten zu verlangen",
+      "Die Löschung Ihres Kontos und Ihrer Daten zu verlangen",
+      "Bestimmter Verarbeitung zu widersprechen oder sie einzuschränken",
+      "Datenübertragbarkeit (Ihre Daten in einem maschinenlesbaren Format zu erhalten)"
+    ],
+    "notePre": "Um diese Rechte auszuüben, kontaktieren Sie uns unter"
+  },
+  "s9": {
+    "h": "9. Datenschutz für Kinder",
+    "p1": "Flowtali richtet sich nicht an Personen unter 16 Jahren. Wir erheben wissentlich keine personenbezogenen Daten von Kindern. Wenn Sie glauben, dass wir versehentlich solche Informationen erhoben haben, kontaktieren Sie uns bitte umgehend."
+  },
+  "s10": {
+    "h": "10. Änderungen dieser Richtlinie",
+    "p1": "Wir können diese Datenschutzrichtlinie von Zeit zu Zeit aktualisieren. Wir benachrichtigen Sie über wesentliche Änderungen per E-Mail oder durch einen deutlichen Hinweis in der App. Die fortgesetzte Nutzung des Dienstes nach Änderungen gilt als Ihre Zustimmung zur aktualisierten Richtlinie."
+  },
+  "s11": {
+    "h": "11. Kontaktieren Sie uns",
+    "p1": "Wenn Sie Fragen zu dieser Datenschutzrichtlinie haben, kontaktieren Sie uns bitte:",
+    "emailLabel": "E-Mail:"
+  }
+}

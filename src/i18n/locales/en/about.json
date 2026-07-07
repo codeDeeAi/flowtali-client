@@ -1,0 +1,32 @@
+{
+  "seo": {
+    "title": "About Flowtali",
+    "description": "Flowtali is a document tool built for freelancers and small teams. Create professional invoices and letterheads with real-time preview and one-click PDF export."
+  },
+  "badge": "Our Story",
+  "heroTitleLine1": "Documents that look as good",
+  "heroTitleLine2": "as the work behind them",
+  "heroSubtitle": "Flowtali was built for freelancers and small teams who care about first impressions — because a polished invoice or letterhead says everything before you say a word.",
+  "missionTitle": "Why we built Flowtali",
+  "missionP1": "Too many great freelancers were sending invoices assembled in Google Docs, or letterheads cobbled together in Word — and it showed. Clients noticed. Deals were harder to close.",
+  "missionP2": "We built Flowtali to close that gap. Professional-grade invoice and letterhead tooling, accessible to a solo designer, a consultant, or a 5-person studio — not just the enterprise with a design team.",
+  "missionP3a": "Every template, every setting, every feature was designed with one question in mind:",
+  "missionP3Quote": "\"Would a client trust this?\"",
+  "missionP3b": "If the answer is yes, it ships. If not, it doesn't.",
+  "stats": [
+    { "value": "6", "label": "Letterhead themes" },
+    { "value": "11+", "label": "Currencies supported" },
+    { "value": "100%", "label": "Browser-based" },
+    { "value": "∞", "label": "Share links per doc" }
+  ],
+  "valuesTitle": "What we believe in",
+  "values": [
+    { "title": "What you see is what they get", "desc": "Live preview is at the heart of Flowtali. No surprises after export — your document looks exactly the same on screen as it does printed." },
+    { "title": "Speed without compromise", "desc": "A first draft in under two minutes. No fiddling with margins or table formatting. Just fill, preview, share." },
+    { "title": "Your data stays yours", "desc": "We don't read your documents, sell your data, or share it with third parties. Encrypted in transit, access-controlled by you." }
+  ],
+  "ctaTitle": "Ready to get started?",
+  "ctaSubtitle": "Join thousands of freelancers and small businesses sending better documents.",
+  "ctaPrimary": "Create free account",
+  "ctaSecondary": "Get in touch"
+}

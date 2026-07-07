@@ -1,0 +1,22 @@
+{
+  "badge": "Get in touch",
+  "title": "We'd love to hear from you",
+  "subtitle": "Have a question, a feature request, or just want to say hello? Drop us a line — we read every message.",
+  "emailUs": "Email us",
+  "emailUsSub": "We typically reply within 24 hours",
+  "copy": "Copy",
+  "copied": "Copied",
+  "responseTime": "Response time",
+  "responseTimeSub": "Business hours, Mon – Fri",
+  "responseBodyPre": "We aim to respond to all enquiries within",
+  "responseBodyStrong": "one business day",
+  "responseBodyPost": ". For urgent issues, please include \"URGENT\" in your subject line.",
+  "helpTitle": "What can we help with?",
+  "helpItems": [
+    { "title": "Feature requests", "desc": "Have an idea that would make Flowtali better? We love hearing from users." },
+    { "title": "Bug reports", "desc": "Found something broken? Tell us exactly what happened and we'll fix it fast." },
+    { "title": "General questions", "desc": "Not sure how something works? We'll walk you through it." },
+    { "title": "Team & billing", "desc": "Questions about your plan, invoices, or team access." }
+  ],
+  "sendEmail": "Send us an email"
+}

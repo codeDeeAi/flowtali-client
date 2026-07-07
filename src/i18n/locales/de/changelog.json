@@ -1,0 +1,18 @@
+{
+  "seo": {
+    "title": "Änderungsprotokoll",
+    "description": "Sehen Sie, was es Neues in Flowtali gibt — Produktupdates, neue Funktionen und Verbesserungen."
+  },
+  "badge": "Produktupdates",
+  "title": "Änderungsprotokoll",
+  "subtitle": "Neue Funktionen, Verbesserungen und Fehlerbehebungen — in chronologischer Reihenfolge.",
+  "badges": {
+    "latest": "Neueste",
+    "launch": "Start"
+  },
+  "types": {
+    "new": "Neu",
+    "improved": "Verbessert",
+    "fix": "Behoben"
+  }
+}

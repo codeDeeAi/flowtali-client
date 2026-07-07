@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useLoaders } from '@/composables/loaders.ts'
 import { signupSchema } from './validation/schema.ts'
 import { useFormErrors } from '@/composables/formErrors'
 import { useSeo } from '@/composables/useSeo'
 import FlowtaliLogo from '@/components/ui/FlowtaliLogo.vue'
 
+const { t } = useI18n()
+
 useSeo({
-  title: 'Create Account',
-  description: 'Get started with Flowtali for free. Create professional invoices and letterheads in minutes — no credit card required.',
+  title: t('auth.signup.seoTitle'),
+  description: t('auth.signup.seoDesc'),
   canonical: 'https://flowtali.com/auth/signup',
 })
 import { useYupForm } from '@/composables/useYupForm.ts'
@@ -71,10 +74,10 @@ const handleSignup = async () => {
       ...(invitationToken.value ? { invitation_token: invitationToken.value } : {}),
     })
 
-    notify('Account created! Please check your email to verify your account.', 'success')
+    notify(t('auth.signup.createdToast'), 'success')
     router.push({ name: 'signin' })
   } catch (err: any) {
-    const message = err?.response?.data?.message ?? 'Registration failed. Please try again.'
+    const message = err?.response?.data?.message ?? t('auth.signup.failed')
     const errors = err?.response?.data?.errors
     if (errors) {
       setErrors(errors)
@@ -94,7 +97,7 @@ const handleGoogleSignup = async () => {
     const res = await AuthService.getGoogleRedirectUrl()
     window.location.href = res.data.data.redirect_url
   } catch {
-    notify('Could not initiate Google sign-up. Please try again.', 'error')
+    notify(t('auth.signup.googleError'), 'error')
     setLoader('isGoogleLoading', false)
   }
 }
@@ -111,15 +114,15 @@ const handleGoogleSignup = async () => {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
-        Back to Flowtali
+        {{ t('auth.backToFlowtali') }}
       </router-link>
 
       <div class="mb-2">
         <FlowtaliLogo variant="full" :size="22" />
       </div>
 
-      <h1 class="font-sans text-3xl font-semibold text-gray-1000 mt-5 mb-1">Create your account</h1>
-      <p class="text-gray-700 text-sm mb-7">Free for 14 days — no credit card needed.</p>
+      <h1 class="font-sans text-3xl font-semibold text-gray-1000 mt-5 mb-1">{{ t('auth.signup.createAccount') }}</h1>
+      <p class="text-gray-700 text-sm mb-7">{{ t('auth.signup.subtitle') }}</p>
 
       <button
         class="w-full flex items-center justify-center gap-3 bg-gray-400/60 border border-gray-500/80 hover:border-gray-500 rounded-lg py-3 text-gray-1000 text-sm font-medium transition-all mb-4 disabled:opacity-60"
@@ -141,12 +144,12 @@ const handleGoogleSignup = async () => {
         <svg v-else class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" />
         </svg>
-        Continue with Google
+        {{ t('auth.continueWithGoogle') }}
       </button>
 
       <div class="flex items-center gap-3 mb-4">
         <div class="flex-1 h-px bg-gray-400/60" />
-        <span class="text-gray-700 text-xs">or sign up with email</span>
+        <span class="text-gray-700 text-xs">{{ t('auth.signup.orEmail') }}</span>
         <div class="flex-1 h-px bg-gray-400/60" />
       </div>
 
@@ -156,21 +159,21 @@ const handleGoogleSignup = async () => {
 
       <div class="flex flex-col gap-4">
         <div class="grid grid-cols-2 gap-3">
-          <InputField v-model="signupForm.first_name" label-text="First Name" type="text" :is-required="true"
+          <InputField v-model="signupForm.first_name" :label-text="t('auth.signup.firstName')" type="text" :is-required="true"
             :error="getError('first_name').value || ''" input-classes="px-2 py-2 text-sm transition-colors"
             autocapitalize="none" autocomplete="given-name" placeholder="" />
-          <InputField v-model="signupForm.last_name" label-text="Last Name" type="text" :is-required="true"
+          <InputField v-model="signupForm.last_name" :label-text="t('auth.signup.lastName')" type="text" :is-required="true"
             :error="getError('last_name').value || ''" input-classes="px-2 py-2 text-sm transition-colors"
             autocapitalize="none" autocomplete="family-name" placeholder="" />
         </div>
 
-        <InputField v-model="signupForm.email" label-text="Email address" type="email" :is-required="true"
+        <InputField v-model="signupForm.email" :label-text="t('auth.emailAddress')" type="email" :is-required="true"
           :error="getError('email').value || ''" input-classes="px-2 py-2 text-sm transition-colors"
           autocapitalize="none" autocomplete="email" placeholder="" />
 
-        <PasswordField v-model="signupForm.password" label-text="Password" :is-required="true"
+        <PasswordField v-model="signupForm.password" :label-text="t('auth.password')" :is-required="true"
           :error="getError('password').value || ''" input-classes="px-2 py-2 text-sm transition-colors"
-          placeholder="Min. 8 characters" :use-strength-indicator="true" />
+          :placeholder="t('auth.signup.passwordPlaceholder')" :use-strength-indicator="true" />
 
         <label class="flex items-start gap-3 cursor-pointer">
           <div class="relative mt-0.5">
@@ -184,10 +187,11 @@ const handleGoogleSignup = async () => {
             </div>
           </div>
           <span class="text-gray-700 text-sm">
-            I agree to Flowtali's
-            <router-link :to="{ name: 'terms' }" target="_blank" class="text-green-700 hover:underline">Terms</router-link>
-            and
-            <router-link :to="{ name: 'privacy' }" target="_blank" class="text-green-700 hover:underline">Privacy Policy</router-link>
+            {{ t('auth.signup.agreePre') }}
+            <router-link :to="{ name: 'terms' }" target="_blank" class="text-green-700 hover:underline">{{ t('auth.signup.agreeTerms') }}</router-link>
+            {{ t('auth.signup.agreeAnd') }}
+            <router-link :to="{ name: 'privacy' }" target="_blank" class="text-green-700 hover:underline">{{ t('auth.signup.agreePrivacy') }}</router-link>
+            {{ t('auth.signup.agreePost') }}
           </span>
         </label>
         <p v-if="getError('agreed').value" class="text-red-400 text-xs -mt-2">{{ getError('agreed').value }}</p>
@@ -195,20 +199,20 @@ const handleGoogleSignup = async () => {
         <button class="btn-primary w-full py-3.5 text-sm mt-1"
           :class="!canSubmit ? 'opacity-50 cursor-not-allowed' : ''"
           :disabled="!canSubmit || getLoader('isRegistering')" @click="handleSignup">
-          <span v-if="!getLoader('isRegistering')">Create account</span>
+          <span v-if="!getLoader('isRegistering')">{{ t('auth.signup.submit') }}</span>
           <span v-else class="flex items-center justify-center gap-2">
             <svg class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" />
             </svg>
-            Creating account…
+            {{ t('auth.signup.submitting') }}
           </span>
         </button>
       </div>
     </div>
 
     <p class="text-center text-gray-700 text-sm mt-6">
-      Already have an account?
-      <router-link :to="{ name: 'signin' }" class="text-green-700 hover:underline">Sign in</router-link>
+      {{ t('auth.signup.haveAccount') }}
+      <router-link :to="{ name: 'signin' }" class="text-green-700 hover:underline">{{ t('auth.signup.signin') }}</router-link>
     </p>
   </div>
 </template>

@@ -105,6 +105,7 @@ export const ProjectService = {
         tracking_options: string[]
         clients: { id: string; name: string; company: string | null }[]
         currencies: string[]
+        default_currency: string
       }
     }>(`/api/v1/orgs/${orgId}/projects/draft-data`)
   },

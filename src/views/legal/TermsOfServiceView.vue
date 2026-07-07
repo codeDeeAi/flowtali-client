@@ -1,14 +1,28 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useSeo } from '@/composables/useSeo'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
 const router = useRouter()
+const { t, tm, rt } = useI18n()
 
 useSeo({
-  title: 'Terms of Service',
-  description: 'Read the Flowtali Terms of Service — the rules and conditions that govern your use of our platform.',
+  title: t('terms.seo.title'),
+  description: t('terms.seo.description'),
   canonical: 'https://flowtali.com/legal/terms',
+  localePath: '/terms',
 })
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const listOf = (key: string) => computed(() => (tm(key) as any[]).map((x) => rt(x)))
+const s2Items = listOf('terms.s2.items')
+const s3Items = listOf('terms.s3.items')
+const s4Items = listOf('terms.s4.items')
+const s5Items = listOf('terms.s5.items')
+const s7Items = listOf('terms.s7.items')
+const s10Items = listOf('terms.s10.items')
 </script>
 
 <template>
@@ -18,128 +32,113 @@ useSeo({
     <header class="border-b border-gray-300 px-6 py-4 flex items-center justify-between max-w-4xl mx-auto">
       <button @click="router.back()" class="flex items-center gap-2 text-sm text-gray-900 hover:text-gray-1000 transition-colors">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-        Back
+        {{ t('legal.back') }}
       </button>
-      <router-link to="/" class="font-sans text-lg font-bold text-green-700">Flowtali</router-link>
+      <div class="flex items-center gap-4">
+        <LanguageSwitcher />
+        <router-link to="/" class="font-sans text-lg font-bold text-green-700">Flowtali</router-link>
+      </div>
     </header>
 
     <!-- Content -->
     <main class="max-w-4xl mx-auto px-6 py-12">
       <div class="mb-10">
-        <h1 class="text-4xl font-bold font-sans text-gray-1000 mb-3">Terms of Service</h1>
-        <p class="text-gray-700 text-sm">Last updated: May 20, 2026</p>
+        <h1 class="text-4xl font-bold font-sans text-gray-1000 mb-3">{{ t('terms.title') }}</h1>
+        <p class="text-gray-700 text-sm">{{ t('terms.lastUpdated') }}</p>
       </div>
 
       <div class="prose prose-invert max-w-none space-y-8 text-gray-900 leading-relaxed">
 
         <section>
-          <h2 class="text-xl font-semibold text-gray-1000 mb-3">1. Acceptance of Terms</h2>
-          <p>By accessing or using Flowtali ("Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, do not use the Service. These terms apply to all users, including individuals and organization accounts.</p>
+          <h2 class="text-xl font-semibold text-gray-1000 mb-3">{{ t('terms.s1.h') }}</h2>
+          <p>{{ t('terms.s1.p1') }}</p>
         </section>
 
         <section>
-          <h2 class="text-xl font-semibold text-gray-1000 mb-3">2. Description of Service</h2>
-          <p>Flowtali is a document and letterhead management platform that allows users to create, store, and share professional letterheads and related documents within organizations. Features include:</p>
+          <h2 class="text-xl font-semibold text-gray-1000 mb-3">{{ t('terms.s2.h') }}</h2>
+          <p>{{ t('terms.s2.p1') }}</p>
           <ul class="list-disc pl-5 space-y-2 mt-2">
-            <li>Letterhead creation and management</li>
-            <li>Client and contact management</li>
-            <li>Shared link generation with optional access codes</li>
-            <li>Team member management with role-based access</li>
-            <li>File uploads for logos, signatures, and documents</li>
+            <li v-for="(item, i) in s2Items" :key="i">{{ item }}</li>
           </ul>
         </section>
 
         <section>
-          <h2 class="text-xl font-semibold text-gray-1000 mb-3">3. Accounts &amp; Registration</h2>
-          <p>To use the Service, you must create an account. You agree to:</p>
+          <h2 class="text-xl font-semibold text-gray-1000 mb-3">{{ t('terms.s3.h') }}</h2>
+          <p>{{ t('terms.s3.p1') }}</p>
           <ul class="list-disc pl-5 space-y-2 mt-2">
-            <li>Provide accurate, current, and complete information</li>
-            <li>Maintain the security of your account credentials</li>
-            <li>Notify us immediately of any unauthorized access to your account</li>
-            <li>Be responsible for all activity that occurs under your account</li>
+            <li v-for="(item, i) in s3Items" :key="i">{{ item }}</li>
           </ul>
-          <p class="mt-3">You must be at least 16 years of age to create an account. By creating an account, you represent that you meet this requirement.</p>
+          <p class="mt-3">{{ t('terms.s3.note') }}</p>
         </section>
 
         <section>
-          <h2 class="text-xl font-semibold text-gray-1000 mb-3">4. Acceptable Use</h2>
-          <p>You agree not to use the Service to:</p>
+          <h2 class="text-xl font-semibold text-gray-1000 mb-3">{{ t('terms.s4.h') }}</h2>
+          <p>{{ t('terms.s4.p1') }}</p>
           <ul class="list-disc pl-5 space-y-2 mt-2">
-            <li>Upload, post, or transmit content that is illegal, fraudulent, or infringes on third-party rights</li>
-            <li>Impersonate any person or entity or misrepresent your affiliation with any entity</li>
-            <li>Distribute malware, spam, or other harmful software</li>
-            <li>Attempt to gain unauthorized access to any portion of the Service or other users' data</li>
-            <li>Use the Service in any way that could disable, overburden, or impair its infrastructure</li>
-            <li>Scrape, crawl, or systematically extract data from the Service</li>
+            <li v-for="(item, i) in s4Items" :key="i">{{ item }}</li>
           </ul>
-          <p class="mt-3">We reserve the right to terminate accounts that violate these terms without notice.</p>
+          <p class="mt-3">{{ t('terms.s4.note') }}</p>
         </section>
 
         <section>
-          <h2 class="text-xl font-semibold text-gray-1000 mb-3">5. Organizations &amp; Teams</h2>
-          <p>When you create an organization on Flowtali, you become the Organization Owner. As Owner, you are responsible for:</p>
+          <h2 class="text-xl font-semibold text-gray-1000 mb-3">{{ t('terms.s5.h') }}</h2>
+          <p>{{ t('terms.s5.p1') }}</p>
           <ul class="list-disc pl-5 space-y-2 mt-2">
-            <li>Managing member invitations and role assignments</li>
-            <li>All content created or uploaded by your organization members</li>
-            <li>Ensuring members comply with these Terms of Service</li>
+            <li v-for="(item, i) in s5Items" :key="i">{{ item }}</li>
           </ul>
-          <p class="mt-3">Members invited to your organization will have access to resources based on the roles you assign. You may remove members at any time.</p>
+          <p class="mt-3">{{ t('terms.s5.note') }}</p>
         </section>
 
         <section>
-          <h2 class="text-xl font-semibold text-gray-1000 mb-3">6. Intellectual Property</h2>
-          <p>You retain ownership of all content you upload or create through the Service, including letterheads, logos, and documents ("User Content"). By uploading content, you grant Flowtali a non-exclusive, worldwide, royalty-free license to store, display, and transmit your User Content solely for the purpose of providing the Service.</p>
-          <p class="mt-3">Flowtali owns all intellectual property rights in the Service itself, including its software, design, and branding. You may not reproduce, modify, or distribute the Service or its components without our express written permission.</p>
+          <h2 class="text-xl font-semibold text-gray-1000 mb-3">{{ t('terms.s6.h') }}</h2>
+          <p>{{ t('terms.s6.p1') }}</p>
+          <p class="mt-3">{{ t('terms.s6.p2') }}</p>
         </section>
 
         <section>
-          <h2 class="text-xl font-semibold text-gray-1000 mb-3">7. Shared Links</h2>
-          <p>The Service allows you to generate shareable links for letterheads. You are solely responsible for the content shared through these links. Private links with access codes provide an additional layer of security, but you acknowledge that:</p>
+          <h2 class="text-xl font-semibold text-gray-1000 mb-3">{{ t('terms.s7.h') }}</h2>
+          <p>{{ t('terms.s7.p1') }}</p>
           <ul class="list-disc pl-5 space-y-2 mt-2">
-            <li>Access codes should be kept confidential</li>
-            <li>We are not responsible for unauthorized access resulting from compromised access codes</li>
-            <li>You should revoke links when they are no longer needed</li>
+            <li v-for="(item, i) in s7Items" :key="i">{{ item }}</li>
           </ul>
         </section>
 
         <section>
-          <h2 class="text-xl font-semibold text-gray-1000 mb-3">8. Subscription &amp; Payments</h2>
-          <p>Flowtali may offer free and paid subscription tiers. By subscribing to a paid plan, you agree to pay all applicable fees. All fees are non-refundable except where required by law. We reserve the right to modify pricing with 30 days' notice.</p>
-          <p class="mt-3">Failure to pay may result in suspension or termination of your account and associated data.</p>
+          <h2 class="text-xl font-semibold text-gray-1000 mb-3">{{ t('terms.s8.h') }}</h2>
+          <p>{{ t('terms.s8.p1') }}</p>
+          <p class="mt-3">{{ t('terms.s8.p2') }}</p>
         </section>
 
         <section>
-          <h2 class="text-xl font-semibold text-gray-1000 mb-3">9. Disclaimers &amp; Limitation of Liability</h2>
-          <p>The Service is provided "as is" without warranties of any kind. We do not guarantee that the Service will be error-free, uninterrupted, or free from security vulnerabilities.</p>
-          <p class="mt-3">To the maximum extent permitted by law, Flowtali shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of data, revenue, or goodwill, arising from your use of or inability to use the Service.</p>
+          <h2 class="text-xl font-semibold text-gray-1000 mb-3">{{ t('terms.s9.h') }}</h2>
+          <p>{{ t('terms.s9.p1') }}</p>
+          <p class="mt-3">{{ t('terms.s9.p2') }}</p>
         </section>
 
         <section>
-          <h2 class="text-xl font-semibold text-gray-1000 mb-3">10. Termination</h2>
-          <p>You may close your account at any time from your profile settings. We may suspend or terminate your access if you violate these Terms. Upon termination:</p>
+          <h2 class="text-xl font-semibold text-gray-1000 mb-3">{{ t('terms.s10.h') }}</h2>
+          <p>{{ t('terms.s10.p1') }}</p>
           <ul class="list-disc pl-5 space-y-2 mt-2">
-            <li>Your access to the Service will be immediately revoked</li>
-            <li>Your data will be retained for 30 days and then permanently deleted</li>
-            <li>You may request immediate deletion by contacting support</li>
+            <li v-for="(item, i) in s10Items" :key="i">{{ item }}</li>
           </ul>
         </section>
 
         <section>
-          <h2 class="text-xl font-semibold text-gray-1000 mb-3">11. Governing Law</h2>
-          <p>These Terms are governed by and construed in accordance with applicable law. Any disputes arising under these Terms shall be resolved through binding arbitration or in the courts of the applicable jurisdiction.</p>
+          <h2 class="text-xl font-semibold text-gray-1000 mb-3">{{ t('terms.s11.h') }}</h2>
+          <p>{{ t('terms.s11.p1') }}</p>
         </section>
 
         <section>
-          <h2 class="text-xl font-semibold text-gray-1000 mb-3">12. Changes to Terms</h2>
-          <p>We reserve the right to modify these Terms at any time. We will notify you of significant changes via email or an in-app notice. Continued use of the Service after changes constitutes your acceptance. If you do not agree with the revised Terms, you must discontinue use of the Service.</p>
+          <h2 class="text-xl font-semibold text-gray-1000 mb-3">{{ t('terms.s12.h') }}</h2>
+          <p>{{ t('terms.s12.p1') }}</p>
         </section>
 
         <section>
-          <h2 class="text-xl font-semibold text-gray-1000 mb-3">13. Contact</h2>
-          <p>For questions about these Terms, please contact:</p>
+          <h2 class="text-xl font-semibold text-gray-1000 mb-3">{{ t('terms.s13.h') }}</h2>
+          <p>{{ t('terms.s13.p1') }}</p>
           <div class="mt-3 p-4 bg-gray-200 border border-gray-400 rounded-xl text-sm">
             <p><strong class="text-gray-1000">Flowtali</strong></p>
-            <p class="mt-1">Email: <a href="mailto:flowtaliltd@gmail.com" class="text-green-700 hover:underline">flowtaliltd@gmail.com</a></p>
+            <p class="mt-1">{{ t('terms.s13.emailLabel') }} <a href="mailto:flowtaliltd@gmail.com" class="text-green-700 hover:underline">flowtaliltd@gmail.com</a></p>
           </div>
         </section>
 
@@ -149,10 +148,10 @@ useSeo({
     <!-- Footer -->
     <footer class="border-t border-gray-300 mt-16 px-6 py-8 text-center">
       <div class="flex items-center justify-center gap-6 text-sm text-gray-700">
-        <router-link :to="{ name: 'privacy' }" class="hover:text-gray-1000 transition-colors">Privacy Policy</router-link>
-        <router-link :to="{ name: 'terms' }" class="hover:text-gray-1000 transition-colors">Terms of Service</router-link>
+        <router-link :to="{ name: 'privacy' }" class="hover:text-gray-1000 transition-colors">{{ t('legal.privacyPolicy') }}</router-link>
+        <router-link :to="{ name: 'terms' }" class="hover:text-gray-1000 transition-colors">{{ t('legal.termsOfService') }}</router-link>
       </div>
-      <p class="text-xs text-gray-700/50 mt-4">© {{ new Date().getFullYear() }} Flowtali. All rights reserved.</p>
+      <p class="text-xs text-gray-700/50 mt-4">{{ t('legal.copyright', { year: new Date().getFullYear() }) }}</p>
     </footer>
   </div>
 </template>

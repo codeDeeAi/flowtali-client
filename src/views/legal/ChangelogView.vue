@@ -1,14 +1,26 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useSeo } from '@/composables/useSeo'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
 const router = useRouter()
+const { t } = useI18n()
 
 useSeo({
-  title: 'Changelog',
-  description: 'See what\'s new in Flowtali — product updates, new features, and improvements.',
+  title: t('changelog.seo.title'),
+  description: t('changelog.seo.description'),
   canonical: 'https://flowtali.com/changelog',
+  localePath: '/changelog',
 })
+
+// Historical release notes below stay in their original (English) language;
+// only the page chrome, badges, and change-type labels are localized.
+function badgeLabel(badge: string | null): string {
+  if (badge === 'Latest') return t('changelog.badges.latest')
+  if (badge === 'Launch') return t('changelog.badges.launch')
+  return badge ?? ''
+}
 
 type ChangeType = 'new' | 'improved' | 'fix'
 
@@ -155,19 +167,22 @@ const typeConfig: Record<ChangeType, { label: string; classes: string }> = {
     <header class="border-b border-gray-300 px-6 py-4 flex items-center justify-between max-w-3xl mx-auto">
       <button @click="router.back()" class="flex items-center gap-2 text-sm text-gray-900 hover:text-gray-1000 transition-colors">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-        Back
+        {{ t('legal.back') }}
       </button>
-      <router-link to="/" class="font-sans text-lg font-bold text-green-700">Flowtali</router-link>
+      <div class="flex items-center gap-4">
+        <LanguageSwitcher />
+        <router-link to="/" class="font-sans text-lg font-bold text-green-700">Flowtali</router-link>
+      </div>
     </header>
 
     <!-- Hero -->
     <main class="max-w-3xl mx-auto px-6 py-14">
       <div class="mb-14">
         <div class="inline-flex items-center gap-2 bg-green-700/10 border border-green-700/20 text-green-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
-          Product Updates
+          {{ t('changelog.badge') }}
         </div>
-        <h1 class="text-4xl font-bold font-sans text-gray-1000 mb-3">Changelog</h1>
-        <p class="text-gray-900 leading-relaxed">New features, improvements, and fixes — in chronological order.</p>
+        <h1 class="text-4xl font-bold font-sans text-gray-1000 mb-3">{{ t('changelog.title') }}</h1>
+        <p class="text-gray-900 leading-relaxed">{{ t('changelog.subtitle') }}</p>
       </div>
 
       <!-- Timeline -->
@@ -183,7 +198,7 @@ const typeConfig: Record<ChangeType, { label: string; classes: string }> = {
             <span class="text-xl font-bold font-sans text-gray-1000">{{ release.version }}</span>
             <span v-if="release.badge" class="text-xs font-semibold px-2 py-0.5 rounded-full border"
               :class="release.badge === 'Latest' ? 'bg-green-700/10 text-green-700 border-green-700/20' : 'bg-gray-400 text-gray-900 border-gray-500'">
-              {{ release.badge }}
+              {{ badgeLabel(release.badge) }}
             </span>
             <span class="text-sm text-gray-700 ml-auto">{{ release.date }}</span>
           </div>
@@ -193,7 +208,7 @@ const typeConfig: Record<ChangeType, { label: string; classes: string }> = {
             <div v-for="(change, i) in release.changes" :key="i" class="flex items-start gap-3">
               <span class="mt-0.5 shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded border"
                 :class="typeConfig[change.type].classes">
-                {{ typeConfig[change.type].label }}
+                {{ t('changelog.types.' + change.type) }}
               </span>
               <p class="text-sm text-gray-900 leading-relaxed">{{ change.text }}</p>
             </div>
@@ -205,11 +220,11 @@ const typeConfig: Record<ChangeType, { label: string; classes: string }> = {
     <!-- Footer -->
     <footer class="border-t border-gray-300 mt-8 px-6 py-8 text-center">
       <div class="flex items-center justify-center gap-6 text-sm text-gray-700">
-        <router-link :to="{ name: 'privacy' }" class="hover:text-gray-1000 transition-colors">Privacy Policy</router-link>
-        <router-link :to="{ name: 'terms' }" class="hover:text-gray-1000 transition-colors">Terms of Service</router-link>
-        <router-link :to="{ name: 'contact' }" class="hover:text-gray-1000 transition-colors">Contact</router-link>
+        <router-link :to="{ name: 'privacy' }" class="hover:text-gray-1000 transition-colors">{{ t('legal.privacyPolicy') }}</router-link>
+        <router-link :to="{ name: 'terms' }" class="hover:text-gray-1000 transition-colors">{{ t('legal.termsOfService') }}</router-link>
+        <router-link :to="{ name: 'contact' }" class="hover:text-gray-1000 transition-colors">{{ t('legal.contact') }}</router-link>
       </div>
-      <p class="text-xs text-gray-700/50 mt-4">© {{ new Date().getFullYear() }} Flowtali. All rights reserved.</p>
+      <p class="text-xs text-gray-700/50 mt-4">{{ t('legal.copyright', { year: new Date().getFullYear() }) }}</p>
     </footer>
   </div>
 </template>
