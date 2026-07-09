@@ -1,0 +1,32 @@
+{
+  "title": "Feedback geben",
+  "subtitle": "Wir lesen jede Einsendung",
+  "typeLabel": "Typ",
+  "types": {
+    "general": { "label": "Allgemein", "desc": "Teilen Sie einen Gedanken oder Kommentar" },
+    "bug": { "label": "Fehler melden", "desc": "Etwas funktioniert nicht" },
+    "feature": { "label": "Funktionswunsch", "desc": "Eine Verbesserung vorschlagen" },
+    "other": { "label": "Sonstiges", "desc": "Alles andere" }
+  },
+  "rating": {
+    "label": "Gesamtbewertung",
+    "optional": "(optional)",
+    "labels": {
+      "1": "Schrecklich",
+      "2": "Schlecht",
+      "3": "Okay",
+      "4": "Gut",
+      "5": "Großartig!"
+    }
+  },
+  "messageLabel": "Nachricht",
+  "messagePlaceholder": "Sagen Sie uns, was Sie denken…",
+  "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+  "send": "Feedback senden",
+  "sending": "Wird gesendet…",
+  "success": {
+    "title": "Danke für dein Feedback!",
+    "body": "Es hilft uns, Flowtali besser zu machen.",
+    "close": "Schließen"
+  }
+}

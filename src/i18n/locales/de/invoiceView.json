@@ -1,0 +1,63 @@
+{
+  "dueOn": "Fällig am {date}",
+  "actions": {
+    "print": "Drucken / PDF",
+    "share": "Teilen",
+    "generateReceipt": "Beleg erstellen",
+    "markPaid": "Bezahlt",
+    "edit": "Bearbeiten",
+    "delete": "Löschen"
+  },
+  "receiptsPanel": {
+    "title": "Belege",
+    "generate": "Erstellen",
+    "empty": "Noch keine Belege",
+    "generateFrom": "Aus dieser Rechnung erstellen"
+  },
+  "links": {
+    "title": "Freigabelinks",
+    "newLink": "Neuer Link",
+    "total": "Gesamt",
+    "active": "Aktiv",
+    "views": "Aufrufe",
+    "private": "{count} privat",
+    "public": "{count} öffentlich",
+    "defaultLabel": "Freigabelink",
+    "statusRevoked": "Widerrufen",
+    "statusExpired": "Abgelaufen",
+    "statusActive": "Aktiv",
+    "neverExpires": "Läuft nie ab",
+    "expiredOn": "Abgelaufen am {date}",
+    "expiresOn": "Läuft ab am {date}",
+    "visibilityPrivate": "Privat",
+    "visibilityPublic": "Öffentlich",
+    "recentViews": "Letzte Aufrufe",
+    "emptyTitle": "Noch keine Freigabelinks",
+    "emptyBody": "Erstellen Sie einen Link, um diese Rechnung mit Kunden zu teilen",
+    "createLink": "Link erstellen",
+    "never": "Nie"
+  },
+  "generateModal": {
+    "title": "Beleg erstellen",
+    "from": "Aus {number}",
+    "receiptNumber": "Belegnummer",
+    "paymentDate": "Zahlungsdatum",
+    "paymentMethod": "Zahlungsmethode",
+    "reference": "Referenz",
+    "statusStamp": "Statusstempel",
+    "balanceDue": "Restbetrag ({currency})",
+    "generate": "Beleg erstellen",
+    "paymentMethodPlaceholder": "Banküberweisung"
+  },
+  "stamps": {
+    "paid": "Bezahlt",
+    "partiallyPaid": "Teilweise bezahlt",
+    "unpaid": "Unbezahlt",
+    "none": "Keiner"
+  },
+  "toasts": {
+    "linkCopied": "Link in Zwischenablage kopiert",
+    "receiptCreated": "Beleg {number} erstellt",
+    "receiptFailed": "Beleg konnte nicht erstellt werden"
+  }
+}

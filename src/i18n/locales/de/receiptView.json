@@ -1,0 +1,5 @@
+{
+  "paidOn": "Bezahlt am {date}",
+  "noPaymentDate": "Zahlungsdatum nicht festgelegt",
+  "linksEmptyBody": "Erstellen Sie einen Link, um diesen Beleg mit Kunden zu teilen"
+}

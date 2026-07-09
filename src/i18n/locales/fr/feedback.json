@@ -1,0 +1,32 @@
+{
+  "title": "Partager un commentaire",
+  "subtitle": "Nous lisons chaque message",
+  "typeLabel": "Type",
+  "types": {
+    "general": { "label": "Général", "desc": "Partagez une pensée ou un commentaire" },
+    "bug": { "label": "Signaler un bug", "desc": "Quelque chose ne fonctionne pas" },
+    "feature": { "label": "Suggestion de fonctionnalité", "desc": "Proposez une amélioration" },
+    "other": { "label": "Autre", "desc": "Autre chose" }
+  },
+  "rating": {
+    "label": "Évaluation globale",
+    "optional": "(facultatif)",
+    "labels": {
+      "1": "Horrible",
+      "2": "Médiocre",
+      "3": "Correct",
+      "4": "Bien",
+      "5": "Excellent !"
+    }
+  },
+  "messageLabel": "Message",
+  "messagePlaceholder": "Dites-nous ce que vous avez en tête…",
+  "error": "Une erreur s'est produite. Veuillez réessayer.",
+  "send": "Envoyer le commentaire",
+  "sending": "Envoi…",
+  "success": {
+    "title": "Merci pour votre commentaire !",
+    "body": "Cela nous aide à améliorer Flowtali.",
+    "close": "Fermer"
+  }
+}

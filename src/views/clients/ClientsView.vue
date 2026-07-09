@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { Icon } from '@iconify/vue';
 import Pagination from '@/components/ui/Pagination.vue';
 import { useAuthStore } from '@/stores/auth';
@@ -9,6 +10,7 @@ import { useNotification } from '@/composables/notification';
 import type { IClient } from '@/types/client.types';
 
 const router    = useRouter();
+const { t }     = useI18n();
 const authStore = useAuthStore();
 const { notify } = useNotification();
 
@@ -33,16 +35,8 @@ const avatarColor = (id: string) => {
   return colors[idx];
 };
 
-const clientTypeLabel = (type: string) => {
-  const map: Record<string, string> = {
-    organization: 'Org',
-    individual: 'Individual',
-    freelancer: 'Freelancer',
-    agency: 'Agency',
-    other: 'Other',
-  };
-  return map[type] ?? type;
-};
+const clientTypeLabel = (type: string) =>
+  type === 'organization' ? t('clients.orgShort') : t(`clients.types.${type}`);
 
 const clientTypeBadge = (type: string) => {
   const map: Record<string, string> = {
@@ -72,7 +66,7 @@ async function fetchClients() {
     lastPage.value = paginated.last_page;
     total.value    = paginated.total;
   } catch {
-    notify('Failed to load clients.', 'error');
+    notify(t('clients.toasts.loadFailed'), 'error');
   } finally {
     isLoading.value = false;
   }
@@ -99,16 +93,16 @@ const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params:
     <div class="flex flex-col gap-3">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="page-title">Clients</h1>
-          <p class="page-subtitle">{{ total }} client{{ total === 1 ? '' : 's' }} in your address book</p>
+          <h1 class="page-title">{{ t('clients.title') }}</h1>
+          <p class="page-subtitle">{{ t('clients.count', total) }}</p>
         </div>
         <button
           @click="goToCreate"
           class="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs px-3 py-2 rounded-lg transition-colors"
         >
           <Icon icon="lucide:user-plus" class="w-3.5 h-3.5" />
-          <span class="hidden sm:inline">Add Client</span>
-          <span class="sm:hidden">Add</span>
+          <span class="hidden sm:inline">{{ t('clients.add') }}</span>
+          <span class="sm:hidden">{{ t('clients.addShort') }}</span>
         </button>
       </div>
       <div class="flex items-center gap-2">
@@ -120,7 +114,7 @@ const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params:
             type="search"
             @keyup.enter="onSearch"
             @input="!searchInput && onSearch()"
-            placeholder="Search clients…"
+            :placeholder="t('clients.search')"
             class="app-inp pl-8 text-xs py-2 w-full"
           />
         </div>
@@ -129,14 +123,14 @@ const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params:
           <button
             @click="viewMode = 'grid'"
             :class="['p-2 rounded-md transition-colors', viewMode === 'grid' ? 'bg-gray-500 text-gray-1000' : 'text-gray-700 hover:text-gray-1000']"
-            title="Grid view"
+            :title="t('clients.gridView')"
           >
             <Icon icon="lucide:layout-grid" class="w-4 h-4" />
           </button>
           <button
             @click="viewMode = 'list'"
             :class="['p-2 rounded-md transition-colors', viewMode === 'list' ? 'bg-gray-500 text-gray-1000' : 'text-gray-700 hover:text-gray-1000']"
-            title="List view"
+            :title="t('clients.listView')"
           >
             <Icon icon="lucide:list" class="w-4 h-4" />
           </button>
@@ -154,8 +148,8 @@ const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params:
       <div class="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center mb-4">
         <Icon icon="lucide:users" class="w-6 h-6 text-gray-700" />
       </div>
-      <p class="text-gray-700 text-sm">No clients found</p>
-      <p class="text-gray-700/60 text-xs mt-1">{{ searchQuery ? 'Try adjusting your search query' : 'Add your first client to get started' }}</p>
+      <p class="text-gray-700 text-sm">{{ t('clients.empty.title') }}</p>
+      <p class="text-gray-700/60 text-xs mt-1">{{ searchQuery ? t('clients.empty.searchHint') : t('clients.empty.addHint') }}</p>
     </div>
 
     <!-- Grid view -->
@@ -182,7 +176,7 @@ const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params:
             <button
               @click.stop="goToEdit(client.id)"
               class="opacity-0 group-hover:opacity-100 p-1 rounded-md hover:bg-gray-500 text-gray-700 hover:text-gray-1000 transition-all"
-              title="Edit client"
+              :title="t('clients.editClient')"
             >
               <Icon icon="lucide:pencil" class="w-3 h-3" />
             </button>
@@ -207,9 +201,9 @@ const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params:
     <div v-else class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden">
       <!-- Table header -->
       <div class="grid grid-cols-[2fr_2fr_1fr_auto] gap-4 px-4 py-3 border-b border-gray-400 text-[11px] font-medium text-gray-700 uppercase tracking-wide">
-        <span>Client</span>
-        <span>Contact</span>
-        <span>Type</span>
+        <span>{{ t('clients.table.client') }}</span>
+        <span>{{ t('clients.table.contact') }}</span>
+        <span>{{ t('clients.table.type') }}</span>
         <span></span>
       </div>
 
@@ -255,7 +249,7 @@ const goToEdit   = (id: string) => router.push({ name: 'clients.edit',   params:
           <button
             @click.stop="goToEdit(client.id)"
             class="p-1.5 rounded-md hover:bg-gray-500 text-gray-700 hover:text-gray-1000 transition-colors"
-            title="Edit client"
+            :title="t('clients.editClient')"
           >
             <Icon icon="lucide:pencil" class="w-3.5 h-3.5" />
           </button>

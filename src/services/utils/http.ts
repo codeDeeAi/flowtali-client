@@ -97,6 +97,23 @@ http.interceptors.response.use(
 
       return
     }
+
+    // Paywall: free trial ended or a subscription is required. Route the user to
+    // billing so they can subscribe. Skipped in embed mode and when already there.
+    if (
+      error.response?.status === httpStatus.PAYMENT_REQUIRED &&
+      error.response?.data?.data?.paywall
+    ) {
+      const embedStore = useEmbedAuthStore()
+      if (!embedStore.isAuthenticated && router.currentRoute.value.name !== 'billing') {
+        router.push({
+          name: 'billing',
+          query: { paywall: error.response.data.data.reason ?? 'subscription_required' },
+        })
+      }
+      return Promise.reject(error)
+    }
+
     return Promise.reject(error)
   },
 )

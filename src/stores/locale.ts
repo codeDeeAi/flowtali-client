@@ -25,7 +25,33 @@ export const useLocaleStore = defineStore(
 
     /** Explicit user choice (or route-driven). Persisted via the store. */
     function setLocale(loc: string | null | undefined) {
-      apply(isSupportedLocale(loc) ? loc : DEFAULT_LOCALE)
+      const next = isSupportedLocale(loc) ? loc : DEFAULT_LOCALE
+      apply(next)
+      // Persist the choice server-side for logged-in users so it drives
+      // locale-aware emails / API messages beyond the current session.
+      // Fire-and-forget; dynamic imports avoid a circular store↔http dependency.
+      void persistToBackend(next)
+    }
+
+    async function persistToBackend(loc: Locale) {
+      try {
+        const [{ useAuthStore }, { ProfileService }] = await Promise.all([
+          import('@/stores/auth'),
+          import('@/services/profile.service'),
+        ])
+        if (!useAuthStore().isLoggedIn) return
+        await ProfileService.update({ locale: loc })
+      } catch {
+        // Non-critical: the Accept-Language header still localizes this session.
+      }
+    }
+
+    /**
+     * Apply the locale the backend has stored for the authenticated user.
+     * Authoritative across devices; does NOT echo back to the server.
+     */
+    function syncFromServer(loc: string | null | undefined) {
+      if (isSupportedLocale(loc) && loc !== current.value) apply(loc)
     }
 
     /**
@@ -37,7 +63,7 @@ export const useLocaleStore = defineStore(
       return normalizeLocale(nav)
     }
 
-    return { current, setLocale, resolveFromBrowser }
+    return { current, setLocale, syncFromServer, resolveFromBrowser }
   },
   { persist: true },
 )

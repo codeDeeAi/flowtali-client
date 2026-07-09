@@ -1,0 +1,24 @@
+{
+  "title": "Protokoly auditu",
+  "subtitle": "Úplný přehled aktivit vaší organizace",
+  "exporting": "Exportování…",
+  "exportCsv": "Exportovat CSV",
+  "allEvents": "Všechny události",
+  "search": "Hledat protokoly…",
+  "count": "žádné události | jedna událost | {count} události | {count} událostí",
+  "table": {
+    "event": "Událost",
+    "user": "Uživatel",
+    "resource": "Zdroj",
+    "ip": "IP adresa",
+    "timestamp": "Časové razítko",
+    "status": "Stav"
+  },
+  "system": "Systém",
+  "formerMember": "Bývalý člen",
+  "success": "Úspěch",
+  "failed": "Selhalo",
+  "ok": "OK",
+  "fail": "Chyba",
+  "empty": "Nebyly nalezeny žádné protokoly auditu"
+}

@@ -50,12 +50,28 @@ for (const path in modules) {
   bucket[namespace] = mod.default
 }
 
+/**
+ * Czech plural rule (CLDR): one (1), few (2–4), other (0, 5+).
+ * Maps a count to an index into a 4-part `zero | one | few | other` message.
+ * en/de/fr use vue-i18n's default rule (zero | one | other → indexes 0/1/2).
+ */
+function czechPluralRule(choice: number, choicesLength: number): number {
+  const n = Math.abs(choice)
+  if (n === 0 && choicesLength > 3) return 0        // dedicated "zero" form when provided
+  if (n === 1) return choicesLength > 3 ? 1 : 1
+  if (n >= 2 && n <= 4) return choicesLength > 3 ? 2 : Math.min(choicesLength - 1, 2)
+  return choicesLength > 3 ? 3 : Math.min(choicesLength - 1, 2)
+}
+
 export const i18n = createI18n({
   legacy: false,
   locale: DEFAULT_LOCALE,
   fallbackLocale: DEFAULT_LOCALE,
   // Some doc/legal messages contain inline HTML rendered via v-html.
   warnHtmlMessage: false,
+  pluralRules: {
+    cs: czechPluralRule,
+  },
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   messages: messages as any,
 })

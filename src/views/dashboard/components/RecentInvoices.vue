@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { Icon } from '@iconify/vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
 import http from '@/services/utils/http';
 
 const router = useRouter()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 
 interface InvoiceRow {
@@ -24,18 +26,21 @@ interface InvoiceRow {
 const invoices = ref<InvoiceRow[]>([])
 const isLoading = ref(true)
 
-const statusConfig: Record<string, { label: string; classes: string }> = {
-  paid:    { label: 'Paid',    classes: 'bg-green-500/10 text-green-400 border border-green-500/20' },
-  sent:    { label: 'Sent',    classes: 'bg-blue-500/10 text-blue-400 border border-blue-500/20' },
-  overdue: { label: 'Overdue', classes: 'bg-red-500/10 text-red-400 border border-red-500/20' },
-  draft:   { label: 'Draft',   classes: 'bg-gray-500 text-gray-900 border border-gray-500' },
-  void:    { label: 'Void',    classes: 'bg-gray-500 text-gray-700 border border-gray-500' },
+const statusClasses: Record<string, string> = {
+  paid:    'bg-green-500/10 text-green-400 border border-green-500/20',
+  sent:    'bg-blue-500/10 text-blue-400 border border-blue-500/20',
+  overdue: 'bg-red-500/10 text-red-400 border border-red-500/20',
+  draft:   'bg-gray-500 text-gray-900 border border-gray-500',
+  void:    'bg-gray-500 text-gray-700 border border-gray-500',
+}
+function statusLabel(status: string) {
+  return t(`common.status.${status}`)
 }
 
 const avatarColors = ['#4ade80', '#a78bfa', '#f87171', '#34d399', '#fbbf24', '#38bdf8', '#fb923c', '#e879f9']
 
 function clientName(inv: InvoiceRow) {
-  return inv.to_name || inv.to_company || 'Unknown'
+  return inv.to_name || inv.to_company || t('common.status.unknown')
 }
 
 function initials(name: string) {
@@ -50,7 +55,7 @@ function avatarColor(id: string) {
 
 function fmtDate(iso: string | null) {
   if (!iso) return '—'
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  return new Date(iso).toLocaleDateString(locale.value, { month: 'short', day: 'numeric' })
 }
 
 function fmtAmount(inv: InvoiceRow) {
@@ -78,12 +83,12 @@ onMounted(async () => {
   <div class="bg-gray-200 border border-gray-400 rounded-xl">
     <!-- Header -->
     <div class="flex items-center justify-between px-5 py-4 border-b border-gray-400">
-      <h3 class="text-sm font-semibold text-gray-1000">Recent Invoices</h3>
+      <h3 class="text-sm font-semibold text-gray-1000">{{ t('dashboard.recentInvoices.title') }}</h3>
       <router-link
         :to="{ name: 'invoices' }"
         class="text-xs text-green-700 hover:text-green-800 transition-colors flex items-center gap-1"
       >
-        View all <span>→</span>
+        {{ t('common.actions.viewAll') }} <span>→</span>
       </router-link>
     </div>
 
@@ -104,7 +109,7 @@ onMounted(async () => {
     <!-- Empty state -->
     <div v-else-if="invoices.length === 0" class="flex flex-col items-center justify-center py-10 gap-2">
       <Icon icon="lucide:file-text" class="w-8 h-8 text-gray-700/40" />
-      <p class="text-xs text-gray-700">No invoices yet</p>
+      <p class="text-xs text-gray-700">{{ t('dashboard.recentInvoices.empty') }}</p>
     </div>
 
     <template v-else>
@@ -113,10 +118,10 @@ onMounted(async () => {
         <table class="w-full text-sm">
           <thead>
             <tr class="border-b border-gray-400">
-              <th class="text-left text-[10px] font-semibold uppercase tracking-wider text-gray-700 px-5 py-3">Client</th>
-              <th class="text-left text-[10px] font-semibold uppercase tracking-wider text-gray-700 px-3 py-3">Amount</th>
-              <th class="text-left text-[10px] font-semibold uppercase tracking-wider text-gray-700 px-3 py-3">Status</th>
-              <th class="text-left text-[10px] font-semibold uppercase tracking-wider text-gray-700 px-3 py-3">Date</th>
+              <th class="text-left text-[10px] font-semibold uppercase tracking-wider text-gray-700 px-5 py-3">{{ t('common.table.client') }}</th>
+              <th class="text-left text-[10px] font-semibold uppercase tracking-wider text-gray-700 px-3 py-3">{{ t('common.table.amount') }}</th>
+              <th class="text-left text-[10px] font-semibold uppercase tracking-wider text-gray-700 px-3 py-3">{{ t('common.table.status') }}</th>
+              <th class="text-left text-[10px] font-semibold uppercase tracking-wider text-gray-700 px-3 py-3">{{ t('common.table.date') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -142,8 +147,8 @@ onMounted(async () => {
               </td>
               <td class="px-3 py-3.5 text-sm font-semibold text-gray-1000">{{ fmtAmount(inv) }}</td>
               <td class="px-3 py-3.5">
-                <span :class="['text-xs font-semibold px-2.5 py-1 rounded-full', statusConfig[inv.status]?.classes ?? '']">
-                  {{ statusConfig[inv.status]?.label ?? inv.status }}
+                <span :class="['text-xs font-semibold px-2.5 py-1 rounded-full', statusClasses[inv.status] ?? '']">
+                  {{ statusLabel(inv.status) }}
                 </span>
               </td>
               <td class="px-3 py-3.5 text-sm text-gray-900">{{ fmtDate(inv.issue_date) }}</td>
@@ -174,8 +179,8 @@ onMounted(async () => {
           </div>
           <div class="flex flex-col items-end gap-1.5">
             <span class="text-sm font-semibold text-gray-1000">{{ fmtAmount(inv) }}</span>
-            <span :class="['text-xs font-semibold px-2 py-0.5 rounded-full', statusConfig[inv.status]?.classes ?? '']">
-              {{ statusConfig[inv.status]?.label ?? inv.status }}
+            <span :class="['text-xs font-semibold px-2 py-0.5 rounded-full', statusClasses[inv.status] ?? '']">
+              {{ statusLabel(inv.status) }}
             </span>
           </div>
         </div>

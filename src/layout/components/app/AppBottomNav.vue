@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import { usePermissions } from '@/composables/usePermissions'
 import { useAuthStore } from '@/stores/auth'
@@ -8,6 +9,7 @@ import { AuthService } from '@/services/auth.service'
 
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 const { can, isBusinessOrg } = usePermissions()
 const authStore = useAuthStore()
 
@@ -16,16 +18,16 @@ const isLoggingOut = ref(false)
 
 const moreItems = computed(() => {
   const items: { name: string; icon: string; to: string }[] = []
-  if (isBusinessOrg.value && can('projects.read'))  items.push({ name: 'Projects',        icon: 'lucide:folder-kanban', to: '/app/projects' })
-  if (can('receipts.read'))                         items.push({ name: 'Receipts',         icon: 'lucide:receipt',       to: '/app/receipts' })
-  if (can('letterheads.read'))                      items.push({ name: 'Letterheads',      icon: 'lucide:file',          to: '/app/letterheads' })
-  if (isBusinessOrg.value && can('members.read'))   items.push({ name: 'Members',          icon: 'lucide:users-2',       to: '/app/members' })
-  if (isBusinessOrg.value && can('roles.read'))     items.push({ name: 'Roles',            icon: 'lucide:shield',        to: '/app/roles' })
-  items.push({ name: 'Org Preferences', icon: 'lucide:building-2',  to: '/app/org-preferences' })
-  if (can('analytics.read'))                        items.push({ name: 'Analytics',        icon: 'lucide:bar-chart-2',   to: '/app/analytics' })
-  items.push({ name: 'Billing',         icon: 'lucide:credit-card', to: '/app/billing' })
-  if (can('settings.read'))                         items.push({ name: 'Settings',         icon: 'lucide:settings',      to: '/app/settings' })
-  items.push({ name: 'My Profile',      icon: 'lucide:user',        to: '/app/profile' })
+  if (isBusinessOrg.value && can('projects.read'))  items.push({ name: t('app.nav.projects'),       icon: 'lucide:folder-kanban', to: '/app/projects' })
+  if (can('receipts.read'))                         items.push({ name: t('app.nav.receipts'),       icon: 'lucide:receipt',       to: '/app/receipts' })
+  if (can('letterheads.read'))                      items.push({ name: t('app.nav.letterheads'),    icon: 'lucide:file',          to: '/app/letterheads' })
+  if (isBusinessOrg.value && can('members.read'))   items.push({ name: t('app.nav.members'),        icon: 'lucide:users-2',       to: '/app/members' })
+  if (isBusinessOrg.value && can('roles.read'))     items.push({ name: t('app.nav.rolesShort'),     icon: 'lucide:shield',        to: '/app/roles' })
+  items.push({ name: t('app.nav.orgPreferences'), icon: 'lucide:building-2',  to: '/app/org-preferences' })
+  if (can('analytics.read'))                        items.push({ name: t('app.nav.analytics'),      icon: 'lucide:bar-chart-2',   to: '/app/analytics' })
+  items.push({ name: t('app.nav.billing'),        icon: 'lucide:credit-card', to: '/app/billing' })
+  if (can('settings.read'))                         items.push({ name: t('app.nav.settings'),       icon: 'lucide:settings',      to: '/app/settings' })
+  items.push({ name: t('app.nav.profile'),      icon: 'lucide:user',        to: '/app/profile' })
   return items
 })
 
@@ -104,7 +106,7 @@ async function handleLogout() {
           >
             <Icon v-if="!isLoggingOut" icon="lucide:log-out" class="w-4 h-4" />
             <Icon v-else icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
-            {{ isLoggingOut ? 'Signing out…' : 'Sign out' }}
+            {{ isLoggingOut ? t('app.userMenu.signingOut') : t('app.userMenu.signOut') }}
           </button>
         </div>
       </div>
@@ -119,7 +121,7 @@ async function handleLogout() {
         :class="['flex-1 flex flex-col items-center justify-center gap-1 transition-colors', isActive('/app/dashboard') ? 'text-green-700' : 'text-gray-700']"
       >
         <Icon icon="lucide:layout-dashboard" class="w-5 h-5" />
-        <span class="text-[10px] font-medium">Home</span>
+        <span class="text-[10px] font-medium">{{ t('app.bottomNav.home') }}</span>
       </RouterLink>
 
       <!-- Invoices -->
@@ -129,7 +131,7 @@ async function handleLogout() {
         :class="['flex-1 flex flex-col items-center justify-center gap-1 transition-colors', isActive('/app/invoices') ? 'text-green-700' : 'text-gray-700']"
       >
         <Icon icon="lucide:file-text" class="w-5 h-5" />
-        <span class="text-[10px] font-medium">Invoices</span>
+        <span class="text-[10px] font-medium">{{ t('app.bottomNav.invoices') }}</span>
       </RouterLink>
 
       <!-- FAB (raised centre button) -->
@@ -138,7 +140,7 @@ async function handleLogout() {
           v-if="can('invoices.create')"
           :to="{ name: 'invoices.create' }"
           class="w-12 h-12 -mt-5 rounded-full bg-green-700 hover:bg-green-800 flex items-center justify-center shadow-lg shadow-green-700/30 transition-colors"
-          aria-label="New Invoice"
+          :aria-label="t('app.bottomNav.newInvoice')"
         >
           <Icon icon="lucide:plus" class="w-5 h-5 text-bg-100" />
         </RouterLink>
@@ -151,7 +153,7 @@ async function handleLogout() {
         :class="['flex-1 flex flex-col items-center justify-center gap-1 transition-colors', isActive('/app/clients') ? 'text-green-700' : 'text-gray-700']"
       >
         <Icon icon="lucide:users" class="w-5 h-5" />
-        <span class="text-[10px] font-medium">Clients</span>
+        <span class="text-[10px] font-medium">{{ t('app.bottomNav.clients') }}</span>
       </RouterLink>
 
       <!-- More -->
@@ -160,7 +162,7 @@ async function handleLogout() {
         @click="showMore = !showMore"
       >
         <Icon icon="lucide:grid-2x2" class="w-5 h-5" />
-        <span class="text-[10px] font-medium">More</span>
+        <span class="text-[10px] font-medium">{{ t('app.bottomNav.more') }}</span>
       </button>
 
     </nav>

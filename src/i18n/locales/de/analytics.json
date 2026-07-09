@@ -1,0 +1,50 @@
+{
+  "title": "Analysen",
+  "subtitle": "Umsatzeinblicke und Leistungskennzahlen",
+  "periods": {
+    "30d": "Letzte 30 Tage",
+    "3m": "Letzte 3 Monate",
+    "12m": "Letzte 12 Monate",
+    "all": "Gesamter Zeitraum"
+  },
+  "upgrade": {
+    "title": "Analysen erfordern Business",
+    "desc": "Umsatzdiagramme, Kundenaufschlüsselungen, Rechnungsanalysen und Leistungskennzahlen sind im Business-Plan verfügbar.",
+    "cta": "Auf Business upgraden"
+  },
+  "kpi": {
+    "totalRevenue": "Gesamtumsatz",
+    "avgInvoiceValue": "Ø Rechnungswert",
+    "collectionRate": "Zahlungsquote",
+    "avgDaysToPay": "Ø Tage bis Zahlung",
+    "vsLastPeriod": "vs. letzter Zeitraum",
+    "daysValue": "{n} T."
+  },
+  "revenueTrend": {
+    "title": "Umsatzentwicklung",
+    "subtitle": "Monatlich fakturiert vs. eingezogen",
+    "billed": "Fakturiert",
+    "collected": "Eingezogen"
+  },
+  "topClients": {
+    "title": "Top-Kunden",
+    "subtitle": "Nach Umsatz in diesem Zeitraum",
+    "empty": "Keine bezahlten Rechnungen in diesem Zeitraum"
+  },
+  "invoiceVolume": {
+    "title": "Monatliches Rechnungsvolumen",
+    "subtitle": "Anzahl der ausgestellten Rechnungen pro Monat"
+  },
+  "receipts": {
+    "title": "Belege",
+    "subtitle": "In diesem Zeitraum ausgestellte Belege",
+    "total": "Belege gesamt",
+    "finalized": "Abgeschlossen",
+    "drafts": "Entwürfe",
+    "void": "Storniert",
+    "volumeTitle": "Monatliches Belegvolumen",
+    "volumeSubtitle": "Anzahl der ausgestellten Belege pro Monat",
+    "volumeEmpty": "In diesem Zeitraum keine Belege ausgestellt"
+  },
+  "noData": "Keine Analysedaten verfügbar."
+}

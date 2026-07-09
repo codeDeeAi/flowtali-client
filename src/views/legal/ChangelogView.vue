@@ -33,9 +33,21 @@ interface Release {
 
 const releases: Release[] = [
   {
+    version: 'v1.9',
+    date: 'July 2026',
+    badge: 'Latest',
+    changes: [
+      { type: 'new', text: 'Multilanguage support — Flowtali is now available in English, Czech, German, and French. Switch languages from the header menu, and your preference follows you across every device.' },
+      { type: 'new', text: 'Localized public pages — the landing, Embed SDK docs, and legal pages are served at language-specific URLs (/de/, /cs/, /fr/) with hreflang alternates so search engines index the right version.' },
+      { type: 'improved', text: 'The entire logged-in app is fully translated — dashboard, invoices, receipts, letterheads, clients, projects, members, roles, organization preferences, audit logs, analytics, billing, settings, and profile.' },
+      { type: 'improved', text: 'The in-app feedback panel is now fully translated across all supported languages.' },
+      { type: 'improved', text: 'Dates and numbers throughout the app now format according to your selected language.' },
+    ],
+  },
+  {
     version: 'v1.8',
     date: 'June 2026',
-    badge: 'Latest',
+    badge: null,
     changes: [
       { type: 'new', text: 'Complete design system overhaul — migrated the entire frontend to a Geist-based dark theme inspired by Vercel\'s design system, with a new green accent palette replacing the previous amber/charcoal scheme.' },
       { type: 'new', text: 'Geist Sans and Geist Mono variable fonts — self-hosted for faster loading and a sharper, more professional typographic feel across the entire app.' },

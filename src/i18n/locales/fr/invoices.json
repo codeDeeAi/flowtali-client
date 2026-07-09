@@ -1,0 +1,62 @@
+{
+  "title": "Factures",
+  "subtitle": "Gérez et suivez toutes vos factures",
+  "new": "Nouvelle facture",
+  "summary": {
+    "total": "Total des factures",
+    "paid": "Payées",
+    "overdue": "En retard",
+    "draft": "Brouillons"
+  },
+  "filters": {
+    "all": "Toutes",
+    "paid": "Payées",
+    "due": "À payer",
+    "overdue": "En retard",
+    "draft": "Brouillon"
+  },
+  "status": {
+    "paid": "Payé",
+    "sent": "À payer",
+    "overdue": "En retard",
+    "draft": "Brouillon",
+    "void": "Annulé"
+  },
+  "search": "Rechercher des factures…",
+  "deleteSelected": "Supprimer {count} sélectionnée(s)",
+  "count": "aucune facture | une facture | {count} factures",
+  "table": {
+    "invoice": "Facture",
+    "client": "Client",
+    "amount": "Montant",
+    "status": "Statut",
+    "issueDate": "Date d'émission",
+    "dueDate": "Date d'échéance",
+    "actions": "Actions"
+  },
+  "actions": {
+    "view": "Voir",
+    "edit": "Modifier",
+    "markPaid": "Marquer comme payée",
+    "markPaidShort": "Payée",
+    "delete": "Supprimer"
+  },
+  "empty": "Aucune facture ne correspond à vos filtres",
+  "deleteModal": {
+    "title": "Supprimer {number} ?",
+    "body": "Cette facture sera définitivement supprimée. Cette action est irréversible.",
+    "cancel": "Annuler",
+    "confirm": "Supprimer"
+  },
+  "toasts": {
+    "loadFailed": "Échec du chargement des factures",
+    "markedPaid": "{number} marquée comme payée",
+    "updateFailed": "Échec de la mise à jour de la facture",
+    "deleted": "{number} supprimée",
+    "deleteFailed": "Échec de la suppression de la facture",
+    "bulkDeleted": "aucune facture supprimée | une facture supprimée | {count} factures supprimées",
+    "bulkDeleteFailed": "Échec de la suppression de certaines factures"
+  },
+  "notFound": "Facture introuvable",
+  "back": "Retour aux factures"
+}

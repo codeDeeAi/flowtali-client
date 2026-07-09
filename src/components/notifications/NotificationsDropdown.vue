@@ -21,6 +21,11 @@ const typeMeta: Record<string, { icon: string; color: string }> = {
   invoice_viewed:  { icon: 'lucide:eye',            color: '#a78bfa' },
   member_joined:   { icon: 'lucide:user-plus',      color: '#00c853' },
   role_changed:    { icon: 'lucide:shield',         color: '#38bdf8' },
+  subscription_expiring:   { icon: 'lucide:clock',        color: '#fbbf24' },
+  subscription_ended:      { icon: 'lucide:alert-circle', color: '#fb923c' },
+  subscription_downgraded: { icon: 'lucide:arrow-down-circle', color: '#f87171' },
+  trial_ending:            { icon: 'lucide:hourglass',    color: '#fbbf24' },
+  trial_ended:             { icon: 'lucide:lock',         color: '#f87171' },
 }
 
 function meta(type: string) {

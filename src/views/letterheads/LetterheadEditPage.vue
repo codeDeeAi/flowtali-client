@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import LetterheadEditor from './LetterheadEditor.vue'
 import { useAuthStore } from '@/stores/auth'
 import { LetterheadService } from '@/services/letterhead.service'
 
 const route      = useRoute()
+const { t }      = useI18n()
 const authStore  = useAuthStore()
 const orgId      = computed(() => authStore.getCurrentOrganization?.id ?? '')
 const isLoading  = ref(true)
@@ -76,9 +78,9 @@ onMounted(async () => {
   </div>
 
   <div v-else-if="notFound" class="flex flex-col items-center justify-center h-screen bg-gray-100">
-    <p class="text-gray-700">Letterhead not found</p>
+    <p class="text-gray-700">{{ t('letterheads.notFound') }}</p>
     <button @click="$router.push({ name: 'letterheads' })" class="mt-4 text-green-700 text-sm hover:underline">
-      Back to letterheads
+      {{ t('letterheads.back') }}
     </button>
   </div>
 

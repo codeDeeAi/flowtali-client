@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import { useLoaders } from '@/composables/loaders.ts'
 import { useNotification } from '@/composables/notification.ts'
@@ -21,6 +22,7 @@ const authStore = useAuthStore()
 const orgId     = computed(() => authStore.getCurrentOrganization?.id ?? '')
 
 const router = useRouter()
+const { t, locale } = useI18n()
 const { notify } = useNotification()
 const { initLoaders, setLoader, getLoader } = useLoaders()
 initLoaders({ isSaving: false })
@@ -111,6 +113,10 @@ onMounted(async () => {
 type Tab = 'Company' | 'Content' | 'Design' | 'Settings' | 'Preview'
 const tab  = ref<Tab>('Company')
 const tabs: Tab[] = ['Company', 'Content', 'Design', 'Settings', 'Preview']
+const tabLabelKeys: Record<Tab, string> = {
+  Company: 'company', Content: 'content', Design: 'design', Settings: 'settings', Preview: 'preview',
+}
+const tabLabel = (tb: Tab) => t(`letterheadEditor.tabs.${tabLabelKeys[tb]}`)
 
 // ─── Zoom ──────────────────────────────────────────────────────────────────────
 const zoom    = ref(0.75)
@@ -137,7 +143,7 @@ async function handleLogoUpload(e: Event) {
       if (draftData.value) draftData.value.logos.unshift({ id: uploaded.id, url: uploaded.url })
     }
   } catch {
-    notify('Logo upload failed', 'error')
+    notify(t('invoiceEditor.toasts.logoUploadFailed'), 'error')
   } finally {
     isUploadingLogo.value = false
   }
@@ -158,7 +164,7 @@ async function handleSignatureUpload(e: Event) {
       if (draftData.value) draftData.value.signatures.unshift({ id: uploaded.id, url: uploaded.url })
     }
   } catch {
-    notify('Signature upload failed', 'error')
+    notify(t('invoiceEditor.toasts.signatureUploadFailed'), 'error')
   } finally {
     isUploadingSig.value = false
   }
@@ -173,14 +179,14 @@ const fillCompany = (p: { name: string; company: string | null; email: string | 
 }
 
 // ─── Themes ────────────────────────────────────────────────────────────────────
-const themes = [
-  { id: 'classic',   label: 'Classic',   desc: 'Traditional & professional' },
-  { id: 'modern',    label: 'Modern',    desc: 'Clean sidebar layout' },
-  { id: 'minimal',   label: 'Minimal',   desc: 'Understated & elegant' },
-  { id: 'bold',      label: 'Bold',      desc: 'Strong header impact' },
-  { id: 'legal',     label: 'Legal',     desc: 'Formal document style' },
-  { id: 'executive', label: 'Executive', desc: 'Premium dual-column' },
-]
+const themes = computed(() => [
+  { id: 'classic',   label: t('letterheads.themes.classic'),   desc: t('letterheadEditor.themeDesc.classic') },
+  { id: 'modern',    label: t('letterheads.themes.modern'),    desc: t('letterheadEditor.themeDesc.modern') },
+  { id: 'minimal',   label: t('letterheads.themes.minimal'),   desc: t('letterheadEditor.themeDesc.minimal') },
+  { id: 'bold',      label: t('letterheads.themes.bold'),      desc: t('letterheadEditor.themeDesc.bold') },
+  { id: 'legal',     label: t('letterheads.themes.legal'),     desc: t('letterheadEditor.themeDesc.legal') },
+  { id: 'executive', label: t('letterheads.themes.executive'), desc: t('letterheadEditor.themeDesc.executive') },
+])
 
 const accentPresets = ['#00c853','#60a5fa','#4ade80','#f87171','#a78bfa','#fb923c','#38bdf8','#1a1a1a']
 
@@ -201,24 +207,28 @@ const stampColorFor = (label: string) =>
 
 const orgBrandColors = computed(() => draftData.value?.organization?.brand_colors ?? [])
 
-const toggleFields = [
-  { key: 'showTopBar',       label: 'Top accent bar' },
-  { key: 'showBottomBar',    label: 'Bottom accent bar' },
-  { key: 'showLogo',         label: 'Company logo' },
-  { key: 'showDivider',      label: 'Header divider' },
-  { key: 'showFooter',       label: 'Footer' },
-  { key: 'showDate',         label: 'Date' },
-  { key: 'showRef',          label: 'Reference number' },
-  { key: 'showLineNumbers',  label: 'Line numbers' },
-]
+const toggleFields = computed(() => [
+  { key: 'showTopBar',       label: t('letterheadEditor.toggles.topBar') },
+  { key: 'showBottomBar',    label: t('letterheadEditor.toggles.bottomBar') },
+  { key: 'showLogo',         label: t('letterheadEditor.toggles.companyLogo') },
+  { key: 'showDivider',      label: t('letterheadEditor.toggles.headerDivider') },
+  { key: 'showFooter',       label: t('letterheadEditor.toggles.footer') },
+  { key: 'showDate',         label: t('letterheadEditor.toggles.date') },
+  { key: 'showRef',          label: t('letterheadEditor.toggles.refNumber') },
+  { key: 'showLineNumbers',  label: t('letterheadEditor.toggles.lineNumbers') },
+])
 
 // ─── Date format ───────────────────────────────────────────────────────────────
 const formatDate = (d: string) => {
   if (!d) return ''
   const [y, m, day] = d.split('-')
   if (!y || !m || !day) return d
-  return new Date(+y, +m - 1, +day).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  return new Date(+y, +m - 1, +day).toLocaleDateString(locale.value, { year: 'numeric', month: 'long', day: 'numeric' })
 }
+
+// ─── Header-layout / orientation display labels ─────────────────────────────────
+const layoutLabel = (l: string) => t(`letterheadEditor.design.layout${l.charAt(0).toUpperCase()}${l.slice(1)}`)
+const orientationLabel = (o: string) => t(`letterheadEditor.settings.${o}`)
 
 // ─── Body lines (for line-number display) ──────────────────────────────────────
 const bodyLines = computed(() => form.value.body.split('\n'))
@@ -290,14 +300,14 @@ const handleSave = async () => {
       savedLetterheadId.value = id
     }
 
-    notify(props.mode === 'create' ? 'Letterhead created!' : 'Letterhead saved!', 'success')
+    notify(props.mode === 'create' ? t('letterheadEditor.toasts.created') : t('letterheadEditor.toasts.saved'), 'success')
     if (props.projectId && props.mode === 'create') {
       router.push({ name: 'projects.view', params: { id: props.projectId } })
     } else {
       router.push({ name: 'letterheads' })
     }
   } catch {
-    notify('Failed to save letterhead. Please try again.', 'error')
+    notify(t('letterheadEditor.toasts.saveFailed'), 'error')
   } finally {
     setLoader('isSaving', false)
   }
@@ -312,23 +322,23 @@ const handleSave = async () => {
       <div class="flex items-center gap-3">
         <button @click="router.push({ name: 'letterheads' })" class="flex items-center gap-2 text-gray-900 hover:text-gray-1000 text-sm transition-colors">
           <Icon icon="lucide:arrow-left" class="w-4 h-4" />
-          <span class="hidden sm:inline">Letterheads</span>
+          <span class="hidden sm:inline">{{ t('letterheadEditor.toolbar.letterheads') }}</span>
         </button>
         <span class="text-gray-500">/</span>
         <div class="flex items-center gap-2">
           <div class="w-5 h-5 rounded bg-green-700/10 border border-green-700/25 flex items-center justify-center">
             <Icon icon="lucide:file-text" class="w-3 h-3 text-green-700" />
           </div>
-          <span class="font-semibold text-gray-1000 text-sm">{{ mode === 'create' ? 'New Letterhead' : 'Edit Letterhead' }}</span>
+          <span class="font-semibold text-gray-1000 text-sm">{{ mode === 'create' ? t('letterheadEditor.toolbar.new') : t('letterheadEditor.toolbar.edit') }}</span>
           <span class="text-xs text-gray-700 hidden sm:inline">{{ form.name }}</span>
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <button @click="handlePrint" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 rounded-lg transition-colors" title="Print / PDF">
-          <Icon icon="lucide:printer" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> Print / PDF</span>
+        <button @click="handlePrint" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 rounded-lg transition-colors" :title="t('invoiceEditor.toolbar.print')">
+          <Icon icon="lucide:printer" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> {{ t('invoiceEditor.toolbar.print') }}</span>
         </button>
-        <button @click="showShareModal = true" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 rounded-lg transition-colors" title="Share">
-          <Icon icon="lucide:share-2" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> Share</span>
+        <button @click="showShareModal = true" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 rounded-lg transition-colors" :title="t('invoiceEditor.toolbar.share')">
+          <Icon icon="lucide:share-2" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> {{ t('invoiceEditor.toolbar.share') }}</span>
         </button>
         <button
           @click="handleSave"
@@ -337,7 +347,7 @@ const handleSave = async () => {
         >
           <Icon v-if="getLoader('isSaving')" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
           <Icon v-else icon="lucide:check" class="w-3.5 h-3.5" />
-          <span class="hidden sm:inline">{{ getLoader('isSaving') ? 'Saving…' : (mode === 'create' ? 'Create' : 'Save Changes') }}</span>
+          <span class="hidden sm:inline">{{ getLoader('isSaving') ? t('invoiceEditor.toolbar.saving') : (mode === 'create' ? t('letterheadEditor.toolbar.create') : t('invoiceEditor.toolbar.saveChanges')) }}</span>
         </button>
       </div>
     </div>
@@ -361,7 +371,7 @@ const handleSave = async () => {
             <template v-if="t === 'Preview'">
               <Icon icon="lucide:eye" class="w-3.5 h-3.5 mx-auto" />
             </template>
-            <template v-else>{{ t }}</template>
+            <template v-else>{{ tabLabel(t) }}</template>
           </button>
         </div>
 
@@ -372,12 +382,12 @@ const handleSave = async () => {
 
             <!-- Client presets -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Quick-fill from Clients</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('letterheadEditor.company.quickFillClients') }}</p>
               <div v-if="isDraftLoading" class="flex items-center gap-2 text-xs text-gray-700 py-2">
                 <Icon icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" /> Loading clients…
               </div>
               <div v-else-if="clientPresets.length === 0" class="text-xs text-gray-700 py-2">
-                No clients yet. <a class="text-green-700 underline" href="/app/clients/create">Add one</a>
+                No clients yet. <a class="text-green-700 underline" href="/app/clients/create">{{ t('letterheadEditor.company.addOne') }}</a>
               </div>
               <div v-else class="space-y-2 max-h-48 overflow-y-auto">
                 <button
@@ -395,7 +405,7 @@ const handleSave = async () => {
 
             <!-- Logo upload -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Company Logo</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('letterheadEditor.company.companyLogo') }}</p>
               <div v-if="form.logoUrl" class="mb-2 flex items-center gap-3">
                 <img :src="form.logoUrl" alt="Logo" class="h-10 w-auto rounded border border-gray-500 bg-gray-400 object-contain p-1" />
                 <button @click="form.logoUrl = ''" class="text-xs text-gray-700 hover:text-red-400 transition-colors flex items-center gap-1">
@@ -414,7 +424,7 @@ const handleSave = async () => {
                   v-for="logo in savedLogos" :key="logo.id"
                   @click="form.logoUrl = logo.url"
                   :class="['rounded border p-0.5 transition-colors', form.logoUrl === logo.url ? 'border-green-700' : 'border-gray-500 hover:border-green-700/50']"
-                  title="Use this logo"
+                  :title="t('letterheadEditor.company.useThisLogo')"
                 >
                   <img :src="logo.url" class="h-8 w-auto max-w-[60px] object-contain" />
                 </button>
@@ -426,36 +436,36 @@ const handleSave = async () => {
             <!-- Fields -->
             <div class="space-y-3">
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Company Name</label>
-                <input v-model="form.company" class="app-inp text-sm" placeholder="ACME STUDIO" />
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.company.companyName') }}</label>
+                <input v-model="form.company" class="app-inp text-sm" :placeholder="t('letterheadEditor.company.companyNamePlaceholder')" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Tagline / Role</label>
-                <input v-model="form.tagline" class="app-inp text-sm" placeholder="Creative Agency & Digital Studio" />
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.company.tagline') }}</label>
+                <input v-model="form.tagline" class="app-inp text-sm" :placeholder="t('letterheadEditor.company.taglinePlaceholder')" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Email</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.from.email') }}</label>
                 <input v-model="form.email" type="email" class="app-inp text-sm" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Phone</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.from.phone') }}</label>
                 <input v-model="form.phone" class="app-inp text-sm" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Website</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.from.website') }}</label>
                 <input v-model="form.website" class="app-inp text-sm" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Address</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.from.address') }}</label>
                 <textarea v-model="form.address" class="app-inp text-sm resize-none" rows="3" />
               </div>
               <div class="grid grid-cols-2 gap-2">
                 <div class="space-y-1">
-                  <label class="text-[10px] uppercase tracking-wider text-gray-700">Reg. Number</label>
+                  <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.company.regNumber') }}</label>
                   <input v-model="form.regNumber" class="app-inp text-sm font-mono" placeholder="12345678" />
                 </div>
                 <div class="space-y-1">
-                  <label class="text-[10px] uppercase tracking-wider text-gray-700">VAT Number</label>
+                  <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.company.vatNumber') }}</label>
                   <input v-model="form.vatNumber" class="app-inp text-sm font-mono" placeholder="GB123456789" />
                 </div>
               </div>
@@ -465,7 +475,7 @@ const handleSave = async () => {
 
             <!-- Signature -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Signature Image</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('letterheadEditor.company.signatureImage') }}</p>
               <div v-if="form.signatureUrl" class="mb-2 flex items-center gap-3">
                 <img :src="form.signatureUrl" alt="Sig" class="h-10 w-auto rounded border border-gray-500 bg-gray-400 object-contain p-1" />
                 <button @click="form.signatureUrl = ''" class="text-xs text-gray-700 hover:text-red-400 transition-colors flex items-center gap-1">
@@ -484,7 +494,7 @@ const handleSave = async () => {
                   v-for="sig in savedSignatures" :key="sig.id"
                   @click="form.signatureUrl = sig.url"
                   :class="['rounded border p-0.5 transition-colors', form.signatureUrl === sig.url ? 'border-green-700' : 'border-gray-500 hover:border-green-700/50']"
-                  title="Use this signature"
+                  :title="t('letterheadEditor.company.useThisSignature')"
                 >
                   <img :src="sig.url" class="h-8 w-auto max-w-[80px] object-contain" />
                 </button>
@@ -495,51 +505,51 @@ const handleSave = async () => {
           <!-- ══════════════════════════ CONTENT TAB ══════════════════════════ -->
           <template v-if="tab === 'Content'">
             <div class="space-y-1">
-              <label class="text-[10px] uppercase tracking-wider text-gray-700">Template Name</label>
-              <input v-model="form.name" class="app-inp text-sm" placeholder="Agency Proposal" />
+              <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.settings.templateName') }}</label>
+              <input v-model="form.name" class="app-inp text-sm" :placeholder="t('letterheadEditor.content.templateNamePlaceholder')" />
             </div>
             <div class="space-y-1">
-              <label class="text-[10px] uppercase tracking-wider text-gray-700">Subject / Re:</label>
-              <input v-model="form.subject" class="app-inp text-sm" placeholder="Re: Project Engagement" />
+              <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.content.subjectRe') }}</label>
+              <input v-model="form.subject" class="app-inp text-sm" :placeholder="t('letterheadEditor.content.subjectPlaceholder')" />
             </div>
             <div class="space-y-1">
-              <label class="text-[10px] uppercase tracking-wider text-gray-700">Salutation</label>
-              <input v-model="form.salutation" class="app-inp text-sm" placeholder="Dear [Client Name]," />
+              <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.content.salutation') }}</label>
+              <input v-model="form.salutation" class="app-inp text-sm" :placeholder="t('letterheadEditor.content.salutationPlaceholder')" />
             </div>
             <div class="space-y-1">
-              <label class="text-[10px] uppercase tracking-wider text-gray-700">Body Text</label>
-              <textarea v-model="form.body" class="app-inp text-sm resize-none" rows="10" placeholder="Letter body…" />
+              <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.content.bodyText') }}</label>
+              <textarea v-model="form.body" class="app-inp text-sm resize-none" rows="10" :placeholder="t('letterheadEditor.content.bodyPlaceholder')" />
             </div>
             <div class="space-y-1">
-              <label class="text-[10px] uppercase tracking-wider text-gray-700">Closing</label>
-              <input v-model="form.closing" class="app-inp text-sm" placeholder="Yours sincerely," />
+              <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.content.closing') }}</label>
+              <input v-model="form.closing" class="app-inp text-sm" :placeholder="t('letterheadEditor.content.closingPlaceholder')" />
             </div>
             <div class="grid grid-cols-2 gap-2">
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Signer Name</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.content.signerName') }}</label>
                 <input v-model="form.signerName" class="app-inp text-sm" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Signer Title</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.content.signerTitle') }}</label>
                 <input v-model="form.signerTitle" class="app-inp text-sm" />
               </div>
             </div>
 
             <div class="h-px bg-gray-400"></div>
 
-            <p class="text-[10px] uppercase tracking-wider text-gray-700">Footer Columns</p>
-            <p class="text-[10px] text-gray-700/60">Use <code class="text-green-700">&#123;page&#125;</code> and <code class="text-green-700">&#123;total&#125;</code> for page numbers</p>
+            <p class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.content.footerColumns') }}</p>
+            <p class="text-[10px] text-gray-700/60">{{ t('letterheadEditor.content.use') }} <code class="text-green-700">&#123;page&#125;</code> and <code class="text-green-700">&#123;total&#125;</code> for page numbers</p>
             <div class="space-y-2">
               <div class="space-y-1">
-                <label class="text-[10px] text-gray-700">Left</label>
+                <label class="text-[10px] text-gray-700">{{ t('letterheadEditor.content.left') }}</label>
                 <input v-model="form.footerLeft" class="app-inp text-sm" :placeholder="form.website || 'www.yourstudio.com'" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] text-gray-700">Center</label>
+                <label class="text-[10px] text-gray-700">{{ t('letterheadEditor.content.center') }}</label>
                 <input v-model="form.footerCenter" class="app-inp text-sm" :placeholder="form.company || 'Company Name'" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] text-gray-700">Right</label>
+                <label class="text-[10px] text-gray-700">{{ t('letterheadEditor.content.right') }}</label>
                 <input v-model="form.footerRight" class="app-inp text-sm" placeholder="Page {page} of {total}" />
               </div>
             </div>
@@ -550,7 +560,7 @@ const handleSave = async () => {
 
             <!-- Theme picker -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Theme</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('invoiceEditor.design.theme') }}</p>
               <div class="grid grid-cols-3 gap-2">
                 <button
                   v-for="th in themes" :key="th.id"
@@ -581,14 +591,14 @@ const handleSave = async () => {
 
             <!-- Accent color -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Accent Color</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('invoiceEditor.design.accentColor') }}</p>
               <div class="flex items-center gap-2 mb-2">
                 <input type="color" v-model="form.accentColor" class="w-9 h-9 rounded cursor-pointer border border-gray-500 bg-gray-200 p-0.5" />
                 <input v-model="form.accentColor" class="app-inp text-sm flex-1 font-mono" />
               </div>
               <!-- Brand colors from org -->
               <template v-if="orgBrandColors.length">
-                <p class="text-[9px] uppercase tracking-wider text-gray-700/60 mb-1.5">Brand</p>
+                <p class="text-[9px] uppercase tracking-wider text-gray-700/60 mb-1.5">{{ t('invoiceEditor.design.brand') }}</p>
                 <div class="flex gap-1.5 flex-wrap mb-2">
                   <button
                     v-for="c in orgBrandColors" :key="c"
@@ -598,7 +608,7 @@ const handleSave = async () => {
                     :style="{ background: c }"
                   />
                 </div>
-                <p class="text-[9px] uppercase tracking-wider text-gray-700/60 mb-1.5">Palette</p>
+                <p class="text-[9px] uppercase tracking-wider text-gray-700/60 mb-1.5">{{ t('letterheadEditor.design.palette') }}</p>
               </template>
               <div class="flex gap-1.5 flex-wrap">
                 <button
@@ -613,7 +623,7 @@ const handleSave = async () => {
 
             <!-- Font -->
             <div class="space-y-1">
-              <p class="text-[10px] uppercase tracking-wider text-gray-700">Font Family</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.design.fontFamily') }}</p>
               <select v-model="form.fontFamily" class="app-select text-sm">
                 <option v-for="f in fonts" :key="f.value" :value="f.value">{{ f.label }}</option>
               </select>
@@ -621,7 +631,7 @@ const handleSave = async () => {
 
             <!-- Header layout -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Header Layout</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('letterheadEditor.design.headerLayout') }}</p>
               <div class="grid grid-cols-4 gap-1.5">
                 <button
                   v-for="layout in (['left','center','right','split'] as const)" :key="layout"
@@ -630,7 +640,7 @@ const handleSave = async () => {
                     'py-2 rounded border text-[9px] font-medium capitalize transition-colors',
                     form.headerLayout === layout ? 'border-green-700 bg-green-700/10 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500'
                   ]"
-                >{{ layout }}</button>
+                >{{ layoutLabel(layout) }}</button>
               </div>
             </div>
 
@@ -638,7 +648,7 @@ const handleSave = async () => {
 
             <!-- Stamp -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Stamp</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('letterheadEditor.design.stamp') }}</p>
               <div class="grid grid-cols-3 gap-1.5">
                 <!-- None option -->
                 <button
@@ -648,7 +658,7 @@ const handleSave = async () => {
                     'py-1.5 rounded border text-xs font-semibold transition-colors',
                     form.stamp === '' ? 'border-green-700 bg-green-700/10 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500'
                   ]"
-                >None</button>
+                >{{ t('invoiceEditor.design.none') }}</button>
                 <!-- Org stamps from draft-data -->
                 <button
                   v-for="s in orgStamps" :key="s.text"
@@ -666,9 +676,9 @@ const handleSave = async () => {
             <!-- Watermark -->
             <div class="space-y-2">
               <div class="flex items-center justify-between">
-                <p class="text-[10px] uppercase tracking-wider text-gray-700">Watermark</p>
+                <p class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.design.watermark') }}</p>
                 <label class="flex items-center gap-1.5 cursor-pointer">
-                  <span class="text-[10px] text-gray-700">{{ form.showWatermark ? 'Visible' : 'Hidden' }}</span>
+                  <span class="text-[10px] text-gray-700">{{ form.showWatermark ? t('invoiceEditor.design.visible') : t('invoiceEditor.design.hidden') }}</span>
                   <div class="relative">
                     <input type="checkbox" v-model="form.showWatermark" class="sr-only" />
                     <div :class="['w-8 h-4 rounded-full transition-colors', form.showWatermark ? 'bg-green-700' : 'bg-gray-500']"></div>
@@ -679,7 +689,7 @@ const handleSave = async () => {
               <input v-model="form.watermark" class="app-inp text-sm" placeholder="CONFIDENTIAL" />
               <div class="flex items-center gap-2">
                 <input type="color" v-model="form.watermarkColor" class="w-8 h-8 rounded cursor-pointer border border-gray-500 bg-gray-200 p-0.5 shrink-0" />
-                <span class="text-xs text-gray-700">Watermark color</span>
+                <span class="text-xs text-gray-700">{{ t('letterheadEditor.design.watermarkColor') }}</span>
               </div>
             </div>
 
@@ -687,7 +697,7 @@ const handleSave = async () => {
 
             <!-- Show / hide toggles -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-3">Show / Hide</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-3">{{ t('invoiceEditor.design.showHide') }}</p>
               <div class="space-y-2.5">
                 <div v-for="field in toggleFields" :key="field.key" class="flex items-center justify-between">
                   <span class="text-xs text-gray-900">{{ field.label }}</span>
@@ -707,31 +717,31 @@ const handleSave = async () => {
           <template v-if="tab === 'Settings'">
             <div class="space-y-3">
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Template Name</label>
-                <input v-model="form.name" class="app-inp text-sm" placeholder="Agency Proposal" />
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.settings.templateName') }}</label>
+                <input v-model="form.name" class="app-inp text-sm" :placeholder="t('letterheadEditor.content.templateNamePlaceholder')" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Date</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadView.doc.date') }}</label>
                 <input v-model="form.date" type="date" class="app-inp text-sm" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Reference Number</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.settings.refNumber') }}</label>
                 <input v-model="form.refNumber" class="app-inp text-sm font-mono" placeholder="REF-001" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Paper Size</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.settings.paperSize') }}</label>
                 <select v-model="form.paperSize" class="app-select text-sm">
                   <option>A4</option><option>Letter</option><option>Legal</option>
                 </select>
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Orientation</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.settings.orientation') }}</label>
                 <div class="grid grid-cols-2 gap-2">
                   <button
                     v-for="o in (['portrait','landscape'] as const)" :key="o"
                     @click="form.orientation = o"
                     :class="['py-1.5 rounded border text-xs capitalize transition-colors', form.orientation === o ? 'border-green-700 bg-green-700/10 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500']"
-                  >{{ o }}</button>
+                  >{{ orientationLabel(o) }}</button>
                 </div>
               </div>
             </div>
@@ -748,7 +758,7 @@ const handleSave = async () => {
           <span class="text-xs text-gray-700 mr-2">{{ Math.round(zoom * 100) }}%</span>
           <button @click="zoomOut" class="p-1.5 rounded bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 transition-colors"><Icon icon="lucide:minus" class="w-3.5 h-3.5" /></button>
           <button @click="zoomIn"  class="p-1.5 rounded bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 transition-colors"><Icon icon="lucide:plus" class="w-3.5 h-3.5" /></button>
-          <button @click="zoomFit" class="px-2.5 py-1 rounded bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 text-xs transition-colors">Fit</button>
+          <button @click="zoomFit" class="px-2.5 py-1 rounded bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 text-xs transition-colors">{{ t('invoiceEditor.zoom.fit') }}</button>
         </div>
 
         <!-- Document -->
@@ -801,18 +811,18 @@ const handleSave = async () => {
                 <!-- Date / Ref -->
                 <div v-if="form.showDate || form.showRef" class="flex gap-8 mb-6 text-xs">
                   <div v-if="form.showDate">
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Date</div>
+                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('letterheadView.doc.date') }}</div>
                     <div class="font-semibold text-gray-700">{{ formatDate(form.date) }}</div>
                   </div>
                   <div v-if="form.showRef">
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Reference</div>
+                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('letterheadView.doc.reference') }}</div>
                     <div class="font-semibold text-gray-700 font-mono">{{ form.refNumber }}</div>
                   </div>
                 </div>
 
                 <!-- Subject -->
                 <div v-if="form.subject" class="mb-6">
-                  <span class="font-semibold text-gray-800">Re: </span>
+                  <span class="font-semibold text-gray-800">{{ t('letterheadView.doc.re') }} </span>
                   <span class="text-gray-700">{{ form.subject }}</span>
                 </div>
 
@@ -877,17 +887,17 @@ const handleSave = async () => {
                 <div v-if="form.tagline" class="text-white/70 text-xs mb-6">{{ form.tagline }}</div>
                 <div class="space-y-4 mt-auto">
                   <div>
-                    <div class="text-white/50 uppercase tracking-widest mb-1" style="font-size:9px">Contact</div>
+                    <div class="text-white/50 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('letterheadView.doc.contact') }}</div>
                     <div v-if="form.email"   class="text-white/80 text-xs">{{ form.email }}</div>
                     <div v-if="form.phone"   class="text-white/80 text-xs">{{ form.phone }}</div>
                     <div v-if="form.website" class="text-white/80 text-xs">{{ form.website }}</div>
                   </div>
                   <div v-if="form.address">
-                    <div class="text-white/50 uppercase tracking-widest mb-1" style="font-size:9px">Address</div>
+                    <div class="text-white/50 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('invoiceEditor.from.address') }}</div>
                     <div class="text-white/80 text-xs whitespace-pre-line leading-relaxed">{{ form.address }}</div>
                   </div>
                   <div v-if="form.regNumber || form.vatNumber">
-                    <div class="text-white/50 uppercase tracking-widest mb-1" style="font-size:9px">Registration</div>
+                    <div class="text-white/50 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('letterheadView.doc.registration') }}</div>
                     <div v-if="form.regNumber" class="text-white/70 text-xs font-mono">{{ form.regNumber }}</div>
                     <div v-if="form.vatNumber" class="text-white/70 text-xs font-mono">{{ form.vatNumber }}</div>
                   </div>
@@ -899,11 +909,11 @@ const handleSave = async () => {
                 <!-- Date / Ref -->
                 <div class="flex justify-end gap-6 mb-8 text-xs">
                   <div v-if="form.showDate" class="text-right">
-                    <div class="text-gray-400 uppercase tracking-widest mb-0.5" style="font-size:9px">Date</div>
+                    <div class="text-gray-400 uppercase tracking-widest mb-0.5" style="font-size:9px">{{ t('letterheadView.doc.date') }}</div>
                     <div class="font-semibold text-gray-700">{{ formatDate(form.date) }}</div>
                   </div>
                   <div v-if="form.showRef" class="text-right">
-                    <div class="text-gray-400 uppercase tracking-widest mb-0.5" style="font-size:9px">Reference</div>
+                    <div class="text-gray-400 uppercase tracking-widest mb-0.5" style="font-size:9px">{{ t('letterheadView.doc.reference') }}</div>
                     <div class="font-semibold text-gray-700 font-mono">{{ form.refNumber }}</div>
                   </div>
                 </div>
@@ -990,8 +1000,8 @@ const handleSave = async () => {
               </div>
               <div class="p-12" style="position: relative; z-index: 3">
                 <div class="flex gap-8 mb-8 text-xs">
-                  <div v-if="form.showDate"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Date</div><div class="font-bold text-gray-800">{{ formatDate(form.date) }}</div></div>
-                  <div v-if="form.showRef"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Reference</div><div class="font-bold text-gray-800 font-mono">{{ form.refNumber }}</div></div>
+                  <div v-if="form.showDate"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('letterheadView.doc.date') }}</div><div class="font-bold text-gray-800">{{ formatDate(form.date) }}</div></div>
+                  <div v-if="form.showRef"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('letterheadView.doc.reference') }}</div><div class="font-bold text-gray-800 font-mono">{{ form.refNumber }}</div></div>
                 </div>
                 <div v-if="form.subject" class="text-lg font-black text-gray-900 mb-6 pb-3" :style="{ borderBottom: `3px solid ${form.accentColor}` }">{{ form.subject }}</div>
                 <p v-if="form.salutation" class="text-gray-700 mb-4">{{ form.salutation }}</p>
@@ -1001,7 +1011,7 @@ const handleSave = async () => {
                 <div class="font-bold text-gray-800">{{ form.signerName }}</div>
                 <div class="text-xs text-gray-500">{{ form.signerTitle }}</div>
                 <div v-if="form.address" class="mt-6 p-4 rounded text-xs text-gray-500 leading-relaxed" :style="{ backgroundColor: form.accentColor + '10', borderLeft: `3px solid ${form.accentColor}` }">
-                  <span class="font-semibold text-gray-700">Address: </span>{{ form.address.replace(/\n/g, ', ') }}
+                  <span class="font-semibold text-gray-700">{{ t('letterheadView.doc.addressInline') }} </span>{{ form.address.replace(/\n/g, ', ') }}
                   <span v-if="form.regNumber"> · Reg: {{ form.regNumber }}</span>
                   <span v-if="form.vatNumber"> · VAT: {{ form.vatNumber }}</span>
                 </div>
@@ -1109,15 +1119,15 @@ const handleSave = async () => {
                 <!-- Meta strip -->
                 <div class="grid grid-cols-3 gap-4 border border-gray-100 rounded p-4 mb-8 text-xs" :style="{ backgroundColor: form.accentColor + '08' }">
                   <div v-if="form.showDate">
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Date</div>
+                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('letterheadView.doc.date') }}</div>
                     <div class="font-semibold text-gray-700">{{ formatDate(form.date) }}</div>
                   </div>
                   <div v-if="form.showRef">
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Reference</div>
+                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('letterheadView.doc.reference') }}</div>
                     <div class="font-semibold text-gray-700 font-mono">{{ form.refNumber }}</div>
                   </div>
                   <div v-if="form.subject">
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Subject</div>
+                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('letterheadView.doc.subject') }}</div>
                     <div class="font-semibold text-gray-700">{{ form.subject }}</div>
                   </div>
                 </div>

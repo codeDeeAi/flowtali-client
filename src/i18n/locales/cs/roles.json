@@ -1,0 +1,70 @@
+{
+  "title": "Role a oprávnění",
+  "subtitle": "žádné role · správa řízení přístupu | jedna role · správa řízení přístupu | {count} role · správa řízení přístupu | {count} rolí · správa řízení přístupu",
+  "businessRequired": "Vyžadován plán Business",
+  "createRole": "Vytvořit roli",
+  "upgrade": {
+    "title": "Role a oprávnění vyžadují Business",
+    "desc": "Vytvářejte vlastní role, přidělujte podrobná oprávnění a přesně řiďte, k čemu má každý člen týmu přístup — dostupné v plánu Business.",
+    "cta": "Upgradovat na Business"
+  },
+  "rolesCount": "Role ({count})",
+  "loading": "Načítání…",
+  "noRoles": "Žádné role nenalezeny.",
+  "system": "Systémová",
+  "custom": "Vlastní",
+  "disabled": "Deaktivováno",
+  "memberCount": "žádní členové | jeden člen | {count} členové | {count} členů",
+  "selectRole": "Vyberte roli pro zobrazení jejích oprávnění",
+  "rolePermissions": "Oprávnění: {name}",
+  "editRole": "Upravit roli",
+  "matrix": {
+    "resource": "Zdroj"
+  },
+  "tags": {
+    "read": "Číst",
+    "create": "Vytvářet",
+    "update": "Upravovat",
+    "delete": "Mazat",
+    "manage": "Spravovat"
+  },
+  "legend": {
+    "allowed": "Povoleno",
+    "denied": "Zamítnuto",
+    "na": "Nedost."
+  },
+  "createModal": {
+    "title": "Vytvořit roli",
+    "roleName": "Název role",
+    "roleNamePlaceholder": "např. Účetní",
+    "description": "Popis",
+    "descriptionPlaceholder": "Co může tato role dělat?",
+    "permissions": "Oprávnění",
+    "resetAll": "Resetovat všechna oprávnění",
+    "toggleGroup": "Přepnout skupinu",
+    "cancel": "Zrušit",
+    "creating": "Vytváření…",
+    "create": "Vytvořit roli"
+  },
+  "editModal": {
+    "title": "Upravit roli",
+    "cancel": "Zrušit",
+    "saving": "Ukládání…",
+    "save": "Uložit změny"
+  },
+  "deleteModal": {
+    "title": "Smazat „{name}\"?",
+    "body": "Tato role bude trvale odstraněna. Členové s touto rolí ztratí tato oprávnění.",
+    "cancel": "Zrušit",
+    "delete": "Smazat roli"
+  },
+  "toasts": {
+    "loadFailed": "Nepodařilo se načíst role.",
+    "created": "Role „{name}\" vytvořena",
+    "createFailed": "Nepodařilo se vytvořit roli.",
+    "updated": "Role „{name}\" aktualizována",
+    "updateFailed": "Nepodařilo se aktualizovat roli.",
+    "deleted": "Role „{name}\" smazána",
+    "deleteFailed": "Nepodařilo se smazat roli."
+  }
+}

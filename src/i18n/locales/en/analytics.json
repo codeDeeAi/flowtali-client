@@ -1,0 +1,50 @@
+{
+  "title": "Analytics",
+  "subtitle": "Revenue insights and performance metrics",
+  "periods": {
+    "30d": "Last 30 days",
+    "3m": "Last 3 months",
+    "12m": "Last 12 months",
+    "all": "All time"
+  },
+  "upgrade": {
+    "title": "Analytics requires Business",
+    "desc": "Revenue charts, client breakdowns, invoice analytics, and performance metrics are available on the Business plan.",
+    "cta": "Upgrade to Business"
+  },
+  "kpi": {
+    "totalRevenue": "Total Revenue",
+    "avgInvoiceValue": "Avg Invoice Value",
+    "collectionRate": "Collection Rate",
+    "avgDaysToPay": "Avg Days to Pay",
+    "vsLastPeriod": "vs last period",
+    "daysValue": "{n}d"
+  },
+  "revenueTrend": {
+    "title": "Revenue Trend",
+    "subtitle": "Monthly billed vs collected",
+    "billed": "Billed",
+    "collected": "Collected"
+  },
+  "topClients": {
+    "title": "Top Clients",
+    "subtitle": "By revenue this period",
+    "empty": "No paid invoices this period"
+  },
+  "invoiceVolume": {
+    "title": "Monthly Invoice Volume",
+    "subtitle": "Number of invoices issued per month"
+  },
+  "receipts": {
+    "title": "Receipts",
+    "subtitle": "Receipts issued in this period",
+    "total": "Total Receipts",
+    "finalized": "Finalized",
+    "drafts": "Drafts",
+    "void": "Void",
+    "volumeTitle": "Monthly Receipt Volume",
+    "volumeSubtitle": "Number of receipts issued per month",
+    "volumeEmpty": "No receipts issued this period"
+  },
+  "noData": "No analytics data available."
+}

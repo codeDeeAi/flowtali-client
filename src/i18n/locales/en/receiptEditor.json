@@ -1,0 +1,55 @@
+{
+  "toolbar": {
+    "receipts": "Receipts",
+    "new": "New Receipt",
+    "edit": "Edit Receipt",
+    "create": "Create Receipt"
+  },
+  "from": {
+    "companyIssuedBy": "Company / Issued By",
+    "bankReceivedTo": "Bank Details (Payment Received To)"
+  },
+  "to": {
+    "selectClient": "Select Client",
+    "receivedFromName": "Received From (Name)",
+    "address": "Address"
+  },
+  "items": {
+    "descriptionPlaceholder": "Description of goods or service",
+    "amountPaid": "Amount Paid",
+    "totalReceived": "Total Received",
+    "balanceDue": "Balance Due"
+  },
+  "design": {
+    "paymentStamp": "Payment Stamp",
+    "balanceDueLabel": "Balance Due (remaining amount owed)",
+    "balanceDueHint": "Shown on the receipt document below the total"
+  },
+  "settings": {
+    "receiptNumber": "Receipt Number",
+    "paymentDate": "Payment Date",
+    "paymentMethod": "Payment Method",
+    "paymentMethodPlaceholder": "Specify method…",
+    "referenceNumber": "Reference Number",
+    "referencePlaceholder": "TXN-123456",
+    "notes": "Notes / Additional Info",
+    "notesPlaceholder": "Thank you for your payment…"
+  },
+  "preview": {
+    "receivedFrom": "Received From",
+    "reference": "Reference",
+    "method": "Method",
+    "receivedTo": "Received To",
+    "paymentReceivedTo": "Payment Received To",
+    "issuedBy": "Issued By"
+  },
+  "toasts": {
+    "created": "Receipt created!",
+    "saved": "Receipt saved!",
+    "saveFailed": "Failed to save receipt."
+  },
+  "validation": {
+    "numberRequired": "Receipt number is required.",
+    "descriptionRequired": "All line items must have a description."
+  }
+}

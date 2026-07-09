@@ -1,0 +1,24 @@
+{
+  "title": "Audit-Protokolle",
+  "subtitle": "Vollständiger Aktivitätsverlauf Ihrer Organisation",
+  "exporting": "Wird exportiert…",
+  "exportCsv": "CSV exportieren",
+  "allEvents": "Alle Ereignisse",
+  "search": "Protokolle suchen…",
+  "count": "keine Ereignisse | ein Ereignis | {count} Ereignisse",
+  "table": {
+    "event": "Ereignis",
+    "user": "Benutzer",
+    "resource": "Ressource",
+    "ip": "IP-Adresse",
+    "timestamp": "Zeitstempel",
+    "status": "Status"
+  },
+  "system": "System",
+  "formerMember": "Ehemaliges Mitglied",
+  "success": "Erfolg",
+  "failed": "Fehlgeschlagen",
+  "ok": "OK",
+  "fail": "Fehler",
+  "empty": "Keine Audit-Protokolle gefunden"
+}

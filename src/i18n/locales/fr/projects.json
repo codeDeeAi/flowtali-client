@@ -1,0 +1,176 @@
+{
+  "title": "Projets",
+  "count": "aucun projet | un projet | {count} projets",
+  "new": "Nouveau projet",
+  "search": "Rechercher des projets…",
+  "status": {
+    "all": "Tous",
+    "draft": "Brouillon",
+    "active": "Actif",
+    "on_hold": "En pause",
+    "completed": "Terminé",
+    "cancelled": "Annulé"
+  },
+  "statusDesc": {
+    "draft": "Pas encore commencé",
+    "active": "En cours",
+    "on_hold": "Temporairement en pause",
+    "completed": "Terminé avec succès",
+    "cancelled": "Ne se poursuit plus"
+  },
+  "empty": {
+    "title": "Aucun projet trouvé",
+    "filterHint": "Essayez d'ajuster vos filtres",
+    "createHint": "Créez votre premier projet pour commencer",
+    "createLink": "Créer un projet"
+  },
+  "card": {
+    "contract": "Contrat"
+  },
+  "create": {
+    "title": "Nouveau projet",
+    "subtitle": "Suivez les factures, reçus et fichiers au sein d'un même projet"
+  },
+  "edit": {
+    "title": "Modifier le projet"
+  },
+  "sections": {
+    "identity": "Identité du projet",
+    "status": "Statut",
+    "financials": "Finances et calendrier"
+  },
+  "fields": {
+    "number": "Numéro",
+    "projectNumber": "Numéro de projet",
+    "title": "Titre",
+    "description": "Description",
+    "client": "Client",
+    "initialStatus": "Statut initial",
+    "statusTracking": "Suivi du statut",
+    "currency": "Devise",
+    "contractValue": "Valeur du contrat",
+    "startDate": "Date de début",
+    "endDate": "Date de fin"
+  },
+  "placeholders": {
+    "number": "PRJ-001",
+    "title": "ex. Refonte du site web pour Acme Corp",
+    "titleShort": "Refonte du site web",
+    "description": "Périmètre, objectifs ou notes sur ce projet…",
+    "descriptionShort": "Description facultative du projet…",
+    "contractValue": "0,00"
+  },
+  "noClientAssigned": "Aucun client attribué",
+  "noClient": "Aucun client",
+  "tracking": {
+    "manual": "Manuel",
+    "manualDesc": "Vous contrôlez les changements de statut",
+    "auto": "Automatique",
+    "autoDesc": "Mise à jour selon les paiements",
+    "autoOption": "Automatique (selon les paiements)"
+  },
+  "cancel": "Annuler",
+  "creating": "Création…",
+  "createProject": "Créer le projet",
+  "saving": "Enregistrement…",
+  "saveChanges": "Enregistrer les modifications",
+  "tabs": {
+    "overview": "Aperçu",
+    "client": "Client",
+    "invoices": "Factures",
+    "receipts": "Reçus",
+    "letterheads": "En-têtes",
+    "activity": "Activité",
+    "files": "Fichiers"
+  },
+  "details": {
+    "title": "Détails",
+    "number": "Numéro",
+    "client": "Client",
+    "statusTracking": "Suivi du statut",
+    "startDate": "Date de début",
+    "endDate": "Date de fin",
+    "description": "Description"
+  },
+  "financials": {
+    "title": "Finances",
+    "contractValue": "Valeur du contrat",
+    "totalInvoiced": "Total facturé",
+    "totalReceived": "Total reçu",
+    "balance": "Solde",
+    "paymentProgress": "Progression des paiements"
+  },
+  "clientPanel": {
+    "noClientAssigned": "Aucun client attribué",
+    "assignHint": "Attribuez un client pour savoir à qui ce projet est destiné",
+    "noEmail": "Aucun e-mail enregistré",
+    "changeClient": "Changer de client",
+    "assignClient": "Attribuer un client",
+    "noClientsFound": "Aucun client trouvé"
+  },
+  "linked": {
+    "noInvoices": "Aucune facture liée.",
+    "noReceipts": "Aucun reçu lié.",
+    "noLetterheads": "Aucun en-tête lié.",
+    "noFiles": "Aucun fichier pour le moment.",
+    "noActivity": "Aucune activité pour le moment."
+  },
+  "notes": {
+    "add": "Ajouter une note",
+    "addBtn": "Ajouter une note"
+  },
+  "deleteModal": {
+    "title": "Supprimer le projet ?",
+    "body": "Cela supprimera définitivement ce projet. Les factures et reçus liés ne seront pas supprimés.",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "deleting": "Suppression…"
+  },
+  "linkModal": {
+    "invoice": "Lier une facture",
+    "receipt": "Lier un reçu",
+    "letterhead": "Lier un en-tête",
+    "noInvoices": "Aucune facture trouvée",
+    "noReceipts": "Aucun reçu trouvé",
+    "noLetterheads": "Aucun en-tête trouvé"
+  },
+  "fileModal": {
+    "title": "Ajouter un fichier",
+    "name": "Nom",
+    "type": "Type",
+    "linkUrl": "Lien / URL",
+    "uploadedFile": "Fichier téléversé",
+    "cancel": "Annuler",
+    "add": "Ajouter un fichier",
+    "adding": "Ajout…"
+  },
+  "notFound": "Projet introuvable",
+  "back": "Retour aux projets",
+  "toasts": {
+    "loadFailed": "Échec du chargement du projet.",
+    "created": "Projet créé.",
+    "createFailed": "Échec de la création du projet.",
+    "updated": "Projet mis à jour.",
+    "updateFailed": "Échec de la mise à jour du projet.",
+    "deleted": "Projet supprimé.",
+    "deleteFailed": "Échec de la suppression du projet.",
+    "linked": "Lié avec succès.",
+    "removed": "Supprimé.",
+    "removeFailed": "Échec de la suppression.",
+    "nameUrlRequired": "Le nom et l'URL sont requis.",
+    "fileAdded": "Fichier ajouté.",
+    "fileAddFailed": "Échec de l'ajout du fichier.",
+    "fileRemoved": "Fichier supprimé.",
+    "fileRemoveFailed": "Échec de la suppression du fichier.",
+    "noteAdded": "Note ajoutée.",
+    "noteAddFailed": "Échec de l'ajout de la note.",
+    "clientUpdateFailed": "Échec de la mise à jour du client.",
+    "numberRequired": "Le numéro de projet est requis.",
+    "titleRequired": "Le titre du projet est requis.",
+    "numberTitleRequired": "Le numéro et le titre sont requis.",
+    "notFound": "Projet introuvable.",
+    "linkFailed": "Échec de la liaison.",
+    "clientAssigned": "Client attribué.",
+    "clientRemoved": "Client retiré."
+  }
+}

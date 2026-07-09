@@ -1,0 +1,147 @@
+{
+  "toolbar": {
+    "invoices": "Invoices",
+    "newInvoice": "New Invoice",
+    "editInvoice": "Edit Invoice",
+    "print": "Print / PDF",
+    "share": "Share",
+    "saveDraft": "Save Draft",
+    "saving": "Saving…",
+    "createInvoice": "Create Invoice",
+    "saveChanges": "Save Changes"
+  },
+  "tabs": {
+    "from": "From",
+    "to": "To",
+    "items": "Items",
+    "design": "Design",
+    "settings": "Settings",
+    "preview": "Preview"
+  },
+  "common": {
+    "loading": "Loading…",
+    "loadingClients": "Loading clients…",
+    "remove": "Remove",
+    "optional": "(optional)",
+    "uploading": "Uploading…"
+  },
+  "from": {
+    "quickFillProfiles": "Quick-Fill Profiles",
+    "orgNameLabel": "Organization name",
+    "addProfilesHint": "Add profiles in Organization Preferences for more options.",
+    "noProfiles": "No profiles set up yet",
+    "companyName": "Company Name",
+    "companyNamePlaceholder": "Your Studio Name",
+    "tagline": "Tagline / Role",
+    "taglinePlaceholder": "Creative Agency & Digital Studio",
+    "email": "Email",
+    "emailPlaceholder": "hello{'@'}studio.com",
+    "phone": "Phone",
+    "phonePlaceholder": "+1 555 000 0000",
+    "website": "Website",
+    "websitePlaceholder": "www.yourstudio.com",
+    "address": "Address",
+    "addressPlaceholder": "123 Street\nCity, Country",
+    "logo": "Logo",
+    "replaceLogo": "Replace logo",
+    "uploadLogo": "Upload logo",
+    "bankDetails": "Bank / Payment Details",
+    "quickFillBank": "Quick-fill from saved account:",
+    "bankName": "Bank Name",
+    "bankNamePlaceholder": "Chase Bank",
+    "accountName": "Account Name",
+    "accountNamePlaceholder": "Acme Design Studio",
+    "accountNumber": "Account Number",
+    "sortCode": "Sort / Routing Code",
+    "iban": "IBAN",
+    "paymentLinks": "Payment Links",
+    "addFromSaved": "Add from saved:",
+    "linkGenericPlaceholder": "Link or username",
+    "addPaymentLink": "Add payment link"
+  },
+  "to": {
+    "selectClient": "Select client",
+    "noClients": "No clients added yet",
+    "billToName": "Bill To Name",
+    "billToNamePlaceholder": "Client Name",
+    "company": "Company",
+    "companyPlaceholder": "Client Company",
+    "email": "Email",
+    "emailPlaceholder": "client{'@'}example.com",
+    "phone": "Phone",
+    "billingAddress": "Billing Address"
+  },
+  "items": {
+    "item": "Item {n}",
+    "descriptionPlaceholder": "Description",
+    "qty": "Qty",
+    "unit": "Unit",
+    "rateWithSym": "Rate ({sym})",
+    "addLineItem": "Add Line Item",
+    "discount": "Discount",
+    "flat": "{sym} Flat",
+    "taxLines": "Tax Lines",
+    "taxLabelPlaceholder": "VAT",
+    "addTaxLine": "Add tax line"
+  },
+  "design": {
+    "theme": "Theme",
+    "accentColor": "Accent Color",
+    "brand": "Brand",
+    "fontFamily": "Font Family",
+    "logo": "Logo",
+    "signature": "Signature",
+    "replaceSignature": "Replace signature",
+    "uploadSignature": "Upload signature",
+    "stampWatermark": "Stamp / Watermark",
+    "none": "None",
+    "watermarkText": "Watermark Text",
+    "visible": "Visible",
+    "hidden": "Hidden",
+    "showHide": "Show / Hide"
+  },
+  "themes": {
+    "classic": "Classic",
+    "modern": "Modern",
+    "minimal": "Minimal",
+    "bold": "Bold Header",
+    "executive": "Executive"
+  },
+  "toggles": {
+    "showTopBar": "Top accent bar",
+    "showLogo": "Company logo",
+    "showFooterLine": "Footer line",
+    "showNotes": "Notes section",
+    "showBankDetails": "Bank details section",
+    "showFlowtaliTag": "Flowtali branding"
+  },
+  "settings": {
+    "invoiceNumber": "Invoice Number",
+    "paymentTerms": "Payment Terms",
+    "issueDate": "Issue Date",
+    "dueDate": "Due Date",
+    "auto": "(auto)",
+    "currency": "Currency",
+    "poNumber": "PO Number",
+    "notes": "Notes / Payment Instructions",
+    "notesPlaceholder": "Payment due within 30 days…",
+    "footerText": "Custom Footer Text",
+    "footerPlaceholder": "Thank you for your business!"
+  },
+  "zoom": {
+    "fit": "Fit"
+  },
+  "toasts": {
+    "logoUploadFailed": "Logo upload failed",
+    "signatureUploadFailed": "Signature upload failed",
+    "created": "Invoice created successfully!",
+    "saved": "Invoice saved successfully!",
+    "saveFailed": "Failed to save invoice. Please try again."
+  },
+  "validation": {
+    "numberRequired": "Invoice number is required.",
+    "itemRequired": "At least one line item is required.",
+    "descriptionRequired": "All line items must have a description.",
+    "linkValueRequired": "All payment links must have a value."
+  }
+}

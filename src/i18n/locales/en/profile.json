@@ -1,0 +1,100 @@
+{
+  "title": "My Profile",
+  "subtitle": "Manage your personal account settings",
+  "changePhoto": "Change Photo",
+  "fields": {
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "jobTitle": "Job Title"
+  },
+  "placeholders": {
+    "phone": "+1 415 555 0199",
+    "jobTitle": "Creative Director",
+    "newPassword": "Min. 8 characters",
+    "otp": "A1B2C3"
+  },
+  "saveChanges": "Save Changes",
+  "password": {
+    "title": "Change Password",
+    "current": "Current Password",
+    "new": "New Password",
+    "confirm": "Confirm New Password",
+    "update": "Update Password"
+  },
+  "mfa": {
+    "title": "Two-Factor Authentication",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "desc": "Add an extra layer of security — a one-time code is emailed on every login.",
+    "enterCode": "Enter the 6-character code sent to your email:",
+    "verifyEnable": "Verify & Enable",
+    "cancel": "Cancel",
+    "enable": "Enable 2FA",
+    "disable": "Disable 2FA",
+    "requiredByOrg": "Required by your organization — cannot be disabled."
+  },
+  "sessions": {
+    "title": "Active Sessions",
+    "activeCount": "{count} active",
+    "none": "No active sessions found.",
+    "current": "Current",
+    "lastActive": "Last active {when}",
+    "expires": "Expires {date}",
+    "revoke": "Revoke",
+    "signOutAll": "Sign out all other sessions"
+  },
+  "danger": {
+    "title": "Danger Zone",
+    "desc": "Permanently delete your account and all associated data. This cannot be undone.",
+    "deleteAccount": "Delete Account"
+  },
+  "deleteModal": {
+    "title": "Delete Account",
+    "permanent": "This action is permanent",
+    "removeIntro": "Deleting your account will permanently remove:",
+    "removeOrgs": "All organizations you own",
+    "removeDocs": "All invoices, clients, and projects",
+    "removeProfile": "Your profile and authentication data",
+    "codeSentBefore": "A verification code will be sent to ",
+    "codeSentAfter": " to confirm this action.",
+    "cancel": "Cancel",
+    "sendCode": "Send Verification Code",
+    "confirmTitle": "Confirm Deletion",
+    "confirmSubtitle": "Enter the code sent to your email",
+    "enterCodeBefore": "Enter the 6-character verification code sent to ",
+    "resend": "Resend code",
+    "deleteMyAccount": "Delete My Account"
+  },
+  "relative": {
+    "never": "Never",
+    "justNow": "Just now",
+    "minAgo": "{n}m ago",
+    "hourAgo": "{n}h ago",
+    "dayAgo": "{n}d ago"
+  },
+  "toasts": {
+    "loadFailed": "Failed to load profile",
+    "avatarUpdated": "Avatar updated",
+    "avatarFailed": "Failed to upload avatar",
+    "profileSaved": "Profile saved",
+    "profileFailed": "Failed to save profile",
+    "pwMismatch": "Passwords do not match",
+    "pwChanged": "Password changed successfully",
+    "pwFailed": "Failed to change password",
+    "sessionRevoked": "Session revoked",
+    "sessionRevokeFailed": "Failed to revoke session",
+    "signedOutOthers": "Signed out of {count} other session(s)",
+    "signOutFailed": "Failed to sign out sessions",
+    "mfaCodeSent": "Verification code sent to your email",
+    "mfaSendFailed": "Failed to send code",
+    "mfaEnabled": "Two-factor authentication enabled",
+    "mfaInvalidCode": "Invalid code",
+    "mfaDisabled": "Two-factor authentication disabled",
+    "mfaDisableFailed": "Failed to disable 2FA",
+    "delCodeSent": "Verification code sent to your email",
+    "delSendFailed": "Failed to send verification code",
+    "delFailed": "Failed to delete account"
+  }
+}

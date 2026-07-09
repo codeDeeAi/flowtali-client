@@ -1,0 +1,54 @@
+{
+  "greeting": {
+    "morning": "Guten Morgen",
+    "afternoon": "Guten Tag",
+    "evening": "Guten Abend"
+  },
+  "defaultName": "willkommen",
+  "defaultOrg": "Ihre Organisation",
+  "subtitle": "Das passiert heute bei {org}",
+  "newInvoice": "Neue Rechnung",
+  "stats": {
+    "totalRevenue": "Gesamtumsatz",
+    "outstanding": "Ausstehend",
+    "invoicesSent": "Gesendete Rechnungen",
+    "collectionRate": "Zahlungsquote",
+    "receiptsIssued": "Ausgestellte Belege"
+  },
+  "quickActions": {
+    "title": "Schnellaktionen",
+    "createInvoice": "Rechnung erstellen",
+    "createReceipt": "Beleg erstellen",
+    "createLetterhead": "Briefkopf erstellen",
+    "addClient": "Kunde hinzufügen",
+    "inviteMember": "Mitglied einladen"
+  },
+  "planUsage": {
+    "title": "Plannutzung",
+    "invoicesPerMo": "Rechnungen/Mon.",
+    "receiptsPerMo": "Belege/Mon.",
+    "letterheadsPerMo": "Briefköpfe/Mon.",
+    "projects": "Projekte",
+    "teamMembers": "Teammitglieder",
+    "upgrade": "Plan upgraden",
+    "manage": "Plan verwalten"
+  },
+  "revenue": {
+    "title": "Umsatzübersicht",
+    "subtitle": "Erhaltene Rechnungszahlungen",
+    "noData": "Noch keine Umsatzdaten"
+  },
+  "statusChart": {
+    "title": "Rechnungsstatus",
+    "thisMonth": "Diesen Monat",
+    "total": "gesamt"
+  },
+  "recentInvoices": {
+    "title": "Neueste Rechnungen",
+    "empty": "Noch keine Rechnungen"
+  },
+  "recentReceipts": {
+    "title": "Neueste Belege",
+    "empty": "Noch keine Belege"
+  }
+}

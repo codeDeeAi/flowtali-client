@@ -1,0 +1,21 @@
+{
+  "status": {
+    "paid": "Paid",
+    "sent": "Sent",
+    "overdue": "Overdue",
+    "draft": "Draft",
+    "void": "Void",
+    "finalized": "Finalized",
+    "unknown": "Unknown"
+  },
+  "table": {
+    "client": "Client",
+    "recipient": "Recipient",
+    "amount": "Amount",
+    "status": "Status",
+    "date": "Date"
+  },
+  "actions": {
+    "viewAll": "View all"
+  }
+}

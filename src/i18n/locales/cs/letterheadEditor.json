@@ -1,0 +1,95 @@
+{
+  "toolbar": {
+    "letterheads": "Hlavičkové papíry",
+    "new": "Nový hlavičkový papír",
+    "edit": "Upravit hlavičkový papír",
+    "create": "Vytvořit"
+  },
+  "toasts": {
+    "created": "Hlavičkový papír vytvořen!",
+    "saved": "Hlavičkový papír uložen!",
+    "saveFailed": "Hlavičkový papír se nepodařilo uložit. Zkuste to prosím znovu."
+  },
+  "tabs": {
+    "company": "Společnost",
+    "content": "Obsah",
+    "design": "Vzhled",
+    "settings": "Nastavení",
+    "preview": "Náhled"
+  },
+  "company": {
+    "quickFillClients": "Vyplnit z klientů",
+    "addOne": "Přidat",
+    "companyLogo": "Firemní logo",
+    "useThisLogo": "Použít toto logo",
+    "companyName": "Název firmy",
+    "companyNamePlaceholder": "ACME STUDIO",
+    "tagline": "Slogan / Role",
+    "taglinePlaceholder": "Kreativní agentura a digitální studio",
+    "email": "E-mail",
+    "phone": "Telefon",
+    "website": "Web",
+    "address": "Adresa",
+    "regNumber": "IČO",
+    "vatNumber": "DIČ",
+    "signatureImage": "Obrázek podpisu",
+    "useThisSignature": "Použít tento podpis"
+  },
+  "content": {
+    "templateName": "Název šablony",
+    "templateNamePlaceholder": "Nabídka agentury",
+    "subjectRe": "Předmět / Věc:",
+    "subjectPlaceholder": "Věc: Zakázka projektu",
+    "salutation": "Oslovení",
+    "salutationPlaceholder": "Vážený [jméno klienta],",
+    "bodyText": "Text",
+    "bodyPlaceholder": "Text dopisu…",
+    "closing": "Závěr",
+    "closingPlaceholder": "S pozdravem,",
+    "signerName": "Jméno podepisujícího",
+    "signerTitle": "Funkce podepisujícího",
+    "footerColumns": "Sloupce zápatí",
+    "use": "Použít",
+    "left": "Vlevo",
+    "center": "Uprostřed",
+    "right": "Vpravo"
+  },
+  "design": {
+    "palette": "Paleta",
+    "headerLayout": "Rozvržení záhlaví",
+    "stamp": "Razítko",
+    "watermark": "Vodoznak",
+    "watermarkColor": "Barva vodoznaku",
+    "layoutLeft": "Vlevo",
+    "layoutCenter": "Uprostřed",
+    "layoutRight": "Vpravo",
+    "layoutSplit": "Rozdělené"
+  },
+  "toggles": {
+    "topBar": "Horní akcentová lišta",
+    "bottomBar": "Dolní akcentová lišta",
+    "companyLogo": "Firemní logo",
+    "headerDivider": "Oddělovač záhlaví",
+    "footer": "Zápatí",
+    "date": "Datum",
+    "refNumber": "Referenční číslo",
+    "lineNumbers": "Čísla řádků"
+  },
+  "settings": {
+    "templateName": "Název šablony",
+    "date": "Datum",
+    "refNumber": "Referenční číslo",
+    "paperSize": "Formát papíru",
+    "orientation": "Orientace",
+    "portrait": "Na výšku",
+    "landscape": "Na šířku"
+  },
+  "themeDesc": {
+    "classic": "Tradiční a profesionální",
+    "modern": "Čisté rozvržení s postranním panelem",
+    "minimal": "Nenápadný a elegantní",
+    "bold": "Výrazné záhlaví",
+    "legal": "Formální styl dokumentu",
+    "executive": "Prémiové dvousloupcové"
+  }
+}

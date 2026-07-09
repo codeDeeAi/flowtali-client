@@ -1,0 +1,54 @@
+{
+  "greeting": {
+    "morning": "Good morning",
+    "afternoon": "Good afternoon",
+    "evening": "Good evening"
+  },
+  "defaultName": "there",
+  "defaultOrg": "your organization",
+  "subtitle": "Here's what's happening with {org} today",
+  "newInvoice": "New Invoice",
+  "stats": {
+    "totalRevenue": "Total Revenue",
+    "outstanding": "Outstanding",
+    "invoicesSent": "Invoices Sent",
+    "collectionRate": "Collection Rate",
+    "receiptsIssued": "Receipts Issued"
+  },
+  "quickActions": {
+    "title": "Quick Actions",
+    "createInvoice": "Create Invoice",
+    "createReceipt": "Create Receipt",
+    "createLetterhead": "Create Letterhead",
+    "addClient": "Add Client",
+    "inviteMember": "Invite Member"
+  },
+  "planUsage": {
+    "title": "Plan Usage",
+    "invoicesPerMo": "Invoices/mo",
+    "receiptsPerMo": "Receipts/mo",
+    "letterheadsPerMo": "Letterheads/mo",
+    "projects": "Projects",
+    "teamMembers": "Team Members",
+    "upgrade": "Upgrade Plan",
+    "manage": "Manage Plan"
+  },
+  "revenue": {
+    "title": "Revenue Overview",
+    "subtitle": "Invoice payments received",
+    "noData": "No revenue data yet"
+  },
+  "statusChart": {
+    "title": "Invoice Status",
+    "thisMonth": "This month",
+    "total": "total"
+  },
+  "recentInvoices": {
+    "title": "Recent Invoices",
+    "empty": "No invoices yet"
+  },
+  "recentReceipts": {
+    "title": "Recent Receipts",
+    "empty": "No receipts yet"
+  }
+}

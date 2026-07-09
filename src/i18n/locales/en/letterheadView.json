@@ -1,0 +1,28 @@
+{
+  "subtitle": "{company} · {uses} uses · Last used {lastUsed}",
+  "doc": {
+    "date": "Date",
+    "reference": "Reference",
+    "re": "Re:",
+    "subject": "Subject",
+    "contact": "Contact",
+    "address": "Address",
+    "addressInline": "Address:",
+    "registration": "Registration",
+    "regNo": "Reg. No:",
+    "vat": "VAT:",
+    "regShort": "Reg:"
+  },
+  "details": {
+    "title": "Letterhead Details",
+    "totalUses": "Total Uses",
+    "sharedLinks": "Shared Links",
+    "lastUsed": "Last used",
+    "template": "Template",
+    "watermark": "Watermark"
+  },
+  "viewsCount": "{n} views",
+  "linksEmptyBody": "Generate a link to share this letterhead with clients",
+  "deleteTitle": "Delete \"{name}\"?",
+  "deleteBody": "This letterhead will be permanently deleted. This action cannot be undone."
+}

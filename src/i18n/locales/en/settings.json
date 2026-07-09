@@ -1,0 +1,84 @@
+{
+  "title": "Settings",
+  "subtitle": "Organization and account configuration",
+  "tabs": {
+    "general": "General",
+    "notifications": "Notifications",
+    "security": "Security",
+    "api": "API & Integrations"
+  },
+  "general": {
+    "orgDetails": "Organization Details",
+    "logo": "Organization Logo",
+    "logoHint": "PNG, JPG or WebP · max 2 MB",
+    "uploadLogo": "Upload logo",
+    "uploading": "Uploading…",
+    "removing": "Removing…",
+    "remove": "Remove",
+    "orgName": "Organization Name",
+    "orgNamePlaceholder": "Organization name",
+    "industry": "Industry",
+    "selectIndustry": "Select industry…",
+    "companySize": "Company Size",
+    "selectSize": "Select size…",
+    "businessAddress": "Business Address",
+    "addressPlaceholder": "123 Street, City, Country",
+    "defaultInvoiceSettings": "Default Invoice Settings",
+    "defaultCurrency": "Default Currency",
+    "paymentTerms": "Payment Terms",
+    "defaultTaxRate": "Default Tax Rate (%)",
+    "saveChanges": "Save Changes",
+    "saved": "Saved"
+  },
+  "notifications": {
+    "title": "Notification Preferences",
+    "groups": {
+      "invoices": "Invoices",
+      "team": "Team"
+    },
+    "items": {
+      "invoice_paid": {
+        "label": "Invoice paid",
+        "desc": "When a client pays an invoice"
+      },
+      "invoice_overdue": {
+        "label": "Invoice overdue",
+        "desc": "When an invoice passes its due date"
+      },
+      "invoice_viewed": {
+        "label": "Invoice viewed",
+        "desc": "When a client views an invoice"
+      },
+      "member_joined": {
+        "label": "Member joined",
+        "desc": "When a team member accepts an invite"
+      },
+      "role_changed": {
+        "label": "Role changed",
+        "desc": "When a member role is updated"
+      }
+    },
+    "email": "Email",
+    "inApp": "In-app",
+    "save": "Save Preferences",
+    "saved": "Saved"
+  },
+  "security": {
+    "title": "Security Settings",
+    "twoFactor": "Two-Factor Authentication",
+    "twoFactorDesc": "Require 2FA for all organization members",
+    "ipAllowlist": "IP Allowlist",
+    "ipAllowlistDesc": "Restrict access to specific IP ranges. Leave empty to allow all IPs. Enter one IP or CIDR block per line.",
+    "save": "Save Security Settings",
+    "saved": "Saved"
+  },
+  "api": {
+    "title": "API Keys",
+    "generateKey": "Generate Key",
+    "planNote": "API access is available on Pro and Business plans",
+    "planDesc": "Use API keys to integrate Flowtali with your own systems and automate workflows.",
+    "active": "Active",
+    "lastUsed": "Last used {when}",
+    "revoke": "Revoke"
+  }
+}

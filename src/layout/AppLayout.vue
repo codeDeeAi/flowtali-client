@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { RouterView } from 'vue-router'
+import { RouterView, useRouter, useRoute } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { useSubscriptionStore } from '@/stores/subscription'
 import { useTourStore } from '@/stores/tour'
+import { useLocaleStore } from '@/stores/locale'
 import { ProfileService } from '@/services/profile.service'
 import { OrgService } from '@/services/org.service'
 import AppHeader from './components/app/AppHeader.vue'
@@ -17,6 +18,12 @@ import AppBottomNav from './components/app/AppBottomNav.vue'
 const authStore = useAuthStore()
 const subStore = useSubscriptionStore()
 const tourStore = useTourStore()
+const localeStore = useLocaleStore()
+const router = useRouter()
+const route = useRoute()
+
+// Billing/account routes remain reachable while paywalled so the user can subscribe.
+const PAYWALL_ALLOWED = new Set(['billing', 'profile'])
 const mobileOpen = ref(false)
 const collapsed = ref(false)
 const showWelcomeModal = ref(false)
@@ -32,12 +39,19 @@ onMounted(async () => {
       currentUserEmail.value = p.email
       authStore.updateUserInfo({ first_name: p.first_name, last_name: p.last_name, avatar: p.avatar })
       authStore.updateMfaEnabled(p.mfa_enabled)
+      // Adopt the user's server-stored language preference (authoritative across devices).
+      localeStore.syncFromServer(p.locale)
     }),
     orgId
       ? OrgService.getMyMembership(orgId).then(res => authStore.updateOrganization(res.data.data))
       : Promise.resolve(),
     subStore.load(),
   ])
+
+  // Once the free trial ends (and no paid plan), send the user to billing.
+  if (subStore.isPaywalled && !PAYWALL_ALLOWED.has(String(route.name ?? ''))) {
+    router.replace({ name: 'billing', query: { paywall: subStore.freeWindowExpired ? 'free_trial_ended' : 'subscription_required' } })
+  }
 
   if (currentUserEmail.value && !tourStore.hasSeenWelcome(currentUserEmail.value)) {
     showWelcomeModal.value = true

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { Icon } from '@iconify/vue';
 import { useAuthStore } from '@/stores/auth';
 import { usePermissions } from '@/composables/usePermissions';
@@ -20,6 +21,7 @@ defineEmits<{
 }>();
 const route = useRoute();
 const router = useRouter();
+const { t } = useI18n();
 const authStore      = useAuthStore();
 const feedbackStore  = useFeedbackStore();
 const { can, isBusinessOrg } = usePermissions();
@@ -124,41 +126,41 @@ const navSections = computed<NavSection[]>(() => {
   // ── Always visible ────────────────────────────────────
   sections.push({
     items: [
-      { name: 'Dashboard', icon: 'lucide:layout-dashboard', to: '/app/dashboard', dataTour: 'nav-dashboard' },
+      { name: t('app.nav.dashboard'), icon: 'lucide:layout-dashboard', to: '/app/dashboard', dataTour: 'nav-dashboard' },
     ],
   })
 
   // ── Documents ─────────────────────────────────────────
   const docItems: NavItem[] = []
-  if (isBusinessOrg.value && can('projects.read')) docItems.push({ name: 'Projects', icon: 'lucide:folder-kanban', to: '/app/projects', dataTour: 'nav-projects' })
-  if (can('invoices.read'))    docItems.push({ name: 'Invoices',    icon: 'lucide:file-text', to: '/app/invoices',    dataTour: 'nav-invoices' })
-  if (can('receipts.read'))    docItems.push({ name: 'Receipts',    icon: 'lucide:receipt',   to: '/app/receipts' })
-  if (can('letterheads.read')) docItems.push({ name: 'Letterheads', icon: 'lucide:file',      to: '/app/letterheads' })
-  if (can('clients.read'))     docItems.push({ name: 'Clients',     icon: 'lucide:users',     to: '/app/clients',     dataTour: 'nav-clients' })
-  if (docItems.length) sections.push({ label: 'Documents', items: docItems })
+  if (isBusinessOrg.value && can('projects.read')) docItems.push({ name: t('app.nav.projects'), icon: 'lucide:folder-kanban', to: '/app/projects', dataTour: 'nav-projects' })
+  if (can('invoices.read'))    docItems.push({ name: t('app.nav.invoices'),    icon: 'lucide:file-text', to: '/app/invoices',    dataTour: 'nav-invoices' })
+  if (can('receipts.read'))    docItems.push({ name: t('app.nav.receipts'),    icon: 'lucide:receipt',   to: '/app/receipts' })
+  if (can('letterheads.read')) docItems.push({ name: t('app.nav.letterheads'), icon: 'lucide:file',      to: '/app/letterheads' })
+  if (can('clients.read'))     docItems.push({ name: t('app.nav.clients'),     icon: 'lucide:users',     to: '/app/clients',     dataTour: 'nav-clients' })
+  if (docItems.length) sections.push({ label: t('app.sections.documents'), items: docItems })
 
   // ── Organization (business only) ─────────────────────
   const orgItems: NavItem[] = []
   if (isBusinessOrg.value) {
     if (can('members.read')) {
-      orgItems.push({ name: 'Members', icon: 'lucide:users-2', to: '/app/members', dataTour: 'nav-members' })
+      orgItems.push({ name: t('app.nav.members'), icon: 'lucide:users-2', to: '/app/members', dataTour: 'nav-members' })
     }
     if (can('roles.read')) {
-      orgItems.push({ name: 'Roles & Permissions', icon: 'lucide:shield', to: '/app/roles', dataTour: 'nav-roles' })
+      orgItems.push({ name: t('app.nav.roles'), icon: 'lucide:shield', to: '/app/roles', dataTour: 'nav-roles' })
     }
   }
-  orgItems.push({ name: 'Org Preferences', icon: 'lucide:building-2', to: '/app/org-preferences', dataTour: 'nav-org-preferences' })
-  orgItems.push({ name: 'Audit Logs', icon: 'lucide:scroll-text', to: '/app/audit-logs' })
+  orgItems.push({ name: t('app.nav.orgPreferences'), icon: 'lucide:building-2', to: '/app/org-preferences', dataTour: 'nav-org-preferences' })
+  orgItems.push({ name: t('app.nav.auditLogs'), icon: 'lucide:scroll-text', to: '/app/audit-logs' })
 
-  sections.push({ label: isBusinessOrg.value ? 'Organization' : 'Workspace', items: orgItems })
+  sections.push({ label: isBusinessOrg.value ? t('app.sections.organization') : t('app.sections.workspace'), items: orgItems })
 
   // ── Account ───────────────────────────────────────────
   const accountItems: NavItem[] = []
-  if (can('analytics.read')) accountItems.push({ name: 'Analytics', icon: 'lucide:bar-chart-2', to: '/app/analytics', dataTour: 'nav-analytics' })
-  accountItems.push({ name: 'Billing', icon: 'lucide:credit-card', to: '/app/billing' })
-  if (can('settings.read'))  accountItems.push({ name: 'Settings',     icon: 'lucide:settings',     to: '/app/settings' })
-  accountItems.push({ name: 'My Profile',   icon: 'lucide:user',         to: '/app/profile' })
-  sections.push({ label: 'Account', items: accountItems })
+  if (can('analytics.read')) accountItems.push({ name: t('app.nav.analytics'), icon: 'lucide:bar-chart-2', to: '/app/analytics', dataTour: 'nav-analytics' })
+  accountItems.push({ name: t('app.nav.billing'), icon: 'lucide:credit-card', to: '/app/billing' })
+  if (can('settings.read'))  accountItems.push({ name: t('app.nav.settings'),     icon: 'lucide:settings',     to: '/app/settings' })
+  accountItems.push({ name: t('app.nav.profile'),   icon: 'lucide:user',         to: '/app/profile' })
+  sections.push({ label: t('app.sections.account'), items: accountItems })
 
   return sections
 })
@@ -182,7 +184,7 @@ function isActive(to: string) {
     <button
       class="md:hidden absolute top-3 right-3 z-50 flex items-center justify-center w-7 h-7 rounded-md text-gray-700 hover:text-gray-1000 hover:bg-gray-400 transition-colors"
       @click="$emit('close')"
-      aria-label="Close sidebar"
+      :aria-label="t('app.sidebar.close')"
     >
       <Icon icon="lucide:x" class="w-4 h-4" />
     </button>
@@ -216,7 +218,7 @@ function isActive(to: string) {
         <div
           :class="['flex-1 min-w-0 text-left overflow-hidden transition-all duration-300', collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100']"
         >
-          <div class="text-sm font-medium text-gray-1000 truncate leading-tight">{{ currentOrg?.name ?? 'Select organization' }}</div>
+          <div class="text-sm font-medium text-gray-1000 truncate leading-tight">{{ currentOrg?.name ?? t('app.sidebar.selectOrg') }}</div>
           <div class="flex items-center gap-1.5 mt-0.5">
             <span class="text-xs text-green-700 font-medium capitalize">{{ currentOrg?.type ?? '' }}</span>
           </div>
@@ -237,7 +239,7 @@ function isActive(to: string) {
         >
           <!-- Header label -->
           <div class="px-3 pt-3 pb-1.5">
-            <span class="text-[10px] font-semibold uppercase tracking-widest text-gray-700">Your Organizations</span>
+            <span class="text-[10px] font-semibold uppercase tracking-widest text-gray-700">{{ t('app.sidebar.yourOrgs') }}</span>
           </div>
 
           <!-- Org list -->
@@ -278,7 +280,7 @@ function isActive(to: string) {
               <div class="w-7 h-7 rounded-md border border-dashed border-green-700/40 flex items-center justify-center shrink-0">
                 <Icon icon="lucide:plus" class="w-3.5 h-3.5" />
               </div>
-              <span class="text-xs font-medium">Create organization</span>
+              <span class="text-xs font-medium">{{ t('app.sidebar.createOrg') }}</span>
             </button>
           </div>
         </div>
@@ -294,12 +296,12 @@ function isActive(to: string) {
           @click.self="showCreateModal = false"
         >
           <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
-            <h2 class="font-sans text-xl font-semibold text-gray-1000 mb-1">Create Organization</h2>
-            <p class="text-xs text-gray-700 mb-5">Set up a new workspace for your team or business</p>
+            <h2 class="font-sans text-xl font-semibold text-gray-1000 mb-1">{{ t('app.createOrg.title') }}</h2>
+            <p class="text-xs text-gray-700 mb-5">{{ t('app.createOrg.subtitle') }}</p>
 
             <div class="space-y-4 mb-5">
               <div>
-                <label class="app-label">Organization Name</label>
+                <label class="app-label">{{ t('app.createOrg.nameLabel') }}</label>
                 <input
                   v-model="newOrgName"
                   class="app-inp"
@@ -309,7 +311,7 @@ function isActive(to: string) {
               </div>
 
               <div>
-                <label class="app-label">Type</label>
+                <label class="app-label">{{ t('app.createOrg.typeLabel') }}</label>
                 <div class="grid grid-cols-2 gap-2 mt-1.5">
                   <button
                     :class="[
@@ -318,8 +320,8 @@ function isActive(to: string) {
                     ]"
                     @click="newOrgType = 'business'"
                   >
-                    <div class="text-xs font-semibold" :class="newOrgType === 'business' ? 'text-green-700' : 'text-gray-900'">Business</div>
-                    <div class="text-[10px] text-gray-700 mt-0.5">Team & client management</div>
+                    <div class="text-xs font-semibold" :class="newOrgType === 'business' ? 'text-green-700' : 'text-gray-900'">{{ t('app.createOrg.business') }}</div>
+                    <div class="text-[10px] text-gray-700 mt-0.5">{{ t('app.createOrg.businessDesc') }}</div>
                   </button>
                   <button
                     :class="[
@@ -328,8 +330,8 @@ function isActive(to: string) {
                     ]"
                     @click="newOrgType = 'personal'"
                   >
-                    <div class="text-xs font-semibold" :class="newOrgType === 'personal' ? 'text-green-700' : 'text-gray-900'">Personal</div>
-                    <div class="text-[10px] text-gray-700 mt-0.5">Solo freelancer mode</div>
+                    <div class="text-xs font-semibold" :class="newOrgType === 'personal' ? 'text-green-700' : 'text-gray-900'">{{ t('app.createOrg.personal') }}</div>
+                    <div class="text-[10px] text-gray-700 mt-0.5">{{ t('app.createOrg.personalDesc') }}</div>
                   </button>
                 </div>
               </div>
@@ -340,7 +342,7 @@ function isActive(to: string) {
                 class="flex-1 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-sm transition-colors"
                 @click="showCreateModal = false"
               >
-                Cancel
+                {{ t('app.createOrg.cancel') }}
               </button>
               <button
                 class="flex-1 py-2 rounded-lg bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
@@ -350,7 +352,7 @@ function isActive(to: string) {
                 <svg v-if="isCreating" class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" />
                 </svg>
-                <span>{{ isCreating ? 'Creating…' : 'Create' }}</span>
+                <span>{{ isCreating ? t('app.createOrg.creating') : t('app.createOrg.create') }}</span>
               </button>
             </div>
           </div>
@@ -421,10 +423,10 @@ function isActive(to: string) {
           'w-full flex items-center gap-2.5 rounded-lg px-2 py-2 transition-colors text-gray-700 hover:text-gray-1000 hover:bg-gray-400',
           collapsed ? 'justify-center' : '',
         ]"
-        :title="collapsed ? 'Share feedback' : undefined"
+        :title="collapsed ? t('app.sidebar.shareFeedback') : undefined"
       >
         <Icon icon="lucide:message-square-plus" class="w-4 h-4 shrink-0" />
-        <span :class="['text-xs font-medium transition-all duration-300', collapsed ? 'hidden' : '']">Feedback</span>
+        <span :class="['text-xs font-medium transition-all duration-300', collapsed ? 'hidden' : '']">{{ t('app.sidebar.feedback') }}</span>
       </button>
     </div>
 
@@ -447,7 +449,7 @@ function isActive(to: string) {
               @click="userMenuOpen = false"
             >
               <Icon icon="lucide:user" class="w-3.5 h-3.5 shrink-0" />
-              <span class="text-xs font-medium">My Profile</span>
+              <span class="text-xs font-medium">{{ t('app.userMenu.myProfile') }}</span>
             </RouterLink>
             <button
               class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-red-900/30 transition-colors text-gray-900 hover:text-red-400 disabled:opacity-50"
@@ -458,7 +460,7 @@ function isActive(to: string) {
               <svg v-else class="animate-spin w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4" />
               </svg>
-              <span class="text-xs font-medium">{{ isLoggingOut ? 'Signing out…' : 'Sign out' }}</span>
+              <span class="text-xs font-medium">{{ isLoggingOut ? t('app.userMenu.signingOut') : t('app.userMenu.signOut') }}</span>
             </button>
           </div>
         </div>

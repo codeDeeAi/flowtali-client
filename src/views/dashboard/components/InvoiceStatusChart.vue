@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 export interface IStatusBreakdown {
   paid:    { count: number; amount: number }
@@ -17,10 +20,10 @@ const props = defineProps<{
 const segments = computed(() => {
   if (!props.breakdown) return []
   return [
-    { label: 'Paid',    value: props.breakdown.paid.count,    color: '#4ade80' },
-    { label: 'Sent',    value: props.breakdown.sent.count,    color: '#38bdf8' },
-    { label: 'Overdue', value: props.breakdown.overdue.count, color: '#f87171' },
-    { label: 'Draft',   value: props.breakdown.draft.count,   color: '#6b7280' },
+    { key: 'paid',    value: props.breakdown.paid.count,    color: '#4ade80' },
+    { key: 'sent',    value: props.breakdown.sent.count,    color: '#38bdf8' },
+    { key: 'overdue', value: props.breakdown.overdue.count, color: '#f87171' },
+    { key: 'draft',   value: props.breakdown.draft.count,   color: '#6b7280' },
   ].filter(s => s.value > 0)
 })
 
@@ -78,13 +81,13 @@ const arcs = computed(() => {
     <template v-else>
       <div class="flex items-start justify-between mb-4">
         <div>
-          <h3 class="text-sm font-semibold text-gray-1000">Invoice Status</h3>
-          <p class="text-xs text-gray-700 mt-0.5">This month</p>
+          <h3 class="text-sm font-semibold text-gray-1000">{{ t('dashboard.statusChart.title') }}</h3>
+          <p class="text-xs text-gray-700 mt-0.5">{{ t('dashboard.statusChart.thisMonth') }}</p>
         </div>
       </div>
 
       <div v-if="!breakdown || total === 0" class="flex items-center justify-center h-28 text-xs text-gray-700">
-        No invoices yet
+        {{ t('dashboard.recentInvoices.empty') }}
       </div>
 
       <div v-else class="flex items-center gap-6">
@@ -93,7 +96,7 @@ const arcs = computed(() => {
         <svg viewBox="0 0 100 100" class="w-28 h-28 -rotate-0">
           <circle
             v-for="arc in arcs"
-            :key="arc.label"
+            :key="arc.key"
             :cx="cx"
             :cy="cy"
             :r="R"
@@ -107,7 +110,7 @@ const arcs = computed(() => {
         </svg>
         <div class="absolute inset-0 flex flex-col items-center justify-center">
           <span class="text-2xl font-bold text-gray-1000 leading-none">{{ total }}</span>
-          <span class="text-[10px] text-gray-700 mt-0.5">total</span>
+          <span class="text-[10px] text-gray-700 mt-0.5">{{ t('dashboard.statusChart.total') }}</span>
         </div>
       </div>
 
@@ -115,12 +118,12 @@ const arcs = computed(() => {
       <div class="flex flex-col gap-2.5 flex-1">
         <div
           v-for="seg in segments"
-          :key="seg.label"
+          :key="seg.key"
           class="flex items-center justify-between"
         >
           <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full shrink-0" :style="{ backgroundColor: seg.color }" />
-            <span class="text-sm text-gray-900">{{ seg.label }}</span>
+            <span class="text-sm text-gray-900">{{ t('common.status.' + seg.key) }}</span>
           </div>
           <span class="text-sm font-semibold text-gray-1000">{{ seg.value }}</span>
         </div>

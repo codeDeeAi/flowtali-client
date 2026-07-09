@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import { useNotification } from '@/composables/notification.ts'
 import { useAuthStore } from '@/stores/auth'
@@ -9,6 +10,7 @@ import ShareLinkModal from '@/components/modals/ShareLinkModal.vue'
 
 const router     = useRouter()
 const route      = useRoute()
+const { t, locale } = useI18n()
 const { notify } = useNotification()
 const authStore  = useAuthStore()
 const orgId      = computed(() => authStore.getCurrentOrganization?.id ?? '')
@@ -49,20 +51,18 @@ async function refreshLinks() {
 
 const symMap: Record<string, string> = { USD: '$', EUR: '€', GBP: '£', NGN: '₦', CAD: 'CA$', AUD: 'A$', JPY: '¥', INR: '₹', ZAR: 'R', CHF: 'Fr', AED: 'د.إ' }
 const sym     = computed(() => receipt.value ? (symMap[receipt.value.currency] ?? '$') : '$')
-const fmtMoney = (n: number) => sym.value + n.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const fmtMoney = (n: number) => sym.value + n.toLocaleString(locale.value, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 const formatDate = (d: string | null) => {
   if (!d) return '—'
   const [y = '0', m = '1', day = '1'] = d.split('-')
-  return new Date(+y, +m - 1, +day).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  return new Date(+y, +m - 1, +day).toLocaleDateString(locale.value, { year: 'numeric', month: 'long', day: 'numeric' })
 }
 
 const statusClass: Record<string, string> = {
   finalized: 'status-paid', draft: 'status-draft', void: 'status-draft',
 }
-const statusLabelMap: Record<string, string> = {
-  finalized: 'Finalized', draft: 'Draft', void: 'Void',
-}
+const statusLabel = (status: string) => t(`common.status.${status}`)
 
 const totalViews  = computed(() => links.value.reduce((s, l) => s + l.views, 0))
 const activeLinks = computed(() => links.value.filter(l => l.is_active && !(l.expires_at && new Date(l.expires_at) < new Date())).length)
@@ -71,27 +71,27 @@ function isExpired(link: IReceiptSharedLink) {
   return !!link.expires_at && new Date(link.expires_at) < new Date()
 }
 function linkStatusLabel(link: IReceiptSharedLink) {
-  if (!link.is_active) return { text: 'Revoked', cls: 'text-red-400 bg-red-500/10 border-red-500/20' }
-  if (isExpired(link)) return { text: 'Expired', cls: 'text-amber-400 bg-amber-500/10 border-amber-500/20' }
-  return { text: 'Active', cls: 'text-green-400 bg-green-500/10 border-green-500/20' }
+  if (!link.is_active) return { text: t('invoiceView.links.statusRevoked'), cls: 'text-red-400 bg-red-500/10 border-red-500/20' }
+  if (isExpired(link)) return { text: t('invoiceView.links.statusExpired'), cls: 'text-amber-400 bg-amber-500/10 border-amber-500/20' }
+  return { text: t('invoiceView.links.statusActive'), cls: 'text-green-400 bg-green-500/10 border-green-500/20' }
 }
 function expiryLabel(link: IReceiptSharedLink) {
-  if (!link.expires_at) return 'Never expires'
-  if (isExpired(link)) return `Expired ${fmtDate(link.expires_at)}`
-  return `Expires ${fmtDate(link.expires_at)}`
+  if (!link.expires_at) return t('invoiceView.links.neverExpires')
+  if (isExpired(link)) return t('invoiceView.links.expiredOn', { date: fmtDate(link.expires_at) })
+  return t('invoiceView.links.expiresOn', { date: fmtDate(link.expires_at) })
 }
 function linkUrl(token: string) { return `${window.location.origin}/share/r/${token}` }
 function copyLink(token: string) {
   navigator.clipboard.writeText(linkUrl(token)).catch(() => {})
-  notify('Link copied to clipboard', 'success')
+  notify(t('invoiceView.toasts.linkCopied'), 'success')
 }
 function fmtDate(iso: string | null) {
   if (!iso) return '—'
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  return new Date(iso).toLocaleDateString(locale.value, { month: 'short', day: 'numeric', year: 'numeric' })
 }
 function fmtDateTime(iso: string | null) {
-  if (!iso) return 'Never'
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+  if (!iso) return t('invoiceView.links.never')
+  return new Date(iso).toLocaleDateString(locale.value, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
 const handlePrint = () => window.print()
@@ -102,9 +102,9 @@ async function finalizeReceipt() {
   try {
     const res = await ReceiptService.update(orgId.value, receipt.value.id, { status: 'finalized' })
     receipt.value = res.data.data
-    notify(`${receipt.value.number} finalized`, 'success')
+    notify(t('receipts.toasts.finalized', { number: receipt.value.number }), 'success')
   } catch {
-    notify('Failed to update receipt', 'error')
+    notify(t('receipts.toasts.updateFailed'), 'error')
   } finally {
     isFinalizing.value = false
   }
@@ -115,10 +115,10 @@ async function handleDelete() {
   isDeleting.value = true
   try {
     await ReceiptService.delete(orgId.value, receipt.value.id)
-    notify(`${receipt.value.number} deleted`, 'success')
+    notify(t('receipts.toasts.deleted', { number: receipt.value.number }), 'success')
     router.push({ name: 'receipts' })
   } catch {
-    notify('Failed to delete receipt', 'error')
+    notify(t('receipts.toasts.deleteFailed'), 'error')
   } finally {
     isDeleting.value = false
   }
@@ -133,8 +133,8 @@ async function handleDelete() {
     </div>
 
     <div v-else-if="notFound" class="flex flex-col items-center justify-center py-24 text-center">
-      <p class="text-gray-700">Receipt not found</p>
-      <button @click="router.push({ name: 'receipts' })" class="mt-4 text-green-700 text-sm hover:underline">Back to receipts</button>
+      <p class="text-gray-700">{{ t('receipts.notFound') }}</p>
+      <button @click="router.push({ name: 'receipts' })" class="mt-4 text-green-700 text-sm hover:underline">{{ t('receipts.back') }}</button>
     </div>
 
     <template v-else-if="receipt">
@@ -148,21 +148,21 @@ async function handleDelete() {
           <div>
             <div class="flex items-center gap-2 flex-wrap">
               <h1 class="page-title font-mono">{{ receipt.number }}</h1>
-              <span :class="['status-badge', statusClass[receipt.status] ?? 'status-draft']">{{ statusLabelMap[receipt.status] ?? receipt.status }}</span>
+              <span :class="['status-badge', statusClass[receipt.status] ?? 'status-draft']">{{ statusLabel(receipt.status) }}</span>
             </div>
-            <p class="page-subtitle">{{ receipt.to_name || '—' }} · {{ receipt.paid_at ? `Paid ${formatDate(receipt.paid_at)}` : 'Payment date not set' }}</p>
+            <p class="page-subtitle">{{ receipt.to_name || '—' }} · {{ receipt.paid_at ? t('receiptView.paidOn', { date: formatDate(receipt.paid_at) }) : t('receiptView.noPaymentDate') }}</p>
           </div>
         </div>
         <div class="flex items-center flex-wrap gap-2 ml-9 sm:ml-0">
-          <button @click="handlePrint" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors" title="Print / PDF">
-            <Icon icon="lucide:printer" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> Print / PDF</span>
+          <button @click="handlePrint" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors" :title="t('invoiceView.actions.print')">
+            <Icon icon="lucide:printer" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> {{ t('invoiceView.actions.print') }}</span>
           </button>
           <button
             @click="showShareModal = true"
             class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors"
-            title="Share"
+            :title="t('invoiceView.actions.share')"
           >
-            <Icon icon="lucide:share-2" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> Share</span>
+            <Icon icon="lucide:share-2" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> {{ t('invoiceView.actions.share') }}</span>
             <span v-if="activeLinks > 0" class="ml-0.5 px-1.5 py-0.5 bg-green-700/20 text-green-700 text-[9px] font-bold rounded-full">{{ activeLinks }}</span>
           </button>
           <button
@@ -170,16 +170,16 @@ async function handleDelete() {
             @click="finalizeReceipt"
             :disabled="isFinalizing"
             class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 text-green-400 rounded-lg transition-colors disabled:opacity-50"
-            title="Finalize"
+            :title="t('receipts.actions.finalize')"
           >
             <Icon v-if="isFinalizing" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
             <Icon v-else icon="lucide:check-circle" class="w-3.5 h-3.5" />
-            <span class="hidden sm:inline">Finalize</span>
+            <span class="hidden sm:inline">{{ t('receipts.actions.finalize') }}</span>
           </button>
           <button @click="router.push({ name: 'receipts.edit', params: { id: receipt.id } })" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-green-700 hover:bg-green-800 text-bg-100 font-semibold rounded-lg transition-colors">
-            <Icon icon="lucide:pencil" class="w-3.5 h-3.5" /> Edit
+            <Icon icon="lucide:pencil" class="w-3.5 h-3.5" /> {{ t('invoiceView.actions.edit') }}
           </button>
-          <button @click="showDeleteConfirm = true" class="flex items-center gap-1.5 px-2 py-2 text-xs font-medium bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-lg transition-colors" title="Delete">
+          <button @click="showDeleteConfirm = true" class="flex items-center gap-1.5 px-2 py-2 text-xs font-medium bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-lg transition-colors" :title="t('invoiceView.actions.delete')">
             <Icon icon="lucide:trash-2" class="w-3.5 h-3.5" />
           </button>
         </div>
@@ -220,7 +220,7 @@ async function handleDelete() {
                   </div>
                 </div>
                 <div class="text-right">
-                  <div class="text-3xl font-bold text-gray-200 tracking-widest" style="font-family:var(--font-sans)">RECEIPT</div>
+                  <div class="text-3xl font-bold text-gray-200 tracking-widest" style="font-family:var(--font-sans)">{{ t('document.receiptWord') }}</div>
                   <div class="font-mono text-sm text-gray-400 mt-1">{{ receipt.number }}</div>
                 </div>
               </div>
@@ -229,15 +229,15 @@ async function handleDelete() {
 
               <!-- Dates and payment info -->
               <div class="flex gap-8 mb-8 text-xs">
-                <div><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Issue Date</div><div class="font-semibold text-gray-700">{{ formatDate(receipt.issue_date) }}</div></div>
-                <div v-if="receipt.paid_at"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Payment Date</div><div class="font-semibold text-gray-700">{{ formatDate(receipt.paid_at) }}</div></div>
-                <div v-if="receipt.payment_method"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Payment Method</div><div class="font-semibold text-gray-700">{{ receipt.payment_method }}</div></div>
-                <div v-if="receipt.reference_number"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Ref. Invoice #</div><div class="font-semibold text-gray-700">{{ receipt.reference_number }}</div></div>
-                <div v-if="receipt.currency !== 'USD'"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Currency</div><div class="font-semibold text-gray-700">{{ receipt.currency }}</div></div>
+                <div><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.issueDate') }}</div><div class="font-semibold text-gray-700">{{ formatDate(receipt.issue_date) }}</div></div>
+                <div v-if="receipt.paid_at"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.paymentDate') }}</div><div class="font-semibold text-gray-700">{{ formatDate(receipt.paid_at) }}</div></div>
+                <div v-if="receipt.payment_method"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.paymentMethod') }}</div><div class="font-semibold text-gray-700">{{ receipt.payment_method }}</div></div>
+                <div v-if="receipt.reference_number"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.refInvoice') }}</div><div class="font-semibold text-gray-700">{{ receipt.reference_number }}</div></div>
+                <div v-if="receipt.currency !== 'USD'"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.currency') }}</div><div class="font-semibold text-gray-700">{{ receipt.currency }}</div></div>
               </div>
 
               <div class="mb-8">
-                <div class="text-[10px] uppercase tracking-widest text-gray-400 mb-2">Receipt To</div>
+                <div class="text-[10px] uppercase tracking-widest text-gray-400 mb-2">{{ t('document.receiptTo') }}</div>
                 <div class="font-semibold text-gray-800">{{ receipt.to_name || '—' }}</div>
                 <div v-if="receipt.to_company" class="text-xs text-gray-500">{{ receipt.to_company }}</div>
                 <div v-if="receipt.to_email" class="text-xs text-gray-500">{{ receipt.to_email }}</div>
@@ -248,11 +248,11 @@ async function handleDelete() {
               <table class="w-full mb-6 text-sm" style="border-collapse:collapse">
                 <thead>
                   <tr :style="{ backgroundColor: receipt.accent_color + '18' }">
-                    <th class="text-left py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">Description</th>
-                    <th class="text-center py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">Qty</th>
-                    <th class="text-center py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">Unit</th>
-                    <th class="text-right py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">Rate</th>
-                    <th class="text-right py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">Amount</th>
+                    <th class="text-left py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">{{ t('document.table.description') }}</th>
+                    <th class="text-center py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">{{ t('document.table.qty') }}</th>
+                    <th class="text-center py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">{{ t('document.table.unit') }}</th>
+                    <th class="text-right py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">{{ t('document.table.rate') }}</th>
+                    <th class="text-right py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">{{ t('document.table.amount') }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -268,27 +268,27 @@ async function handleDelete() {
 
               <div class="flex justify-end mb-6">
                 <div class="w-56 space-y-1.5 text-sm">
-                  <div class="flex justify-between text-gray-500"><span>Subtotal</span><span class="font-mono">{{ fmtMoney(receipt.totals.subtotal) }}</span></div>
+                  <div class="flex justify-between text-gray-500"><span>{{ t('document.subtotal') }}</span><span class="font-mono">{{ fmtMoney(receipt.totals.subtotal) }}</span></div>
                   <div v-if="receipt.totals.discount_amt > 0" class="flex justify-between text-gray-500">
-                    <span>Discount</span><span class="font-mono text-red-500">-{{ fmtMoney(receipt.totals.discount_amt) }}</span>
+                    <span>{{ t('document.discount') }}</span><span class="font-mono text-red-500">-{{ fmtMoney(receipt.totals.discount_amt) }}</span>
                   </div>
                   <div v-if="receipt.totals.taxes_total > 0" class="flex justify-between text-gray-500">
-                    <span>Tax</span><span class="font-mono">{{ fmtMoney(receipt.totals.taxes_total) }}</span>
+                    <span>{{ t('document.tax') }}</span><span class="font-mono">{{ fmtMoney(receipt.totals.taxes_total) }}</span>
                   </div>
                   <div class="h-px bg-gray-200 my-2"></div>
                   <div class="flex justify-between font-bold text-base">
-                    <span>Amount Received</span><span class="font-mono" :style="{ color: receipt.accent_color }">{{ fmtMoney(receipt.totals.total) }}</span>
+                    <span>{{ t('document.amountReceived') }}</span><span class="font-mono" :style="{ color: receipt.accent_color }">{{ fmtMoney(receipt.totals.total) }}</span>
                   </div>
                 </div>
               </div>
 
               <div v-if="receipt.show_notes && receipt.notes" class="border-t border-gray-100 pt-6">
-                <div class="text-[10px] uppercase tracking-widest text-gray-400 mb-1.5">Notes</div>
+                <div class="text-[10px] uppercase tracking-widest text-gray-400 mb-1.5">{{ t('document.notes') }}</div>
                 <p class="text-xs text-gray-500 leading-relaxed whitespace-pre-line">{{ receipt.notes }}</p>
               </div>
 
               <div v-if="receipt.show_flowtali_tag" class="mt-8 text-center">
-                <div class="text-[10px] text-gray-300">Generated with Flowtali · flowtali.com</div>
+                <div class="text-[10px] text-gray-300">{{ t('document.generatedWith') }}</div>
               </div>
             </div>
           </div>
@@ -300,31 +300,31 @@ async function handleDelete() {
           <!-- Stats -->
           <div class="bg-gray-200 border border-gray-400 rounded-xl p-4 space-y-3">
             <div class="flex items-center justify-between">
-              <p class="text-xs font-semibold text-gray-900 uppercase tracking-wider">Shared Links</p>
+              <p class="text-xs font-semibold text-gray-900 uppercase tracking-wider">{{ t('invoiceView.links.title') }}</p>
               <button
                 @click="showShareModal = true"
                 class="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-green-700 hover:text-green-700/80 bg-green-700/10 hover:bg-green-700/15 rounded-md transition-colors"
               >
-                <Icon icon="lucide:plus" class="w-3 h-3" /> New Link
+                <Icon icon="lucide:plus" class="w-3 h-3" /> {{ t('invoiceView.links.newLink') }}
               </button>
             </div>
             <div class="grid grid-cols-3 gap-2">
               <div class="bg-gray-100/50 rounded-lg p-2.5 text-center">
                 <div class="text-lg font-bold text-gray-1000">{{ links.length }}</div>
-                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">Total</div>
+                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">{{ t('invoiceView.links.total') }}</div>
               </div>
               <div class="bg-gray-100/50 rounded-lg p-2.5 text-center">
                 <div class="text-lg font-bold text-green-400">{{ activeLinks }}</div>
-                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">Active</div>
+                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">{{ t('invoiceView.links.active') }}</div>
               </div>
               <div class="bg-gray-100/50 rounded-lg p-2.5 text-center">
                 <div class="text-lg font-bold text-gray-1000">{{ totalViews }}</div>
-                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">Views</div>
+                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">{{ t('invoiceView.links.views') }}</div>
               </div>
             </div>
             <div class="flex items-center gap-3 text-xs text-gray-700 pt-0.5">
-              <span class="flex items-center gap-1"><Icon icon="lucide:lock" class="w-3 h-3" />{{ links.filter(l => l.visibility === 'private').length }} private</span>
-              <span class="flex items-center gap-1"><Icon icon="lucide:globe" class="w-3 h-3" />{{ links.filter(l => l.visibility === 'public').length }} public</span>
+              <span class="flex items-center gap-1"><Icon icon="lucide:lock" class="w-3 h-3" />{{ t('invoiceView.links.private', { count: links.filter(l => l.visibility === 'private').length }) }}</span>
+              <span class="flex items-center gap-1"><Icon icon="lucide:globe" class="w-3 h-3" />{{ t('invoiceView.links.public', { count: links.filter(l => l.visibility === 'public').length }) }}</span>
             </div>
           </div>
 
@@ -337,13 +337,13 @@ async function handleDelete() {
               <div class="flex items-start justify-between gap-2">
                 <div class="min-w-0">
                   <div class="flex items-center gap-1.5 flex-wrap">
-                    <span class="text-xs font-semibold text-gray-1000 truncate">{{ link.label || 'Shared Link' }}</span>
+                    <span class="text-xs font-semibold text-gray-1000 truncate">{{ link.label || t('invoiceView.links.defaultLabel') }}</span>
                     <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium', linkStatusLabel(link).cls]">{{ linkStatusLabel(link).text }}</span>
                   </div>
                   <p class="text-[10px] text-gray-700 mt-0.5">{{ expiryLabel(link) }}</p>
                 </div>
                 <span class="text-[9px] px-1.5 py-0.5 rounded border font-medium text-gray-700 border-gray-500 bg-gray-400 shrink-0">
-                  {{ link.visibility === 'private' ? 'Private' : 'Public' }}
+                  {{ link.visibility === 'private' ? t('invoiceView.links.visibilityPrivate') : t('invoiceView.links.visibilityPublic') }}
                 </span>
               </div>
 
@@ -369,7 +369,7 @@ async function handleDelete() {
               </div>
 
               <div v-if="link.view_log.length > 0" class="space-y-1 border-t border-gray-400/50 pt-2">
-                <p class="text-[9px] uppercase tracking-wider text-gray-700">Recent Views</p>
+                <p class="text-[9px] uppercase tracking-wider text-gray-700">{{ t('invoiceView.links.recentViews') }}</p>
                 <div v-for="(entry, i) in link.view_log.slice(0, 5)" :key="i" class="flex items-center justify-between text-[10px] text-gray-700">
                   <span>{{ entry.browser }}</span>
                   <span>{{ fmtDateTime(entry.timestamp) }}</span>
@@ -381,10 +381,10 @@ async function handleDelete() {
           <!-- Empty state -->
           <div v-else class="bg-gray-200 border border-dashed border-gray-500 rounded-xl p-6 flex flex-col items-center text-center gap-2">
             <Icon icon="lucide:share-2" class="w-8 h-8 text-gray-700" />
-            <p class="text-xs font-medium text-gray-900">No shared links yet</p>
-            <p class="text-[11px] text-gray-700">Generate a link to share this receipt with clients</p>
+            <p class="text-xs font-medium text-gray-900">{{ t('invoiceView.links.emptyTitle') }}</p>
+            <p class="text-[11px] text-gray-700">{{ t('receiptView.linksEmptyBody') }}</p>
             <button @click="showShareModal = true" class="mt-2 flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-green-700/10 hover:bg-green-700/15 border border-green-700/20 text-green-700 rounded-lg transition-colors">
-              <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Create Link
+              <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> {{ t('invoiceView.links.createLink') }}
             </button>
           </div>
 
@@ -414,15 +414,15 @@ async function handleDelete() {
                 <Icon icon="lucide:trash-2" class="w-4 h-4 text-red-400" />
               </div>
               <div>
-                <h3 class="text-sm font-semibold text-gray-1000">Delete {{ receipt.number }}?</h3>
-                <p class="text-xs text-gray-700 mt-1 leading-relaxed">This receipt will be permanently deleted. This action cannot be undone.</p>
+                <h3 class="text-sm font-semibold text-gray-1000">{{ t('receipts.deleteModal.title', { number: receipt.number }) }}</h3>
+                <p class="text-xs text-gray-700 mt-1 leading-relaxed">{{ t('receipts.deleteModal.body') }}</p>
               </div>
             </div>
             <div class="flex justify-end gap-2">
-              <button @click="showDeleteConfirm = false" :disabled="isDeleting" class="px-4 py-2 text-xs font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors disabled:opacity-50">Cancel</button>
+              <button @click="showDeleteConfirm = false" :disabled="isDeleting" class="px-4 py-2 text-xs font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors disabled:opacity-50">{{ t('receipts.deleteModal.cancel') }}</button>
               <button @click="handleDelete" :disabled="isDeleting" class="px-4 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-1.5">
                 <Icon v-if="isDeleting" icon="lucide:loader-2" class="w-3 h-3 animate-spin" />
-                Delete
+                {{ t('receipts.deleteModal.confirm') }}
               </button>
             </div>
           </div>

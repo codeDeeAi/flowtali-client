@@ -1,0 +1,147 @@
+{
+  "toolbar": {
+    "invoices": "Rechnungen",
+    "newInvoice": "Neue Rechnung",
+    "editInvoice": "Rechnung bearbeiten",
+    "print": "Drucken / PDF",
+    "share": "Teilen",
+    "saveDraft": "Entwurf speichern",
+    "saving": "Speichern…",
+    "createInvoice": "Rechnung erstellen",
+    "saveChanges": "Änderungen speichern"
+  },
+  "tabs": {
+    "from": "Von",
+    "to": "An",
+    "items": "Positionen",
+    "design": "Design",
+    "settings": "Einstellungen",
+    "preview": "Vorschau"
+  },
+  "common": {
+    "loading": "Wird geladen…",
+    "loadingClients": "Kunden werden geladen…",
+    "remove": "Entfernen",
+    "optional": "(optional)",
+    "uploading": "Wird hochgeladen…"
+  },
+  "from": {
+    "quickFillProfiles": "Schnellausfüll-Profile",
+    "orgNameLabel": "Organisationsname",
+    "addProfilesHint": "Fügen Sie in den Organisationseinstellungen Profile für weitere Optionen hinzu.",
+    "noProfiles": "Noch keine Profile eingerichtet",
+    "companyName": "Firmenname",
+    "companyNamePlaceholder": "Ihr Studioname",
+    "tagline": "Slogan / Rolle",
+    "taglinePlaceholder": "Kreativagentur & Digitalstudio",
+    "email": "E-Mail",
+    "emailPlaceholder": "hello{'@'}studio.com",
+    "phone": "Telefon",
+    "phonePlaceholder": "+1 555 000 0000",
+    "website": "Website",
+    "websitePlaceholder": "www.ihrstudio.com",
+    "address": "Adresse",
+    "addressPlaceholder": "123 Straße\nStadt, Land",
+    "logo": "Logo",
+    "replaceLogo": "Logo ersetzen",
+    "uploadLogo": "Logo hochladen",
+    "bankDetails": "Bank- / Zahlungsdetails",
+    "quickFillBank": "Aus gespeichertem Konto ausfüllen:",
+    "bankName": "Bankname",
+    "bankNamePlaceholder": "Chase Bank",
+    "accountName": "Kontoinhaber",
+    "accountNamePlaceholder": "Acme Design Studio",
+    "accountNumber": "Kontonummer",
+    "sortCode": "BLZ / Routing-Code",
+    "iban": "IBAN",
+    "paymentLinks": "Zahlungslinks",
+    "addFromSaved": "Aus Gespeicherten hinzufügen:",
+    "linkGenericPlaceholder": "Link oder Benutzername",
+    "addPaymentLink": "Zahlungslink hinzufügen"
+  },
+  "to": {
+    "selectClient": "Kunde auswählen",
+    "noClients": "Noch keine Kunden hinzugefügt",
+    "billToName": "Rechnungsempfänger",
+    "billToNamePlaceholder": "Kundenname",
+    "company": "Firma",
+    "companyPlaceholder": "Kundenfirma",
+    "email": "E-Mail",
+    "emailPlaceholder": "kunde{'@'}beispiel.com",
+    "phone": "Telefon",
+    "billingAddress": "Rechnungsadresse"
+  },
+  "items": {
+    "item": "Position {n}",
+    "descriptionPlaceholder": "Beschreibung",
+    "qty": "Menge",
+    "unit": "Einheit",
+    "rateWithSym": "Preis ({sym})",
+    "addLineItem": "Position hinzufügen",
+    "discount": "Rabatt",
+    "flat": "{sym} pauschal",
+    "taxLines": "Steuerzeilen",
+    "taxLabelPlaceholder": "MwSt.",
+    "addTaxLine": "Steuerzeile hinzufügen"
+  },
+  "design": {
+    "theme": "Design",
+    "accentColor": "Akzentfarbe",
+    "brand": "Marke",
+    "fontFamily": "Schriftart",
+    "logo": "Logo",
+    "signature": "Unterschrift",
+    "replaceSignature": "Unterschrift ersetzen",
+    "uploadSignature": "Unterschrift hochladen",
+    "stampWatermark": "Stempel / Wasserzeichen",
+    "none": "Keiner",
+    "watermarkText": "Wasserzeichentext",
+    "visible": "Sichtbar",
+    "hidden": "Verborgen",
+    "showHide": "Anzeigen / Ausblenden"
+  },
+  "themes": {
+    "classic": "Klassisch",
+    "modern": "Modern",
+    "minimal": "Minimalistisch",
+    "bold": "Auffälliger Kopf",
+    "executive": "Executive"
+  },
+  "toggles": {
+    "showTopBar": "Akzentleiste oben",
+    "showLogo": "Firmenlogo",
+    "showFooterLine": "Fußzeile",
+    "showNotes": "Notizbereich",
+    "showBankDetails": "Bankdetails-Bereich",
+    "showFlowtaliTag": "Flowtali-Branding"
+  },
+  "settings": {
+    "invoiceNumber": "Rechnungsnummer",
+    "paymentTerms": "Zahlungsbedingungen",
+    "issueDate": "Rechnungsdatum",
+    "dueDate": "Fälligkeitsdatum",
+    "auto": "(automatisch)",
+    "currency": "Währung",
+    "poNumber": "Bestellnummer",
+    "notes": "Notizen / Zahlungshinweise",
+    "notesPlaceholder": "Zahlbar innerhalb von 30 Tagen…",
+    "footerText": "Benutzerdefinierter Fußzeilentext",
+    "footerPlaceholder": "Vielen Dank für Ihr Vertrauen!"
+  },
+  "zoom": {
+    "fit": "Anpassen"
+  },
+  "toasts": {
+    "logoUploadFailed": "Logo-Upload fehlgeschlagen",
+    "signatureUploadFailed": "Unterschrift-Upload fehlgeschlagen",
+    "created": "Rechnung erfolgreich erstellt!",
+    "saved": "Rechnung erfolgreich gespeichert!",
+    "saveFailed": "Rechnung konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
+  },
+  "validation": {
+    "numberRequired": "Rechnungsnummer ist erforderlich.",
+    "itemRequired": "Mindestens eine Position ist erforderlich.",
+    "descriptionRequired": "Alle Positionen müssen eine Beschreibung haben.",
+    "linkValueRequired": "Alle Zahlungslinks müssen einen Wert haben."
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "paidOn": "Payé le {date}",
+  "noPaymentDate": "Date de paiement non définie",
+  "linksEmptyBody": "Générez un lien pour partager ce reçu avec vos clients"
+}

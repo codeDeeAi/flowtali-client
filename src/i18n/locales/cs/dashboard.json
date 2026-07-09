@@ -1,0 +1,54 @@
+{
+  "greeting": {
+    "morning": "Dobré ráno",
+    "afternoon": "Dobré odpoledne",
+    "evening": "Dobrý večer"
+  },
+  "defaultName": "vítejte",
+  "defaultOrg": "vaši organizaci",
+  "subtitle": "Co se dnes děje v {org}",
+  "newInvoice": "Nová faktura",
+  "stats": {
+    "totalRevenue": "Celkové tržby",
+    "outstanding": "Nezaplaceno",
+    "invoicesSent": "Odeslané faktury",
+    "collectionRate": "Míra inkasa",
+    "receiptsIssued": "Vydané účtenky"
+  },
+  "quickActions": {
+    "title": "Rychlé akce",
+    "createInvoice": "Vytvořit fakturu",
+    "createReceipt": "Vytvořit účtenku",
+    "createLetterhead": "Vytvořit hlavičkový papír",
+    "addClient": "Přidat klienta",
+    "inviteMember": "Pozvat člena"
+  },
+  "planUsage": {
+    "title": "Využití plánu",
+    "invoicesPerMo": "Faktury/měs.",
+    "receiptsPerMo": "Účtenky/měs.",
+    "letterheadsPerMo": "Hlavičky/měs.",
+    "projects": "Projekty",
+    "teamMembers": "Členové týmu",
+    "upgrade": "Vylepšit plán",
+    "manage": "Spravovat plán"
+  },
+  "revenue": {
+    "title": "Přehled tržeb",
+    "subtitle": "Přijaté platby faktur",
+    "noData": "Zatím žádná data o tržbách"
+  },
+  "statusChart": {
+    "title": "Stav faktur",
+    "thisMonth": "Tento měsíc",
+    "total": "celkem"
+  },
+  "recentInvoices": {
+    "title": "Nedávné faktury",
+    "empty": "Zatím žádné faktury"
+  },
+  "recentReceipts": {
+    "title": "Nedávné účtenky",
+    "empty": "Zatím žádné účtenky"
+  }
+}

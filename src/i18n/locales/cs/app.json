@@ -1,0 +1,99 @@
+{
+  "nav": {
+    "dashboard": "Přehled",
+    "projects": "Projekty",
+    "invoices": "Faktury",
+    "receipts": "Účtenky",
+    "letterheads": "Hlavičkové papíry",
+    "clients": "Klienti",
+    "members": "Členové",
+    "roles": "Role a oprávnění",
+    "rolesShort": "Role",
+    "orgPreferences": "Nastavení organizace",
+    "auditLogs": "Protokoly auditu",
+    "analytics": "Analytika",
+    "billing": "Fakturace",
+    "settings": "Nastavení",
+    "profile": "Můj profil"
+  },
+  "sections": {
+    "documents": "Dokumenty",
+    "organization": "Organizace",
+    "workspace": "Pracovní prostor",
+    "account": "Účet"
+  },
+  "pageTitles": {
+    "dashboard": "Přehled",
+    "invoices": "Faktury",
+    "invoicesCreate": "Nová faktura",
+    "invoicesView": "Faktura",
+    "invoicesEdit": "Upravit fakturu",
+    "receipts": "Účtenky",
+    "receiptsCreate": "Nová účtenka",
+    "receiptsView": "Účtenka",
+    "receiptsEdit": "Upravit účtenku",
+    "letterheads": "Hlavičkové papíry",
+    "letterheadsCreate": "Nový hlavičkový papír",
+    "letterheadsView": "Hlavičkový papír",
+    "letterheadsEdit": "Upravit hlavičkový papír",
+    "projects": "Projekty",
+    "projectsCreate": "Nový projekt",
+    "projectsView": "Projekt",
+    "projectsEdit": "Upravit projekt",
+    "clients": "Klienti",
+    "clientsCreate": "Nový klient",
+    "clientsView": "Klient",
+    "clientsEdit": "Upravit klienta",
+    "members": "Členové",
+    "membersView": "Člen",
+    "roles": "Role a oprávnění",
+    "orgPreferences": "Nastavení organizace",
+    "auditLogs": "Protokoly auditu",
+    "analytics": "Analytika",
+    "billing": "Fakturace",
+    "subscription": "Předplatné",
+    "settings": "Nastavení",
+    "profile": "Můj profil"
+  },
+  "header": {
+    "toggleSidebar": "Přepnout postranní panel",
+    "language": "Jazyk",
+    "profileMenu": "Nabídka profilu"
+  },
+  "sidebar": {
+    "selectOrg": "Vyberte organizaci",
+    "yourOrgs": "Vaše organizace",
+    "createOrg": "Vytvořit organizaci",
+    "collapse": "Sbalit postranní panel",
+    "expand": "Rozbalit postranní panel",
+    "close": "Zavřít postranní panel",
+    "feedback": "Zpětná vazba",
+    "shareFeedback": "Sdílet zpětnou vazbu"
+  },
+  "createOrg": {
+    "title": "Vytvořit organizaci",
+    "subtitle": "Nastavte nový pracovní prostor pro svůj tým nebo firmu",
+    "nameLabel": "Název organizace",
+    "typeLabel": "Typ",
+    "business": "Firma",
+    "businessDesc": "Správa týmu a klientů",
+    "personal": "Osobní",
+    "personalDesc": "Režim samostatného freelancera",
+    "cancel": "Zrušit",
+    "create": "Vytvořit",
+    "creating": "Vytváření…"
+  },
+  "userMenu": {
+    "myProfile": "Můj profil",
+    "settings": "Nastavení",
+    "signOut": "Odhlásit se",
+    "signingOut": "Odhlašování…"
+  },
+  "bottomNav": {
+    "home": "Domů",
+    "invoices": "Faktury",
+    "clients": "Klienti",
+    "more": "Více",
+    "newInvoice": "Nová faktura"
+  }
+}

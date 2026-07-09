@@ -1,0 +1,105 @@
+{
+  "title": "Facturation",
+  "subtitle": "Gérez votre abonnement et votre historique de facturation",
+  "verifying": "Vérification du paiement…",
+  "verifyingDesc": "Veuillez patienter pendant que nous confirmons votre paiement avec Paystack.",
+  "currentPlan": "Forfait actuel",
+  "statuses": {
+    "active": "Actif",
+    "trial": "Essai",
+    "past_due": "En retard",
+    "cancelled": "Annulé",
+    "expired": "Expiré",
+    "pending": "En attente",
+    "completed": "Terminé",
+    "failed": "Échoué"
+  },
+  "period": {
+    "cancelledUntil": "Abonnement annulé — accès jusqu'au",
+    "renewsAnnual": "Le forfait annuel se renouvelle le",
+    "renewsMonthly": "Le forfait mensuel se renouvelle le",
+    "billingCurrency": "Devise de facturation : {currency}",
+    "cancelPlan": "Annuler le forfait"
+  },
+  "tabs": {
+    "plans": "Forfaits",
+    "history": "Historique de facturation"
+  },
+  "interval": {
+    "monthly": "Mensuel",
+    "annual": "Annuel"
+  },
+  "detected": "(détecté)",
+  "plan": {
+    "mostPopular": "Le plus populaire",
+    "currentPlan": "Forfait actuel",
+    "free": "Gratuit",
+    "perMonth": "/mois",
+    "billedAnnual": "Facturé {price}/an",
+    "save": "Économisez {pct} %",
+    "downgradeFree": "Rétrograder vers Gratuit",
+    "upgradeTo": "Passer à {name}",
+    "current": "Forfait actuel"
+  },
+  "history": {
+    "empty": "Aucun historique de facturation",
+    "emptyHint": "Votre historique de paiement apparaîtra ici après votre premier upgrade.",
+    "date": "Date",
+    "type": "Type",
+    "reference": "Référence",
+    "amount": "Montant",
+    "status": "Statut",
+    "prev": "← Précédent",
+    "next": "Suivant →",
+    "page": "Page {page} sur {total}"
+  },
+  "txType": {
+    "new_subscription": "Nouvel abonnement",
+    "renewal": "Renouvellement",
+    "upgrade": "Upgrade",
+    "downgrade": "Downgrade"
+  },
+  "cancelModal": {
+    "title": "Annuler l'abonnement ?",
+    "subtitle": "Vous conserverez l'accès jusqu'à la fin de votre période en cours.",
+    "body": "Après l'annulation, votre compte sera automatiquement rétrogradé vers le forfait Starter à la fin de votre période de facturation. Vous ne serez plus débité.",
+    "keep": "Conserver le forfait",
+    "cancelling": "Annulation…",
+    "confirm": "Oui, annuler"
+  },
+  "features": {
+    "unlimitedInvoices": "Factures illimitées",
+    "invoicesPerMonth": "{n} factures/mois",
+    "unlimitedReceipts": "Reçus illimités",
+    "receiptsPerMonth": "{n} reçus/mois",
+    "unlimitedLetterheads": "En-têtes illimités",
+    "letterheadsPerMonth": "{n} en-têtes/mois",
+    "unlimitedProjects": "Projets illimités",
+    "projectsLimit": "{n} projet actif",
+    "upToTeam": "Jusqu'à {n} membres d'équipe",
+    "solo": "Solo (1 membre)",
+    "customBranding": "Image de marque et logo personnalisés",
+    "removeBranding": "Supprimer la marque Flowtali",
+    "allCurrencies": "Les 11 devises",
+    "allTemplates": "Les 8 modèles d'en-tête",
+    "stampWatermark": "Tampons et filigranes",
+    "prioritySupport": "Support prioritaire",
+    "teamRoles": "Rôles et autorisations d'équipe",
+    "invoiceAnalytics": "Analytique des factures"
+  },
+  "toasts": {
+    "activated": "Abonnement activé avec succès !",
+    "verifyFailed": "La vérification du paiement a échoué.",
+    "loadPlansFailed": "Échec du chargement des forfaits.",
+    "loadHistoryFailed": "Échec du chargement de l'historique de facturation.",
+    "initPaymentFailed": "Échec de l'initialisation du paiement.",
+    "cancelled": "Abonnement annulé. L'accès continue jusqu'à la fin de votre période de facturation.",
+    "cancelFailed": "Échec de l'annulation de l'abonnement."
+  },
+  "paywall": {
+    "trialEndedTitle": "Votre essai gratuit est terminé",
+    "trialEndedBody": "Abonnez-vous à une formule pour continuer à créer des factures, des reçus et plus encore. Vos données existantes restent en sécurité.",
+    "requiredTitle": "Un abonnement est requis",
+    "requiredBody": "Votre organisation a besoin d'une formule active pour continuer. Choisissez une formule ci-dessous pour rétablir l'accès."
+  }
+}

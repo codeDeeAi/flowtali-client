@@ -1,0 +1,24 @@
+{
+  "title": "Audit Logs",
+  "subtitle": "Full activity trail for your organization",
+  "exporting": "Exporting…",
+  "exportCsv": "Export CSV",
+  "allEvents": "All events",
+  "search": "Search logs…",
+  "count": "no events | one event | {count} events",
+  "table": {
+    "event": "Event",
+    "user": "User",
+    "resource": "Resource",
+    "ip": "IP Address",
+    "timestamp": "Timestamp",
+    "status": "Status"
+  },
+  "system": "System",
+  "formerMember": "Former member",
+  "success": "Success",
+  "failed": "Failed",
+  "ok": "OK",
+  "fail": "Fail",
+  "empty": "No audit logs found"
+}

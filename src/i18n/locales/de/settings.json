@@ -1,0 +1,84 @@
+{
+  "title": "Einstellungen",
+  "subtitle": "Organisations- und Kontokonfiguration",
+  "tabs": {
+    "general": "Allgemein",
+    "notifications": "Benachrichtigungen",
+    "security": "Sicherheit",
+    "api": "API & Integrationen"
+  },
+  "general": {
+    "orgDetails": "Organisationsdetails",
+    "logo": "Organisationslogo",
+    "logoHint": "PNG, JPG oder WebP · max. 2 MB",
+    "uploadLogo": "Logo hochladen",
+    "uploading": "Wird hochgeladen…",
+    "removing": "Wird entfernt…",
+    "remove": "Entfernen",
+    "orgName": "Organisationsname",
+    "orgNamePlaceholder": "Organisationsname",
+    "industry": "Branche",
+    "selectIndustry": "Branche auswählen…",
+    "companySize": "Unternehmensgröße",
+    "selectSize": "Größe auswählen…",
+    "businessAddress": "Geschäftsadresse",
+    "addressPlaceholder": "Straße 123, Stadt, Land",
+    "defaultInvoiceSettings": "Standard-Rechnungseinstellungen",
+    "defaultCurrency": "Standardwährung",
+    "paymentTerms": "Zahlungsbedingungen",
+    "defaultTaxRate": "Standard-Steuersatz (%)",
+    "saveChanges": "Änderungen speichern",
+    "saved": "Gespeichert"
+  },
+  "notifications": {
+    "title": "Benachrichtigungseinstellungen",
+    "groups": {
+      "invoices": "Rechnungen",
+      "team": "Team"
+    },
+    "items": {
+      "invoice_paid": {
+        "label": "Rechnung bezahlt",
+        "desc": "Wenn ein Kunde eine Rechnung bezahlt"
+      },
+      "invoice_overdue": {
+        "label": "Rechnung überfällig",
+        "desc": "Wenn eine Rechnung ihr Fälligkeitsdatum überschreitet"
+      },
+      "invoice_viewed": {
+        "label": "Rechnung angesehen",
+        "desc": "Wenn ein Kunde eine Rechnung ansieht"
+      },
+      "member_joined": {
+        "label": "Mitglied beigetreten",
+        "desc": "Wenn ein Teammitglied eine Einladung annimmt"
+      },
+      "role_changed": {
+        "label": "Rolle geändert",
+        "desc": "Wenn die Rolle eines Mitglieds aktualisiert wird"
+      }
+    },
+    "email": "E-Mail",
+    "inApp": "In-App",
+    "save": "Einstellungen speichern",
+    "saved": "Gespeichert"
+  },
+  "security": {
+    "title": "Sicherheitseinstellungen",
+    "twoFactor": "Zwei-Faktor-Authentifizierung",
+    "twoFactorDesc": "2FA für alle Organisationsmitglieder erforderlich machen",
+    "ipAllowlist": "IP-Zulassungsliste",
+    "ipAllowlistDesc": "Zugriff auf bestimmte IP-Bereiche beschränken. Leer lassen, um alle IPs zuzulassen. Eine IP oder einen CIDR-Block pro Zeile eingeben.",
+    "save": "Sicherheitseinstellungen speichern",
+    "saved": "Gespeichert"
+  },
+  "api": {
+    "title": "API-Schlüssel",
+    "generateKey": "Schlüssel generieren",
+    "planNote": "API-Zugriff ist in den Plänen Pro und Business verfügbar",
+    "planDesc": "Verwenden Sie API-Schlüssel, um Flowtali in Ihre eigenen Systeme zu integrieren und Arbeitsabläufe zu automatisieren.",
+    "active": "Aktiv",
+    "lastUsed": "Zuletzt verwendet {when}",
+    "revoke": "Widerrufen"
+  }
+}

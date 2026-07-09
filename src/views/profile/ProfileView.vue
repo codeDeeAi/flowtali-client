@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { ProfileService, type IUserProfile, type ISession } from '@/services/profile.service'
@@ -8,6 +9,7 @@ import { SettingsService } from '@/services/settings.service'
 import { useNotification } from '@/composables/notification'
 
 const router      = useRouter()
+const { t, locale } = useI18n()
 const authStore   = useAuthStore()
 const { notify }  = useNotification()
 
@@ -76,7 +78,7 @@ async function load() {
       job_title:  profile.value.job_title ?? '',
     }
   } catch {
-    notify('Failed to load profile', 'error')
+    notify(t('profile.toasts.loadFailed'), 'error')
   } finally {
     isLoading.value = false
   }
@@ -102,9 +104,9 @@ async function handleAvatarChange(e: Event) {
     const res = await ProfileService.uploadAvatar(file)
     profile.value = res.data.data
     authStore.updateUserInfo({ avatar: res.data.data.avatar })
-    notify('Avatar updated', 'success')
+    notify(t('profile.toasts.avatarUpdated'), 'success')
   } catch {
-    notify('Failed to upload avatar', 'error')
+    notify(t('profile.toasts.avatarFailed'), 'error')
   } finally {
     isUploadingAvatar.value = false
     if (avatarInput.value) avatarInput.value.value = ''
@@ -127,9 +129,9 @@ async function saveProfile() {
       first_name: profile.value.first_name,
       last_name:  profile.value.last_name,
     })
-    notify('Profile saved', 'success')
+    notify(t('profile.toasts.profileSaved'), 'success')
   } catch {
-    notify('Failed to save profile', 'error')
+    notify(t('profile.toasts.profileFailed'), 'error')
   } finally {
     isSavingProfile.value = false
   }
@@ -138,7 +140,7 @@ async function saveProfile() {
 // ── password ───────────────────────────────────────────────────────────────────
 async function changePassword() {
   if (pwForm.value.password !== pwForm.value.password_confirmation) {
-    notify('Passwords do not match', 'error')
+    notify(t('profile.toasts.pwMismatch'), 'error')
     return
   }
   isSavingPw.value = true
@@ -149,9 +151,9 @@ async function changePassword() {
       pwForm.value.password_confirmation,
     )
     pwForm.value = { current_password: '', password: '', password_confirmation: '' }
-    notify('Password changed successfully', 'success')
+    notify(t('profile.toasts.pwChanged'), 'success')
   } catch (err: any) {
-    const msg = err?.response?.data?.message ?? 'Failed to change password'
+    const msg = err?.response?.data?.message ?? t('profile.toasts.pwFailed')
     notify(msg, 'error')
   } finally {
     isSavingPw.value = false
@@ -164,9 +166,9 @@ async function revokeSession(id: number) {
   try {
     await ProfileService.revokeSession(id)
     sessions.value = sessions.value.filter(s => s.id !== id)
-    notify('Session revoked', 'success')
+    notify(t('profile.toasts.sessionRevoked'), 'success')
   } catch {
-    notify('Failed to revoke session', 'error')
+    notify(t('profile.toasts.sessionRevokeFailed'), 'error')
   } finally {
     revokingId.value = null
   }
@@ -178,9 +180,9 @@ async function revokeAll() {
     const res = await ProfileService.revokeAllSessions()
     const { revoked } = res.data.data
     sessions.value = sessions.value.filter(s => s.is_current)
-    notify(`Signed out of ${revoked} other session(s)`, 'success')
+    notify(t('profile.toasts.signedOutOthers', { count: revoked }), 'success')
   } catch {
-    notify('Failed to sign out sessions', 'error')
+    notify(t('profile.toasts.signOutFailed'), 'error')
   } finally {
     isRevokingAll.value = false
   }
@@ -193,9 +195,9 @@ async function initiateMfa() {
     await ProfileService.initiateMfa()
     mfaStep.value = 'otp'
     mfaOtp.value = ''
-    notify('Verification code sent to your email', 'success')
+    notify(t('profile.toasts.mfaCodeSent'), 'success')
   } catch (err: any) {
-    notify(err?.response?.data?.message ?? 'Failed to send code', 'error')
+    notify(err?.response?.data?.message ?? t('profile.toasts.mfaSendFailed'), 'error')
   } finally {
     isMfaInitiating.value = false
   }
@@ -210,9 +212,9 @@ async function confirmEnableMfa() {
     authStore.updateMfaEnabled(true)
     mfaStep.value = 'idle'
     mfaOtp.value = ''
-    notify('Two-factor authentication enabled', 'success')
+    notify(t('profile.toasts.mfaEnabled'), 'success')
   } catch (err: any) {
-    notify(err?.response?.data?.message ?? 'Invalid code', 'error')
+    notify(err?.response?.data?.message ?? t('profile.toasts.mfaInvalidCode'), 'error')
   } finally {
     isMfaSubmitting.value = false
   }
@@ -224,9 +226,9 @@ async function disableMfa() {
     const res = await ProfileService.disableMfa()
     profile.value = res.data.data
     authStore.updateMfaEnabled(false)
-    notify('Two-factor authentication disabled', 'success')
+    notify(t('profile.toasts.mfaDisabled'), 'success')
   } catch (err: any) {
-    notify(err?.response?.data?.message ?? 'Failed to disable 2FA', 'error')
+    notify(err?.response?.data?.message ?? t('profile.toasts.mfaDisableFailed'), 'error')
   } finally {
     isMfaDisabling.value = false
   }
@@ -249,9 +251,9 @@ async function sendDeletionOtp() {
     await ProfileService.initiateAccountDeletion()
     deleteStep.value = 'otp'
     deleteOtp.value = ''
-    notify('Verification code sent to your email', 'success')
+    notify(t('profile.toasts.delCodeSent'), 'success')
   } catch (err: any) {
-    notify(err?.response?.data?.message ?? 'Failed to send verification code', 'error')
+    notify(err?.response?.data?.message ?? t('profile.toasts.delSendFailed'), 'error')
   } finally {
     isDeleteInitiating.value = false
   }
@@ -265,7 +267,7 @@ async function confirmDeletion() {
     authStore.logout()
     router.push({ name: 'signin' })
   } catch (err: any) {
-    notify(err?.response?.data?.message ?? 'Failed to delete account', 'error')
+    notify(err?.response?.data?.message ?? t('profile.toasts.delFailed'), 'error')
   } finally {
     isDeleteConfirming.value = false
   }
@@ -273,20 +275,20 @@ async function confirmDeletion() {
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 function fmtDate(iso: string | null): string {
-  if (!iso) return 'Never'
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  if (!iso) return t('profile.relative.never')
+  return new Date(iso).toLocaleDateString(locale.value, { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 function fmtRelative(iso: string | null): string {
-  if (!iso) return 'Never'
+  if (!iso) return t('profile.relative.never')
   const diff = Date.now() - new Date(iso).getTime()
   const mins = Math.floor(diff / 60000)
-  if (mins < 1)  return 'Just now'
-  if (mins < 60) return `${mins}m ago`
+  if (mins < 1)  return t('profile.relative.justNow')
+  if (mins < 60) return t('profile.relative.minAgo', { n: mins })
   const hrs = Math.floor(mins / 60)
-  if (hrs  < 24) return `${hrs}h ago`
+  if (hrs  < 24) return t('profile.relative.hourAgo', { n: hrs })
   const days = Math.floor(hrs / 24)
-  return `${days}d ago`
+  return t('profile.relative.dayAgo', { n: days })
 }
 </script>
 
@@ -295,8 +297,8 @@ function fmtRelative(iso: string | null): string {
 
     <!-- Header -->
     <div>
-      <h1 class="page-title">My Profile</h1>
-      <p class="page-subtitle">Manage your personal account settings</p>
+      <h1 class="page-title">{{ t('profile.title') }}</h1>
+      <p class="page-subtitle">{{ t('profile.subtitle') }}</p>
     </div>
 
     <!-- Loading skeleton -->
@@ -333,7 +335,7 @@ function fmtRelative(iso: string | null): string {
                 @click="triggerAvatarUpload"
                 class="mt-2 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1 rounded-md transition-colors"
               >
-                Change Photo
+                {{ t('profile.changePhoto') }}
               </button>
             </div>
           </div>
@@ -341,24 +343,24 @@ function fmtRelative(iso: string | null): string {
           <!-- Form -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
             <div>
-              <label class="app-label">First Name</label>
+              <label class="app-label">{{ t('profile.fields.firstName') }}</label>
               <input class="app-inp" v-model="profileForm.first_name" />
             </div>
             <div>
-              <label class="app-label">Last Name</label>
+              <label class="app-label">{{ t('profile.fields.lastName') }}</label>
               <input class="app-inp" v-model="profileForm.last_name" />
             </div>
             <div class="sm:col-span-2">
-              <label class="app-label">Email Address</label>
+              <label class="app-label">{{ t('profile.fields.email') }}</label>
               <input class="app-inp opacity-60 cursor-not-allowed" :value="profile?.email" disabled />
             </div>
             <div class="sm:col-span-2">
-              <label class="app-label">Phone Number</label>
-              <input class="app-inp" v-model="profileForm.phone" placeholder="+1 415 555 0199" />
+              <label class="app-label">{{ t('profile.fields.phone') }}</label>
+              <input class="app-inp" v-model="profileForm.phone" :placeholder="t('profile.placeholders.phone')" />
             </div>
             <div class="sm:col-span-2">
-              <label class="app-label">Job Title</label>
-              <input class="app-inp" v-model="profileForm.job_title" placeholder="Creative Director" />
+              <label class="app-label">{{ t('profile.fields.jobTitle') }}</label>
+              <input class="app-inp" v-model="profileForm.job_title" :placeholder="t('profile.placeholders.jobTitle')" />
             </div>
           </div>
 
@@ -368,7 +370,7 @@ function fmtRelative(iso: string | null): string {
             class="flex items-center gap-2 bg-green-700 hover:bg-green-800 disabled:opacity-60 text-bg-100 font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
           >
             <Icon v-if="isSavingProfile" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
-            Save Changes
+            {{ t('profile.saveChanges') }}
           </button>
         </div>
 
@@ -377,10 +379,10 @@ function fmtRelative(iso: string | null): string {
 
           <!-- Change password -->
           <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
-            <h3 class="text-sm font-semibold text-gray-1000 mb-4">Change Password</h3>
+            <h3 class="text-sm font-semibold text-gray-1000 mb-4">{{ t('profile.password.title') }}</h3>
             <div class="space-y-3 mb-4">
               <div>
-                <label class="app-label">Current Password</label>
+                <label class="app-label">{{ t('profile.password.current') }}</label>
                 <div class="relative">
                   <input class="app-inp pr-10"
                     :type="showCurrentPw ? 'text' : 'password'"
@@ -392,19 +394,19 @@ function fmtRelative(iso: string | null): string {
                 </div>
               </div>
               <div>
-                <label class="app-label">New Password</label>
+                <label class="app-label">{{ t('profile.password.new') }}</label>
                 <div class="relative">
                   <input class="app-inp pr-10"
                     :type="showNewPw ? 'text' : 'password'"
                     v-model="pwForm.password"
-                    placeholder="Min. 8 characters" />
+                    :placeholder="t('profile.placeholders.newPassword')" />
                   <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 hover:text-gray-1000" @click="showNewPw = !showNewPw">
                     <Icon :icon="showNewPw ? 'lucide:eye-off' : 'lucide:eye'" class="w-4 h-4" />
                   </button>
                 </div>
               </div>
               <div>
-                <label class="app-label">Confirm New Password</label>
+                <label class="app-label">{{ t('profile.password.confirm') }}</label>
                 <div class="relative">
                   <input class="app-inp pr-10"
                     :type="showConfirmPw ? 'text' : 'password'"
@@ -422,14 +424,14 @@ function fmtRelative(iso: string | null): string {
               class="flex items-center gap-2 text-sm text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 disabled:opacity-50 px-4 py-2 rounded-lg transition-colors"
             >
               <Icon v-if="isSavingPw" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
-              Update Password
+              {{ t('profile.password.update') }}
             </button>
           </div>
 
           <!-- Two-Factor Authentication -->
           <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
             <div class="flex items-start justify-between mb-1">
-              <h3 class="text-sm font-semibold text-gray-1000">Two-Factor Authentication</h3>
+              <h3 class="text-sm font-semibold text-gray-1000">{{ t('profile.mfa.title') }}</h3>
               <span
                 :class="[
                   'text-[10px] font-semibold px-2 py-0.5 rounded-full',
@@ -438,20 +440,20 @@ function fmtRelative(iso: string | null): string {
                     : 'bg-gray-500 text-gray-900 border border-gray-500',
                 ]"
               >
-                {{ profile?.mfa_enabled ? 'Enabled' : 'Disabled' }}
+                {{ profile?.mfa_enabled ? t('profile.mfa.enabled') : t('profile.mfa.disabled') }}
               </span>
             </div>
             <p class="text-xs text-gray-700 mb-4">
-              Add an extra layer of security — a one-time code is emailed on every login.
+              {{ t('profile.mfa.desc') }}
             </p>
 
             <!-- OTP confirmation step -->
             <div v-if="mfaStep === 'otp'" class="space-y-3">
-              <p class="text-xs text-gray-900">Enter the 6-character code sent to your email:</p>
+              <p class="text-xs text-gray-900">{{ t('profile.mfa.enterCode') }}</p>
               <input
                 v-model="mfaOtp"
                 class="app-inp tracking-widest font-mono text-center"
-                placeholder="A1B2C3"
+                :placeholder="t('profile.placeholders.otp')"
                 maxlength="6"
                 autocomplete="one-time-code"
                 @keyup.enter="confirmEnableMfa"
@@ -463,13 +465,13 @@ function fmtRelative(iso: string | null): string {
                   class="flex items-center gap-2 bg-green-700 hover:bg-green-800 disabled:opacity-60 text-bg-100 font-semibold text-xs px-4 py-2 rounded-lg transition-colors"
                 >
                   <Icon v-if="isMfaSubmitting" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
-                  Verify & Enable
+                  {{ t('profile.mfa.verifyEnable') }}
                 </button>
                 <button
                   @click="mfaStep = 'idle'"
                   class="text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-4 py-2 rounded-lg transition-colors"
                 >
-                  Cancel
+                  {{ t('profile.mfa.cancel') }}
                 </button>
               </div>
             </div>
@@ -483,7 +485,7 @@ function fmtRelative(iso: string | null): string {
             >
               <Icon v-if="isMfaInitiating" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
               <Icon v-else icon="lucide:shield-check" class="w-4 h-4" />
-              Enable 2FA
+              {{ t('profile.mfa.enable') }}
             </button>
 
             <!-- Disable button (locked when org enforces MFA) -->
@@ -495,11 +497,11 @@ function fmtRelative(iso: string | null): string {
               >
                 <Icon v-if="isMfaDisabling" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
                 <Icon v-else icon="lucide:shield-off" class="w-3.5 h-3.5" />
-                Disable 2FA
+                {{ t('profile.mfa.disable') }}
               </button>
               <p v-if="orgRequiresMfa" class="text-[11px] text-green-700/70 flex items-center gap-1.5">
                 <Icon icon="lucide:info" class="w-3 h-3 shrink-0" />
-                Required by your organization — cannot be disabled.
+                {{ t('profile.mfa.requiredByOrg') }}
               </p>
             </div>
           </div>
@@ -507,12 +509,12 @@ function fmtRelative(iso: string | null): string {
           <!-- Active sessions -->
           <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
             <div class="flex items-center justify-between mb-4">
-              <h3 class="text-sm font-semibold text-gray-1000">Active Sessions</h3>
-              <span class="text-xs text-gray-700">{{ activeSessions.length }} active</span>
+              <h3 class="text-sm font-semibold text-gray-1000">{{ t('profile.sessions.title') }}</h3>
+              <span class="text-xs text-gray-700">{{ t('profile.sessions.activeCount', { count: activeSessions.length }) }}</span>
             </div>
 
             <div v-if="activeSessions.length === 0" class="text-xs text-gray-700 py-2">
-              No active sessions found.
+              {{ t('profile.sessions.none') }}
             </div>
 
             <div v-else class="space-y-2 mb-4">
@@ -530,12 +532,12 @@ function fmtRelative(iso: string | null): string {
                       {{ session.name }}
                       <span v-if="session.is_current"
                         class="text-[10px] font-semibold text-green-400 bg-green-500/10 border border-green-500/20 px-1.5 py-0.5 rounded-full">
-                        Current
+                        {{ t('profile.sessions.current') }}
                       </span>
                     </div>
                     <div class="text-[11px] text-gray-700 mt-0.5">
-                      Last active {{ fmtRelative(session.last_used_at) }}
-                      <span v-if="session.expires_at"> · Expires {{ fmtDate(session.expires_at) }}</span>
+                      {{ t('profile.sessions.lastActive', { when: fmtRelative(session.last_used_at) }) }}
+                      <span v-if="session.expires_at"> · {{ t('profile.sessions.expires', { date: fmtDate(session.expires_at) }) }}</span>
                     </div>
                   </div>
                 </div>
@@ -546,7 +548,7 @@ function fmtRelative(iso: string | null): string {
                   class="text-xs text-red-400 hover:text-red-300 disabled:opacity-50 transition-colors"
                 >
                   <Icon v-if="revokingId === session.id" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
-                  <span v-else>Revoke</span>
+                  <span v-else>{{ t('profile.sessions.revoke') }}</span>
                 </button>
               </div>
             </div>
@@ -558,22 +560,22 @@ function fmtRelative(iso: string | null): string {
             >
               <Icon v-if="isRevokingAll" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
               <Icon v-else icon="lucide:log-out" class="w-3.5 h-3.5" />
-              Sign out all other sessions
+              {{ t('profile.sessions.signOutAll') }}
             </button>
           </div>
 
           <!-- Danger zone -->
           <div class="bg-gray-200 border border-red-500/15 rounded-xl p-5">
-            <h3 class="text-sm font-semibold text-red-400 mb-1">Danger Zone</h3>
+            <h3 class="text-sm font-semibold text-red-400 mb-1">{{ t('profile.danger.title') }}</h3>
             <p class="text-xs text-gray-700 mb-4">
-              Permanently delete your account and all associated data. This cannot be undone.
+              {{ t('profile.danger.desc') }}
             </p>
             <button
               @click="openDeleteModal"
               class="text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 border border-red-500/20 px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
             >
               <Icon icon="lucide:trash-2" class="w-3.5 h-3.5" />
-              Delete Account
+              {{ t('profile.danger.deleteAccount') }}
             </button>
           </div>
         </div>
@@ -596,24 +598,24 @@ function fmtRelative(iso: string | null): string {
                   <Icon icon="lucide:alert-triangle" class="w-5 h-5 text-red-400" />
                 </div>
                 <div>
-                  <h3 class="text-base font-semibold text-gray-1000">Delete Account</h3>
-                  <p class="text-xs text-gray-700">This action is permanent</p>
+                  <h3 class="text-base font-semibold text-gray-1000">{{ t('profile.deleteModal.title') }}</h3>
+                  <p class="text-xs text-gray-700">{{ t('profile.deleteModal.permanent') }}</p>
                 </div>
               </div>
 
               <div class="bg-red-500/5 border border-red-500/15 rounded-lg p-3.5 mb-4">
                 <p class="text-xs text-red-400 leading-relaxed">
-                  Deleting your account will permanently remove:
+                  {{ t('profile.deleteModal.removeIntro') }}
                 </p>
                 <ul class="text-xs text-red-400/80 mt-2 space-y-1 list-disc list-inside">
-                  <li>All organizations you own</li>
-                  <li>All invoices, clients, and projects</li>
-                  <li>Your profile and authentication data</li>
+                  <li>{{ t('profile.deleteModal.removeOrgs') }}</li>
+                  <li>{{ t('profile.deleteModal.removeDocs') }}</li>
+                  <li>{{ t('profile.deleteModal.removeProfile') }}</li>
                 </ul>
               </div>
 
               <p class="text-xs text-gray-700 mb-5">
-                A verification code will be sent to <strong class="text-gray-900">{{ profile?.email }}</strong> to confirm this action.
+                {{ t('profile.deleteModal.codeSentBefore') }}<strong class="text-gray-900">{{ profile?.email }}</strong>{{ t('profile.deleteModal.codeSentAfter') }}
               </p>
 
               <div class="flex gap-2 justify-end">
@@ -621,7 +623,7 @@ function fmtRelative(iso: string | null): string {
                   @click="closeDeleteModal"
                   class="text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-4 py-2 rounded-lg transition-colors"
                 >
-                  Cancel
+                  {{ t('profile.mfa.cancel') }}
                 </button>
                 <button
                   @click="sendDeletionOtp"
@@ -630,7 +632,7 @@ function fmtRelative(iso: string | null): string {
                 >
                   <Icon v-if="isDeleteInitiating" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
                   <Icon v-else icon="lucide:mail" class="w-3.5 h-3.5" />
-                  Send Verification Code
+                  {{ t('profile.deleteModal.sendCode') }}
                 </button>
               </div>
             </template>
@@ -642,19 +644,19 @@ function fmtRelative(iso: string | null): string {
                   <Icon icon="lucide:shield-alert" class="w-5 h-5 text-red-400" />
                 </div>
                 <div>
-                  <h3 class="text-base font-semibold text-gray-1000">Confirm Deletion</h3>
-                  <p class="text-xs text-gray-700">Enter the code sent to your email</p>
+                  <h3 class="text-base font-semibold text-gray-1000">{{ t('profile.deleteModal.confirmTitle') }}</h3>
+                  <p class="text-xs text-gray-700">{{ t('profile.deleteModal.confirmSubtitle') }}</p>
                 </div>
               </div>
 
               <p class="text-xs text-gray-700 mb-4">
-                Enter the 6-character verification code sent to <strong class="text-gray-900">{{ profile?.email }}</strong>
+                {{ t('profile.deleteModal.enterCodeBefore') }}<strong class="text-gray-900">{{ profile?.email }}</strong>
               </p>
 
               <input
                 v-model="deleteOtp"
                 class="app-inp tracking-widest font-mono text-center mb-2"
-                placeholder="A1B2C3"
+                :placeholder="t('profile.placeholders.otp')"
                 maxlength="6"
                 autocomplete="one-time-code"
                 @keyup.enter="confirmDeletion"
@@ -666,7 +668,7 @@ function fmtRelative(iso: string | null): string {
                 class="text-xs text-gray-700 hover:text-gray-900 mb-5 flex items-center gap-1 transition-colors"
               >
                 <Icon v-if="isDeleteInitiating" icon="lucide:loader-2" class="w-3 h-3 animate-spin" />
-                Resend code
+                {{ t('profile.deleteModal.resend') }}
               </button>
 
               <div class="flex gap-2 justify-end">
@@ -674,7 +676,7 @@ function fmtRelative(iso: string | null): string {
                   @click="closeDeleteModal"
                   class="text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-4 py-2 rounded-lg transition-colors"
                 >
-                  Cancel
+                  {{ t('profile.mfa.cancel') }}
                 </button>
                 <button
                   @click="confirmDeletion"
@@ -683,7 +685,7 @@ function fmtRelative(iso: string | null): string {
                 >
                   <Icon v-if="isDeleteConfirming" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
                   <Icon v-else icon="lucide:trash-2" class="w-3.5 h-3.5" />
-                  Delete My Account
+                  {{ t('profile.deleteModal.deleteMyAccount') }}
                 </button>
               </div>
             </template>

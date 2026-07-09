@@ -1,0 +1,32 @@
+{
+  "title": "Sdílet zpětnou vazbu",
+  "subtitle": "Čteme každý příspěvek",
+  "typeLabel": "Typ",
+  "types": {
+    "general": { "label": "Obecné", "desc": "Podělte se o názor nebo komentář" },
+    "bug": { "label": "Nahlásit chybu", "desc": "Něco nefunguje" },
+    "feature": { "label": "Návrh funkce", "desc": "Navrhněte vylepšení" },
+    "other": { "label": "Jiné", "desc": "Cokoli dalšího" }
+  },
+  "rating": {
+    "label": "Celkové hodnocení",
+    "optional": "(volitelné)",
+    "labels": {
+      "1": "Hrozné",
+      "2": "Špatné",
+      "3": "V pořádku",
+      "4": "Dobré",
+      "5": "Skvělé!"
+    }
+  },
+  "messageLabel": "Zpráva",
+  "messagePlaceholder": "Řekněte nám, co máte na mysli…",
+  "error": "Něco se pokazilo. Zkuste to prosím znovu.",
+  "send": "Odeslat zpětnou vazbu",
+  "sending": "Odesílání…",
+  "success": {
+    "title": "Děkujeme za zpětnou vazbu!",
+    "body": "Pomáhá nám to vylepšovat Flowtali.",
+    "close": "Zavřít"
+  }
+}

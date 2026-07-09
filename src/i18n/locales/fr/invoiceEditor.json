@@ -1,0 +1,147 @@
+{
+  "toolbar": {
+    "invoices": "Factures",
+    "newInvoice": "Nouvelle facture",
+    "editInvoice": "Modifier la facture",
+    "print": "Imprimer / PDF",
+    "share": "Partager",
+    "saveDraft": "Enregistrer le brouillon",
+    "saving": "Enregistrement…",
+    "createInvoice": "Créer la facture",
+    "saveChanges": "Enregistrer les modifications"
+  },
+  "tabs": {
+    "from": "De",
+    "to": "À",
+    "items": "Articles",
+    "design": "Conception",
+    "settings": "Paramètres",
+    "preview": "Aperçu"
+  },
+  "common": {
+    "loading": "Chargement…",
+    "loadingClients": "Chargement des clients…",
+    "remove": "Supprimer",
+    "optional": "(facultatif)",
+    "uploading": "Téléversement…"
+  },
+  "from": {
+    "quickFillProfiles": "Profils de remplissage rapide",
+    "orgNameLabel": "Nom de l'organisation",
+    "addProfilesHint": "Ajoutez des profils dans les Préférences de l'organisation pour plus d'options.",
+    "noProfiles": "Aucun profil configuré",
+    "companyName": "Nom de l'entreprise",
+    "companyNamePlaceholder": "Nom de votre studio",
+    "tagline": "Slogan / Rôle",
+    "taglinePlaceholder": "Agence créative et studio numérique",
+    "email": "E-mail",
+    "emailPlaceholder": "hello{'@'}studio.com",
+    "phone": "Téléphone",
+    "phonePlaceholder": "+1 555 000 0000",
+    "website": "Site web",
+    "websitePlaceholder": "www.votrestudio.com",
+    "address": "Adresse",
+    "addressPlaceholder": "123 Rue\nVille, Pays",
+    "logo": "Logo",
+    "replaceLogo": "Remplacer le logo",
+    "uploadLogo": "Téléverser un logo",
+    "bankDetails": "Coordonnées bancaires / de paiement",
+    "quickFillBank": "Remplir depuis un compte enregistré :",
+    "bankName": "Nom de la banque",
+    "bankNamePlaceholder": "Chase Bank",
+    "accountName": "Titulaire du compte",
+    "accountNamePlaceholder": "Acme Design Studio",
+    "accountNumber": "Numéro de compte",
+    "sortCode": "Code guichet / routage",
+    "iban": "IBAN",
+    "paymentLinks": "Liens de paiement",
+    "addFromSaved": "Ajouter depuis les enregistrés :",
+    "linkGenericPlaceholder": "Lien ou nom d'utilisateur",
+    "addPaymentLink": "Ajouter un lien de paiement"
+  },
+  "to": {
+    "selectClient": "Sélectionner un client",
+    "noClients": "Aucun client ajouté",
+    "billToName": "Nom du destinataire",
+    "billToNamePlaceholder": "Nom du client",
+    "company": "Entreprise",
+    "companyPlaceholder": "Entreprise du client",
+    "email": "E-mail",
+    "emailPlaceholder": "client{'@'}example.com",
+    "phone": "Téléphone",
+    "billingAddress": "Adresse de facturation"
+  },
+  "items": {
+    "item": "Article {n}",
+    "descriptionPlaceholder": "Description",
+    "qty": "Qté",
+    "unit": "Unité",
+    "rateWithSym": "Tarif ({sym})",
+    "addLineItem": "Ajouter une ligne",
+    "discount": "Remise",
+    "flat": "{sym} fixe",
+    "taxLines": "Lignes de taxe",
+    "taxLabelPlaceholder": "TVA",
+    "addTaxLine": "Ajouter une ligne de taxe"
+  },
+  "design": {
+    "theme": "Conception",
+    "accentColor": "Couleur d'accent",
+    "brand": "Marque",
+    "fontFamily": "Police",
+    "logo": "Logo",
+    "signature": "Signature",
+    "replaceSignature": "Remplacer la signature",
+    "uploadSignature": "Téléverser une signature",
+    "stampWatermark": "Tampon / Filigrane",
+    "none": "Aucun",
+    "watermarkText": "Texte du filigrane",
+    "visible": "Visible",
+    "hidden": "Masqué",
+    "showHide": "Afficher / Masquer"
+  },
+  "themes": {
+    "classic": "Classique",
+    "modern": "Moderne",
+    "minimal": "Minimaliste",
+    "bold": "En-tête audacieux",
+    "executive": "Exécutif"
+  },
+  "toggles": {
+    "showTopBar": "Barre d'accent supérieure",
+    "showLogo": "Logo de l'entreprise",
+    "showFooterLine": "Ligne de pied de page",
+    "showNotes": "Section notes",
+    "showBankDetails": "Section coordonnées bancaires",
+    "showFlowtaliTag": "Marque Flowtali"
+  },
+  "settings": {
+    "invoiceNumber": "Numéro de facture",
+    "paymentTerms": "Conditions de paiement",
+    "issueDate": "Date d'émission",
+    "dueDate": "Date d'échéance",
+    "auto": "(auto)",
+    "currency": "Devise",
+    "poNumber": "N° de commande",
+    "notes": "Notes / Instructions de paiement",
+    "notesPlaceholder": "Paiement dû sous 30 jours…",
+    "footerText": "Texte de pied de page personnalisé",
+    "footerPlaceholder": "Merci de votre confiance !"
+  },
+  "zoom": {
+    "fit": "Ajuster"
+  },
+  "toasts": {
+    "logoUploadFailed": "Échec du téléversement du logo",
+    "signatureUploadFailed": "Échec du téléversement de la signature",
+    "created": "Facture créée avec succès !",
+    "saved": "Facture enregistrée avec succès !",
+    "saveFailed": "Échec de l'enregistrement de la facture. Veuillez réessayer."
+  },
+  "validation": {
+    "numberRequired": "Le numéro de facture est requis.",
+    "itemRequired": "Au moins une ligne est requise.",
+    "descriptionRequired": "Toutes les lignes doivent avoir une description.",
+    "linkValueRequired": "Tous les liens de paiement doivent avoir une valeur."
+  }
+}

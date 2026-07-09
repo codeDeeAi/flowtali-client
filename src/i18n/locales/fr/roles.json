@@ -1,0 +1,70 @@
+{
+  "title": "Rôles et autorisations",
+  "subtitle": "aucun rôle · gérer le contrôle d'accès | un rôle · gérer le contrôle d'accès | {count} rôles · gérer le contrôle d'accès",
+  "businessRequired": "Forfait Business requis",
+  "createRole": "Créer un rôle",
+  "upgrade": {
+    "title": "Les rôles et autorisations nécessitent Business",
+    "desc": "Créez des rôles personnalisés, attribuez des autorisations granulaires et contrôlez précisément à quoi chaque membre de l'équipe peut accéder — disponible sur le forfait Business.",
+    "cta": "Passer à Business"
+  },
+  "rolesCount": "Rôles ({count})",
+  "loading": "Chargement…",
+  "noRoles": "Aucun rôle trouvé.",
+  "system": "Système",
+  "custom": "Personnalisé",
+  "disabled": "Désactivé",
+  "memberCount": "aucun membre | un membre | {count} membres",
+  "selectRole": "Sélectionnez un rôle pour voir ses autorisations",
+  "rolePermissions": "Autorisations : {name}",
+  "editRole": "Modifier le rôle",
+  "matrix": {
+    "resource": "Ressource"
+  },
+  "tags": {
+    "read": "Lire",
+    "create": "Créer",
+    "update": "Modifier",
+    "delete": "Supprimer",
+    "manage": "Gérer"
+  },
+  "legend": {
+    "allowed": "Autorisé",
+    "denied": "Refusé",
+    "na": "N/D"
+  },
+  "createModal": {
+    "title": "Créer un rôle",
+    "roleName": "Nom du rôle",
+    "roleNamePlaceholder": "ex. Comptable",
+    "description": "Description",
+    "descriptionPlaceholder": "Que peut faire ce rôle ?",
+    "permissions": "Autorisations",
+    "resetAll": "Réinitialiser toutes les autorisations",
+    "toggleGroup": "Basculer le groupe",
+    "cancel": "Annuler",
+    "creating": "Création…",
+    "create": "Créer un rôle"
+  },
+  "editModal": {
+    "title": "Modifier le rôle",
+    "cancel": "Annuler",
+    "saving": "Enregistrement…",
+    "save": "Enregistrer les modifications"
+  },
+  "deleteModal": {
+    "title": "Supprimer « {name} » ?",
+    "body": "Ce rôle sera définitivement supprimé. Les membres qui y sont affectés perdront ces autorisations.",
+    "cancel": "Annuler",
+    "delete": "Supprimer le rôle"
+  },
+  "toasts": {
+    "loadFailed": "Échec du chargement des rôles.",
+    "created": "Rôle « {name} » créé",
+    "createFailed": "Échec de la création du rôle.",
+    "updated": "Rôle « {name} » mis à jour",
+    "updateFailed": "Échec de la mise à jour du rôle.",
+    "deleted": "Rôle « {name} » supprimé",
+    "deleteFailed": "Échec de la suppression du rôle."
+  }
+}

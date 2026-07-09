@@ -1,0 +1,28 @@
+{
+  "subtitle": "{company} · {uses} Verwendungen · Zuletzt genutzt {lastUsed}",
+  "doc": {
+    "date": "Datum",
+    "reference": "Referenz",
+    "re": "Betreff:",
+    "subject": "Betreff",
+    "contact": "Kontakt",
+    "address": "Adresse",
+    "addressInline": "Adresse:",
+    "registration": "Registrierung",
+    "regNo": "Reg.-Nr.:",
+    "vat": "USt-IdNr.:",
+    "regShort": "Reg.:"
+  },
+  "details": {
+    "title": "Briefkopf-Details",
+    "totalUses": "Verwendungen gesamt",
+    "sharedLinks": "Freigabelinks",
+    "lastUsed": "Zuletzt genutzt",
+    "template": "Vorlage",
+    "watermark": "Wasserzeichen"
+  },
+  "viewsCount": "{n} Aufrufe",
+  "linksEmptyBody": "Erstellen Sie einen Link, um diesen Briefkopf mit Kunden zu teilen",
+  "deleteTitle": "„{name}“ löschen?",
+  "deleteBody": "Dieser Briefkopf wird dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."
+}

@@ -1,0 +1,91 @@
+{
+  "title": "Clients",
+  "count": "no clients in your address book | one client in your address book | {count} clients in your address book",
+  "add": "Add Client",
+  "addShort": "Add",
+  "search": "Search clients…",
+  "gridView": "Grid view",
+  "listView": "List view",
+  "empty": {
+    "title": "No clients found",
+    "searchHint": "Try adjusting your search query",
+    "addHint": "Add your first client to get started"
+  },
+  "types": {
+    "organization": "Organization",
+    "individual": "Individual",
+    "freelancer": "Freelancer",
+    "agency": "Agency",
+    "other": "Other"
+  },
+  "orgShort": "Org",
+  "table": {
+    "client": "Client",
+    "contact": "Contact",
+    "type": "Type"
+  },
+  "editClient": "Edit client",
+  "noCompany": "No company",
+  "clientSince": "Client since {date}",
+  "create": {
+    "title": "Add Client",
+    "subtitle": "Fill in the details below to add a new client"
+  },
+  "edit": {
+    "title": "Edit Client",
+    "subtitle": "Update the details for this client"
+  },
+  "sections": {
+    "basic": "Basic Information",
+    "contact": "Contact Details",
+    "notes": "Notes"
+  },
+  "fields": {
+    "fullName": "Full Name",
+    "company": "Company",
+    "clientType": "Client Type",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "address": "Address",
+    "notes": "Additional Notes"
+  },
+  "placeholders": {
+    "fullName": "John Doe",
+    "company": "Acme Inc.",
+    "email": "john{'@'}example.com",
+    "phone": "+1 555 000 0000",
+    "address": "123 Main St, City, Country",
+    "notes": "Any additional information about this client…"
+  },
+  "cancel": "Cancel",
+  "saving": "Saving…",
+  "saveChanges": "Save Changes",
+  "view": {
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "type": "Type",
+    "notes": "Notes",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "notFound": "Client not found",
+  "back": "Back to clients",
+  "deleteModal": {
+    "title": "Delete client?",
+    "bodyBefore": "This will permanently delete ",
+    "bodyAfter": " and all associated records. This action cannot be undone.",
+    "delete": "Delete client",
+    "deleting": "Deleting…"
+  },
+  "toasts": {
+    "loadFailed": "Failed to load clients.",
+    "loadOneFailed": "Failed to load client.",
+    "created": "Client created successfully!",
+    "createFailed": "Failed to create client.",
+    "updated": "Client updated successfully!",
+    "updateFailed": "Failed to update client.",
+    "deleted": "Client deleted successfully.",
+    "deleteFailed": "Failed to delete client."
+  }
+}

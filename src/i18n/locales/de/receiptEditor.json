@@ -1,0 +1,55 @@
+{
+  "toolbar": {
+    "receipts": "Belege",
+    "new": "Neuer Beleg",
+    "edit": "Beleg bearbeiten",
+    "create": "Beleg erstellen"
+  },
+  "from": {
+    "companyIssuedBy": "Firma / Ausgestellt von",
+    "bankReceivedTo": "Bankdaten (Zahlungseingang auf)"
+  },
+  "to": {
+    "selectClient": "Kunde auswählen",
+    "receivedFromName": "Erhalten von (Name)",
+    "address": "Adresse"
+  },
+  "items": {
+    "descriptionPlaceholder": "Beschreibung der Ware oder Leistung",
+    "amountPaid": "Gezahlter Betrag",
+    "totalReceived": "Erhaltener Gesamtbetrag",
+    "balanceDue": "Restbetrag"
+  },
+  "design": {
+    "paymentStamp": "Zahlungsstempel",
+    "balanceDueLabel": "Restbetrag (noch offener Betrag)",
+    "balanceDueHint": "Wird im Beleg unter dem Gesamtbetrag angezeigt"
+  },
+  "settings": {
+    "receiptNumber": "Belegnummer",
+    "paymentDate": "Zahlungsdatum",
+    "paymentMethod": "Zahlungsmethode",
+    "paymentMethodPlaceholder": "Methode angeben…",
+    "referenceNumber": "Referenznummer",
+    "referencePlaceholder": "TXN-123456",
+    "notes": "Notizen / Zusätzliche Infos",
+    "notesPlaceholder": "Vielen Dank für Ihre Zahlung…"
+  },
+  "preview": {
+    "receivedFrom": "Erhalten von",
+    "reference": "Referenz",
+    "method": "Methode",
+    "receivedTo": "Empfangen auf",
+    "paymentReceivedTo": "Zahlungseingang auf",
+    "issuedBy": "Ausgestellt von"
+  },
+  "toasts": {
+    "created": "Beleg erstellt!",
+    "saved": "Beleg gespeichert!",
+    "saveFailed": "Beleg konnte nicht gespeichert werden."
+  },
+  "validation": {
+    "numberRequired": "Belegnummer ist erforderlich.",
+    "descriptionRequired": "Alle Positionen müssen eine Beschreibung haben."
+  }
+}

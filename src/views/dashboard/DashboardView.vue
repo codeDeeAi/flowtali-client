@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { Icon } from '@iconify/vue';
 import { useAuthStore } from '@/stores/auth';
 import { usePermissions } from '@/composables/usePermissions';
@@ -14,16 +15,17 @@ import QuickActions from './components/QuickActions.vue';
 import PlanUsage from './components/PlanUsage.vue';
 
 const router    = useRouter()
+const { t }     = useI18n()
 const authStore = useAuthStore()
 const { can }   = usePermissions()
 
 const hour = new Date().getHours();
 const greeting = computed(() =>
-  hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+  hour < 12 ? t('dashboard.greeting.morning') : hour < 17 ? t('dashboard.greeting.afternoon') : t('dashboard.greeting.evening')
 );
 
-const userName  = computed(() => authStore.getUser?.first_name ?? 'there')
-const orgName   = computed(() => authStore.getCurrentOrganization?.name ?? 'your organization')
+const userName  = computed(() => authStore.getUser?.first_name ?? t('dashboard.defaultName'))
+const orgName   = computed(() => authStore.getCurrentOrganization?.name ?? t('dashboard.defaultOrg'))
 
 const analytics  = ref<IAnalyticsData | null>(null)
 const isLoading  = ref(true)
@@ -39,7 +41,7 @@ const stats = computed(() => {
 
   const all = [
     {
-      title: 'Total Revenue',
+      title: t('dashboard.stats.totalRevenue'),
       value: k ? fmt(k.total_revenue.value) : '—',
       change: k?.total_revenue.change_pct ?? 0,
       icon: 'lucide:dollar-sign',
@@ -48,7 +50,7 @@ const stats = computed(() => {
       permission: 'dashboard.revenue.read',
     },
     {
-      title: 'Outstanding',
+      title: t('dashboard.stats.outstanding'),
       value: k ? fmt(k.outstanding.value) : '—',
       change: k?.outstanding.change_pct ?? 0,
       icon: 'lucide:clock',
@@ -57,7 +59,7 @@ const stats = computed(() => {
       permission: 'dashboard.revenue.read',
     },
     {
-      title: 'Invoices Sent',
+      title: t('dashboard.stats.invoicesSent'),
       value: k ? String(k.total_invoices.value) : '—',
       change: k?.total_invoices.change_pct ?? 0,
       icon: 'lucide:send',
@@ -66,7 +68,7 @@ const stats = computed(() => {
       permission: 'dashboard.invoices.read',
     },
     {
-      title: 'Collection Rate',
+      title: t('dashboard.stats.collectionRate'),
       value: k ? `${k.collection_rate.value}%` : '—',
       change: k?.collection_rate.change_pct ?? 0,
       icon: 'lucide:trending-up',
@@ -75,7 +77,7 @@ const stats = computed(() => {
       permission: 'dashboard.revenue.read',
     },
     {
-      title: 'Receipts Issued',
+      title: t('dashboard.stats.receiptsIssued'),
       value: analytics.value ? String(analytics.value.receipt_stats?.total ?? 0) : '—',
       change: 0,
       icon: 'lucide:receipt',
@@ -120,7 +122,7 @@ onMounted(async () => {
           {{ greeting }}, {{ userName }} 👋
         </h1>
         <p class="text-sm text-gray-900 mt-1">
-          Here's what's happening with {{ orgName }} today
+          {{ t('dashboard.subtitle', { org: orgName }) }}
         </p>
       </div>
       <div v-if="can('invoices.read')" class="flex items-center gap-2 shrink-0">
@@ -129,7 +131,7 @@ onMounted(async () => {
           @click="router.push({ name: 'invoices.create' })"
         >
           <Icon icon="lucide:plus" class="w-4 h-4" />
-          <span>New Invoice</span>
+          <span>{{ t('dashboard.newInvoice') }}</span>
         </button>
       </div>
     </div>

@@ -16,6 +16,13 @@ export const useSubscriptionStore = defineStore('subscription', () => {
   const isPro      = computed(() => ['pro', 'business'].includes(planSlug.value))
   const isBusiness = computed(() => planSlug.value === 'business')
 
+  // Access gating. `hasUsableAccess` is authoritative once the subscription has
+  // loaded; before then we optimistically allow access to avoid a flash-redirect.
+  const hasUsableAccess = computed(() => subscription.value?.has_usable_access ?? true)
+  const isPaywalled     = computed(() => subscription.value != null && !subscription.value.has_usable_access)
+  const freeWindowExpired = computed(() => subscription.value?.free_window_expired ?? false)
+  const freeAccessEndsAt  = computed(() => subscription.value?.free_access_ends_at ?? null)
+
   function canUse(feature: string): boolean {
     const features = subscription.value?.plan?.features ?? {}
     const val      = features[feature]
@@ -58,6 +65,10 @@ export const useSubscriptionStore = defineStore('subscription', () => {
     isStarter,
     isPro,
     isBusiness,
+    hasUsableAccess,
+    isPaywalled,
+    freeWindowExpired,
+    freeAccessEndsAt,
     canUse,
     getLimit,
     load,

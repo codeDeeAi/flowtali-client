@@ -1,0 +1,28 @@
+{
+  "subtitle": "{company} · {uses} použití · Naposledy použito {lastUsed}",
+  "doc": {
+    "date": "Datum",
+    "reference": "Reference",
+    "re": "Věc:",
+    "subject": "Věc",
+    "contact": "Kontakt",
+    "address": "Adresa",
+    "addressInline": "Adresa:",
+    "registration": "Registrace",
+    "regNo": "IČO:",
+    "vat": "DIČ:",
+    "regShort": "IČO:"
+  },
+  "details": {
+    "title": "Podrobnosti hlavičkového papíru",
+    "totalUses": "Použití celkem",
+    "sharedLinks": "Sdílené odkazy",
+    "lastUsed": "Naposledy použito",
+    "template": "Šablona",
+    "watermark": "Vodoznak"
+  },
+  "viewsCount": "{n} zobrazení",
+  "linksEmptyBody": "Vytvořte odkaz pro sdílení tohoto hlavičkového papíru s klienty",
+  "deleteTitle": "Smazat „{name}“?",
+  "deleteBody": "Tento hlavičkový papír bude trvale smazán. Tuto akci nelze vrátit zpět."
+}

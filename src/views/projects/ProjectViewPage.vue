@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { Icon } from '@iconify/vue';
 import { useAuthStore } from '@/stores/auth';
 import { usePermissions } from '@/composables/usePermissions';
@@ -17,6 +18,7 @@ import type {
 
 const router    = useRouter();
 const route     = useRoute();
+const { t, locale } = useI18n();
 const authStore = useAuthStore();
 const { can }   = usePermissions();
 const { notify } = useNotification();
@@ -81,7 +83,7 @@ async function loadProject() {
     project.value = res.data.data;
   } catch (err: any) {
     if (err?.response?.status === 404) notFound.value = true;
-    else { notify('Failed to load project.', 'error'); router.push({ name: 'projects' }); }
+    else { notify(t('projects.toasts.loadFailed'), 'error'); router.push({ name: 'projects' }); }
   } finally {
     loading.value = false;
   }
@@ -119,10 +121,10 @@ async function handleDelete() {
   isDeleting.value = true;
   try {
     await ProjectService.delete(orgId.value, projectId);
-    notify('Project deleted.', 'success');
+    notify(t('projects.toasts.deleted'), 'success');
     router.push({ name: 'projects' });
   } catch {
-    notify('Failed to delete project.', 'error');
+    notify(t('projects.toasts.deleteFailed'), 'error');
   } finally {
     isDeleting.value = false;
     showDeleteConfirm.value = false;
@@ -166,9 +168,9 @@ async function doAttach(type: 'invoice' | 'receipt' | 'letterhead', id: string) 
     showAttachInvoice.value = false;
     showAttachReceipt.value = false;
     showAttachLetterhead.value = false;
-    notify('Linked successfully.', 'success');
+    notify(t('projects.toasts.linked'), 'success');
   } catch (err: any) {
-    notify(err?.response?.data?.message ?? 'Failed to link.', 'error');
+    notify(err?.response?.data?.message ?? t('projects.toasts.linkFailed'), 'error');
   } finally {
     isAttaching.value = false;
   }
@@ -180,16 +182,16 @@ async function doDetach(type: 'invoice' | 'receipt' | 'letterhead', id: string) 
     if (type === 'receipt')    await ProjectService.detachReceipt(orgId.value, projectId, id);
     if (type === 'letterhead') await ProjectService.detachLetterhead(orgId.value, projectId, id);
     await Promise.all([loadDocuments(), loadProject()]);
-    notify('Removed.', 'success');
+    notify(t('projects.toasts.removed'), 'success');
   } catch {
-    notify('Failed to remove.', 'error');
+    notify(t('projects.toasts.removeFailed'), 'error');
   }
 }
 
 // ── Files ───────────────────────────────────────────────────
 async function handleAddFile() {
   if (!fileForm.value.name.trim() || !fileForm.value.url.trim()) {
-    notify('Name and URL are required.', 'error');
+    notify(t('projects.toasts.nameUrlRequired'), 'error');
     return;
   }
   isSavingFile.value = true;
@@ -204,9 +206,9 @@ async function handleAddFile() {
     await loadFiles();
     showAddFile.value = false;
     fileForm.value = { name: '', type: 'url', url: '', file_size: '', mime_type: '' };
-    notify('File added.', 'success');
+    notify(t('projects.toasts.fileAdded'), 'success');
   } catch {
-    notify('Failed to add file.', 'error');
+    notify(t('projects.toasts.fileAddFailed'), 'error');
   } finally {
     isSavingFile.value = false;
   }
@@ -216,9 +218,9 @@ async function handleDeleteFile(fileId: string) {
   try {
     await ProjectService.deleteFile(orgId.value, projectId, fileId);
     files.value = files.value.filter(f => f.id !== fileId);
-    notify('File removed.', 'success');
+    notify(t('projects.toasts.fileRemoved'), 'success');
   } catch {
-    notify('Failed to remove file.', 'error');
+    notify(t('projects.toasts.fileRemoveFailed'), 'error');
   }
 }
 
@@ -230,9 +232,9 @@ async function handleAddNote() {
     await ProjectService.addNote(orgId.value, projectId, noteText.value.trim());
     noteText.value = '';
     await loadActivities();
-    notify('Note added.', 'success');
+    notify(t('projects.toasts.noteAdded'), 'success');
   } catch {
-    notify('Failed to add note.', 'error');
+    notify(t('projects.toasts.noteAddFailed'), 'error');
   } finally {
     isSavingNote.value = false;
   }
@@ -264,9 +266,9 @@ async function assignClient(clientId: string | null) {
     const res = await ProjectService.update(orgId.value, projectId, { client_id: clientId });
     project.value = res.data.data;
     showAssignClient.value = false;
-    notify(clientId ? 'Client assigned.' : 'Client removed.', 'success');
+    notify(clientId ? t('projects.toasts.clientAssigned') : t('projects.toasts.clientRemoved'), 'success');
   } catch {
-    notify('Failed to update client.', 'error');
+    notify(t('projects.toasts.clientUpdateFailed'), 'error');
   } finally {
     isAssigningClient.value = false;
   }
@@ -284,13 +286,9 @@ const statusBadge = (status: string) => {
   return 'text-[10px] font-semibold px-1.5 py-0.5 rounded-full border ' + (map[status] ?? map.draft);
 };
 
-const statusLabel = (status: string) => {
-  const map: Record<string, string> = {
-    draft: 'Draft', active: 'Active', on_hold: 'On Hold',
-    completed: 'Completed', cancelled: 'Cancelled',
-  };
-  return map[status] ?? status;
-};
+const PROJECT_STATUSES = ['draft', 'active', 'on_hold', 'completed', 'cancelled'];
+const statusLabel = (status: string) =>
+  PROJECT_STATUSES.includes(status) ? t(`projects.status.${status}`) : t(`common.status.${status}`);
 
 const activityIcon = (type: string) => {
   const map: Record<string, string> = {
@@ -308,11 +306,11 @@ const activityIcon = (type: string) => {
 };
 
 function formatDate(dt: string) {
-  return new Date(dt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return new Date(dt).toLocaleDateString(locale.value, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function formatDateTime(dt: string) {
-  return new Date(dt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  return new Date(dt).toLocaleString(locale.value, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
 }
 
 function formatBytes(bytes: number) {
@@ -341,8 +339,8 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
     <!-- Not found -->
     <div v-else-if="notFound" class="flex flex-col items-center justify-center py-20 text-center">
       <Icon icon="lucide:folder-x" class="w-10 h-10 text-gray-700 mb-4" />
-      <p class="text-gray-700 text-sm">Project not found</p>
-      <button @click="router.push({ name: 'projects' })" class="mt-3 text-xs text-green-700 hover:underline">Back to projects</button>
+      <p class="text-gray-700 text-sm">{{ t('projects.notFound') }}</p>
+      <button @click="router.push({ name: 'projects' })" class="mt-3 text-xs text-green-700 hover:underline">{{ t('projects.back') }}</button>
     </div>
 
     <template v-else-if="project">
@@ -357,7 +355,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
             <div class="flex items-center gap-2 flex-wrap">
               <h1 class="page-title">{{ project.title }}</h1>
               <span :class="statusBadge(project.status)">{{ statusLabel(project.status) }}</span>
-              <span v-if="project.status_tracking === 'auto'" class="text-[10px] text-green-700 border border-green-700/30 bg-green-700/8 px-1.5 py-0.5 rounded-full font-semibold">Auto</span>
+              <span v-if="project.status_tracking === 'auto'" class="text-[10px] text-green-700 border border-green-700/30 bg-green-700/8 px-1.5 py-0.5 rounded-full font-semibold">{{ t('projects.tracking.auto') }}</span>
             </div>
             <p class="page-subtitle">{{ project.number }}{{ project.client ? ` · ${project.client.name}` : '' }}</p>
           </div>
@@ -422,7 +420,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
               : 'border-transparent text-gray-700 hover:text-gray-1000',
           ]"
         >
-          {{ { overview: 'Overview', client: 'Client', invoices: 'Invoices', receipts: 'Receipts', letterheads: 'Letterheads', files: 'Files', activity: 'Activity' }[tab] }}
+          {{ t(`projects.tabs.${tab}`) }}
         </button>
       </div>
 
@@ -431,30 +429,30 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
 
         <!-- Details -->
         <div class="bg-gray-200 border border-gray-400 rounded-xl p-5 space-y-4">
-          <h2 class="text-sm font-semibold text-gray-1000">Details</h2>
+          <h2 class="text-sm font-semibold text-gray-1000">{{ t('projects.details.title') }}</h2>
           <dl class="space-y-2.5">
             <div class="flex justify-between text-xs">
-              <dt class="text-gray-700">Number</dt>
+              <dt class="text-gray-700">{{ t('projects.details.number') }}</dt>
               <dd class="text-gray-1000 font-medium">{{ project.number }}</dd>
             </div>
             <div v-if="project.client" class="flex justify-between text-xs">
-              <dt class="text-gray-700">Client</dt>
+              <dt class="text-gray-700">{{ t('projects.details.client') }}</dt>
               <dd class="text-gray-1000">{{ project.client.name }}</dd>
             </div>
             <div class="flex justify-between text-xs">
-              <dt class="text-gray-700">Status Tracking</dt>
+              <dt class="text-gray-700">{{ t('projects.details.statusTracking') }}</dt>
               <dd class="text-gray-1000 capitalize">{{ project.status_tracking }}</dd>
             </div>
             <div v-if="project.start_date" class="flex justify-between text-xs">
-              <dt class="text-gray-700">Start Date</dt>
+              <dt class="text-gray-700">{{ t('projects.details.startDate') }}</dt>
               <dd class="text-gray-1000">{{ formatDate(project.start_date) }}</dd>
             </div>
             <div v-if="project.end_date" class="flex justify-between text-xs">
-              <dt class="text-gray-700">End Date</dt>
+              <dt class="text-gray-700">{{ t('projects.details.endDate') }}</dt>
               <dd class="text-gray-1000">{{ formatDate(project.end_date) }}</dd>
             </div>
             <div v-if="project.description" class="pt-1">
-              <dt class="text-gray-700 text-xs mb-1">Description</dt>
+              <dt class="text-gray-700 text-xs mb-1">{{ t('projects.details.description') }}</dt>
               <dd class="text-gray-900 text-xs leading-relaxed">{{ project.description }}</dd>
             </div>
           </dl>
@@ -462,22 +460,22 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
 
         <!-- Financials -->
         <div class="bg-gray-200 border border-gray-400 rounded-xl p-5 space-y-4">
-          <h2 class="text-sm font-semibold text-gray-1000">Financials</h2>
+          <h2 class="text-sm font-semibold text-gray-1000">{{ t('projects.financials.title') }}</h2>
           <dl class="space-y-2.5">
             <div v-if="project.financials?.contract_value" class="flex justify-between text-xs">
-              <dt class="text-gray-700">Contract Value</dt>
+              <dt class="text-gray-700">{{ t('projects.financials.contractValue') }}</dt>
               <dd class="text-gray-1000 font-medium">{{ project.currency }} {{ project.financials.contract_value.toLocaleString() }}</dd>
             </div>
             <div class="flex justify-between text-xs">
-              <dt class="text-gray-700">Total Invoiced</dt>
+              <dt class="text-gray-700">{{ t('projects.financials.totalInvoiced') }}</dt>
               <dd class="text-gray-1000">{{ project.currency }} {{ (project.financials?.total_invoiced ?? 0).toLocaleString() }}</dd>
             </div>
             <div class="flex justify-between text-xs">
-              <dt class="text-gray-700">Total Received</dt>
+              <dt class="text-gray-700">{{ t('projects.financials.totalReceived') }}</dt>
               <dd class="text-green-400 font-medium">{{ project.currency }} {{ (project.financials?.total_received ?? 0).toLocaleString() }}</dd>
             </div>
             <div class="flex justify-between text-xs">
-              <dt class="text-gray-700">Balance</dt>
+              <dt class="text-gray-700">{{ t('projects.financials.balance') }}</dt>
               <dd :class="(project.financials?.balance ?? 0) > 0 ? 'text-green-700 font-medium' : 'text-gray-1000'">
                 {{ project.currency }} {{ (project.financials?.balance ?? 0).toLocaleString() }}
               </dd>
@@ -486,7 +484,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
           <!-- Progress bar -->
           <div v-if="(project.financials?.total_invoiced ?? 0) > 0">
             <div class="flex justify-between text-[10px] text-gray-700 mb-1">
-              <span>Payment progress</span>
+              <span>{{ t('projects.financials.paymentProgress') }}</span>
               <span>{{ paidPercent }}%</span>
             </div>
             <div class="h-1.5 bg-gray-400 rounded-full overflow-hidden">
@@ -506,8 +504,8 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
             <Icon icon="lucide:user" class="w-5 h-5 text-gray-700" />
           </div>
           <div>
-            <p class="text-sm font-medium text-gray-1000">No client assigned</p>
-            <p class="text-xs text-gray-700 mt-0.5">Assign a client to track who this project is for</p>
+            <p class="text-sm font-medium text-gray-1000">{{ t('projects.clientPanel.noClientAssigned') }}</p>
+            <p class="text-xs text-gray-700 mt-0.5">{{ t('projects.clientPanel.assignHint') }}</p>
           </div>
           <button
             v-if="can('projects.update')"
@@ -547,7 +545,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
               <Icon icon="lucide:mail" class="w-3.5 h-3.5 text-gray-700 shrink-0" />
               <span class="text-gray-900">{{ project.client.email }}</span>
             </div>
-            <div v-if="!project.client.email" class="text-xs text-gray-700 italic">No email on record</div>
+            <div v-if="!project.client.email" class="text-xs text-gray-700 italic">{{ t('projects.clientPanel.noEmail') }}</div>
           </div>
 
           <!-- Actions -->
@@ -592,7 +590,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
           </div>
         </div>
 
-        <div v-if="invoices.length === 0" class="text-center py-10 text-gray-700 text-sm">No invoices linked.</div>
+        <div v-if="invoices.length === 0" class="text-center py-10 text-gray-700 text-sm">{{ t('projects.linked.noInvoices') }}</div>
         <div v-else class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden">
           <div
             v-for="(inv, i) in invoices" :key="inv.id"
@@ -638,7 +636,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
           </div>
         </div>
 
-        <div v-if="receipts.length === 0" class="text-center py-10 text-gray-700 text-sm">No receipts linked.</div>
+        <div v-if="receipts.length === 0" class="text-center py-10 text-gray-700 text-sm">{{ t('projects.linked.noReceipts') }}</div>
         <div v-else class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden">
           <div
             v-for="(rec, i) in receipts" :key="rec.id"
@@ -684,7 +682,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
           </div>
         </div>
 
-        <div v-if="letterheads.length === 0" class="text-center py-10 text-gray-700 text-sm">No letterheads linked.</div>
+        <div v-if="letterheads.length === 0" class="text-center py-10 text-gray-700 text-sm">{{ t('projects.linked.noLetterheads') }}</div>
         <div v-else class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden">
           <div
             v-for="(lh, i) in letterheads" :key="lh.id"
@@ -717,7 +715,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
           </button>
         </div>
 
-        <div v-if="files.length === 0" class="text-center py-10 text-gray-700 text-sm">No files yet.</div>
+        <div v-if="files.length === 0" class="text-center py-10 text-gray-700 text-sm">{{ t('projects.linked.noFiles') }}</div>
         <div v-else class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden">
           <a
             v-for="(file, i) in files" :key="file.id"
@@ -748,7 +746,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <div v-if="activeTab === 'activity'" class="space-y-4">
         <!-- Add note -->
         <div v-if="can('projects.update')" class="bg-gray-200 border border-gray-400 rounded-xl p-4 space-y-3">
-          <label class="text-xs font-medium text-gray-1000">Add a Note</label>
+          <label class="text-xs font-medium text-gray-1000">{{ t('projects.notes.add') }}</label>
           <textarea
             v-model="noteText"
             class="app-inp resize-none w-full text-xs"
@@ -762,13 +760,13 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
               class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Icon v-if="isSavingNote" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
-              {{ isSavingNote ? 'Saving…' : 'Add Note' }}
+              {{ isSavingNote ? t('projects.saving') : t('projects.notes.addBtn') }}
             </button>
           </div>
         </div>
 
         <!-- Timeline -->
-        <div v-if="activities.length === 0" class="text-center py-10 text-gray-700 text-sm">No activity yet.</div>
+        <div v-if="activities.length === 0" class="text-center py-10 text-gray-700 text-sm">{{ t('projects.linked.noActivity') }}</div>
         <div v-else class="relative space-y-0 before:absolute before:left-5 before:top-0 before:bottom-0 before:w-px before:bg-gray-400">
           <div v-for="activity in activities" :key="activity.id" class="flex items-start gap-3 relative pl-0">
             <div class="w-10 h-10 rounded-full bg-gray-400 border border-gray-500 flex items-center justify-center shrink-0 z-10">
@@ -793,13 +791,13 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <Transition name="modal">
         <div v-if="showDeleteConfirm" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-200 flex items-center justify-center p-4" @click.self="showDeleteConfirm = false">
           <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
-            <h2 class="text-lg font-semibold text-gray-1000 mb-2">Delete Project?</h2>
-            <p class="text-sm text-gray-700 mb-5">This will permanently delete this project. Linked invoices and receipts will not be deleted.</p>
+            <h2 class="text-lg font-semibold text-gray-1000 mb-2">{{ t('projects.deleteModal.title') }}</h2>
+            <p class="text-sm text-gray-700 mb-5">{{ t('projects.deleteModal.body') }}</p>
             <div class="flex gap-2">
-              <button @click="showDeleteConfirm = false" class="flex-1 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 text-sm transition-colors">Cancel</button>
+              <button @click="showDeleteConfirm = false" class="flex-1 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 text-sm transition-colors">{{ t('projects.cancel') }}</button>
               <button @click="handleDelete" :disabled="isDeleting" class="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white font-semibold text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
                 <Icon v-if="isDeleting" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
-                {{ isDeleting ? 'Deleting…' : 'Delete' }}
+                {{ isDeleting ? t('projects.deleteModal.deleting') : t('projects.deleteModal.delete') }}
               </button>
             </div>
           </div>
@@ -810,7 +808,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <Transition name="modal">
         <div v-if="showAttachInvoice" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-200 flex items-center justify-center p-4" @click.self="showAttachInvoice = false">
           <div class="bg-gray-200 border border-gray-400 rounded-2xl p-5 w-full max-w-md shadow-2xl">
-            <h2 class="text-base font-semibold text-gray-1000 mb-4">Link Invoice</h2>
+            <h2 class="text-base font-semibold text-gray-1000 mb-4">{{ t('projects.linkModal.invoice') }}</h2>
             <div class="relative mb-3">
               <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-700" />
               <input v-model="attachSearch" @input="searchAttach('invoice')" class="app-inp pl-8 text-xs" placeholder="Search invoices…" />
@@ -829,7 +827,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
                 </div>
                 <span :class="statusBadge(inv.status)">{{ statusLabel(inv.status) }}</span>
               </button>
-              <div v-if="attachResults.length === 0" class="text-center py-6 text-gray-700 text-xs">No invoices found</div>
+              <div v-if="attachResults.length === 0" class="text-center py-6 text-gray-700 text-xs">{{ t('projects.linkModal.noInvoices') }}</div>
             </div>
           </div>
         </div>
@@ -839,7 +837,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <Transition name="modal">
         <div v-if="showAttachReceipt" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-200 flex items-center justify-center p-4" @click.self="showAttachReceipt = false">
           <div class="bg-gray-200 border border-gray-400 rounded-2xl p-5 w-full max-w-md shadow-2xl">
-            <h2 class="text-base font-semibold text-gray-1000 mb-4">Link Receipt</h2>
+            <h2 class="text-base font-semibold text-gray-1000 mb-4">{{ t('projects.linkModal.receipt') }}</h2>
             <div class="relative mb-3">
               <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-700" />
               <input v-model="attachSearch" @input="searchAttach('receipt')" class="app-inp pl-8 text-xs" placeholder="Search receipts…" />
@@ -858,7 +856,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
                 </div>
                 <span :class="statusBadge(rec.status)">{{ statusLabel(rec.status) }}</span>
               </button>
-              <div v-if="attachResults.length === 0" class="text-center py-6 text-gray-700 text-xs">No receipts found</div>
+              <div v-if="attachResults.length === 0" class="text-center py-6 text-gray-700 text-xs">{{ t('projects.linkModal.noReceipts') }}</div>
             </div>
           </div>
         </div>
@@ -868,7 +866,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <Transition name="modal">
         <div v-if="showAttachLetterhead" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-200 flex items-center justify-center p-4" @click.self="showAttachLetterhead = false">
           <div class="bg-gray-200 border border-gray-400 rounded-2xl p-5 w-full max-w-md shadow-2xl">
-            <h2 class="text-base font-semibold text-gray-1000 mb-4">Link Letterhead</h2>
+            <h2 class="text-base font-semibold text-gray-1000 mb-4">{{ t('projects.linkModal.letterhead') }}</h2>
             <div class="relative mb-3">
               <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-700" />
               <input v-model="attachSearch" @input="searchAttach('letterhead')" class="app-inp pl-8 text-xs" placeholder="Search letterheads…" />
@@ -887,7 +885,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
                 </div>
                 <span :class="statusBadge(lh.status)">{{ statusLabel(lh.status) }}</span>
               </button>
-              <div v-if="attachResults.length === 0" class="text-center py-6 text-gray-700 text-xs">No letterheads found</div>
+              <div v-if="attachResults.length === 0" class="text-center py-6 text-gray-700 text-xs">{{ t('projects.linkModal.noLetterheads') }}</div>
             </div>
           </div>
         </div>
@@ -897,23 +895,23 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <Transition name="modal">
         <div v-if="showAddFile" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-200 flex items-center justify-center p-4" @click.self="showAddFile = false">
           <div class="bg-gray-200 border border-gray-400 rounded-2xl p-5 w-full max-w-sm shadow-2xl">
-            <h2 class="text-base font-semibold text-gray-1000 mb-4">Add File</h2>
+            <h2 class="text-base font-semibold text-gray-1000 mb-4">{{ t('projects.fileModal.title') }}</h2>
             <div class="space-y-3">
               <div>
-                <label class="app-label">Name</label>
+                <label class="app-label">{{ t('projects.fileModal.name') }}</label>
                 <input v-model="fileForm.name" class="app-inp" placeholder="Design mockup" />
               </div>
               <div>
-                <label class="app-label">Type</label>
+                <label class="app-label">{{ t('projects.fileModal.type') }}</label>
                 <div class="flex gap-2 mt-1">
                   <button
                     @click="fileForm.type = 'url'"
                     :class="['flex-1 py-2 rounded-lg text-xs border transition-colors', fileForm.type === 'url' ? 'border-green-700/40 bg-green-700/6 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500']"
-                  >Link / URL</button>
+                  >{{ t('projects.fileModal.linkUrl') }}</button>
                   <button
                     @click="fileForm.type = 'upload'"
                     :class="['flex-1 py-2 rounded-lg text-xs border transition-colors', fileForm.type === 'upload' ? 'border-green-700/40 bg-green-700/6 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500']"
-                  >Uploaded File</button>
+                  >{{ t('projects.fileModal.uploadedFile') }}</button>
                 </div>
               </div>
               <div>
@@ -922,10 +920,10 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
               </div>
             </div>
             <div class="flex gap-2 mt-5">
-              <button @click="showAddFile = false" class="flex-1 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 text-sm transition-colors">Cancel</button>
+              <button @click="showAddFile = false" class="flex-1 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 text-sm transition-colors">{{ t('projects.cancel') }}</button>
               <button @click="handleAddFile" :disabled="isSavingFile" class="flex-1 py-2 rounded-lg bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
                 <Icon v-if="isSavingFile" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
-                {{ isSavingFile ? 'Adding…' : 'Add File' }}
+                {{ isSavingFile ? t('projects.fileModal.adding') : t('projects.fileModal.add') }}
               </button>
             </div>
           </div>
@@ -936,7 +934,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
       <Transition name="modal">
         <div v-if="showAssignClient" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-200 flex items-center justify-center p-4" @click.self="showAssignClient = false">
           <div class="bg-gray-200 border border-gray-400 rounded-2xl p-5 w-full max-w-md shadow-2xl">
-            <h2 class="text-base font-semibold text-gray-1000 mb-4">{{ project?.client ? 'Change Client' : 'Assign Client' }}</h2>
+            <h2 class="text-base font-semibold text-gray-1000 mb-4">{{ project?.client ? t('projects.clientPanel.changeClient') : t('projects.clientPanel.assignClient') }}</h2>
             <div class="relative mb-3">
               <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-700" />
               <input
@@ -971,7 +969,7 @@ const paidPercent = computed(() => project.value?.financials?.paid_percent ?? 0)
                 </div>
                 <Icon v-if="project?.client?.id === c.id" icon="lucide:check" class="w-3.5 h-3.5 text-green-700 shrink-0" />
               </button>
-              <div v-if="clientResults.length === 0" class="text-center py-6 text-gray-700 text-xs">No clients found</div>
+              <div v-if="clientResults.length === 0" class="text-center py-6 text-gray-700 text-xs">{{ t('projects.clientPanel.noClientsFound') }}</div>
             </div>
             <button @click="showAssignClient = false" class="mt-4 w-full py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 text-xs transition-colors">
               Cancel

@@ -1,0 +1,62 @@
+{
+  "title": "Faktury",
+  "subtitle": "Spravujte a sledujte všechny své faktury",
+  "new": "Nová faktura",
+  "summary": {
+    "total": "Faktury celkem",
+    "paid": "Zaplaceno",
+    "overdue": "Po splatnosti",
+    "draft": "Koncept"
+  },
+  "filters": {
+    "all": "Vše",
+    "paid": "Zaplacené",
+    "due": "K úhradě",
+    "overdue": "Po splatnosti",
+    "draft": "Koncept"
+  },
+  "status": {
+    "paid": "Zaplaceno",
+    "sent": "K úhradě",
+    "overdue": "Po splatnosti",
+    "draft": "Koncept",
+    "void": "Neplatné"
+  },
+  "search": "Hledat faktury…",
+  "deleteSelected": "Smazat {count} vybraných",
+  "count": "žádné faktury | jedna faktura | {count} faktury | {count} faktur",
+  "table": {
+    "invoice": "Faktura",
+    "client": "Klient",
+    "amount": "Částka",
+    "status": "Stav",
+    "issueDate": "Datum vystavení",
+    "dueDate": "Datum splatnosti",
+    "actions": "Akce"
+  },
+  "actions": {
+    "view": "Zobrazit",
+    "edit": "Upravit",
+    "markPaid": "Označit jako zaplacené",
+    "markPaidShort": "Zaplaceno",
+    "delete": "Smazat"
+  },
+  "empty": "Žádné faktury neodpovídají vašim filtrům",
+  "deleteModal": {
+    "title": "Smazat {number}?",
+    "body": "Tato faktura bude trvale smazána. Tuto akci nelze vrátit zpět.",
+    "cancel": "Zrušit",
+    "confirm": "Smazat"
+  },
+  "toasts": {
+    "loadFailed": "Nepodařilo se načíst faktury",
+    "markedPaid": "{number} označena jako zaplacená",
+    "updateFailed": "Nepodařilo se aktualizovat fakturu",
+    "deleted": "{number} smazána",
+    "deleteFailed": "Nepodařilo se smazat fakturu",
+    "bulkDeleted": "žádné faktury nesmazány | jedna faktura smazána | {count} faktury smazány | {count} faktur smazáno",
+    "bulkDeleteFailed": "Některé faktury se nepodařilo smazat"
+  },
+  "notFound": "Faktura nenalezena",
+  "back": "Zpět na faktury"
+}

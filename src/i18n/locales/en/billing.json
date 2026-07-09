@@ -1,0 +1,105 @@
+{
+  "title": "Billing",
+  "subtitle": "Manage your subscription and billing history",
+  "verifying": "Verifying payment…",
+  "verifyingDesc": "Please wait while we confirm your payment with Paystack.",
+  "currentPlan": "Current plan",
+  "statuses": {
+    "active": "Active",
+    "trial": "Trial",
+    "past_due": "Past due",
+    "cancelled": "Cancelled",
+    "expired": "Expired",
+    "pending": "Pending",
+    "completed": "Completed",
+    "failed": "Failed"
+  },
+  "period": {
+    "cancelledUntil": "Subscription cancelled — access until",
+    "renewsAnnual": "Annual plan renews on",
+    "renewsMonthly": "Monthly plan renews on",
+    "billingCurrency": "Billing currency: {currency}",
+    "cancelPlan": "Cancel plan"
+  },
+  "tabs": {
+    "plans": "Plans",
+    "history": "Billing History"
+  },
+  "interval": {
+    "monthly": "Monthly",
+    "annual": "Annual"
+  },
+  "detected": "(detected)",
+  "plan": {
+    "mostPopular": "Most popular",
+    "currentPlan": "Current plan",
+    "free": "Free",
+    "perMonth": "/mo",
+    "billedAnnual": "Billed {price}/year",
+    "save": "Save {pct}%",
+    "downgradeFree": "Downgrade to Free",
+    "upgradeTo": "Upgrade to {name}",
+    "current": "Current plan"
+  },
+  "history": {
+    "empty": "No billing history yet",
+    "emptyHint": "Your payment history will appear here after your first upgrade.",
+    "date": "Date",
+    "type": "Type",
+    "reference": "Reference",
+    "amount": "Amount",
+    "status": "Status",
+    "prev": "← Prev",
+    "next": "Next →",
+    "page": "Page {page} of {total}"
+  },
+  "txType": {
+    "new_subscription": "New Subscription",
+    "renewal": "Renewal",
+    "upgrade": "Upgrade",
+    "downgrade": "Downgrade"
+  },
+  "cancelModal": {
+    "title": "Cancel subscription?",
+    "subtitle": "You'll keep access until your current period ends.",
+    "body": "After cancellation, your account will automatically downgrade to the Starter plan at the end of your billing period. You will not be charged again.",
+    "keep": "Keep plan",
+    "cancelling": "Cancelling…",
+    "confirm": "Yes, cancel"
+  },
+  "features": {
+    "unlimitedInvoices": "Unlimited invoices",
+    "invoicesPerMonth": "{n} invoices/month",
+    "unlimitedReceipts": "Unlimited receipts",
+    "receiptsPerMonth": "{n} receipts/month",
+    "unlimitedLetterheads": "Unlimited letterheads",
+    "letterheadsPerMonth": "{n} letterheads/month",
+    "unlimitedProjects": "Unlimited projects",
+    "projectsLimit": "{n} active project",
+    "upToTeam": "Up to {n} team members",
+    "solo": "Solo (1 member)",
+    "customBranding": "Custom branding & logo",
+    "removeBranding": "Remove Flowtali branding",
+    "allCurrencies": "All 11 currencies",
+    "allTemplates": "All 8 letterhead templates",
+    "stampWatermark": "Stamps & watermarks",
+    "prioritySupport": "Priority support",
+    "teamRoles": "Team roles & permissions",
+    "invoiceAnalytics": "Invoice analytics"
+  },
+  "toasts": {
+    "activated": "Subscription activated successfully!",
+    "verifyFailed": "Payment verification failed.",
+    "loadPlansFailed": "Failed to load pricing plans.",
+    "loadHistoryFailed": "Failed to load billing history.",
+    "initPaymentFailed": "Failed to initialize payment.",
+    "cancelled": "Subscription cancelled. Access continues until the end of your billing period.",
+    "cancelFailed": "Failed to cancel subscription."
+  },
+  "paywall": {
+    "trialEndedTitle": "Your free trial has ended",
+    "trialEndedBody": "Subscribe to a plan to keep creating invoices, receipts and more. Your existing data stays safe.",
+    "requiredTitle": "A subscription is required",
+    "requiredBody": "Your organization needs an active plan to continue. Choose a plan below to restore access."
+  }
+}

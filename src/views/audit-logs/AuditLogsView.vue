@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { AuditLogService, type IAuditLog, type IAuditLogUser, type IAuditLogEventType } from '@/services/audit-log.service'
 import Pagination from '@/components/ui/Pagination.vue'
 
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const orgId     = computed(() => authStore.getCurrentOrganization?.id ?? '')
 
@@ -23,7 +25,7 @@ const eventTypes      = ref<IAuditLogEventType[]>([])
 const typesLoading    = ref(false)
 
 const eventFilters = computed(() => [
-  { key: '', label: 'All events', icon: 'lucide:list', color: '#9ca3af' },
+  { key: '', label: t('auditLogs.allEvents'), icon: 'lucide:list', color: '#9ca3af' },
   ...eventTypes.value,
 ])
 
@@ -117,7 +119,7 @@ function eventMeta(event: string, status: string) {
 }
 
 function fmtDateTime(iso: string) {
-  return new Date(iso).toLocaleDateString('en-US', {
+  return new Date(iso).toLocaleDateString(locale.value, {
     month: 'short', day: 'numeric', year: 'numeric',
     hour: '2-digit', minute: '2-digit',
   })
@@ -146,8 +148,8 @@ function userInitials(user: IAuditLogUser | null | undefined) {
     <!-- Page header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div>
-        <h1 class="page-title">Audit Logs</h1>
-        <p class="page-subtitle">Full activity trail for your organization</p>
+        <h1 class="page-title">{{ t('auditLogs.title') }}</h1>
+        <p class="page-subtitle">{{ t('auditLogs.subtitle') }}</p>
       </div>
       <div class="flex items-center gap-2">
         <button
@@ -156,7 +158,7 @@ function userInitials(user: IAuditLogUser | null | undefined) {
           class="flex items-center gap-2 bg-gray-200 border border-gray-400 hover:border-gray-500 text-gray-900 hover:text-gray-1000 text-xs px-3 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Icon :icon="isExporting ? 'lucide:loader-2' : 'lucide:download'" class="w-3.5 h-3.5" :class="{ 'animate-spin': isExporting }" />
-          {{ isExporting ? 'Exporting…' : 'Export CSV' }}
+          {{ isExporting ? t('auditLogs.exporting') : t('auditLogs.exportCsv') }}
         </button>
         <div class="relative">
           <select v-model="eventFilter" @change="onFilter" class="app-select text-xs py-2 w-40" :disabled="typesLoading">
@@ -173,14 +175,14 @@ function userInitials(user: IAuditLogUser | null | undefined) {
       <div class="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-gray-400">
         <div class="relative">
           <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-700" />
-          <input v-model="searchQuery" placeholder="Search logs…" class="app-inp pl-8 text-xs py-2 w-52" />
+          <input v-model="searchQuery" :placeholder="t('auditLogs.search')" class="app-inp pl-8 text-xs py-2 w-52" />
         </div>
         <div class="flex items-center gap-2">
           <input v-model="dateFrom" type="date" class="app-inp text-xs py-2 w-36 text-gray-900" @change="onFilter" />
           <span class="text-gray-700 text-xs">–</span>
           <input v-model="dateTo"   type="date" class="app-inp text-xs py-2 w-36 text-gray-900" @change="onFilter" />
         </div>
-        <span class="text-xs text-gray-700 ml-auto">{{ total.toLocaleString() }} event{{ total !== 1 ? 's' : '' }}</span>
+        <span class="text-xs text-gray-700 ml-auto">{{ t('auditLogs.count', total) }}</span>
       </div>
 
       <!-- Loading -->
@@ -193,12 +195,12 @@ function userInitials(user: IAuditLogUser | null | undefined) {
         <table class="app-table">
           <thead>
             <tr>
-              <th>Event</th>
-              <th>User</th>
-              <th>Resource</th>
-              <th>IP Address</th>
-              <th>Timestamp</th>
-              <th>Status</th>
+              <th>{{ t('auditLogs.table.event') }}</th>
+              <th>{{ t('auditLogs.table.user') }}</th>
+              <th>{{ t('auditLogs.table.resource') }}</th>
+              <th>{{ t('auditLogs.table.ip') }}</th>
+              <th>{{ t('auditLogs.table.timestamp') }}</th>
+              <th>{{ t('auditLogs.table.status') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -233,12 +235,12 @@ function userInitials(user: IAuditLogUser | null | undefined) {
                     <div
                       v-if="log.user && !log.user.is_active"
                       class="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-gray-500 border border-gray-300"
-                      title="Former member"
+                      :title="t('auditLogs.formerMember')"
                     ></div>
                   </div>
                   <div class="min-w-0">
                     <div class="text-xs text-gray-1000 leading-tight truncate max-w-[120px]" :class="{ 'opacity-60': log.user && !log.user.is_active }">
-                      {{ log.user?.name ?? 'System' }}
+                      {{ log.user?.name ?? t('auditLogs.system') }}
                     </div>
                     <div v-if="log.user?.email" class="text-[10px] text-gray-700/60 truncate max-w-[120px]">{{ log.user.email }}</div>
                   </div>
@@ -255,12 +257,12 @@ function userInitials(user: IAuditLogUser | null | undefined) {
               <td class="text-xs text-gray-700 whitespace-nowrap">{{ fmtDateTime(log.created_at) }}</td>
               <td>
                 <span :class="['status-badge', log.status === 'success' ? 'status-active' : 'status-overdue']">
-                  {{ log.status === 'success' ? 'Success' : 'Failed' }}
+                  {{ log.status === 'success' ? t('auditLogs.success') : t('auditLogs.failed') }}
                 </span>
               </td>
             </tr>
             <tr v-if="logs.length === 0">
-              <td colspan="6" class="text-center py-12 text-gray-700 text-sm">No audit logs found</td>
+              <td colspan="6" class="text-center py-12 text-gray-700 text-sm">{{ t('auditLogs.empty') }}</td>
             </tr>
           </tbody>
         </table>
@@ -277,7 +279,7 @@ function userInitials(user: IAuditLogUser | null | undefined) {
               <span class="text-sm font-medium text-gray-1000">{{ log.action }}</span>
             </div>
             <span :class="['status-badge', log.status === 'success' ? 'status-active' : 'status-overdue']">
-              {{ log.status === 'success' ? 'OK' : 'Fail' }}
+              {{ log.status === 'success' ? t('auditLogs.ok') : t('auditLogs.fail') }}
             </span>
           </div>
           <div class="text-xs text-gray-700 ml-8">{{ log.resource_label || '—' }} · {{ fmtDateTime(log.created_at) }}</div>
@@ -293,11 +295,11 @@ function userInitials(user: IAuditLogUser | null | undefined) {
               :style="{ backgroundColor: userColor(log.user) }"
             >{{ userInitials(log.user) }}</div>
             <span class="text-[10px] text-gray-700/70 truncate" :class="{ 'opacity-60': log.user && !log.user.is_active }">
-              {{ log.user?.name ?? 'System' }}
+              {{ log.user?.name ?? t('auditLogs.system') }}
             </span>
           </div>
         </div>
-        <div v-if="logs.length === 0" class="text-center py-12 text-gray-700 text-sm">No audit logs found</div>
+        <div v-if="logs.length === 0" class="text-center py-12 text-gray-700 text-sm">{{ t('auditLogs.empty') }}</div>
       </div>
 
       <!-- Pagination -->

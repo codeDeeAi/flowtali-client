@@ -1,0 +1,100 @@
+{
+  "title": "Můj profil",
+  "subtitle": "Spravujte nastavení svého osobního účtu",
+  "changePhoto": "Změnit fotku",
+  "fields": {
+    "firstName": "Jméno",
+    "lastName": "Příjmení",
+    "email": "E-mailová adresa",
+    "phone": "Telefonní číslo",
+    "jobTitle": "Pracovní pozice"
+  },
+  "placeholders": {
+    "phone": "+420 600 000 000",
+    "jobTitle": "Kreativní ředitel",
+    "newPassword": "Min. 8 znaků",
+    "otp": "A1B2C3"
+  },
+  "saveChanges": "Uložit změny",
+  "password": {
+    "title": "Změnit heslo",
+    "current": "Současné heslo",
+    "new": "Nové heslo",
+    "confirm": "Potvrďte nové heslo",
+    "update": "Aktualizovat heslo"
+  },
+  "mfa": {
+    "title": "Dvoufaktorové ověření",
+    "enabled": "Zapnuto",
+    "disabled": "Vypnuto",
+    "desc": "Přidejte další vrstvu zabezpečení — při každém přihlášení je e-mailem zaslán jednorázový kód.",
+    "enterCode": "Zadejte 6místný kód zaslaný na váš e-mail:",
+    "verifyEnable": "Ověřit a zapnout",
+    "cancel": "Zrušit",
+    "enable": "Zapnout 2FA",
+    "disable": "Vypnout 2FA",
+    "requiredByOrg": "Vyžadováno vaší organizací — nelze vypnout."
+  },
+  "sessions": {
+    "title": "Aktivní relace",
+    "activeCount": "{count} aktivních",
+    "none": "Nebyly nalezeny žádné aktivní relace.",
+    "current": "Aktuální",
+    "lastActive": "Naposledy aktivní {when}",
+    "expires": "Vyprší {date}",
+    "revoke": "Zrušit",
+    "signOutAll": "Odhlásit ze všech ostatních relací"
+  },
+  "danger": {
+    "title": "Nebezpečná zóna",
+    "desc": "Trvale smažte svůj účet a všechna související data. Tuto akci nelze vrátit zpět.",
+    "deleteAccount": "Smazat účet"
+  },
+  "deleteModal": {
+    "title": "Smazat účet",
+    "permanent": "Tato akce je trvalá",
+    "removeIntro": "Smazání účtu trvale odstraní:",
+    "removeOrgs": "Všechny organizace, které vlastníte",
+    "removeDocs": "Všechny faktury, klienty a projekty",
+    "removeProfile": "Váš profil a ověřovací údaje",
+    "codeSentBefore": "Ověřovací kód bude odeslán na ",
+    "codeSentAfter": " pro potvrzení této akce.",
+    "cancel": "Zrušit",
+    "sendCode": "Odeslat ověřovací kód",
+    "confirmTitle": "Potvrdit smazání",
+    "confirmSubtitle": "Zadejte kód zaslaný na váš e-mail",
+    "enterCodeBefore": "Zadejte 6místný ověřovací kód zaslaný na ",
+    "resend": "Odeslat kód znovu",
+    "deleteMyAccount": "Smazat můj účet"
+  },
+  "relative": {
+    "never": "Nikdy",
+    "justNow": "Právě teď",
+    "minAgo": "před {n} min",
+    "hourAgo": "před {n} h",
+    "dayAgo": "před {n} d"
+  },
+  "toasts": {
+    "loadFailed": "Nepodařilo se načíst profil",
+    "avatarUpdated": "Avatar aktualizován",
+    "avatarFailed": "Nepodařilo se nahrát avatar",
+    "profileSaved": "Profil uložen",
+    "profileFailed": "Nepodařilo se uložit profil",
+    "pwMismatch": "Hesla se neshodují",
+    "pwChanged": "Heslo úspěšně změněno",
+    "pwFailed": "Nepodařilo se změnit heslo",
+    "sessionRevoked": "Relace zrušena",
+    "sessionRevokeFailed": "Nepodařilo se zrušit relaci",
+    "signedOutOthers": "Odhlášeno z {count} dalších relací",
+    "signOutFailed": "Nepodařilo se odhlásit relace",
+    "mfaCodeSent": "Ověřovací kód odeslán na váš e-mail",
+    "mfaSendFailed": "Nepodařilo se odeslat kód",
+    "mfaEnabled": "Dvoufaktorové ověření zapnuto",
+    "mfaInvalidCode": "Neplatný kód",
+    "mfaDisabled": "Dvoufaktorové ověření vypnuto",
+    "mfaDisableFailed": "Nepodařilo se vypnout 2FA",
+    "delCodeSent": "Ověřovací kód odeslán na váš e-mail",
+    "delSendFailed": "Nepodařilo se odeslat ověřovací kód",
+    "delFailed": "Nepodařilo se smazat účet"
+  }
+}

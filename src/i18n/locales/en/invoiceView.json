@@ -1,0 +1,63 @@
+{
+  "dueOn": "Due {date}",
+  "actions": {
+    "print": "Print / PDF",
+    "share": "Share",
+    "generateReceipt": "Generate Receipt",
+    "markPaid": "Mark Paid",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "receiptsPanel": {
+    "title": "Receipts",
+    "generate": "Generate",
+    "empty": "No receipts yet",
+    "generateFrom": "Generate from this invoice"
+  },
+  "links": {
+    "title": "Shared Links",
+    "newLink": "New Link",
+    "total": "Total",
+    "active": "Active",
+    "views": "Views",
+    "private": "{count} private",
+    "public": "{count} public",
+    "defaultLabel": "Shared Link",
+    "statusRevoked": "Revoked",
+    "statusExpired": "Expired",
+    "statusActive": "Active",
+    "neverExpires": "Never expires",
+    "expiredOn": "Expired {date}",
+    "expiresOn": "Expires {date}",
+    "visibilityPrivate": "Private",
+    "visibilityPublic": "Public",
+    "recentViews": "Recent Views",
+    "emptyTitle": "No shared links yet",
+    "emptyBody": "Generate a link to share this invoice with clients",
+    "createLink": "Create Link",
+    "never": "Never"
+  },
+  "generateModal": {
+    "title": "Generate Receipt",
+    "from": "From {number}",
+    "receiptNumber": "Receipt Number",
+    "paymentDate": "Payment Date",
+    "paymentMethod": "Payment Method",
+    "reference": "Reference",
+    "statusStamp": "Status Stamp",
+    "balanceDue": "Balance Due ({currency})",
+    "generate": "Generate Receipt",
+    "paymentMethodPlaceholder": "Bank Transfer"
+  },
+  "stamps": {
+    "paid": "Paid",
+    "partiallyPaid": "Partially Paid",
+    "unpaid": "Unpaid",
+    "none": "None"
+  },
+  "toasts": {
+    "linkCopied": "Link copied to clipboard",
+    "receiptCreated": "Receipt {number} created",
+    "receiptFailed": "Failed to create receipt"
+  }
+}

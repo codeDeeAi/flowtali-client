@@ -1,0 +1,147 @@
+{
+  "toolbar": {
+    "invoices": "Faktury",
+    "newInvoice": "Nová faktura",
+    "editInvoice": "Upravit fakturu",
+    "print": "Tisk / PDF",
+    "share": "Sdílet",
+    "saveDraft": "Uložit koncept",
+    "saving": "Ukládání…",
+    "createInvoice": "Vytvořit fakturu",
+    "saveChanges": "Uložit změny"
+  },
+  "tabs": {
+    "from": "Od",
+    "to": "Komu",
+    "items": "Položky",
+    "design": "Vzhled",
+    "settings": "Nastavení",
+    "preview": "Náhled"
+  },
+  "common": {
+    "loading": "Načítání…",
+    "loadingClients": "Načítání klientů…",
+    "remove": "Odebrat",
+    "optional": "(volitelné)",
+    "uploading": "Nahrávání…"
+  },
+  "from": {
+    "quickFillProfiles": "Profily rychlého vyplnění",
+    "orgNameLabel": "Název organizace",
+    "addProfilesHint": "Přidejte profily v Nastavení organizace pro více možností.",
+    "noProfiles": "Zatím nejsou nastaveny žádné profily",
+    "companyName": "Název firmy",
+    "companyNamePlaceholder": "Název vašeho studia",
+    "tagline": "Slogan / Role",
+    "taglinePlaceholder": "Kreativní agentura a digitální studio",
+    "email": "E-mail",
+    "emailPlaceholder": "hello{'@'}studio.com",
+    "phone": "Telefon",
+    "phonePlaceholder": "+1 555 000 0000",
+    "website": "Web",
+    "websitePlaceholder": "www.vasestudio.com",
+    "address": "Adresa",
+    "addressPlaceholder": "Ulice 123\nMěsto, Země",
+    "logo": "Logo",
+    "replaceLogo": "Nahradit logo",
+    "uploadLogo": "Nahrát logo",
+    "bankDetails": "Bankovní / platební údaje",
+    "quickFillBank": "Vyplnit z uloženého účtu:",
+    "bankName": "Název banky",
+    "bankNamePlaceholder": "Chase Bank",
+    "accountName": "Jméno majitele účtu",
+    "accountNamePlaceholder": "Acme Design Studio",
+    "accountNumber": "Číslo účtu",
+    "sortCode": "Kód banky",
+    "iban": "IBAN",
+    "paymentLinks": "Platební odkazy",
+    "addFromSaved": "Přidat z uložených:",
+    "linkGenericPlaceholder": "Odkaz nebo uživatelské jméno",
+    "addPaymentLink": "Přidat platební odkaz"
+  },
+  "to": {
+    "selectClient": "Vybrat klienta",
+    "noClients": "Zatím nejsou přidáni žádní klienti",
+    "billToName": "Jméno odběratele",
+    "billToNamePlaceholder": "Jméno klienta",
+    "company": "Firma",
+    "companyPlaceholder": "Firma klienta",
+    "email": "E-mail",
+    "emailPlaceholder": "klient{'@'}example.com",
+    "phone": "Telefon",
+    "billingAddress": "Fakturační adresa"
+  },
+  "items": {
+    "item": "Položka {n}",
+    "descriptionPlaceholder": "Popis",
+    "qty": "Množ.",
+    "unit": "Jedn.",
+    "rateWithSym": "Sazba ({sym})",
+    "addLineItem": "Přidat položku",
+    "discount": "Sleva",
+    "flat": "{sym} pevně",
+    "taxLines": "Daňové řádky",
+    "taxLabelPlaceholder": "DPH",
+    "addTaxLine": "Přidat daňový řádek"
+  },
+  "design": {
+    "theme": "Vzhled",
+    "accentColor": "Akcentová barva",
+    "brand": "Značka",
+    "fontFamily": "Písmo",
+    "logo": "Logo",
+    "signature": "Podpis",
+    "replaceSignature": "Nahradit podpis",
+    "uploadSignature": "Nahrát podpis",
+    "stampWatermark": "Razítko / Vodoznak",
+    "none": "Žádné",
+    "watermarkText": "Text vodoznaku",
+    "visible": "Viditelné",
+    "hidden": "Skryté",
+    "showHide": "Zobrazit / Skrýt"
+  },
+  "themes": {
+    "classic": "Klasický",
+    "modern": "Moderní",
+    "minimal": "Minimalistický",
+    "bold": "Výrazné záhlaví",
+    "executive": "Reprezentativní"
+  },
+  "toggles": {
+    "showTopBar": "Horní akcentová lišta",
+    "showLogo": "Firemní logo",
+    "showFooterLine": "Čára v zápatí",
+    "showNotes": "Sekce poznámek",
+    "showBankDetails": "Sekce bankovních údajů",
+    "showFlowtaliTag": "Branding Flowtali"
+  },
+  "settings": {
+    "invoiceNumber": "Číslo faktury",
+    "paymentTerms": "Platební podmínky",
+    "issueDate": "Datum vystavení",
+    "dueDate": "Datum splatnosti",
+    "auto": "(automaticky)",
+    "currency": "Měna",
+    "poNumber": "Číslo objednávky",
+    "notes": "Poznámky / Platební pokyny",
+    "notesPlaceholder": "Splatnost do 30 dnů…",
+    "footerText": "Vlastní text zápatí",
+    "footerPlaceholder": "Děkujeme za vaši důvěru!"
+  },
+  "zoom": {
+    "fit": "Přizpůsobit"
+  },
+  "toasts": {
+    "logoUploadFailed": "Nahrání loga selhalo",
+    "signatureUploadFailed": "Nahrání podpisu selhalo",
+    "created": "Faktura úspěšně vytvořena!",
+    "saved": "Faktura úspěšně uložena!",
+    "saveFailed": "Fakturu se nepodařilo uložit. Zkuste to prosím znovu."
+  },
+  "validation": {
+    "numberRequired": "Číslo faktury je povinné.",
+    "itemRequired": "Je vyžadována alespoň jedna položka.",
+    "descriptionRequired": "Všechny položky musí mít popis.",
+    "linkValueRequired": "Všechny platební odkazy musí mít hodnotu."
+  }
+}

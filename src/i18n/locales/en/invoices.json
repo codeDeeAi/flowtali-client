@@ -1,0 +1,62 @@
+{
+  "title": "Invoices",
+  "subtitle": "Manage and track all your invoices",
+  "new": "New Invoice",
+  "summary": {
+    "total": "Total Invoices",
+    "paid": "Paid",
+    "overdue": "Overdue",
+    "draft": "Draft"
+  },
+  "filters": {
+    "all": "All",
+    "paid": "Paid",
+    "due": "Due",
+    "overdue": "Overdue",
+    "draft": "Draft"
+  },
+  "status": {
+    "paid": "Paid",
+    "sent": "Due",
+    "overdue": "Overdue",
+    "draft": "Draft",
+    "void": "Void"
+  },
+  "search": "Search invoices…",
+  "deleteSelected": "Delete {count} selected",
+  "count": "no invoices | one invoice | {count} invoices",
+  "table": {
+    "invoice": "Invoice",
+    "client": "Client",
+    "amount": "Amount",
+    "status": "Status",
+    "issueDate": "Issue Date",
+    "dueDate": "Due Date",
+    "actions": "Actions"
+  },
+  "actions": {
+    "view": "View",
+    "edit": "Edit",
+    "markPaid": "Mark as paid",
+    "markPaidShort": "Mark Paid",
+    "delete": "Delete"
+  },
+  "empty": "No invoices match your filters",
+  "deleteModal": {
+    "title": "Delete {number}?",
+    "body": "This invoice will be permanently deleted. This action cannot be undone.",
+    "cancel": "Cancel",
+    "confirm": "Delete"
+  },
+  "toasts": {
+    "loadFailed": "Failed to load invoices",
+    "markedPaid": "{number} marked as paid",
+    "updateFailed": "Failed to update invoice",
+    "deleted": "{number} deleted",
+    "deleteFailed": "Failed to delete invoice",
+    "bulkDeleted": "no invoices deleted | one invoice deleted | {count} invoices deleted",
+    "bulkDeleteFailed": "Failed to delete some invoices"
+  },
+  "notFound": "Invoice not found",
+  "back": "Back to invoices"
+}

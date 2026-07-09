@@ -1,0 +1,74 @@
+{
+  "title": "Hlavičkové papíry",
+  "count": "žádné značkové šablony | jedna značková šablona | {count} značkové šablony | {count} značkových šablon",
+  "new": "Nový hlavičkový papír",
+  "stats": {
+    "totalTemplates": "Šablony celkem",
+    "totalUses": "Použití celkem",
+    "mostUsed": "Nejpoužívanější",
+    "confidential": "Důvěrné",
+    "uses": "{count} použití"
+  },
+  "search": "Hledat hlavičkové papíry…",
+  "empty": {
+    "title": "Žádné hlavičkové papíry nenalezeny",
+    "hint": "Zkuste jiné hledání nebo vytvořte nový"
+  },
+  "preview": {
+    "re": "Věc:",
+    "dear": "Vážený kliente,",
+    "body1": "S potěšením vám předkládáme naši nabídku pro váš připravovaný projekt…",
+    "body2": "V příloze naleznete podrobnosti naší spolupráce…",
+    "confidential": "Důvěrné",
+    "page": "Strana 1 z 1"
+  },
+  "themes": {
+    "classic": "Klasický",
+    "modern": "Moderní",
+    "bold": "Výrazný",
+    "minimal": "Minimalistický",
+    "legal": "Právní",
+    "executive": "Reprezentativní"
+  },
+  "card": {
+    "view": "Zobrazit",
+    "startFromTemplate": "Začít ze šablony",
+    "usesAndLastUsed": "{uses} použití · Naposledy použito {lastUsed}"
+  },
+  "table": {
+    "name": "Název",
+    "theme": "Vzhled",
+    "watermark": "Vodoznak",
+    "uses": "Použití",
+    "lastUsed": "Naposledy použito"
+  },
+  "actions": {
+    "edit": "Upravit",
+    "share": "Sdílet",
+    "delete": "Smazat"
+  },
+  "lastUsed": {
+    "never": "Nikdy nepoužito",
+    "today": "Dnes",
+    "dayAgo": "před 1 dnem",
+    "daysAgo": "před {n} dny",
+    "weekAgo": "před 1 týdnem",
+    "weeksAgo": "před {n} týdny",
+    "monthsAgo": "před {n} měsíci"
+  },
+  "deleteModal": {
+    "title": "Smazat hlavičkový papír",
+    "subtitle": "Tuto akci nelze vrátit zpět",
+    "confirmBefore": "Opravdu chcete smazat ",
+    "confirmAfter": "?",
+    "cancel": "Zrušit",
+    "delete": "Smazat"
+  },
+  "toasts": {
+    "loadFailed": "Nepodařilo se načíst hlavičkové papíry",
+    "deleted": "Hlavičkový papír smazán",
+    "deleteFailed": "Nepodařilo se smazat hlavičkový papír"
+  },
+  "notFound": "Hlavičkový papír nenalezen",
+  "back": "Zpět na hlavičkové papíry"
+}

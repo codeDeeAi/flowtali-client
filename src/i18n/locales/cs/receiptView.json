@@ -1,0 +1,5 @@
+{
+  "paidOn": "Zaplaceno {date}",
+  "noPaymentDate": "Datum platby nenastaveno",
+  "linksEmptyBody": "Vytvořte odkaz pro sdílení této účtenky s klienty"
+}

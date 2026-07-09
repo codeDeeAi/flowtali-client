@@ -1,0 +1,95 @@
+{
+  "toolbar": {
+    "letterheads": "En-têtes",
+    "new": "Nouvel en-tête",
+    "edit": "Modifier l'en-tête",
+    "create": "Créer"
+  },
+  "toasts": {
+    "created": "En-tête créé !",
+    "saved": "En-tête enregistré !",
+    "saveFailed": "Échec de l'enregistrement de l'en-tête. Veuillez réessayer."
+  },
+  "tabs": {
+    "company": "Entreprise",
+    "content": "Contenu",
+    "design": "Conception",
+    "settings": "Paramètres",
+    "preview": "Aperçu"
+  },
+  "company": {
+    "quickFillClients": "Remplir depuis les clients",
+    "addOne": "Ajouter",
+    "companyLogo": "Logo de l'entreprise",
+    "useThisLogo": "Utiliser ce logo",
+    "companyName": "Nom de l'entreprise",
+    "companyNamePlaceholder": "ACME STUDIO",
+    "tagline": "Slogan / Rôle",
+    "taglinePlaceholder": "Agence créative et studio numérique",
+    "email": "E-mail",
+    "phone": "Téléphone",
+    "website": "Site web",
+    "address": "Adresse",
+    "regNumber": "N° SIREN",
+    "vatNumber": "N° TVA",
+    "signatureImage": "Image de signature",
+    "useThisSignature": "Utiliser cette signature"
+  },
+  "content": {
+    "templateName": "Nom du modèle",
+    "templateNamePlaceholder": "Proposition d'agence",
+    "subjectRe": "Objet / Réf. :",
+    "subjectPlaceholder": "Objet : Engagement de projet",
+    "salutation": "Salutation",
+    "salutationPlaceholder": "Cher [nom du client],",
+    "bodyText": "Corps du texte",
+    "bodyPlaceholder": "Corps de la lettre…",
+    "closing": "Formule de politesse",
+    "closingPlaceholder": "Cordialement,",
+    "signerName": "Nom du signataire",
+    "signerTitle": "Fonction du signataire",
+    "footerColumns": "Colonnes de pied de page",
+    "use": "Utiliser",
+    "left": "Gauche",
+    "center": "Centre",
+    "right": "Droite"
+  },
+  "design": {
+    "palette": "Palette",
+    "headerLayout": "Disposition de l'en-tête",
+    "stamp": "Tampon",
+    "watermark": "Filigrane",
+    "watermarkColor": "Couleur du filigrane",
+    "layoutLeft": "Gauche",
+    "layoutCenter": "Centre",
+    "layoutRight": "Droite",
+    "layoutSplit": "Divisé"
+  },
+  "toggles": {
+    "topBar": "Barre d'accent supérieure",
+    "bottomBar": "Barre d'accent inférieure",
+    "companyLogo": "Logo de l'entreprise",
+    "headerDivider": "Séparateur d'en-tête",
+    "footer": "Pied de page",
+    "date": "Date",
+    "refNumber": "Numéro de référence",
+    "lineNumbers": "Numéros de ligne"
+  },
+  "settings": {
+    "templateName": "Nom du modèle",
+    "date": "Date",
+    "refNumber": "Numéro de référence",
+    "paperSize": "Format du papier",
+    "orientation": "Orientation",
+    "portrait": "Portrait",
+    "landscape": "Paysage"
+  },
+  "themeDesc": {
+    "classic": "Traditionnel et professionnel",
+    "modern": "Disposition épurée avec barre latérale",
+    "minimal": "Sobre et élégant",
+    "bold": "En-tête à fort impact",
+    "legal": "Style de document formel",
+    "executive": "Deux colonnes premium"
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "projects": "Projekte",
+    "invoices": "Rechnungen",
+    "receipts": "Belege",
+    "letterheads": "Briefköpfe",
+    "clients": "Kunden",
+    "members": "Mitglieder",
+    "roles": "Rollen & Berechtigungen",
+    "rolesShort": "Rollen",
+    "orgPreferences": "Org.-Einstellungen",
+    "auditLogs": "Audit-Protokolle",
+    "analytics": "Analysen",
+    "billing": "Abrechnung",
+    "settings": "Einstellungen",
+    "profile": "Mein Profil"
+  },
+  "sections": {
+    "documents": "Dokumente",
+    "organization": "Organisation",
+    "workspace": "Arbeitsbereich",
+    "account": "Konto"
+  },
+  "pageTitles": {
+    "dashboard": "Dashboard",
+    "invoices": "Rechnungen",
+    "invoicesCreate": "Neue Rechnung",
+    "invoicesView": "Rechnung",
+    "invoicesEdit": "Rechnung bearbeiten",
+    "receipts": "Belege",
+    "receiptsCreate": "Neuer Beleg",
+    "receiptsView": "Beleg",
+    "receiptsEdit": "Beleg bearbeiten",
+    "letterheads": "Briefköpfe",
+    "letterheadsCreate": "Neuer Briefkopf",
+    "letterheadsView": "Briefkopf",
+    "letterheadsEdit": "Briefkopf bearbeiten",
+    "projects": "Projekte",
+    "projectsCreate": "Neues Projekt",
+    "projectsView": "Projekt",
+    "projectsEdit": "Projekt bearbeiten",
+    "clients": "Kunden",
+    "clientsCreate": "Neuer Kunde",
+    "clientsView": "Kunde",
+    "clientsEdit": "Kunde bearbeiten",
+    "members": "Mitglieder",
+    "membersView": "Mitglied",
+    "roles": "Rollen & Berechtigungen",
+    "orgPreferences": "Org.-Einstellungen",
+    "auditLogs": "Audit-Protokolle",
+    "analytics": "Analysen",
+    "billing": "Abrechnung",
+    "subscription": "Abonnement",
+    "settings": "Einstellungen",
+    "profile": "Mein Profil"
+  },
+  "header": {
+    "toggleSidebar": "Seitenleiste umschalten",
+    "language": "Sprache",
+    "profileMenu": "Profilmenü"
+  },
+  "sidebar": {
+    "selectOrg": "Organisation auswählen",
+    "yourOrgs": "Ihre Organisationen",
+    "createOrg": "Organisation erstellen",
+    "collapse": "Seitenleiste einklappen",
+    "expand": "Seitenleiste ausklappen",
+    "close": "Seitenleiste schließen",
+    "feedback": "Feedback",
+    "shareFeedback": "Feedback geben"
+  },
+  "createOrg": {
+    "title": "Organisation erstellen",
+    "subtitle": "Richten Sie einen neuen Arbeitsbereich für Ihr Team oder Unternehmen ein",
+    "nameLabel": "Organisationsname",
+    "typeLabel": "Typ",
+    "business": "Unternehmen",
+    "businessDesc": "Team- & Kundenverwaltung",
+    "personal": "Persönlich",
+    "personalDesc": "Modus für Einzel-Freelancer",
+    "cancel": "Abbrechen",
+    "create": "Erstellen",
+    "creating": "Wird erstellt…"
+  },
+  "userMenu": {
+    "myProfile": "Mein Profil",
+    "settings": "Einstellungen",
+    "signOut": "Abmelden",
+    "signingOut": "Abmeldung…"
+  },
+  "bottomNav": {
+    "home": "Start",
+    "invoices": "Rechnungen",
+    "clients": "Kunden",
+    "more": "Mehr",
+    "newInvoice": "Neue Rechnung"
+  }
+}

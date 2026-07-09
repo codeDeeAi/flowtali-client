@@ -1,0 +1,62 @@
+{
+  "title": "Rechnungen",
+  "subtitle": "Verwalten und verfolgen Sie alle Ihre Rechnungen",
+  "new": "Neue Rechnung",
+  "summary": {
+    "total": "Rechnungen gesamt",
+    "paid": "Bezahlt",
+    "overdue": "Überfällig",
+    "draft": "Entwurf"
+  },
+  "filters": {
+    "all": "Alle",
+    "paid": "Bezahlt",
+    "due": "Fällig",
+    "overdue": "Überfällig",
+    "draft": "Entwurf"
+  },
+  "status": {
+    "paid": "Bezahlt",
+    "sent": "Fällig",
+    "overdue": "Überfällig",
+    "draft": "Entwurf",
+    "void": "Storniert"
+  },
+  "search": "Rechnungen suchen…",
+  "deleteSelected": "{count} ausgewählte löschen",
+  "count": "keine Rechnungen | eine Rechnung | {count} Rechnungen",
+  "table": {
+    "invoice": "Rechnung",
+    "client": "Kunde",
+    "amount": "Betrag",
+    "status": "Status",
+    "issueDate": "Rechnungsdatum",
+    "dueDate": "Fälligkeitsdatum",
+    "actions": "Aktionen"
+  },
+  "actions": {
+    "view": "Ansehen",
+    "edit": "Bearbeiten",
+    "markPaid": "Als bezahlt markieren",
+    "markPaidShort": "Bezahlt",
+    "delete": "Löschen"
+  },
+  "empty": "Keine Rechnungen entsprechen Ihren Filtern",
+  "deleteModal": {
+    "title": "{number} löschen?",
+    "body": "Diese Rechnung wird dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "cancel": "Abbrechen",
+    "confirm": "Löschen"
+  },
+  "toasts": {
+    "loadFailed": "Rechnungen konnten nicht geladen werden",
+    "markedPaid": "{number} als bezahlt markiert",
+    "updateFailed": "Rechnung konnte nicht aktualisiert werden",
+    "deleted": "{number} gelöscht",
+    "deleteFailed": "Rechnung konnte nicht gelöscht werden",
+    "bulkDeleted": "keine Rechnungen gelöscht | eine Rechnung gelöscht | {count} Rechnungen gelöscht",
+    "bulkDeleteFailed": "Einige Rechnungen konnten nicht gelöscht werden"
+  },
+  "notFound": "Rechnung nicht gefunden",
+  "back": "Zurück zu den Rechnungen"
+}

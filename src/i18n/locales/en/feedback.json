@@ -1,0 +1,32 @@
+{
+  "title": "Share feedback",
+  "subtitle": "We read every submission",
+  "typeLabel": "Type",
+  "types": {
+    "general": { "label": "General", "desc": "Share a thought or comment" },
+    "bug": { "label": "Bug Report", "desc": "Something isn't working" },
+    "feature": { "label": "Feature Request", "desc": "Suggest an improvement" },
+    "other": { "label": "Other", "desc": "Anything else" }
+  },
+  "rating": {
+    "label": "Overall rating",
+    "optional": "(optional)",
+    "labels": {
+      "1": "Awful",
+      "2": "Poor",
+      "3": "Okay",
+      "4": "Good",
+      "5": "Great!"
+    }
+  },
+  "messageLabel": "Message",
+  "messagePlaceholder": "Tell us what's on your mind…",
+  "error": "Something went wrong. Please try again.",
+  "send": "Send feedback",
+  "sending": "Sending…",
+  "success": {
+    "title": "Thanks for the feedback!",
+    "body": "It helps us make Flowtali better.",
+    "close": "Close"
+  }
+}

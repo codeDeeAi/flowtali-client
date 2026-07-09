@@ -2,11 +2,13 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { AuthService } from '@/services/auth.service'
 import { ProfileService, type IUserProfile } from '@/services/profile.service'
 
 const router    = useRouter()
+const { t }     = useI18n()
 const authStore = useAuthStore()
 
 const open        = ref(false)
@@ -67,7 +69,7 @@ onUnmounted(() => document.removeEventListener('mousedown', onOutsideClick))
     <button
       class="flex items-center gap-2 rounded-lg px-1.5 py-1 hover:bg-gray-400 transition-colors"
       @click="toggle"
-      aria-label="Profile menu"
+      :aria-label="t('app.header.profileMenu')"
     >
       <!-- Avatar photo or initials -->
       <div class="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-green-700/20 flex items-center justify-center">
@@ -124,7 +126,7 @@ onUnmounted(() => document.removeEventListener('mousedown', onOutsideClick))
             @click="open = false"
           >
             <Icon icon="lucide:user" class="w-4 h-4 shrink-0" />
-            My Profile
+            {{ t('app.userMenu.myProfile') }}
           </RouterLink>
 
           <RouterLink
@@ -133,7 +135,7 @@ onUnmounted(() => document.removeEventListener('mousedown', onOutsideClick))
             @click="open = false"
           >
             <Icon icon="lucide:settings" class="w-4 h-4 shrink-0" />
-            Settings
+            {{ t('app.userMenu.settings') }}
           </RouterLink>
         </div>
 
@@ -145,7 +147,7 @@ onUnmounted(() => document.removeEventListener('mousedown', onOutsideClick))
           >
             <Icon v-if="isLoggingOut" icon="lucide:loader-2" class="w-4 h-4 animate-spin shrink-0" />
             <Icon v-else icon="lucide:log-out" class="w-4 h-4 shrink-0" />
-            {{ isLoggingOut ? 'Signing out…' : 'Sign out' }}
+            {{ isLoggingOut ? t('app.userMenu.signingOut') : t('app.userMenu.signOut') }}
           </button>
         </div>
       </div>

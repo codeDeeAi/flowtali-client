@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import ShareLinkModal from '@/components/modals/ShareLinkModal.vue'
@@ -9,6 +10,7 @@ import { LetterheadService, type ILetterhead, type ILetterheadStats } from '@/se
 import { useNotification } from '@/composables/notification'
 
 const router    = useRouter()
+const { t }     = useI18n()
 const authStore = useAuthStore()
 const { notify } = useNotification()
 const orgId     = computed(() => authStore.getCurrentOrganization?.id ?? '')
@@ -40,7 +42,7 @@ async function fetchLetterheads() {
     letterheads.value = res.data.data.data ?? []
     total.value = (res.data.data as any).total ?? letterheads.value.length
   } catch {
-    notify('Failed to load letterheads', 'error')
+    notify(t('letterheads.toasts.loadFailed'), 'error')
   } finally {
     loading.value = false
   }
@@ -70,10 +72,7 @@ const templateBadgeClass: Record<string, string> = {
   executive: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
 }
 
-const templateLabel: Record<string, string> = {
-  classic: 'Classic', modern: 'Modern', bold: 'Bold',
-  minimal: 'Minimal', legal: 'Legal', executive: 'Executive',
-}
+const templateLabel = (theme: string) => t(`letterheads.themes.${theme}`)
 
 const confirmDelete = (lh: ILetterhead) => { deleteTarget.value = lh; showDeleteConfirm.value = true }
 const doDelete = async () => {
@@ -81,12 +80,12 @@ const doDelete = async () => {
   isDeleting.value = true
   try {
     await LetterheadService.delete(orgId.value, deleteTarget.value.id)
-    notify('Letterhead deleted', 'success')
+    notify(t('letterheads.toasts.deleted'), 'success')
     showDeleteConfirm.value = false
     deleteTarget.value = null
     fetchLetterheads()
   } catch {
-    notify('Failed to delete letterhead', 'error')
+    notify(t('letterheads.toasts.deleteFailed'), 'error')
   } finally {
     isDeleting.value = false
   }
@@ -98,16 +97,16 @@ const showShareModal = ref(false)
 const openShare = (lh: ILetterhead) => { shareTarget.value = lh; showShareModal.value = true }
 
 function lastUsedLabel(lh: ILetterhead): string {
-  if (!lh.last_used_at) return 'Never used'
+  if (!lh.last_used_at) return t('letterheads.lastUsed.never')
   const d = new Date(lh.last_used_at)
   const diff = Date.now() - d.getTime()
   const days = Math.floor(diff / 86_400_000)
-  if (days === 0) return 'Today'
-  if (days === 1) return '1 day ago'
-  if (days < 7)  return `${days} days ago`
-  if (days < 14) return '1 week ago'
-  if (days < 30) return `${Math.floor(days / 7)} weeks ago`
-  return `${Math.floor(days / 30)} months ago`
+  if (days === 0) return t('letterheads.lastUsed.today')
+  if (days === 1) return t('letterheads.lastUsed.dayAgo')
+  if (days < 7)  return t('letterheads.lastUsed.daysAgo', { n: days })
+  if (days < 14) return t('letterheads.lastUsed.weekAgo')
+  if (days < 30) return t('letterheads.lastUsed.weeksAgo', { n: Math.floor(days / 7) })
+  return t('letterheads.lastUsed.monthsAgo', { n: Math.floor(days / 30) })
 }
 </script>
 
@@ -117,34 +116,34 @@ function lastUsedLabel(lh: ILetterhead): string {
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div>
-        <h1 class="page-title">Letterheads</h1>
-        <p class="page-subtitle">{{ total }} branded template{{ total !== 1 ? 's' : '' }}</p>
+        <h1 class="page-title">{{ t('letterheads.title') }}</h1>
+        <p class="page-subtitle">{{ t('letterheads.count', total) }}</p>
       </div>
       <button
         @click="router.push({ name: 'letterheads.create' })"
         class="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs px-3 py-2 rounded-lg transition-colors self-start sm:self-auto"
       >
-        <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> New Letterhead
+        <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> {{ t('letterheads.new') }}
       </button>
     </div>
 
     <!-- Stats row -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
       <div class="bg-gray-200 border border-gray-400 rounded-xl p-4">
-        <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-1">Total Templates</p>
+        <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-1">{{ t('letterheads.stats.totalTemplates') }}</p>
         <p class="text-2xl font-bold text-gray-1000">{{ stats?.total ?? total }}</p>
       </div>
       <div class="bg-gray-200 border border-gray-400 rounded-xl p-4">
-        <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-1">Total Uses</p>
+        <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-1">{{ t('letterheads.stats.totalUses') }}</p>
         <p class="text-2xl font-bold text-gray-1000">{{ stats?.total_uses ?? '—' }}</p>
       </div>
       <div class="bg-gray-200 border border-gray-400 rounded-xl p-4">
-        <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-1">Most Used</p>
+        <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-1">{{ t('letterheads.stats.mostUsed') }}</p>
         <p class="text-sm font-semibold text-gray-1000 truncate">{{ stats?.most_used?.name ?? '—' }}</p>
-        <p v-if="stats?.most_used" class="text-[10px] text-gray-700 mt-0.5">{{ stats.most_used.uses }} uses</p>
+        <p v-if="stats?.most_used" class="text-[10px] text-gray-700 mt-0.5">{{ t('letterheads.stats.uses', { count: stats.most_used.uses }) }}</p>
       </div>
       <div class="bg-gray-200 border border-gray-400 rounded-xl p-4">
-        <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-1">Confidential</p>
+        <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-1">{{ t('letterheads.stats.confidential') }}</p>
         <p class="text-2xl font-bold text-gray-1000">{{ stats?.confidential ?? '—' }}</p>
       </div>
     </div>
@@ -156,7 +155,7 @@ function lastUsedLabel(lh: ILetterhead): string {
         <input
           v-model="search"
           @input="onSearch"
-          placeholder="Search letterheads…"
+          :placeholder="t('letterheads.search')"
           class="app-inp pl-9 text-sm w-full"
         />
       </div>
@@ -176,8 +175,8 @@ function lastUsedLabel(lh: ILetterhead): string {
     <!-- Empty -->
     <div v-if="!loading && letterheads.length === 0" class="flex flex-col items-center justify-center py-24 text-center">
       <Icon icon="lucide:file-text" class="w-10 h-10 text-gray-700 mb-3" />
-      <p class="text-gray-900 font-medium">No letterheads found</p>
-      <p class="text-gray-700 text-xs mt-1">Try a different search or create a new one</p>
+      <p class="text-gray-900 font-medium">{{ t('letterheads.empty.title') }}</p>
+      <p class="text-gray-700 text-xs mt-1">{{ t('letterheads.empty.hint') }}</p>
     </div>
 
     <!-- ── GRID VIEW ── -->
@@ -205,15 +204,15 @@ function lastUsedLabel(lh: ILetterhead): string {
               </div>
               <div class="h-px bg-gray-200 mb-1.5"></div>
               <div class="text-[5.5px] text-gray-500 leading-relaxed flex-1">
-                <div class="mb-1">Re: {{ lh.name }}</div>
-                Dear Client,<br/>
-                We are pleased to present our proposal for your upcoming project…<br/><br/>
-                Please find attached the details of our engagement…
+                <div class="mb-1">{{ t('letterheads.preview.re') }} {{ lh.name }}</div>
+                {{ t('letterheads.preview.dear') }}<br/>
+                {{ t('letterheads.preview.body1') }}<br/><br/>
+                {{ t('letterheads.preview.body2') }}
               </div>
               <div class="h-px bg-gray-200 mt-1 mb-1"></div>
               <div class="flex justify-between items-center">
-                <div class="text-[4.5px] text-gray-300">{{ lh.company || lh.name }} · Confidential</div>
-                <div class="text-[4.5px] text-gray-300">Page 1 of 1</div>
+                <div class="text-[4.5px] text-gray-300">{{ lh.company || lh.name }} · {{ t('letterheads.preview.confidential') }}</div>
+                <div class="text-[4.5px] text-gray-300">{{ t('letterheads.preview.page') }}</div>
               </div>
             </div>
             <!-- Watermark -->
@@ -228,31 +227,31 @@ function lastUsedLabel(lh: ILetterhead): string {
           <div class="flex items-start justify-between mb-1">
             <span class="text-sm font-semibold text-gray-1000 group-hover:text-green-700 transition-colors">{{ lh.name }}</span>
             <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium ml-2 shrink-0', templateBadgeClass[lh.theme] ?? 'bg-gray-400 text-gray-700 border-gray-500']">
-              {{ templateLabel[lh.theme] ?? lh.theme }}
+              {{ templateLabel(lh.theme) }}
             </span>
           </div>
-          <p class="text-xs text-gray-700 mb-3">{{ lh.uses }} uses · Last used {{ lastUsedLabel(lh) }}</p>
+          <p class="text-xs text-gray-700 mb-3">{{ t('letterheads.card.usesAndLastUsed', { uses: lh.uses, lastUsed: lastUsedLabel(lh) }) }}</p>
           <div class="flex items-center gap-2" @click.stop>
             <button
               @click="router.push({ name: 'letterheads.view', params: { id: lh.id } })"
               class="flex-1 text-xs py-1.5 bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 rounded-md transition-colors"
-            >View</button>
+            >{{ t('letterheads.card.view') }}</button>
             <button
               @click="router.push({ name: 'letterheads.edit', params: { id: lh.id } })"
               class="w-7 h-7 flex items-center justify-center rounded-md bg-gray-400 hover:bg-gray-500 text-gray-700 hover:text-gray-1000 transition-colors"
-              title="Edit"
+              :title="t('letterheads.actions.edit')"
             ><Icon icon="lucide:pencil" class="w-3.5 h-3.5" /></button>
             <button
               @click="openShare(lh)"
               class="relative w-7 h-7 flex items-center justify-center rounded-md bg-gray-400 hover:bg-gray-500 text-gray-700 hover:text-gray-1000 transition-colors"
-              title="Share"
+              :title="t('letterheads.actions.share')"
             >
               <Icon icon="lucide:share-2" class="w-3.5 h-3.5" />
             </button>
             <button
               @click="confirmDelete(lh)"
               class="w-7 h-7 flex items-center justify-center rounded-md bg-gray-400 hover:bg-red-500/20 text-gray-700 hover:text-red-400 transition-colors"
-              title="Delete"
+              :title="t('letterheads.actions.delete')"
             ><Icon icon="lucide:trash-2" class="w-3.5 h-3.5" /></button>
           </div>
         </div>
@@ -267,8 +266,8 @@ function lastUsedLabel(lh: ILetterhead): string {
           <Icon icon="lucide:plus" class="w-5 h-5 text-green-700" />
         </div>
         <div class="text-center">
-          <div class="text-sm font-medium text-gray-900 group-hover:text-gray-1000 transition-colors">New Letterhead</div>
-          <div class="text-xs text-gray-700 mt-0.5">Start from a template</div>
+          <div class="text-sm font-medium text-gray-900 group-hover:text-gray-1000 transition-colors">{{ t('letterheads.new') }}</div>
+          <div class="text-xs text-gray-700 mt-0.5">{{ t('letterheads.card.startFromTemplate') }}</div>
         </div>
       </div>
     </div>
@@ -278,11 +277,11 @@ function lastUsedLabel(lh: ILetterhead): string {
       <table class="w-full text-sm">
         <thead>
           <tr class="border-b border-gray-400 bg-gray-100/40">
-            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-gray-700 font-medium">Name</th>
-            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-gray-700 font-medium hidden sm:table-cell">Theme</th>
-            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-gray-700 font-medium hidden md:table-cell">Watermark</th>
-            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-gray-700 font-medium hidden lg:table-cell">Uses</th>
-            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-gray-700 font-medium hidden md:table-cell">Last Used</th>
+            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-gray-700 font-medium">{{ t('letterheads.table.name') }}</th>
+            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-gray-700 font-medium hidden sm:table-cell">{{ t('letterheads.table.theme') }}</th>
+            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-gray-700 font-medium hidden md:table-cell">{{ t('letterheads.table.watermark') }}</th>
+            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-gray-700 font-medium hidden lg:table-cell">{{ t('letterheads.table.uses') }}</th>
+            <th class="text-left py-3 px-4 text-[10px] uppercase tracking-wider text-gray-700 font-medium hidden md:table-cell">{{ t('letterheads.table.lastUsed') }}</th>
             <th class="py-3 px-4"></th>
           </tr>
         </thead>
@@ -315,7 +314,7 @@ function lastUsedLabel(lh: ILetterhead): string {
             </td>
             <td class="py-3 px-4 hidden sm:table-cell">
               <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium', templateBadgeClass[lh.theme] ?? 'bg-gray-400 text-gray-700 border-gray-500']">
-                {{ templateLabel[lh.theme] ?? lh.theme }}
+                {{ templateLabel(lh.theme) }}
               </span>
             </td>
             <td class="py-3 px-4 hidden md:table-cell">
@@ -329,19 +328,19 @@ function lastUsedLabel(lh: ILetterhead): string {
                 <button
                   @click="router.push({ name: 'letterheads.edit', params: { id: lh.id } })"
                   class="p-1.5 rounded hover:bg-gray-500 text-gray-700 hover:text-gray-1000 transition-colors"
-                  title="Edit"
+                  :title="t('letterheads.actions.edit')"
                 ><Icon icon="lucide:pencil" class="w-3.5 h-3.5" /></button>
                 <button
                   @click="openShare(lh)"
                   class="relative p-1.5 rounded hover:bg-gray-500 text-gray-700 hover:text-gray-1000 transition-colors"
-                  title="Share"
+                  :title="t('letterheads.actions.share')"
                 >
                   <Icon icon="lucide:share-2" class="w-3.5 h-3.5" />
                 </button>
                 <button
                   @click="confirmDelete(lh)"
                   class="p-1.5 rounded hover:bg-red-500/20 text-gray-700 hover:text-red-400 transition-colors"
-                  title="Delete"
+                  :title="t('letterheads.actions.delete')"
                 ><Icon icon="lucide:trash-2" class="w-3.5 h-3.5" /></button>
               </div>
             </td>
@@ -379,18 +378,18 @@ function lastUsedLabel(lh: ILetterhead): string {
                 <Icon icon="lucide:trash-2" class="w-4 h-4 text-red-400" />
               </div>
               <div>
-                <p class="font-semibold text-gray-1000 text-sm">Delete Letterhead</p>
-                <p class="text-xs text-gray-700">This action cannot be undone</p>
+                <p class="font-semibold text-gray-1000 text-sm">{{ t('letterheads.deleteModal.title') }}</p>
+                <p class="text-xs text-gray-700">{{ t('letterheads.deleteModal.subtitle') }}</p>
               </div>
             </div>
             <p class="text-sm text-gray-900 mb-5">
-              Are you sure you want to delete <span class="font-semibold text-gray-1000">{{ deleteTarget?.name }}</span>?
+              {{ t('letterheads.deleteModal.confirmBefore') }}<span class="font-semibold text-gray-1000">{{ deleteTarget?.name }}</span>{{ t('letterheads.deleteModal.confirmAfter') }}
             </p>
             <div class="flex justify-end gap-2">
-              <button @click="showDeleteConfirm = false" class="px-4 py-2 text-xs font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors">Cancel</button>
+              <button @click="showDeleteConfirm = false" class="px-4 py-2 text-xs font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors">{{ t('letterheads.deleteModal.cancel') }}</button>
               <button @click="doDelete" :disabled="isDeleting" class="px-4 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors disabled:opacity-60">
                 <Icon v-if="isDeleting" icon="lucide:loader-2" class="w-3 h-3 animate-spin inline mr-1" />
-                Delete
+                {{ t('letterheads.deleteModal.delete') }}
               </button>
             </div>
           </div>

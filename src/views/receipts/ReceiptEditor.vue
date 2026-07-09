@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import { useLoaders } from '@/composables/loaders.ts'
 import { useNotification } from '@/composables/notification.ts'
@@ -21,6 +22,7 @@ const authStore = useAuthStore()
 const orgId     = computed(() => authStore.getCurrentOrganization?.id ?? '')
 
 const router = useRouter()
+const { t, locale } = useI18n()
 const { notify } = useNotification()
 const { initLoaders, setLoader, getLoader } = useLoaders()
 initLoaders({ isSaving: false })
@@ -153,19 +155,23 @@ const taxesTotal = computed(() =>
 const total = computed(() => subtotal.value - discountAmt.value + taxesTotal.value)
 
 const fmtMoney = (n: number) =>
-  sym.value + n.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  sym.value + n.toLocaleString(locale.value, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 const formatDate = (d: string) => {
   if (!d) return '—'
   const [y, m, day] = d.split('-')
   if (!y || !m || !day) return d
-  return new Date(+y, +m - 1, +day).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  return new Date(+y, +m - 1, +day).toLocaleDateString(locale.value, { year: 'numeric', month: 'long', day: 'numeric' })
 }
 
 // ── Tabs ───────────────────────────────────────────────────────────────────────
 type Tab = 'From' | 'To' | 'Items' | 'Design' | 'Settings' | 'Preview'
 const tab  = ref<Tab>('From')
 const tabs: Tab[] = ['From', 'To', 'Items', 'Design', 'Settings', 'Preview']
+const tabLabelKeys: Record<Tab, string> = {
+  From: 'from', To: 'to', Items: 'items', Design: 'design', Settings: 'settings', Preview: 'preview',
+}
+const tabLabel = (tb: Tab) => t(`invoiceEditor.tabs.${tabLabelKeys[tb]}`)
 
 // ── Zoom ───────────────────────────────────────────────────────────────────────
 const zoom    = ref(0.75)
@@ -219,7 +225,7 @@ const handleLogoUpload = async (e: Event) => {
       form.value.logoUrl = uploaded.url
       if (draftData.value) draftData.value.logos.unshift({ id: uploaded.id, url: uploaded.url })
     }
-  } catch { notify('Logo upload failed', 'error') }
+  } catch { notify(t('invoiceEditor.toasts.logoUploadFailed'), 'error') }
   finally { isUploadingLogo.value = false }
 }
 
@@ -237,7 +243,7 @@ const handleSignatureUpload = async (e: Event) => {
       form.value.signatureUrl = uploaded.url
       if (draftData.value) draftData.value.signatures.unshift({ id: uploaded.id, url: uploaded.url })
     }
-  } catch { notify('Signature upload failed', 'error') }
+  } catch { notify(t('invoiceEditor.toasts.signatureUploadFailed'), 'error') }
   finally { isUploadingSig.value = false }
 }
 
@@ -251,13 +257,13 @@ const addTax    = () => form.value.taxes.push({ id: nextTaxId++, label: 'VAT', r
 const removeTax = (id: number) => { if (form.value.taxes.length > 1) form.value.taxes = form.value.taxes.filter(t => t.id !== id) }
 
 // ── Design options ─────────────────────────────────────────────────────────────
-const themes = [
-  { id: 'classic',   label: 'Classic' },
-  { id: 'modern',    label: 'Modern' },
-  { id: 'minimal',   label: 'Minimal' },
-  { id: 'bold',      label: 'Bold Header' },
-  { id: 'executive', label: 'Executive' },
-] as const
+const themes = computed(() => [
+  { id: 'classic',   label: t('invoiceEditor.themes.classic') },
+  { id: 'modern',    label: t('invoiceEditor.themes.modern') },
+  { id: 'minimal',   label: t('invoiceEditor.themes.minimal') },
+  { id: 'bold',      label: t('invoiceEditor.themes.bold') },
+  { id: 'executive', label: t('invoiceEditor.themes.executive') },
+] as const)
 
 const accentSwatches = ['#00c853', '#4f86c6', '#5ab88a', '#e05a5a', '#9b71c8', '#e8854a', '#3bbfc7', '#d4548a', '#1a1a1a', '#637074']
 
@@ -270,14 +276,14 @@ const fontOptions = [
   { value: "var(--font-mono)",                 label: 'Geist Mono (Technical)' },
 ]
 
-const toggleFields = [
-  { key: 'showTopBar',      label: 'Top accent bar' },
-  { key: 'showLogo',        label: 'Company logo' },
-  { key: 'showFooterLine',  label: 'Footer line' },
-  { key: 'showNotes',       label: 'Notes section' },
-  { key: 'showBankDetails', label: 'Bank details section' },
-  { key: 'showFlowtaliTag', label: 'Flowtali branding' },
-] as const
+const toggleFields = computed(() => [
+  { key: 'showTopBar',      label: t('invoiceEditor.toggles.showTopBar') },
+  { key: 'showLogo',        label: t('invoiceEditor.toggles.showLogo') },
+  { key: 'showFooterLine',  label: t('invoiceEditor.toggles.showFooterLine') },
+  { key: 'showNotes',       label: t('invoiceEditor.toggles.showNotes') },
+  { key: 'showBankDetails', label: t('invoiceEditor.toggles.showBankDetails') },
+  { key: 'showFlowtaliTag', label: t('invoiceEditor.toggles.showFlowtaliTag') },
+] as const)
 
 // ── Built-in stamps ────────────────────────────────────────────────────────────
 const builtInStamps = [
@@ -350,12 +356,12 @@ const buildPayload = (overrides?: Record<string, any>) => ({
 const handleSave = async (statusOverride?: string) => {
   if (!orgId.value) return
   if (!form.value.number.trim()) {
-    notify('Receipt number is required.', 'error')
+    notify(t('receiptEditor.validation.numberRequired'), 'error')
     tab.value = 'Settings'
     return
   }
   if (!form.value.items.length || form.value.items.some(i => !i.description.trim())) {
-    notify('All line items must have a description.', 'error')
+    notify(t('receiptEditor.validation.descriptionRequired'), 'error')
     tab.value = 'Items'
     return
   }
@@ -365,10 +371,10 @@ const handleSave = async (statusOverride?: string) => {
     if (props.mode === 'create') {
       const res = await ReceiptService.create(orgId.value, { ...payload, ...(props.projectId ? { project_id: props.projectId } : {}) })
       savedReceiptId.value = res.data.data.id
-      notify('Receipt created!', 'success')
+      notify(t('receiptEditor.toasts.created'), 'success')
     } else {
       await ReceiptService.update(orgId.value, props.receiptId!, payload)
-      notify('Receipt saved!', 'success')
+      notify(t('receiptEditor.toasts.saved'), 'success')
     }
     if (props.projectId && props.mode === 'create') {
       router.push({ name: 'projects.view', params: { id: props.projectId } })
@@ -377,7 +383,7 @@ const handleSave = async (statusOverride?: string) => {
     }
   } catch (err: any) {
     const msg = err?.response?.data?.message ?? err?.response?.data?.errors?.[0]
-    notify(msg ?? 'Failed to save receipt.', 'error')
+    notify(msg ?? t('receiptEditor.toasts.saveFailed'), 'error')
   } finally {
     setLoader('isSaving', false)
   }
@@ -395,7 +401,7 @@ const handleFinalize     = () => handleSave('finalized')
       <div class="flex items-center gap-3">
         <button @click="router.push({ name: 'receipts' })" class="flex items-center gap-2 text-gray-900 hover:text-gray-1000 text-sm transition-colors">
           <Icon icon="lucide:arrow-left" class="w-4 h-4" />
-          <span class="hidden sm:inline">Receipts</span>
+          <span class="hidden sm:inline">{{ t('receiptEditor.toolbar.receipts') }}</span>
         </button>
         <span class="text-gray-500">/</span>
         <div class="flex items-center gap-2">
@@ -403,33 +409,33 @@ const handleFinalize     = () => handleSave('finalized')
             <Icon icon="lucide:receipt" class="w-3 h-3 text-green-700" />
           </div>
           <span class="font-semibold text-gray-1000 text-sm">
-            {{ mode === 'create' ? 'New Receipt' : 'Edit Receipt' }}
+            {{ mode === 'create' ? t('receiptEditor.toolbar.new') : t('receiptEditor.toolbar.edit') }}
           </span>
           <span class="font-mono text-xs text-gray-700">{{ form.number }}</span>
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <button @click="handlePrint" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 rounded-lg transition-colors" title="Print / PDF">
+        <button @click="handlePrint" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 rounded-lg transition-colors" :title="t('invoiceEditor.toolbar.print')">
           <Icon icon="lucide:printer" class="w-3.5 h-3.5" />
-          <span class="hidden sm:inline">Print / PDF</span>
+          <span class="hidden sm:inline">{{ t('invoiceEditor.toolbar.print') }}</span>
         </button>
         <button
           v-if="mode === 'edit' || savedReceiptId"
           @click="showShareModal = true"
           class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 rounded-lg transition-colors"
-          title="Share"
+          :title="t('invoiceEditor.toolbar.share')"
         >
           <Icon icon="lucide:share-2" class="w-3.5 h-3.5" />
-          <span class="hidden sm:inline">Share</span>
+          <span class="hidden sm:inline">{{ t('invoiceEditor.toolbar.share') }}</span>
         </button>
-        <button @click="handleSaveDraft" :disabled="getLoader('isSaving')" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 rounded-lg transition-colors disabled:opacity-50" title="Save Draft">
+        <button @click="handleSaveDraft" :disabled="getLoader('isSaving')" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 rounded-lg transition-colors disabled:opacity-50" :title="t('invoiceEditor.toolbar.saveDraft')">
           <Icon icon="lucide:save" class="w-3.5 h-3.5" />
-          <span class="hidden sm:inline">Save Draft</span>
+          <span class="hidden sm:inline">{{ t('invoiceEditor.toolbar.saveDraft') }}</span>
         </button>
         <button @click="handleFinalize" :disabled="getLoader('isSaving')" class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-semibold rounded-lg transition-colors bg-green-700 hover:bg-green-700/90 text-bg-100 disabled:opacity-60 disabled:cursor-not-allowed">
           <Icon v-if="getLoader('isSaving')" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
           <Icon v-else icon="lucide:check-circle" class="w-3.5 h-3.5" />
-          <span class="hidden sm:inline">{{ getLoader('isSaving') ? 'Saving…' : (mode === 'create' ? 'Create Receipt' : 'Save Changes') }}</span>
+          <span class="hidden sm:inline">{{ getLoader('isSaving') ? t('invoiceEditor.toolbar.saving') : (mode === 'create' ? t('receiptEditor.toolbar.create') : t('invoiceEditor.toolbar.saveChanges')) }}</span>
         </button>
       </div>
     </div>
@@ -454,7 +460,7 @@ const handleFinalize     = () => handleSave('finalized')
             <template v-if="t === 'Preview'">
               <Icon icon="lucide:eye" class="w-3.5 h-3.5 mx-auto" />
             </template>
-            <template v-else>{{ t }}</template>
+            <template v-else>{{ tabLabel(t) }}</template>
           </button>
         </div>
 
@@ -465,9 +471,9 @@ const handleFinalize     = () => handleSave('finalized')
 
             <!-- Quick-fill profiles -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Quick-Fill Profiles</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('invoiceEditor.from.quickFillProfiles') }}</p>
               <div v-if="isDraftLoading" class="flex items-center gap-2 text-xs text-gray-700 py-2">
-                <Icon icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" /> Loading…
+                <Icon icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" /> {{ t('invoiceEditor.common.loading') }}
               </div>
               <div v-else-if="orgProfiles.length" class="space-y-1.5">
                 <button v-for="p in orgProfiles" :key="p.id" type="button" @click="fillFrom(p)"
@@ -481,37 +487,37 @@ const handleFinalize     = () => handleSave('finalized')
                 <button type="button" @click="fillFrom({ name: draftData!.organization!.name })"
                   class="w-full text-left p-2.5 rounded-lg border border-gray-500 bg-gray-400/40 hover:border-green-700/50 hover:bg-gray-400 transition-colors group">
                   <p class="text-xs font-medium text-gray-1000 group-hover:text-green-700 transition-colors">{{ draftData.organization.name }}</p>
-                  <p class="text-[10px] text-gray-700 mt-0.5">Organization name</p>
+                  <p class="text-[10px] text-gray-700 mt-0.5">{{ t('invoiceEditor.from.orgNameLabel') }}</p>
                 </button>
               </div>
-              <p v-else-if="!isDraftLoading" class="text-[10px] text-gray-700/60">No profiles set up yet</p>
+              <p v-else-if="!isDraftLoading" class="text-[10px] text-gray-700/60">{{ t('invoiceEditor.from.noProfiles') }}</p>
             </div>
 
             <div class="h-px bg-gray-400"></div>
 
             <div class="space-y-3">
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Company / Issued By</label>
-                <input v-model="form.fromName" class="app-inp text-sm" placeholder="Your Studio Name" />
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('receiptEditor.from.companyIssuedBy') }}</label>
+                <input v-model="form.fromName" class="app-inp text-sm" :placeholder="t('invoiceEditor.from.companyNamePlaceholder')" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Tagline / Role</label>
-                <input v-model="form.fromTagline" class="app-inp text-sm" placeholder="Creative Agency & Digital Studio" />
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.from.tagline') }}</label>
+                <input v-model="form.fromTagline" class="app-inp text-sm" :placeholder="t('invoiceEditor.from.taglinePlaceholder')" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Email</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.from.email') }}</label>
                 <input v-model="form.fromEmail" type="email" class="app-inp text-sm" placeholder="hello@studio.com" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Phone</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.from.phone') }}</label>
                 <input v-model="form.fromPhone" class="app-inp text-sm" placeholder="+1 555 000 0000" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Website</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.from.website') }}</label>
                 <input v-model="form.fromWebsite" class="app-inp text-sm" placeholder="www.yourstudio.com" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Address</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.from.address') }}</label>
                 <textarea v-model="form.fromAddress" class="app-inp text-sm resize-none" rows="3" placeholder="123 Street&#10;City, Country" />
               </div>
             </div>
@@ -520,17 +526,17 @@ const handleFinalize     = () => handleSave('finalized')
 
             <!-- Logo upload -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Logo</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('invoiceEditor.from.logo') }}</p>
               <div v-if="form.logoUrl" class="mb-2 flex items-center gap-3">
                 <img :src="form.logoUrl" alt="Logo" class="h-12 w-auto rounded border border-gray-500 bg-gray-400 object-contain p-1" />
                 <button @click="form.logoUrl = ''" class="text-xs text-gray-700 hover:text-red-400 transition-colors flex items-center gap-1">
-                  <Icon icon="lucide:trash-2" class="w-3.5 h-3.5" /> Remove
+                  <Icon icon="lucide:trash-2" class="w-3.5 h-3.5" /> {{ t('invoiceEditor.common.remove') }}
                 </button>
               </div>
               <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-dashed border-gray-500 hover:border-green-700/50 text-xs text-gray-700 hover:text-gray-1000 transition-colors">
                 <Icon v-if="isUploadingLogo" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
                 <Icon v-else icon="lucide:upload" class="w-3.5 h-3.5" />
-                {{ isUploadingLogo ? 'Uploading…' : form.logoUrl ? 'Replace logo' : 'Upload logo' }}
+                {{ isUploadingLogo ? t('invoiceEditor.common.uploading') : form.logoUrl ? t('invoiceEditor.from.replaceLogo') : t('invoiceEditor.from.uploadLogo') }}
                 <input type="file" accept="image/*" class="hidden" :disabled="isUploadingLogo" @change="handleLogoUpload" />
               </label>
             </div>
@@ -539,32 +545,32 @@ const handleFinalize     = () => handleSave('finalized')
 
             <!-- Bank details (received to) -->
             <div class="space-y-3">
-              <p class="text-[10px] uppercase tracking-wider text-gray-700">Bank Details (Payment Received To)</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('receiptEditor.from.bankReceivedTo') }}</p>
               <div v-if="orgBankAccounts.length" class="space-y-1">
-                <p class="text-[10px] text-gray-700/70 mb-1">Quick-fill from saved account:</p>
+                <p class="text-[10px] text-gray-700/70 mb-1">{{ t('invoiceEditor.from.quickFillBank') }}</p>
                 <div class="flex flex-wrap gap-1.5">
                   <button v-for="b in orgBankAccounts" :key="b.id" type="button" @click="fillBank(b)"
                     class="text-xs px-2.5 py-1 rounded border border-gray-500 text-gray-700 hover:border-green-700/50 hover:text-gray-1000 transition-colors">{{ b.label }}</button>
                 </div>
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] text-gray-700">Bank Name</label>
-                <input v-model="form.fromBankName" class="app-inp text-sm" placeholder="Chase Bank" />
+                <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.bankName') }}</label>
+                <input v-model="form.fromBankName" class="app-inp text-sm" :placeholder="t('invoiceEditor.from.bankNamePlaceholder')" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] text-gray-700">Account Name</label>
-                <input v-model="form.fromBankAccountName" class="app-inp text-sm" placeholder="Acme Studio" />
+                <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.accountName') }}</label>
+                <input v-model="form.fromBankAccountName" class="app-inp text-sm" :placeholder="t('invoiceEditor.from.accountNamePlaceholder')" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] text-gray-700">Account Number</label>
+                <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.accountNumber') }}</label>
                 <input v-model="form.fromBankAccountNumber" class="app-inp text-sm font-mono" placeholder="0000000000" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] text-gray-700">Sort / Routing Code</label>
+                <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.sortCode') }}</label>
                 <input v-model="form.fromBankSortCode" class="app-inp text-sm font-mono" placeholder="12-34-56" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] text-gray-700">IBAN <span class="text-gray-700/50">(optional)</span></label>
+                <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.iban') }} <span class="text-gray-700/50">{{ t('invoiceEditor.common.optional') }}</span></label>
                 <input v-model="form.fromBankIban" class="app-inp text-sm font-mono" placeholder="GB29 NWBK 6016 1331 9268 19" />
               </div>
             </div>
@@ -573,9 +579,9 @@ const handleFinalize     = () => handleSave('finalized')
           <!-- ═══ TO TAB ═══ -->
           <template v-if="tab === 'To'">
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Select Client</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('receiptEditor.to.selectClient') }}</p>
               <div v-if="isDraftLoading" class="flex items-center gap-2 text-xs text-gray-700 py-2">
-                <Icon icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" /> Loading clients…
+                <Icon icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" /> {{ t('invoiceEditor.common.loadingClients') }}
               </div>
               <div v-else-if="clientPresets.length" class="space-y-1.5 max-h-64 overflow-y-auto pr-1">
                 <button v-for="c in clientPresets" :key="c.id" @click="fillTo(c)"
@@ -590,30 +596,30 @@ const handleFinalize     = () => handleSave('finalized')
                   </div>
                 </button>
               </div>
-              <p v-else-if="!isDraftLoading" class="text-[10px] text-gray-700/60">No clients added yet</p>
+              <p v-else-if="!isDraftLoading" class="text-[10px] text-gray-700/60">{{ t('invoiceEditor.to.noClients') }}</p>
             </div>
 
             <div class="h-px bg-gray-400"></div>
 
             <div class="space-y-3">
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Received From (Name)</label>
-                <input v-model="form.toName" class="app-inp text-sm" placeholder="Client Name" />
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('receiptEditor.to.receivedFromName') }}</label>
+                <input v-model="form.toName" class="app-inp text-sm" :placeholder="t('invoiceEditor.to.billToNamePlaceholder')" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Company</label>
-                <input v-model="form.toCompany" class="app-inp text-sm" placeholder="Client Company" />
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.to.company') }}</label>
+                <input v-model="form.toCompany" class="app-inp text-sm" :placeholder="t('invoiceEditor.to.companyPlaceholder')" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Email</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.from.email') }}</label>
                 <input v-model="form.toEmail" type="email" class="app-inp text-sm" placeholder="client@example.com" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Phone</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.from.phone') }}</label>
                 <input v-model="form.toPhone" class="app-inp text-sm" placeholder="+1 555 000 0000" />
               </div>
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Address</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.from.address') }}</label>
                 <textarea v-model="form.toAddress" class="app-inp text-sm resize-none" rows="3" placeholder="123 Client St&#10;City, Country" />
               </div>
             </div>
@@ -630,14 +636,14 @@ const handleFinalize     = () => handleSave('finalized')
                     <Icon icon="lucide:x" class="w-3.5 h-3.5" />
                   </button>
                 </div>
-                <input v-model="item.description" class="app-inp text-sm" placeholder="Description of goods or service" />
+                <input v-model="item.description" class="app-inp text-sm" :placeholder="t('receiptEditor.items.descriptionPlaceholder')" />
                 <div class="grid grid-cols-3 gap-2">
                   <div class="space-y-0.5">
-                    <label class="text-[10px] text-gray-700">Qty</label>
+                    <label class="text-[10px] text-gray-700">{{ t('document.table.qty') }}</label>
                     <input v-model.number="item.qty" type="number" min="0" class="app-inp text-sm" />
                   </div>
                   <div class="space-y-0.5">
-                    <label class="text-[10px] text-gray-700">Unit</label>
+                    <label class="text-[10px] text-gray-700">{{ t('document.table.unit') }}</label>
                     <select v-model="item.unit" class="app-select text-sm">
                       <option v-for="u in unitOptions" :key="u">{{ u }}</option>
                     </select>
@@ -652,14 +658,14 @@ const handleFinalize     = () => handleSave('finalized')
             </div>
 
             <button @click="addItem" class="w-full flex items-center justify-center gap-2 py-2.5 border border-dashed border-gray-500 hover:border-green-700/50 rounded-lg text-xs text-gray-700 hover:text-gray-1000 transition-colors">
-              <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Add Line Item
+              <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> {{ t('invoiceEditor.items.addLineItem') }}
             </button>
 
             <div class="h-px bg-gray-400"></div>
 
             <!-- Discount -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Discount</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('document.discount') }}</p>
               <div class="flex gap-2 mb-2">
                 <button @click="form.discountType = 'percent'" :class="['flex-1 py-1.5 rounded text-xs border transition-colors', form.discountType === 'percent' ? 'bg-green-700/10 border-green-700 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500']">%</button>
                 <button @click="form.discountType = 'flat'" :class="['flex-1 py-1.5 rounded text-xs border transition-colors', form.discountType === 'flat' ? 'bg-green-700/10 border-green-700 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500']">{{ sym }} Flat</button>
@@ -669,11 +675,11 @@ const handleFinalize     = () => handleSave('finalized')
 
             <!-- Tax lines -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Tax Lines</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('invoiceEditor.items.taxLines') }}</p>
               <div class="space-y-2">
                 <div v-for="(tax) in form.taxes" :key="tax.id" class="space-y-1.5">
                   <div class="flex gap-1.5 items-center">
-                    <input v-model="tax.label" class="app-inp text-sm min-w-0 flex-1" placeholder="VAT" />
+                    <input v-model="tax.label" class="app-inp text-sm min-w-0 flex-1" :placeholder="t('invoiceEditor.items.taxLabelPlaceholder')" />
                     <div class="flex rounded border border-gray-500 overflow-hidden shrink-0 text-xs">
                       <button type="button" @click="tax.type = 'percent'" :class="['px-2 py-1 transition-colors', tax.type === 'percent' ? 'bg-green-700 text-bg-100 font-semibold' : 'text-gray-700 hover:bg-gray-400']">%</button>
                       <button type="button" @click="tax.type = 'flat'"    :class="['px-2 py-1 transition-colors', tax.type === 'flat'    ? 'bg-green-700 text-bg-100 font-semibold' : 'text-gray-700 hover:bg-gray-400']">$</button>
@@ -699,7 +705,7 @@ const handleFinalize     = () => handleSave('finalized')
 
             <!-- Running totals -->
             <div class="space-y-2 text-sm">
-              <div class="flex justify-between text-gray-700"><span>Subtotal</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
+              <div class="flex justify-between text-gray-700"><span>{{ t('document.subtotal') }}</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
               <div v-if="form.discount > 0" class="flex justify-between text-gray-700">
                 <span>Discount {{ form.discountType === 'percent' ? `(${form.discount}%)` : '' }}</span>
                 <span class="font-mono text-red-400">-{{ fmtMoney(discountAmt) }}</span>
@@ -712,12 +718,12 @@ const handleFinalize     = () => handleSave('finalized')
               </template>
               <div class="h-px bg-gray-500"></div>
               <div class="flex justify-between font-semibold text-gray-1000">
-                <span>{{ showsBalanceDue ? 'Amount Paid' : 'Total Received' }}</span>
+                <span>{{ showsBalanceDue ? t('receiptEditor.items.amountPaid') : t('receiptEditor.items.totalReceived') }}</span>
                 <span class="font-mono text-green-700">{{ fmtMoney(total) }}</span>
               </div>
               <template v-if="showsBalanceDue && form.balanceDue > 0">
                 <div class="flex justify-between text-sm font-semibold" style="color: #f97316">
-                  <span>Balance Due</span>
+                  <span>{{ t('receiptEditor.items.balanceDue') }}</span>
                   <span class="font-mono">{{ fmtMoney(form.balanceDue) }}</span>
                 </div>
               </template>
@@ -729,7 +735,7 @@ const handleFinalize     = () => handleSave('finalized')
 
             <!-- Theme -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Theme</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('invoiceEditor.design.theme') }}</p>
               <div class="grid grid-cols-2 gap-2">
                 <button v-for="th in themes" :key="th.id" @click="form.theme = th.id"
                   :class="['p-3 rounded-lg border text-xs font-medium text-left transition-colors', form.theme === th.id ? 'border-green-700 bg-green-700/10 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500 hover:text-gray-1000']">
@@ -794,13 +800,13 @@ const handleFinalize     = () => handleSave('finalized')
 
             <!-- Accent Color -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Accent Color</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('invoiceEditor.design.accentColor') }}</p>
               <div class="flex items-center gap-2 mb-2">
                 <input type="color" v-model="form.accentColor" class="w-9 h-9 rounded cursor-pointer border border-gray-500 bg-gray-200 p-0.5 shrink-0" />
                 <input v-model="form.accentColor" class="app-inp text-sm flex-1 font-mono" placeholder="#00c853" />
               </div>
               <div v-if="orgBrandColors.length" class="mb-2">
-                <p class="text-[10px] text-gray-700/60 mb-1.5">Brand</p>
+                <p class="text-[10px] text-gray-700/60 mb-1.5">{{ t('invoiceEditor.design.brand') }}</p>
                 <div class="flex flex-wrap gap-1.5">
                   <button v-for="c in orgBrandColors" :key="c" @click="form.accentColor = c"
                     class="w-6 h-6 rounded-full border-2 transition-transform hover:scale-110"
@@ -820,7 +826,7 @@ const handleFinalize     = () => handleSave('finalized')
 
             <!-- Font -->
             <div class="space-y-1">
-              <p class="text-[10px] uppercase tracking-wider text-gray-700">Font Family</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.design.fontFamily') }}</p>
               <select v-model="form.fontFamily" class="app-select text-sm">
                 <option v-for="f in fontOptions" :key="f.value" :value="f.value">{{ f.label }}</option>
               </select>
@@ -830,11 +836,11 @@ const handleFinalize     = () => handleSave('finalized')
 
             <!-- Logo -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Logo</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('invoiceEditor.from.logo') }}</p>
               <div v-if="form.logoUrl" class="mb-2 flex items-center gap-3">
                 <img :src="form.logoUrl" alt="Logo" class="h-10 w-auto rounded border border-gray-500 bg-gray-400 object-contain p-1" />
                 <button @click="form.logoUrl = ''" class="text-xs text-gray-700 hover:text-red-400 transition-colors flex items-center gap-1">
-                  <Icon icon="lucide:trash-2" class="w-3 h-3" /> Remove
+                  <Icon icon="lucide:trash-2" class="w-3 h-3" /> {{ t('invoiceEditor.common.remove') }}
                 </button>
               </div>
               <div v-if="savedLogos.length" class="flex flex-wrap gap-2 mb-2">
@@ -847,18 +853,18 @@ const handleFinalize     = () => handleSave('finalized')
               <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-dashed border-gray-500 hover:border-green-700/50 text-xs text-gray-700 hover:text-gray-1000 transition-colors">
                 <Icon v-if="isUploadingLogo" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
                 <Icon v-else icon="lucide:upload" class="w-3.5 h-3.5" />
-                {{ isUploadingLogo ? 'Uploading…' : form.logoUrl ? 'Replace logo' : 'Upload logo' }}
+                {{ isUploadingLogo ? t('invoiceEditor.common.uploading') : form.logoUrl ? t('invoiceEditor.from.replaceLogo') : t('invoiceEditor.from.uploadLogo') }}
                 <input type="file" accept="image/*" class="hidden" :disabled="isUploadingLogo" @change="handleLogoUpload" />
               </label>
             </div>
 
             <!-- Signature -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Signature</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('invoiceEditor.design.signature') }}</p>
               <div v-if="form.signatureUrl" class="mb-2 flex items-center gap-3">
                 <img :src="form.signatureUrl" alt="Signature" class="h-10 w-auto rounded border border-gray-500 bg-gray-400 object-contain p-1" />
                 <button @click="form.signatureUrl = ''" class="text-xs text-gray-700 hover:text-red-400 transition-colors flex items-center gap-1">
-                  <Icon icon="lucide:trash-2" class="w-3 h-3" /> Remove
+                  <Icon icon="lucide:trash-2" class="w-3 h-3" /> {{ t('invoiceEditor.common.remove') }}
                 </button>
               </div>
               <div v-if="savedSignatures.length" class="flex flex-wrap gap-2 mb-2">
@@ -871,7 +877,7 @@ const handleFinalize     = () => handleSave('finalized')
               <label class="flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-dashed border-gray-500 hover:border-green-700/50 text-xs text-gray-700 hover:text-gray-1000 transition-colors">
                 <Icon v-if="isUploadingSig" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
                 <Icon v-else icon="lucide:pen-line" class="w-3.5 h-3.5" />
-                {{ isUploadingSig ? 'Uploading…' : form.signatureUrl ? 'Replace signature' : 'Upload signature' }}
+                {{ isUploadingSig ? t('invoiceEditor.common.uploading') : form.signatureUrl ? t('invoiceEditor.design.replaceSignature') : t('invoiceEditor.design.uploadSignature') }}
                 <input type="file" accept="image/*" class="hidden" :disabled="isUploadingSig" @change="handleSignatureUpload" />
               </label>
             </div>
@@ -880,7 +886,7 @@ const handleFinalize     = () => handleSave('finalized')
 
             <!-- Stamp -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">Payment Stamp</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('receiptEditor.design.paymentStamp') }}</p>
               <div class="grid grid-cols-2 gap-1.5">
                 <button type="button" @click="form.stamp = ''"
                   :class="['py-2 rounded border text-xs font-semibold transition-colors', form.stamp === '' ? 'border-green-700 bg-green-700/10 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500']">
@@ -897,21 +903,21 @@ const handleFinalize     = () => handleSave('finalized')
             <!-- Balance due (partially paid / unpaid) -->
             <Transition name="fade">
               <div v-if="showsBalanceDue" class="space-y-1 p-3 rounded-lg border border-orange-500/20 bg-orange-500/5">
-                <label class="text-[10px] uppercase tracking-wider text-orange-300">Balance Due (remaining amount owed)</label>
+                <label class="text-[10px] uppercase tracking-wider text-orange-300">{{ t('receiptEditor.design.balanceDueLabel') }}</label>
                 <div class="flex items-center gap-2">
                   <span class="text-gray-700 text-sm">{{ sym }}</span>
                   <input v-model.number="form.balanceDue" type="number" min="0" class="app-inp text-sm flex-1" placeholder="0.00" />
                 </div>
-                <p class="text-[10px] text-orange-300/70">Shown on the receipt document below the total</p>
+                <p class="text-[10px] text-orange-300/70">{{ t('receiptEditor.design.balanceDueHint') }}</p>
               </div>
             </Transition>
 
             <!-- Watermark -->
             <div class="space-y-2">
               <div class="flex items-center justify-between">
-                <p class="text-[10px] uppercase tracking-wider text-gray-700">Watermark Text</p>
+                <p class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.design.watermarkText') }}</p>
                 <label class="flex items-center gap-1.5 cursor-pointer">
-                  <span class="text-[10px] text-gray-700">{{ form.showWatermark ? 'Visible' : 'Hidden' }}</span>
+                  <span class="text-[10px] text-gray-700">{{ form.showWatermark ? t('invoiceEditor.design.visible') : t('invoiceEditor.design.hidden') }}</span>
                   <div class="relative">
                     <input type="checkbox" v-model="form.showWatermark" class="sr-only" />
                     <div :class="['w-8 h-4 rounded-full transition-colors', form.showWatermark ? 'bg-green-700' : 'bg-gray-500']"></div>
@@ -926,7 +932,7 @@ const handleFinalize     = () => handleSave('finalized')
 
             <!-- Show / hide toggles -->
             <div>
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-3">Show / Hide</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-3">{{ t('invoiceEditor.design.showHide') }}</p>
               <div class="space-y-2.5">
                 <div v-for="field in toggleFields" :key="field.key" class="flex items-center justify-between">
                   <span class="text-xs text-gray-900">{{ field.label }}</span>
@@ -946,36 +952,36 @@ const handleFinalize     = () => handleSave('finalized')
           <template v-if="tab === 'Settings'">
             <div class="space-y-3">
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Receipt Number</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('receiptEditor.settings.receiptNumber') }}</label>
                 <input v-model="form.number" class="app-inp text-sm font-mono" placeholder="REC-0001" />
               </div>
 
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Issue Date</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('document.issueDate') }}</label>
                 <input v-model="form.issueDate" type="date" class="app-inp text-sm" />
               </div>
 
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Payment Date</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('document.paymentDate') }}</label>
                 <input v-model="form.paidAt" type="date" class="app-inp text-sm" />
               </div>
 
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Payment Method</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('document.paymentMethod') }}</label>
                 <div class="grid grid-cols-2 gap-1.5">
                   <button v-for="m in paymentMethods" :key="m" @click="form.paymentMethod = m"
                     :class="['py-1.5 px-2 rounded border text-xs transition-colors text-left', form.paymentMethod === m ? 'border-green-700 bg-green-700/10 text-green-700' : 'border-gray-500 text-gray-700 hover:border-gray-500 hover:text-gray-1000']">{{ m }}</button>
                 </div>
-                <input v-if="form.paymentMethod === 'Other'" v-model="form.paymentMethod" class="app-inp text-sm mt-1" placeholder="Specify method…" />
+                <input v-if="form.paymentMethod === 'Other'" v-model="form.paymentMethod" class="app-inp text-sm mt-1" :placeholder="t('receiptEditor.settings.paymentMethodPlaceholder')" />
               </div>
 
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Reference Number <span class="text-gray-700/50 normal-case">(optional)</span></label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('receiptEditor.settings.referenceNumber') }} <span class="text-gray-700/50 normal-case">{{ t('invoiceEditor.common.optional') }}</span></label>
                 <input v-model="form.referenceNumber" class="app-inp text-sm font-mono" placeholder="TXN-123456" />
               </div>
 
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Currency</label>
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('document.currency') }}</label>
                 <select v-model="form.currency" class="app-select text-sm">
                   <option v-for="c in currencies" :key="c.code" :value="c.code">{{ c.label }}</option>
                 </select>
@@ -984,13 +990,13 @@ const handleFinalize     = () => handleSave('finalized')
               <div class="h-px bg-gray-400"></div>
 
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Notes / Additional Info</label>
-                <textarea v-model="form.notes" class="app-inp text-sm resize-none" rows="4" placeholder="Thank you for your payment…" />
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('receiptEditor.settings.notes') }}</label>
+                <textarea v-model="form.notes" class="app-inp text-sm resize-none" rows="4" :placeholder="t('receiptEditor.settings.notesPlaceholder')" />
               </div>
 
               <div class="space-y-1">
-                <label class="text-[10px] uppercase tracking-wider text-gray-700">Custom Footer Text</label>
-                <input v-model="form.footerText" class="app-inp text-sm" placeholder="Thank you for your business!" />
+                <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.settings.footerText') }}</label>
+                <input v-model="form.footerText" class="app-inp text-sm" :placeholder="t('invoiceEditor.settings.footerPlaceholder')" />
               </div>
             </div>
           </template>
@@ -1006,7 +1012,7 @@ const handleFinalize     = () => handleSave('finalized')
           <span class="text-xs text-gray-700 mr-2">{{ Math.round(zoom * 100) }}%</span>
           <button @click="zoomOut" class="p-1.5 rounded bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 transition-colors"><Icon icon="lucide:minus" class="w-3.5 h-3.5" /></button>
           <button @click="zoomIn"  class="p-1.5 rounded bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 transition-colors"><Icon icon="lucide:plus" class="w-3.5 h-3.5" /></button>
-          <button @click="zoomFit" class="px-2.5 py-1 rounded bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 text-xs transition-colors">Fit</button>
+          <button @click="zoomFit" class="px-2.5 py-1 rounded bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-900 hover:text-gray-1000 text-xs transition-colors">{{ t('invoiceEditor.zoom.fit') }}</button>
         </div>
 
         <!-- Document wrapper -->
@@ -1047,30 +1053,30 @@ const handleFinalize     = () => handleSave('finalized')
                 <!-- Payment info row -->
                 <div class="flex gap-8 mb-8 text-xs flex-wrap">
                   <div>
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Issue Date</div>
+                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.issueDate') }}</div>
                     <div class="font-semibold text-gray-700">{{ formatDate(form.issueDate) }}</div>
                   </div>
                   <div>
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Payment Date</div>
+                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.paymentDate') }}</div>
                     <div class="font-semibold text-gray-700">{{ formatDate(form.paidAt) }}</div>
                   </div>
                   <div>
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Payment Method</div>
+                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.paymentMethod') }}</div>
                     <div class="font-semibold text-gray-700">{{ form.paymentMethod || '—' }}</div>
                   </div>
                   <div v-if="form.referenceNumber">
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Reference</div>
+                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('receiptEditor.preview.reference') }}</div>
                     <div class="font-semibold font-mono text-gray-700">{{ form.referenceNumber }}</div>
                   </div>
                   <div v-if="form.currency !== 'USD'">
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Currency</div>
+                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.currency') }}</div>
                     <div class="font-semibold text-gray-700">{{ form.currency }}</div>
                   </div>
                 </div>
 
                 <!-- Received From -->
                 <div class="mb-8">
-                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:10px">Received From</div>
+                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:10px">{{ t('receiptEditor.preview.receivedFrom') }}</div>
                   <div class="font-semibold text-gray-800 text-sm">{{ form.toName || '—' }}</div>
                   <div v-if="form.toCompany" class="text-xs text-gray-500">{{ form.toCompany }}</div>
                   <div v-if="form.toEmail" class="text-xs text-gray-500">{{ form.toEmail }}</div>
@@ -1082,11 +1088,11 @@ const handleFinalize     = () => handleSave('finalized')
                 <table class="w-full mb-6" style="border-collapse: collapse;">
                   <thead>
                     <tr :style="{ backgroundColor: form.accentColor + '18' }">
-                      <th class="text-left py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Description</th>
-                      <th class="text-center py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Qty</th>
-                      <th class="text-center py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Unit</th>
-                      <th class="text-right py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Rate</th>
-                      <th class="text-right py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Amount</th>
+                      <th class="text-left py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.description') }}</th>
+                      <th class="text-center py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.qty') }}</th>
+                      <th class="text-center py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.unit') }}</th>
+                      <th class="text-right py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.rate') }}</th>
+                      <th class="text-right py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.amount') }}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1103,7 +1109,7 @@ const handleFinalize     = () => handleSave('finalized')
                 <!-- Totals -->
                 <div class="flex justify-end mb-8">
                   <div style="width: 260px" class="space-y-1.5 text-sm">
-                    <div class="flex justify-between text-gray-500"><span>Subtotal</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
+                    <div class="flex justify-between text-gray-500"><span>{{ t('document.subtotal') }}</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
                     <div v-if="form.discount > 0" class="flex justify-between text-gray-500">
                       <span>Discount{{ form.discountType === 'percent' ? ` (${form.discount}%)` : '' }}</span>
                       <span class="font-mono text-red-500">-{{ fmtMoney(discountAmt) }}</span>
@@ -1116,13 +1122,13 @@ const handleFinalize     = () => handleSave('finalized')
                     </template>
                     <div style="height: 1px; background: #e5e7eb; margin: 8px 0"></div>
                     <div class="flex justify-between font-bold text-base">
-                      <span class="text-gray-800">{{ balanceDueAmt > 0 ? 'Amount Paid' : 'Total Received' }}</span>
+                      <span class="text-gray-800">{{ balanceDueAmt > 0 ? t('receiptEditor.items.amountPaid') : t('receiptEditor.items.totalReceived') }}</span>
                       <span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span>
                     </div>
                     <template v-if="balanceDueAmt > 0">
                       <div style="height: 1px; background: #fecaca; margin: 6px 0"></div>
                       <div class="flex justify-between font-bold text-base">
-                        <span style="color: #dc2626">Balance Due</span>
+                        <span style="color: #dc2626">{{ t('receiptEditor.items.balanceDue') }}</span>
                         <span class="font-mono" style="color: #dc2626">{{ fmtMoney(balanceDueAmt) }}</span>
                       </div>
                     </template>
@@ -1131,13 +1137,13 @@ const handleFinalize     = () => handleSave('finalized')
 
                 <!-- Bank details received to -->
                 <div v-if="form.showBankDetails && (form.fromBankName || form.fromBankAccountNumber)" style="border-top: 1px solid #f3f4f6; padding-top: 20px; margin-bottom: 16px">
-                  <div class="text-gray-400 uppercase tracking-widest mb-3" style="font-size:10px">Payment Received To</div>
+                  <div class="text-gray-400 uppercase tracking-widest mb-3" style="font-size:10px">{{ t('receiptEditor.preview.paymentReceivedTo') }}</div>
                   <div class="grid grid-cols-2 gap-x-6 gap-y-1" style="font-size: 12px">
-                    <div v-if="form.fromBankName" class="flex gap-2"><span class="text-gray-400">Bank:</span><span class="text-gray-700">{{ form.fromBankName }}</span></div>
-                    <div v-if="form.fromBankAccountName" class="flex gap-2"><span class="text-gray-400">Name:</span><span class="text-gray-700">{{ form.fromBankAccountName }}</span></div>
-                    <div v-if="form.fromBankAccountNumber" class="flex gap-2"><span class="text-gray-400">Account:</span><span class="font-mono text-gray-700">{{ form.fromBankAccountNumber }}</span></div>
-                    <div v-if="form.fromBankSortCode" class="flex gap-2"><span class="text-gray-400">Sort Code:</span><span class="font-mono text-gray-700">{{ form.fromBankSortCode }}</span></div>
-                    <div v-if="form.fromBankIban" class="flex gap-2"><span class="text-gray-400">IBAN:</span><span class="font-mono text-gray-700">{{ form.fromBankIban }}</span></div>
+                    <div v-if="form.fromBankName" class="flex gap-2"><span class="text-gray-400">{{ t('document.bankInline.bank') }}:</span><span class="text-gray-700">{{ form.fromBankName }}</span></div>
+                    <div v-if="form.fromBankAccountName" class="flex gap-2"><span class="text-gray-400">{{ t('document.bankInline.name') }}:</span><span class="text-gray-700">{{ form.fromBankAccountName }}</span></div>
+                    <div v-if="form.fromBankAccountNumber" class="flex gap-2"><span class="text-gray-400">{{ t('document.bankInline.account') }}:</span><span class="font-mono text-gray-700">{{ form.fromBankAccountNumber }}</span></div>
+                    <div v-if="form.fromBankSortCode" class="flex gap-2"><span class="text-gray-400">{{ t('document.bankInline.sortCode') }}:</span><span class="font-mono text-gray-700">{{ form.fromBankSortCode }}</span></div>
+                    <div v-if="form.fromBankIban" class="flex gap-2"><span class="text-gray-400">{{ t('document.bankInline.iban') }}:</span><span class="font-mono text-gray-700">{{ form.fromBankIban }}</span></div>
                   </div>
                 </div>
 
@@ -1145,21 +1151,21 @@ const handleFinalize     = () => handleSave('finalized')
                 <div v-if="form.signatureUrl" class="mb-6 flex flex-col items-end">
                   <img :src="form.signatureUrl" alt="Signature" class="h-12 w-auto object-contain" />
                   <div style="width: 120px; height: 1px; background: #d1d5db; margin-top: 4px"></div>
-                  <div class="text-gray-400 mt-1" style="font-size: 10px">Authorized Signature</div>
+                  <div class="text-gray-400 mt-1" style="font-size: 10px">{{ t('document.authorizedSignature') }}</div>
                 </div>
 
                 <!-- Notes -->
                 <div v-if="form.showNotes && form.notes" style="border-top: 1px solid #f3f4f6; padding-top: 24px; margin-bottom: 16px">
-                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:10px">Notes</div>
+                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:10px">{{ t('document.notes') }}</div>
                   <p class="text-gray-500 leading-relaxed whitespace-pre-line" style="font-size: 12px">{{ form.notes }}</p>
                 </div>
 
                 <!-- Footer -->
                 <div v-if="form.showFooterLine" style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 24px" class="flex justify-between items-center">
                   <div class="text-gray-400" style="font-size: 11px">{{ form.footerText || form.fromWebsite }}</div>
-                  <div v-if="form.showFlowtaliTag" class="text-gray-300" style="font-size: 10px">Generated with Flowtali · flowtali.com</div>
+                  <div v-if="form.showFlowtaliTag" class="text-gray-300" style="font-size: 10px">{{ t('document.generatedWith') }}</div>
                 </div>
-                <div v-else-if="form.showFlowtaliTag" class="text-center mt-6 text-gray-300" style="font-size: 10px">Generated with Flowtali · flowtali.com</div>
+                <div v-else-if="form.showFlowtaliTag" class="text-center mt-6 text-gray-300" style="font-size: 10px">{{ t('document.generatedWith') }}</div>
               </div>
             </div>
 
@@ -1182,7 +1188,7 @@ const handleFinalize     = () => handleSave('finalized')
                 <div v-if="form.fromPhone" class="text-white/60 text-xs">{{ form.fromPhone }}</div>
                 <div v-if="form.fromWebsite" class="text-white/60 text-xs">{{ form.fromWebsite }}</div>
                 <div v-if="form.showBankDetails && form.fromBankName" class="mt-8 pt-6" style="border-top: 1px solid rgba(255,255,255,0.2)">
-                  <div class="text-white/50 uppercase tracking-widest mb-3" style="font-size:9px">Received To</div>
+                  <div class="text-white/50 uppercase tracking-widest mb-3" style="font-size:9px">{{ t('receiptEditor.preview.receivedTo') }}</div>
                   <div class="space-y-1 text-xs text-white/70">
                     <div v-if="form.fromBankName">{{ form.fromBankName }}</div>
                     <div v-if="form.fromBankAccountName">{{ form.fromBankAccountName }}</div>
@@ -1201,15 +1207,15 @@ const handleFinalize     = () => handleSave('finalized')
                     <div class="font-mono text-sm text-gray-400 mt-1">{{ form.number }}</div>
                   </div>
                   <div class="text-right text-xs space-y-2">
-                    <div><div class="text-gray-400 uppercase tracking-widest" style="font-size:10px">Issue Date</div><div class="font-semibold text-gray-700">{{ formatDate(form.issueDate) }}</div></div>
-                    <div><div class="text-gray-400 uppercase tracking-widest" style="font-size:10px">Payment Date</div><div class="font-semibold text-gray-700">{{ formatDate(form.paidAt) }}</div></div>
-                    <div><div class="text-gray-400 uppercase tracking-widest" style="font-size:10px">Method</div><div class="font-semibold text-gray-700">{{ form.paymentMethod }}</div></div>
-                    <div v-if="form.referenceNumber"><div class="text-gray-400 uppercase tracking-widest" style="font-size:10px">Reference</div><div class="font-semibold font-mono text-gray-700">{{ form.referenceNumber }}</div></div>
+                    <div><div class="text-gray-400 uppercase tracking-widest" style="font-size:10px">{{ t('document.issueDate') }}</div><div class="font-semibold text-gray-700">{{ formatDate(form.issueDate) }}</div></div>
+                    <div><div class="text-gray-400 uppercase tracking-widest" style="font-size:10px">{{ t('document.paymentDate') }}</div><div class="font-semibold text-gray-700">{{ formatDate(form.paidAt) }}</div></div>
+                    <div><div class="text-gray-400 uppercase tracking-widest" style="font-size:10px">{{ t('receiptEditor.preview.method') }}</div><div class="font-semibold text-gray-700">{{ form.paymentMethod }}</div></div>
+                    <div v-if="form.referenceNumber"><div class="text-gray-400 uppercase tracking-widest" style="font-size:10px">{{ t('receiptEditor.preview.reference') }}</div><div class="font-semibold font-mono text-gray-700">{{ form.referenceNumber }}</div></div>
                   </div>
                 </div>
                 <!-- Received From -->
                 <div class="mb-8 p-4 rounded-lg" :style="{ backgroundColor: form.accentColor + '0d' }">
-                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:10px">Received From</div>
+                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:10px">{{ t('receiptEditor.preview.receivedFrom') }}</div>
                   <div class="font-semibold text-gray-800">{{ form.toName || '—' }}</div>
                   <div v-if="form.toCompany" class="text-xs text-gray-500">{{ form.toCompany }}</div>
                   <div v-if="form.toEmail" class="text-xs text-gray-500">{{ form.toEmail }}</div>
@@ -1220,11 +1226,11 @@ const handleFinalize     = () => handleSave('finalized')
                 <table class="w-full mb-6" style="border-collapse: collapse;">
                   <thead>
                     <tr :style="{ borderBottom: `2px solid ${form.accentColor}` }">
-                      <th class="text-left pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Description</th>
-                      <th class="text-center pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Qty</th>
-                      <th class="text-center pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Unit</th>
-                      <th class="text-right pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Rate</th>
-                      <th class="text-right pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Amount</th>
+                      <th class="text-left pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.description') }}</th>
+                      <th class="text-center pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.qty') }}</th>
+                      <th class="text-center pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.unit') }}</th>
+                      <th class="text-right pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.rate') }}</th>
+                      <th class="text-right pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.amount') }}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1240,26 +1246,26 @@ const handleFinalize     = () => handleSave('finalized')
                 <!-- Totals -->
                 <div class="flex justify-end mb-6">
                   <div style="width: 260px" class="space-y-1.5 text-sm">
-                    <div class="flex justify-between text-gray-500"><span>Subtotal</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
+                    <div class="flex justify-between text-gray-500"><span>{{ t('document.subtotal') }}</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
                     <div v-if="form.discount > 0" class="flex justify-between text-gray-500"><span>Discount{{ form.discountType === 'percent' ? ` (${form.discount}%)` : '' }}</span><span class="font-mono text-red-500">-{{ fmtMoney(discountAmt) }}</span></div>
                     <template v-for="tax in form.taxes" :key="tax.id">
                       <div v-if="tax.rate > 0" class="flex justify-between text-gray-500"><span>{{ tax.label }}{{ tax.type !== 'flat' ? ` (${tax.rate}%)` : '' }}</span><span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span></div>
                     </template>
                     <div style="height: 1px; background: #e5e7eb; margin: 8px 0"></div>
-                    <div class="flex justify-between font-bold text-base"><span class="text-gray-800">{{ balanceDueAmt > 0 ? 'Amount Paid' : 'Total Received' }}</span><span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span></div>
+                    <div class="flex justify-between font-bold text-base"><span class="text-gray-800">{{ balanceDueAmt > 0 ? t('receiptEditor.items.amountPaid') : t('receiptEditor.items.totalReceived') }}</span><span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span></div>
                     <template v-if="balanceDueAmt > 0">
                       <div style="height: 1px; background: #fecaca; margin: 6px 0"></div>
-                      <div class="flex justify-between font-bold text-base"><span style="color: #dc2626">Balance Due</span><span class="font-mono" style="color: #dc2626">{{ fmtMoney(balanceDueAmt) }}</span></div>
+                      <div class="flex justify-between font-bold text-base"><span style="color: #dc2626">{{ t('receiptEditor.items.balanceDue') }}</span><span class="font-mono" style="color: #dc2626">{{ fmtMoney(balanceDueAmt) }}</span></div>
                     </template>
                   </div>
                 </div>
                 <div v-if="form.signatureUrl" class="mb-4 flex flex-col items-end">
                   <img :src="form.signatureUrl" alt="Signature" class="h-10 w-auto object-contain" />
                   <div style="width: 120px; height:1px; background: #d1d5db; margin-top: 4px"></div>
-                  <div class="text-gray-400 mt-1" style="font-size:10px">Authorized Signature</div>
+                  <div class="text-gray-400 mt-1" style="font-size:10px">{{ t('document.authorizedSignature') }}</div>
                 </div>
                 <div v-if="form.showNotes && form.notes" style="border-top: 1px solid #f3f4f6; padding-top: 20px">
-                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:10px">Notes</div>
+                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:10px">{{ t('document.notes') }}</div>
                   <p class="text-gray-500 leading-relaxed whitespace-pre-line" style="font-size:12px">{{ form.notes }}</p>
                 </div>
                 <div v-if="form.footerText" class="mt-4 text-gray-400 text-xs">{{ form.footerText }}</div>
@@ -1291,14 +1297,14 @@ const handleFinalize     = () => handleSave('finalized')
                 <div style="height: 1px; background: #111827; margin-bottom: 32px"></div>
                 <!-- Payment info -->
                 <div class="flex gap-10 mb-8 text-xs">
-                  <div><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Issue Date</div><div class="text-gray-700 font-medium">{{ formatDate(form.issueDate) }}</div></div>
-                  <div><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Payment Date</div><div class="text-gray-700 font-medium">{{ formatDate(form.paidAt) }}</div></div>
-                  <div><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Method</div><div class="text-gray-700 font-medium">{{ form.paymentMethod }}</div></div>
-                  <div v-if="form.referenceNumber"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Reference</div><div class="text-gray-700 font-mono font-medium">{{ form.referenceNumber }}</div></div>
+                  <div><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('document.issueDate') }}</div><div class="text-gray-700 font-medium">{{ formatDate(form.issueDate) }}</div></div>
+                  <div><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('document.paymentDate') }}</div><div class="text-gray-700 font-medium">{{ formatDate(form.paidAt) }}</div></div>
+                  <div><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('receiptEditor.preview.method') }}</div><div class="text-gray-700 font-medium">{{ form.paymentMethod }}</div></div>
+                  <div v-if="form.referenceNumber"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('receiptEditor.preview.reference') }}</div><div class="text-gray-700 font-mono font-medium">{{ form.referenceNumber }}</div></div>
                 </div>
                 <!-- Received From -->
                 <div class="mb-8">
-                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:9px">Received From</div>
+                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:9px">{{ t('receiptEditor.preview.receivedFrom') }}</div>
                   <div class="font-medium text-gray-800">{{ form.toName || '—' }}</div>
                   <div v-if="form.toCompany" class="text-xs text-gray-500">{{ form.toCompany }}</div>
                   <div v-if="form.toEmail" class="text-xs text-gray-500">{{ form.toEmail }}</div>
@@ -1306,11 +1312,11 @@ const handleFinalize     = () => handleSave('finalized')
                 <!-- Items -->
                 <table class="w-full mb-6" style="border-collapse: collapse;">
                   <thead><tr style="border-bottom: 1px solid #111827">
-                    <th class="text-left pb-2 text-gray-500 uppercase tracking-wide font-medium" style="font-size:9px">Description</th>
-                    <th class="text-center pb-2 text-gray-500 uppercase tracking-wide font-medium" style="font-size:9px">Qty</th>
-                    <th class="text-center pb-2 text-gray-500 uppercase tracking-wide font-medium" style="font-size:9px">Unit</th>
-                    <th class="text-right pb-2 text-gray-500 uppercase tracking-wide font-medium" style="font-size:9px">Rate</th>
-                    <th class="text-right pb-2 text-gray-500 uppercase tracking-wide font-medium" style="font-size:9px">Amount</th>
+                    <th class="text-left pb-2 text-gray-500 uppercase tracking-wide font-medium" style="font-size:9px">{{ t('document.table.description') }}</th>
+                    <th class="text-center pb-2 text-gray-500 uppercase tracking-wide font-medium" style="font-size:9px">{{ t('document.table.qty') }}</th>
+                    <th class="text-center pb-2 text-gray-500 uppercase tracking-wide font-medium" style="font-size:9px">{{ t('document.table.unit') }}</th>
+                    <th class="text-right pb-2 text-gray-500 uppercase tracking-wide font-medium" style="font-size:9px">{{ t('document.table.rate') }}</th>
+                    <th class="text-right pb-2 text-gray-500 uppercase tracking-wide font-medium" style="font-size:9px">{{ t('document.table.amount') }}</th>
                   </tr></thead>
                   <tbody>
                     <tr v-for="item in form.items" :key="item.id" style="border-bottom: 1px solid #f3f4f6">
@@ -1325,26 +1331,26 @@ const handleFinalize     = () => handleSave('finalized')
                 <!-- Totals -->
                 <div class="flex justify-end mb-8">
                   <div style="width: 260px" class="space-y-1.5 text-sm">
-                    <div class="flex justify-between text-gray-500"><span>Subtotal</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
+                    <div class="flex justify-between text-gray-500"><span>{{ t('document.subtotal') }}</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
                     <div v-if="form.discount > 0" class="flex justify-between text-gray-500"><span>Discount{{ form.discountType === 'percent' ? ` (${form.discount}%)` : '' }}</span><span class="font-mono text-red-500">-{{ fmtMoney(discountAmt) }}</span></div>
                     <template v-for="tax in form.taxes" :key="tax.id">
                       <div v-if="tax.rate > 0" class="flex justify-between text-gray-500"><span>{{ tax.label }}{{ tax.type !== 'flat' ? ` (${tax.rate}%)` : '' }}</span><span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span></div>
                     </template>
                     <div style="height: 1px; background: #111827; margin: 8px 0"></div>
-                    <div class="flex justify-between font-bold text-base"><span>{{ balanceDueAmt > 0 ? 'Amount Paid' : 'Total Received' }}</span><span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span></div>
+                    <div class="flex justify-between font-bold text-base"><span>{{ balanceDueAmt > 0 ? t('receiptEditor.items.amountPaid') : t('receiptEditor.items.totalReceived') }}</span><span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span></div>
                     <template v-if="balanceDueAmt > 0">
                       <div style="height: 1px; background: #fecaca; margin: 6px 0"></div>
-                      <div class="flex justify-between font-bold text-base"><span style="color: #dc2626">Balance Due</span><span class="font-mono" style="color: #dc2626">{{ fmtMoney(balanceDueAmt) }}</span></div>
+                      <div class="flex justify-between font-bold text-base"><span style="color: #dc2626">{{ t('receiptEditor.items.balanceDue') }}</span><span class="font-mono" style="color: #dc2626">{{ fmtMoney(balanceDueAmt) }}</span></div>
                     </template>
                   </div>
                 </div>
                 <div v-if="form.signatureUrl" class="mb-6 flex flex-col items-end">
                   <img :src="form.signatureUrl" alt="Signature" class="h-10 w-auto object-contain" />
                   <div style="width: 120px; height:1px; background: #d1d5db; margin-top: 4px"></div>
-                  <div class="text-gray-400 mt-1" style="font-size:10px">Authorized Signature</div>
+                  <div class="text-gray-400 mt-1" style="font-size:10px">{{ t('document.authorizedSignature') }}</div>
                 </div>
                 <div v-if="form.showNotes && form.notes" class="mb-6">
-                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:9px">Notes</div>
+                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:9px">{{ t('document.notes') }}</div>
                   <p class="text-gray-500 leading-relaxed whitespace-pre-line text-xs">{{ form.notes }}</p>
                 </div>
                 <div v-if="form.showFooterLine" style="border-top: 1px solid #e5e7eb; padding-top: 16px; margin-top: 20px" class="flex justify-between items-center">
@@ -1380,22 +1386,22 @@ const handleFinalize     = () => handleSave('finalized')
               </div>
               <!-- Payment badges -->
               <div class="px-8 py-4 flex gap-6 text-xs" :style="{ backgroundColor: form.accentColor + '15', position: 'relative', zIndex: 3 }">
-                <div><span class="text-gray-500 uppercase tracking-wide" style="font-size:9px">Payment Date</span><div class="font-semibold text-gray-800 mt-0.5">{{ formatDate(form.paidAt) }}</div></div>
-                <div><span class="text-gray-500 uppercase tracking-wide" style="font-size:9px">Method</span><div class="font-semibold text-gray-800 mt-0.5">{{ form.paymentMethod }}</div></div>
-                <div v-if="form.referenceNumber"><span class="text-gray-500 uppercase tracking-wide" style="font-size:9px">Reference</span><div class="font-semibold font-mono text-gray-800 mt-0.5">{{ form.referenceNumber }}</div></div>
-                <div><span class="text-gray-500 uppercase tracking-wide" style="font-size:9px">Issue Date</span><div class="font-semibold text-gray-800 mt-0.5">{{ formatDate(form.issueDate) }}</div></div>
+                <div><span class="text-gray-500 uppercase tracking-wide" style="font-size:9px">{{ t('document.paymentDate') }}</span><div class="font-semibold text-gray-800 mt-0.5">{{ formatDate(form.paidAt) }}</div></div>
+                <div><span class="text-gray-500 uppercase tracking-wide" style="font-size:9px">{{ t('receiptEditor.preview.method') }}</span><div class="font-semibold text-gray-800 mt-0.5">{{ form.paymentMethod }}</div></div>
+                <div v-if="form.referenceNumber"><span class="text-gray-500 uppercase tracking-wide" style="font-size:9px">{{ t('receiptEditor.preview.reference') }}</span><div class="font-semibold font-mono text-gray-800 mt-0.5">{{ form.referenceNumber }}</div></div>
+                <div><span class="text-gray-500 uppercase tracking-wide" style="font-size:9px">{{ t('document.issueDate') }}</span><div class="font-semibold text-gray-800 mt-0.5">{{ formatDate(form.issueDate) }}</div></div>
               </div>
               <div class="p-8 pt-6" style="position: relative; z-index: 3">
                 <div class="grid grid-cols-2 gap-8 mb-8">
                   <div>
-                    <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:9px">Received From</div>
+                    <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:9px">{{ t('receiptEditor.preview.receivedFrom') }}</div>
                     <div class="font-semibold text-gray-800">{{ form.toName || '—' }}</div>
                     <div v-if="form.toCompany" class="text-xs text-gray-500">{{ form.toCompany }}</div>
                     <div v-if="form.toEmail" class="text-xs text-gray-500">{{ form.toEmail }}</div>
                     <div v-if="form.toAddress" class="text-xs text-gray-500 whitespace-pre-line mt-1">{{ form.toAddress }}</div>
                   </div>
                   <div>
-                    <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:9px">Issued By</div>
+                    <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:9px">{{ t('receiptEditor.preview.issuedBy') }}</div>
                     <div class="text-xs text-gray-600 whitespace-pre-line leading-relaxed">{{ form.fromAddress }}</div>
                     <div v-if="form.fromEmail" class="text-xs text-gray-500">{{ form.fromEmail }}</div>
                     <div v-if="form.fromWebsite" class="text-xs text-gray-500">{{ form.fromWebsite }}</div>
@@ -1403,11 +1409,11 @@ const handleFinalize     = () => handleSave('finalized')
                 </div>
                 <table class="w-full mb-6" style="border-collapse: collapse;">
                   <thead><tr :style="{ backgroundColor: form.accentColor + '18' }">
-                    <th class="text-left py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Description</th>
-                    <th class="text-center py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Qty</th>
-                    <th class="text-center py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Unit</th>
-                    <th class="text-right py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Rate</th>
-                    <th class="text-right py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Amount</th>
+                    <th class="text-left py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.description') }}</th>
+                    <th class="text-center py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.qty') }}</th>
+                    <th class="text-center py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.unit') }}</th>
+                    <th class="text-right py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.rate') }}</th>
+                    <th class="text-right py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.amount') }}</th>
                   </tr></thead>
                   <tbody>
                     <tr v-for="item in form.items" :key="item.id" style="border-bottom: 1px solid #f3f4f6">
@@ -1421,19 +1427,19 @@ const handleFinalize     = () => handleSave('finalized')
                 </table>
                 <div class="flex justify-end mb-8">
                   <div style="width: 260px" class="space-y-1.5 text-sm">
-                    <div class="flex justify-between text-gray-500"><span>Subtotal</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
+                    <div class="flex justify-between text-gray-500"><span>{{ t('document.subtotal') }}</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
                     <div v-if="form.discount > 0" class="flex justify-between text-gray-500"><span>Discount{{ form.discountType === 'percent' ? ` (${form.discount}%)` : '' }}</span><span class="font-mono text-red-500">-{{ fmtMoney(discountAmt) }}</span></div>
                     <template v-for="tax in form.taxes" :key="tax.id">
                       <div v-if="tax.rate > 0" class="flex justify-between text-gray-500"><span>{{ tax.label }}{{ tax.type !== 'flat' ? ` (${tax.rate}%)` : '' }}</span><span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span></div>
                     </template>
                     <div class="h-px" :style="{ background: form.accentColor + '40' }"></div>
                     <div class="flex justify-between font-bold text-base p-3 rounded" :style="{ backgroundColor: form.accentColor + '15' }">
-                      <span class="text-gray-800">{{ balanceDueAmt > 0 ? 'Amount Paid' : 'Total Received' }}</span>
+                      <span class="text-gray-800">{{ balanceDueAmt > 0 ? t('receiptEditor.items.amountPaid') : t('receiptEditor.items.totalReceived') }}</span>
                       <span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span>
                     </div>
                     <template v-if="balanceDueAmt > 0">
                       <div class="flex justify-between font-bold text-base p-3 rounded mt-1" style="background: #fef2f2">
-                        <span style="color: #dc2626">Balance Due</span>
+                        <span style="color: #dc2626">{{ t('receiptEditor.items.balanceDue') }}</span>
                         <span class="font-mono" style="color: #dc2626">{{ fmtMoney(balanceDueAmt) }}</span>
                       </div>
                     </template>
@@ -1442,10 +1448,10 @@ const handleFinalize     = () => handleSave('finalized')
                 <div v-if="form.signatureUrl" class="mb-6 flex flex-col items-end">
                   <img :src="form.signatureUrl" alt="Signature" class="h-10 w-auto object-contain" />
                   <div style="width: 120px; height:1px; background: #d1d5db; margin-top: 4px"></div>
-                  <div class="text-gray-400 mt-1" style="font-size:10px">Authorized Signature</div>
+                  <div class="text-gray-400 mt-1" style="font-size:10px">{{ t('document.authorizedSignature') }}</div>
                 </div>
                 <div v-if="form.showNotes && form.notes" class="mb-4">
-                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:9px">Notes</div>
+                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:9px">{{ t('document.notes') }}</div>
                   <p class="text-gray-500 text-xs leading-relaxed whitespace-pre-line">{{ form.notes }}</p>
                 </div>
                 <div v-if="form.showFooterLine" style="border-top: 1px solid #e5e7eb; padding-top: 16px; margin-top: 16px" class="flex justify-between items-center">
@@ -1480,16 +1486,16 @@ const handleFinalize     = () => handleSave('finalized')
                       <div class="font-mono text-sm text-gray-400">{{ form.number }}</div>
                     </div>
                     <div class="space-y-2 text-xs">
-                      <div class="flex justify-between"><span class="text-gray-400">Issue Date</span><span class="font-medium text-gray-700">{{ formatDate(form.issueDate) }}</span></div>
-                      <div class="flex justify-between"><span class="text-gray-400">Payment Date</span><span class="font-medium text-gray-700">{{ formatDate(form.paidAt) }}</span></div>
-                      <div class="flex justify-between"><span class="text-gray-400">Method</span><span class="font-medium text-gray-700">{{ form.paymentMethod }}</span></div>
-                      <div v-if="form.referenceNumber" class="flex justify-between"><span class="text-gray-400">Reference</span><span class="font-mono font-medium text-gray-700">{{ form.referenceNumber }}</span></div>
+                      <div class="flex justify-between"><span class="text-gray-400">{{ t('document.issueDate') }}</span><span class="font-medium text-gray-700">{{ formatDate(form.issueDate) }}</span></div>
+                      <div class="flex justify-between"><span class="text-gray-400">{{ t('document.paymentDate') }}</span><span class="font-medium text-gray-700">{{ formatDate(form.paidAt) }}</span></div>
+                      <div class="flex justify-between"><span class="text-gray-400">{{ t('receiptEditor.preview.method') }}</span><span class="font-medium text-gray-700">{{ form.paymentMethod }}</span></div>
+                      <div v-if="form.referenceNumber" class="flex justify-between"><span class="text-gray-400">{{ t('receiptEditor.preview.reference') }}</span><span class="font-mono font-medium text-gray-700">{{ form.referenceNumber }}</span></div>
                     </div>
                   </div>
                 </div>
                 <!-- Received From -->
                 <div class="mb-6 p-4 border rounded-lg" :style="{ borderColor: form.accentColor + '30', backgroundColor: form.accentColor + '05' }">
-                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:9px">Received From</div>
+                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:9px">{{ t('receiptEditor.preview.receivedFrom') }}</div>
                   <div class="font-semibold text-gray-800">{{ form.toName || '—' }}</div>
                   <div v-if="form.toCompany" class="text-xs text-gray-500">{{ form.toCompany }}</div>
                   <div v-if="form.toEmail" class="text-xs text-gray-500">{{ form.toEmail }}</div>
@@ -1497,11 +1503,11 @@ const handleFinalize     = () => handleSave('finalized')
                 </div>
                 <table class="w-full mb-6" style="border-collapse: collapse;">
                   <thead><tr style="border-bottom: 2px solid #e5e7eb">
-                    <th class="text-left pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Description</th>
-                    <th class="text-center pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Qty</th>
-                    <th class="text-center pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Unit</th>
-                    <th class="text-right pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Rate</th>
-                    <th class="text-right pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">Amount</th>
+                    <th class="text-left pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.description') }}</th>
+                    <th class="text-center pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.qty') }}</th>
+                    <th class="text-center pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.unit') }}</th>
+                    <th class="text-right pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.rate') }}</th>
+                    <th class="text-right pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.amount') }}</th>
                   </tr></thead>
                   <tbody>
                     <tr v-for="item in form.items" :key="item.id" style="border-bottom: 1px solid #f3f4f6">
@@ -1516,16 +1522,16 @@ const handleFinalize     = () => handleSave('finalized')
                 <div class="flex justify-end mb-8">
                   <div class="border-2 rounded-lg p-4" style="width: 280px" :style="{ borderColor: form.accentColor + '40' }">
                     <div class="space-y-1.5 text-sm">
-                      <div class="flex justify-between text-gray-500"><span>Subtotal</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
+                      <div class="flex justify-between text-gray-500"><span>{{ t('document.subtotal') }}</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
                       <div v-if="form.discount > 0" class="flex justify-between text-gray-500"><span>Discount{{ form.discountType === 'percent' ? ` (${form.discount}%)` : '' }}</span><span class="font-mono text-red-500">-{{ fmtMoney(discountAmt) }}</span></div>
                       <template v-for="tax in form.taxes" :key="tax.id">
                         <div v-if="tax.rate > 0" class="flex justify-between text-gray-500"><span>{{ tax.label }}{{ tax.type !== 'flat' ? ` (${tax.rate}%)` : '' }}</span><span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span></div>
                       </template>
                       <div style="height: 1px; background: #e5e7eb; margin: 8px 0"></div>
-                      <div class="flex justify-between font-bold text-base"><span class="text-gray-800">{{ balanceDueAmt > 0 ? 'Amount Paid' : 'Total Received' }}</span><span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span></div>
+                      <div class="flex justify-between font-bold text-base"><span class="text-gray-800">{{ balanceDueAmt > 0 ? t('receiptEditor.items.amountPaid') : t('receiptEditor.items.totalReceived') }}</span><span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span></div>
                       <template v-if="balanceDueAmt > 0">
                         <div style="height: 1px; background: #fecaca; margin: 6px 0"></div>
-                        <div class="flex justify-between font-bold text-base"><span style="color: #dc2626">Balance Due</span><span class="font-mono" style="color: #dc2626">{{ fmtMoney(balanceDueAmt) }}</span></div>
+                        <div class="flex justify-between font-bold text-base"><span style="color: #dc2626">{{ t('receiptEditor.items.balanceDue') }}</span><span class="font-mono" style="color: #dc2626">{{ fmtMoney(balanceDueAmt) }}</span></div>
                       </template>
                     </div>
                   </div>
@@ -1533,10 +1539,10 @@ const handleFinalize     = () => handleSave('finalized')
                 <div v-if="form.signatureUrl" class="mb-6 flex flex-col items-end">
                   <img :src="form.signatureUrl" alt="Signature" class="h-10 w-auto object-contain" />
                   <div style="width: 120px; height:1px; background: #d1d5db; margin-top: 4px"></div>
-                  <div class="text-gray-400 mt-1" style="font-size:10px">Authorized Signature</div>
+                  <div class="text-gray-400 mt-1" style="font-size:10px">{{ t('document.authorizedSignature') }}</div>
                 </div>
                 <div v-if="form.showNotes && form.notes" class="mb-4">
-                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:9px">Notes</div>
+                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:9px">{{ t('document.notes') }}</div>
                   <p class="text-gray-500 text-xs leading-relaxed whitespace-pre-line">{{ form.notes }}</p>
                 </div>
                 <div v-if="form.showFooterLine" style="border-top: 1px solid #e5e7eb; padding-top: 16px; margin-top: 20px" class="flex justify-between items-center">

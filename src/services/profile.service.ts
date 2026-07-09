@@ -10,6 +10,7 @@ export interface IUserProfile {
   job_title: string | null
   avatar: string | null
   mfa_enabled: boolean
+  locale: string | null
   email_verified_at: string | null
   created_at: string
 }
@@ -28,7 +29,7 @@ export const ProfileService = {
     return http.get<{ data: IUserProfile }>('/api/v1/profile')
   },
 
-  update(data: { first_name?: string; last_name?: string; phone?: unknown; job_title?: string }) {
+  update(data: { first_name?: string; last_name?: string; phone?: unknown; job_title?: string; locale?: string }) {
     return http.put<{ data: IUserProfile }>('/api/v1/profile', data)
   },
 

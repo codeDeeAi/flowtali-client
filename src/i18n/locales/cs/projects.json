@@ -1,0 +1,176 @@
+{
+  "title": "Projekty",
+  "count": "žádné projekty | jeden projekt | {count} projekty | {count} projektů",
+  "new": "Nový projekt",
+  "search": "Hledat projekty…",
+  "status": {
+    "all": "Vše",
+    "draft": "Koncept",
+    "active": "Aktivní",
+    "on_hold": "Pozastaveno",
+    "completed": "Dokončeno",
+    "cancelled": "Zrušeno"
+  },
+  "statusDesc": {
+    "draft": "Ještě nezahájeno",
+    "active": "Právě probíhá",
+    "on_hold": "Dočasně pozastaveno",
+    "completed": "Úspěšně dokončeno",
+    "cancelled": "Již nepokračuje"
+  },
+  "empty": {
+    "title": "Žádné projekty nenalezeny",
+    "filterHint": "Zkuste upravit filtry",
+    "createHint": "Vytvořte svůj první projekt a začněte",
+    "createLink": "Vytvořit projekt"
+  },
+  "card": {
+    "contract": "Zakázka"
+  },
+  "create": {
+    "title": "Nový projekt",
+    "subtitle": "Sledujte faktury, účtenky a soubory v rámci jednoho projektu"
+  },
+  "edit": {
+    "title": "Upravit projekt"
+  },
+  "sections": {
+    "identity": "Identita projektu",
+    "status": "Stav",
+    "financials": "Finance a časový plán"
+  },
+  "fields": {
+    "number": "Číslo",
+    "projectNumber": "Číslo projektu",
+    "title": "Název",
+    "description": "Popis",
+    "client": "Klient",
+    "initialStatus": "Počáteční stav",
+    "statusTracking": "Sledování stavu",
+    "currency": "Měna",
+    "contractValue": "Hodnota zakázky",
+    "startDate": "Datum zahájení",
+    "endDate": "Datum ukončení"
+  },
+  "placeholders": {
+    "number": "PRJ-001",
+    "title": "např. Redesign webu pro Acme Corp",
+    "titleShort": "Redesign webu",
+    "description": "Rozsah, cíle nebo poznámky k tomuto projektu…",
+    "descriptionShort": "Volitelný popis projektu…",
+    "contractValue": "0,00"
+  },
+  "noClientAssigned": "Není přiřazen žádný klient",
+  "noClient": "Bez klienta",
+  "tracking": {
+    "manual": "Ručně",
+    "manualDesc": "Změny stavu řídíte vy",
+    "auto": "Automaticky",
+    "autoDesc": "Aktualizace podle plateb",
+    "autoOption": "Automaticky (podle plateb)"
+  },
+  "cancel": "Zrušit",
+  "creating": "Vytváření…",
+  "createProject": "Vytvořit projekt",
+  "saving": "Ukládání…",
+  "saveChanges": "Uložit změny",
+  "tabs": {
+    "overview": "Přehled",
+    "client": "Klient",
+    "invoices": "Faktury",
+    "receipts": "Účtenky",
+    "letterheads": "Hlavičkové papíry",
+    "activity": "Aktivita",
+    "files": "Soubory"
+  },
+  "details": {
+    "title": "Podrobnosti",
+    "number": "Číslo",
+    "client": "Klient",
+    "statusTracking": "Sledování stavu",
+    "startDate": "Datum zahájení",
+    "endDate": "Datum ukončení",
+    "description": "Popis"
+  },
+  "financials": {
+    "title": "Finance",
+    "contractValue": "Hodnota zakázky",
+    "totalInvoiced": "Celkem fakturováno",
+    "totalReceived": "Celkem přijato",
+    "balance": "Zůstatek",
+    "paymentProgress": "Průběh plateb"
+  },
+  "clientPanel": {
+    "noClientAssigned": "Není přiřazen žádný klient",
+    "assignHint": "Přiřaďte klienta a sledujte, pro koho je tento projekt určen",
+    "noEmail": "Není evidován žádný e-mail",
+    "changeClient": "Změnit klienta",
+    "assignClient": "Přiřadit klienta",
+    "noClientsFound": "Žádní klienti nenalezeni"
+  },
+  "linked": {
+    "noInvoices": "Žádné propojené faktury.",
+    "noReceipts": "Žádné propojené účtenky.",
+    "noLetterheads": "Žádné propojené hlavičkové papíry.",
+    "noFiles": "Zatím žádné soubory.",
+    "noActivity": "Zatím žádná aktivita."
+  },
+  "notes": {
+    "add": "Přidat poznámku",
+    "addBtn": "Přidat poznámku"
+  },
+  "deleteModal": {
+    "title": "Smazat projekt?",
+    "body": "Tímto trvale smažete tento projekt. Propojené faktury a účtenky nebudou smazány.",
+    "cancel": "Zrušit",
+    "delete": "Smazat",
+    "deleting": "Mazání…"
+  },
+  "linkModal": {
+    "invoice": "Propojit fakturu",
+    "receipt": "Propojit účtenku",
+    "letterhead": "Propojit hlavičkový papír",
+    "noInvoices": "Žádné faktury nenalezeny",
+    "noReceipts": "Žádné účtenky nenalezeny",
+    "noLetterheads": "Žádné hlavičkové papíry nenalezeny"
+  },
+  "fileModal": {
+    "title": "Přidat soubor",
+    "name": "Název",
+    "type": "Typ",
+    "linkUrl": "Odkaz / URL",
+    "uploadedFile": "Nahraný soubor",
+    "cancel": "Zrušit",
+    "add": "Přidat soubor",
+    "adding": "Přidávání…"
+  },
+  "notFound": "Projekt nenalezen",
+  "back": "Zpět na projekty",
+  "toasts": {
+    "loadFailed": "Nepodařilo se načíst projekt.",
+    "created": "Projekt vytvořen.",
+    "createFailed": "Nepodařilo se vytvořit projekt.",
+    "updated": "Projekt aktualizován.",
+    "updateFailed": "Nepodařilo se aktualizovat projekt.",
+    "deleted": "Projekt smazán.",
+    "deleteFailed": "Nepodařilo se smazat projekt.",
+    "linked": "Úspěšně propojeno.",
+    "removed": "Odebráno.",
+    "removeFailed": "Odebrání se nezdařilo.",
+    "nameUrlRequired": "Název a URL jsou povinné.",
+    "fileAdded": "Soubor přidán.",
+    "fileAddFailed": "Nepodařilo se přidat soubor.",
+    "fileRemoved": "Soubor odebrán.",
+    "fileRemoveFailed": "Nepodařilo se odebrat soubor.",
+    "noteAdded": "Poznámka přidána.",
+    "noteAddFailed": "Nepodařilo se přidat poznámku.",
+    "clientUpdateFailed": "Nepodařilo se aktualizovat klienta.",
+    "numberRequired": "Číslo projektu je povinné.",
+    "titleRequired": "Název projektu je povinný.",
+    "numberTitleRequired": "Číslo a název jsou povinné.",
+    "notFound": "Projekt nenalezen.",
+    "linkFailed": "Propojení se nezdařilo.",
+    "clientAssigned": "Klient přiřazen.",
+    "clientRemoved": "Klient odebrán."
+  }
+}

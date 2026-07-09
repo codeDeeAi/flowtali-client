@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 export interface IRevenueTrendItem {
   month: string
@@ -70,13 +73,13 @@ const bars = computed(() => {
     <template v-else>
       <div class="flex items-start justify-between mb-5">
         <div>
-          <h3 class="text-sm font-semibold text-gray-1000">Revenue Overview</h3>
-          <p class="text-xs text-gray-700 mt-0.5">Invoice payments received</p>
+          <h3 class="text-sm font-semibold text-gray-1000">{{ t('dashboard.revenue.title') }}</h3>
+          <p class="text-xs text-gray-700 mt-0.5">{{ t('dashboard.revenue.subtitle') }}</p>
         </div>
       </div>
 
       <div v-if="!hasData" class="flex items-center justify-center h-[140px] text-xs text-gray-700">
-        No revenue data yet
+        {{ t('dashboard.revenue.noData') }}
       </div>
 
       <svg

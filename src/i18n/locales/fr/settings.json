@@ -1,0 +1,84 @@
+{
+  "title": "Paramètres",
+  "subtitle": "Configuration de l'organisation et du compte",
+  "tabs": {
+    "general": "Général",
+    "notifications": "Notifications",
+    "security": "Sécurité",
+    "api": "API et intégrations"
+  },
+  "general": {
+    "orgDetails": "Détails de l'organisation",
+    "logo": "Logo de l'organisation",
+    "logoHint": "PNG, JPG ou WebP · max. 2 Mo",
+    "uploadLogo": "Téléverser un logo",
+    "uploading": "Téléversement…",
+    "removing": "Suppression…",
+    "remove": "Supprimer",
+    "orgName": "Nom de l'organisation",
+    "orgNamePlaceholder": "Nom de l'organisation",
+    "industry": "Secteur",
+    "selectIndustry": "Sélectionner un secteur…",
+    "companySize": "Taille de l'entreprise",
+    "selectSize": "Sélectionner une taille…",
+    "businessAddress": "Adresse professionnelle",
+    "addressPlaceholder": "123 Rue, Ville, Pays",
+    "defaultInvoiceSettings": "Paramètres de facture par défaut",
+    "defaultCurrency": "Devise par défaut",
+    "paymentTerms": "Conditions de paiement",
+    "defaultTaxRate": "Taux de taxe par défaut (%)",
+    "saveChanges": "Enregistrer les modifications",
+    "saved": "Enregistré"
+  },
+  "notifications": {
+    "title": "Préférences de notification",
+    "groups": {
+      "invoices": "Factures",
+      "team": "Équipe"
+    },
+    "items": {
+      "invoice_paid": {
+        "label": "Facture payée",
+        "desc": "Lorsqu'un client paie une facture"
+      },
+      "invoice_overdue": {
+        "label": "Facture en retard",
+        "desc": "Lorsqu'une facture dépasse sa date d'échéance"
+      },
+      "invoice_viewed": {
+        "label": "Facture consultée",
+        "desc": "Lorsqu'un client consulte une facture"
+      },
+      "member_joined": {
+        "label": "Membre ajouté",
+        "desc": "Lorsqu'un membre de l'équipe accepte une invitation"
+      },
+      "role_changed": {
+        "label": "Rôle modifié",
+        "desc": "Lorsque le rôle d'un membre est mis à jour"
+      }
+    },
+    "email": "E-mail",
+    "inApp": "In-app",
+    "save": "Enregistrer les préférences",
+    "saved": "Enregistré"
+  },
+  "security": {
+    "title": "Paramètres de sécurité",
+    "twoFactor": "Authentification à deux facteurs",
+    "twoFactorDesc": "Exiger la 2FA pour tous les membres de l'organisation",
+    "ipAllowlist": "Liste d'IP autorisées",
+    "ipAllowlistDesc": "Limitez l'accès à des plages d'IP spécifiques. Laissez vide pour autoriser toutes les IP. Saisissez une IP ou un bloc CIDR par ligne.",
+    "save": "Enregistrer les paramètres de sécurité",
+    "saved": "Enregistré"
+  },
+  "api": {
+    "title": "Clés API",
+    "generateKey": "Générer une clé",
+    "planNote": "L'accès à l'API est disponible sur les forfaits Pro et Business",
+    "planDesc": "Utilisez des clés API pour intégrer Flowtali à vos propres systèmes et automatiser vos flux de travail.",
+    "active": "Actif",
+    "lastUsed": "Dernière utilisation {when}",
+    "revoke": "Révoquer"
+  }
+}

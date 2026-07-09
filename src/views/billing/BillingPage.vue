@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { useSubscriptionStore } from '@/stores/subscription'
@@ -9,6 +10,7 @@ import { SubscriptionService, type ISubscriptionPlan, type ISubscriptionTransact
 
 const route    = useRoute()
 const router   = useRouter()
+const { t, locale } = useI18n()
 const auth     = useAuthStore()
 const subStore = useSubscriptionStore()
 const { notify } = useNotification()
@@ -49,10 +51,10 @@ async function handleCallbackRef() {
   try {
     const res             = await SubscriptionService.verify(orgId.value, ref)
     subStore.subscription = res.data.data
-    notify('Subscription activated successfully!', 'success')
+    notify(t('billing.toasts.activated'), 'success')
     activeTab.value = 'plans'
   } catch (err: any) {
-    notify(err?.response?.data?.message ?? 'Payment verification failed.', 'error')
+    notify(err?.response?.data?.message ?? t('billing.toasts.verifyFailed'), 'error')
   } finally {
     isVerifying.value = false
   }
@@ -67,7 +69,7 @@ async function loadPlans() {
     recommendedCurrency.value = res.data.data.recommended_currency
     selectedCurrency.value    = res.data.data.recommended_currency
   } catch {
-    notify('Failed to load pricing plans.', 'error')
+    notify(t('billing.toasts.loadPlansFailed'), 'error')
   } finally {
     isLoadingPlans.value = false
   }
@@ -81,7 +83,7 @@ async function loadTransactions() {
     transactions.value = res.data.data.data
     txLastPage.value   = res.data.data.last_page
   } catch {
-    notify('Failed to load billing history.', 'error')
+    notify(t('billing.toasts.loadHistoryFailed'), 'error')
   } finally {
     isLoadingTx.value = false
   }
@@ -99,7 +101,7 @@ async function upgrade(planSlug: string) {
     })
     window.location.href = res.data.data.payment_url
   } catch (err: any) {
-    notify(err?.response?.data?.message ?? 'Failed to initialize payment.', 'error')
+    notify(err?.response?.data?.message ?? t('billing.toasts.initPaymentFailed'), 'error')
     isInitializing.value = false
   }
 }
@@ -111,9 +113,9 @@ async function cancelSubscription() {
     const res             = await SubscriptionService.cancel(orgId.value)
     subStore.subscription = res.data.data
     showCancelModal.value = false
-    notify('Subscription cancelled. Access continues until the end of your billing period.', 'success')
+    notify(t('billing.toasts.cancelled'), 'success')
   } catch (err: any) {
-    notify(err?.response?.data?.message ?? 'Failed to cancel subscription.', 'error')
+    notify(err?.response?.data?.message ?? t('billing.toasts.cancelFailed'), 'error')
   } finally {
     isCancelling.value = false
   }
@@ -145,7 +147,7 @@ function annualSaving(plan: ISubscriptionPlan): string | null {
   const annual    = prices.annual
   if (monthly12 === 0 || annual === 0) return null
   const pct = Math.round(((monthly12 - annual) / monthly12) * 100)
-  return pct > 0 ? `Save ${pct}%` : null
+  return pct > 0 ? t('billing.plan.save', { pct }) : null
 }
 
 function statusBadge(status: string) {
@@ -163,34 +165,34 @@ function statusBadge(status: string) {
 }
 
 function txTypeLabel(type: string) {
-  const map: Record<string, string> = {
-    new_subscription: 'New Subscription',
-    renewal:          'Renewal',
-    upgrade:          'Upgrade',
-    downgrade:        'Downgrade',
-  }
-  return map[type] ?? type
+  const keys = ['new_subscription', 'renewal', 'upgrade', 'downgrade']
+  return keys.includes(type) ? t('billing.txType.' + type) : type
+}
+
+function statusLabel(status: string) {
+  const keys = ['active', 'trial', 'past_due', 'cancelled', 'expired', 'pending', 'completed', 'failed']
+  return keys.includes(status) ? t('billing.statuses.' + status) : status
 }
 
 function formatDate(dt: string) {
-  return new Date(dt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  return new Date(dt).toLocaleDateString(locale.value, { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 function featureLabel(key: string, val: boolean | number | null): string {
   const labels: Record<string, string> = {
-    invoices_per_month:       val === null ? 'Unlimited invoices'    : `${val} invoices/month`,
-    receipts_per_month:       val === null ? 'Unlimited receipts'    : `${val} receipts/month`,
-    letterheads_per_month:    val === null ? 'Unlimited letterheads' : `${val} letterheads/month`,
-    projects_limit:           val === null ? 'Unlimited projects'    : `${val} active project`,
-    team_members:             typeof val === 'number' && val > 1 ? `Up to ${val} team members` : 'Solo (1 member)',
-    custom_branding:          'Custom branding & logo',
-    remove_flowtali_branding: 'Remove Flowtali branding',
-    all_currencies:           'All 11 currencies',
-    all_letterhead_templates: 'All 8 letterhead templates',
-    stamp_watermark:          'Stamps & watermarks',
-    priority_support:         'Priority support',
-    team_roles:               'Team roles & permissions',
-    invoice_analytics:        'Invoice analytics',
+    invoices_per_month:       val === null ? t('billing.features.unlimitedInvoices')    : t('billing.features.invoicesPerMonth', { n: val }),
+    receipts_per_month:       val === null ? t('billing.features.unlimitedReceipts')    : t('billing.features.receiptsPerMonth', { n: val }),
+    letterheads_per_month:    val === null ? t('billing.features.unlimitedLetterheads') : t('billing.features.letterheadsPerMonth', { n: val }),
+    projects_limit:           val === null ? t('billing.features.unlimitedProjects')    : t('billing.features.projectsLimit', { n: val }),
+    team_members:             typeof val === 'number' && val > 1 ? t('billing.features.upToTeam', { n: val }) : t('billing.features.solo'),
+    custom_branding:          t('billing.features.customBranding'),
+    remove_flowtali_branding: t('billing.features.removeBranding'),
+    all_currencies:           t('billing.features.allCurrencies'),
+    all_letterhead_templates: t('billing.features.allTemplates'),
+    stamp_watermark:          t('billing.features.stampWatermark'),
+    priority_support:         t('billing.features.prioritySupport'),
+    team_roles:               t('billing.features.teamRoles'),
+    invoice_analytics:        t('billing.features.invoiceAnalytics'),
   }
   return labels[key] ?? key.replace(/_/g, ' ')
 }
@@ -199,13 +201,29 @@ function featureLabel(key: string, val: boolean | number | null): string {
 <template>
   <div class="p-4 md:p-6 space-y-5 min-h-full">
 
+    <!-- Paywall notice: free trial ended / subscription required -->
+    <div
+      v-if="subStore.isPaywalled"
+      class="flex items-start gap-3 bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3.5"
+    >
+      <Icon icon="lucide:lock" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+      <div>
+        <p class="text-sm font-semibold text-gray-1000">
+          {{ subStore.freeWindowExpired ? t('billing.paywall.trialEndedTitle') : t('billing.paywall.requiredTitle') }}
+        </p>
+        <p class="text-xs text-gray-700 mt-0.5">
+          {{ subStore.freeWindowExpired ? t('billing.paywall.trialEndedBody') : t('billing.paywall.requiredBody') }}
+        </p>
+      </div>
+    </div>
+
     <!-- Verifying overlay -->
     <div v-if="isVerifying" class="fixed inset-0 bg-gray-100/80 flex items-center justify-center z-50">
       <div class="bg-gray-200 border border-gray-400 rounded-2xl p-8 flex flex-col items-center gap-4 text-center max-w-sm mx-4">
         <Icon icon="lucide:loader-2" class="w-8 h-8 text-green-700 animate-spin" />
         <div>
-          <p class="text-gray-1000 font-semibold">Verifying payment…</p>
-          <p class="text-gray-700 text-sm mt-1">Please wait while we confirm your payment with Paystack.</p>
+          <p class="text-gray-1000 font-semibold">{{ t('billing.verifying') }}</p>
+          <p class="text-gray-700 text-sm mt-1">{{ t('billing.verifyingDesc') }}</p>
         </div>
       </div>
     </div>
@@ -213,19 +231,19 @@ function featureLabel(key: string, val: boolean | number | null): string {
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div>
-        <h1 class="page-title">Billing</h1>
-        <p class="page-subtitle">Manage your subscription and billing history</p>
+        <h1 class="page-title">{{ t('billing.title') }}</h1>
+        <p class="page-subtitle">{{ t('billing.subtitle') }}</p>
       </div>
 
       <!-- Current plan badge -->
       <div v-if="subStore.subscription" class="flex items-center gap-2 bg-gray-200 border border-gray-400 rounded-xl px-4 py-2.5">
         <Icon icon="lucide:zap" class="w-4 h-4 text-green-700 shrink-0" />
         <div>
-          <div class="text-xs text-gray-700">Current plan</div>
+          <div class="text-xs text-gray-700">{{ t('billing.currentPlan') }}</div>
           <div class="text-sm font-semibold text-gray-1000 capitalize">{{ subStore.subscription.plan?.name ?? 'Starter' }}</div>
         </div>
         <span :class="statusBadge(subStore.subscription.status)" class="ml-2">
-          {{ subStore.subscription.status }}
+          {{ statusLabel(subStore.subscription.status) }}
         </span>
       </div>
     </div>
@@ -245,14 +263,14 @@ function featureLabel(key: string, val: boolean | number | null): string {
         <div>
           <p class="text-sm text-gray-1000">
             <span v-if="subStore.subscription.status === 'cancelled'">
-              Subscription cancelled — access until
+              {{ t('billing.period.cancelledUntil') }}
             </span>
             <span v-else>
-              {{ subStore.subscription.billing_interval === 'annual' ? 'Annual' : 'Monthly' }} plan renews on
+              {{ subStore.subscription.billing_interval === 'annual' ? t('billing.period.renewsAnnual') : t('billing.period.renewsMonthly') }}
             </span>
             <span class="font-semibold"> {{ formatDate(subStore.subscription.current_period_end) }}</span>
           </p>
-          <p class="text-xs text-gray-700 mt-0.5">Billing currency: {{ subStore.subscription.billing_currency }}</p>
+          <p class="text-xs text-gray-700 mt-0.5">{{ t('billing.period.billingCurrency', { currency: subStore.subscription.billing_currency }) }}</p>
         </div>
       </div>
       <button
@@ -260,14 +278,14 @@ function featureLabel(key: string, val: boolean | number | null): string {
         @click="showCancelModal = true"
         class="text-xs text-red-400 hover:text-red-300 transition-colors whitespace-nowrap shrink-0"
       >
-        Cancel plan
+        {{ t('billing.period.cancelPlan') }}
       </button>
     </div>
 
     <!-- Tabs -->
     <div class="flex gap-1 bg-gray-200 border border-gray-400 rounded-xl p-1 w-fit">
       <button
-        v-for="tab in [{ key: 'plans', label: 'Plans', icon: 'lucide:zap' }, { key: 'history', label: 'Billing History', icon: 'lucide:receipt' }]"
+        v-for="tab in [{ key: 'plans', label: t('billing.tabs.plans'), icon: 'lucide:zap' }, { key: 'history', label: t('billing.tabs.history'), icon: 'lucide:receipt' }]"
         :key="tab.key"
         @click="activeTab = tab.key as BillingTab"
         :class="[
@@ -290,7 +308,7 @@ function featureLabel(key: string, val: boolean | number | null): string {
         <!-- Interval toggle -->
         <div class="flex items-center gap-2 bg-gray-200 border border-gray-400 rounded-lg p-1">
           <button
-            v-for="iv in [{ key: 'monthly', label: 'Monthly' }, { key: 'annual', label: 'Annual' }]"
+            v-for="iv in [{ key: 'monthly', label: t('billing.interval.monthly') }, { key: 'annual', label: t('billing.interval.annual') }]"
             :key="iv.key"
             @click="billingInterval = iv.key as 'monthly' | 'annual'"
             :class="[
@@ -315,7 +333,7 @@ function featureLabel(key: string, val: boolean | number | null): string {
             ]"
           >
             {{ cur }}
-            <span v-if="cur === recommendedCurrency" class="ml-1 text-[10px] text-green-700">(detected)</span>
+            <span v-if="cur === recommendedCurrency" class="ml-1 text-[10px] text-green-700">{{ t('billing.detected') }}</span>
           </button>
         </div>
       </div>
@@ -337,13 +355,13 @@ function featureLabel(key: string, val: boolean | number | null): string {
         >
           <!-- Popular badge -->
           <div v-if="plan.slug === 'pro'" class="absolute -top-2.5 left-1/2 -translate-x-1/2">
-            <span class="text-[10px] font-bold px-3 py-1 rounded-full bg-green-700 text-bg-100 whitespace-nowrap">Most popular</span>
+            <span class="text-[10px] font-bold px-3 py-1 rounded-full bg-green-700 text-bg-100 whitespace-nowrap">{{ t('billing.plan.mostPopular') }}</span>
           </div>
 
           <!-- Current plan badge -->
           <div v-if="currentPlanSlug === plan.slug" class="flex items-center gap-1.5 mb-3">
             <Icon icon="lucide:check-circle" class="w-3.5 h-3.5 text-green-400" />
-            <span class="text-[11px] text-green-400 font-medium">Current plan</span>
+            <span class="text-[11px] text-green-400 font-medium">{{ t('billing.plan.currentPlan') }}</span>
           </div>
 
           <div class="mb-4">
@@ -355,12 +373,12 @@ function featureLabel(key: string, val: boolean | number | null): string {
           <div class="mb-5">
             <div class="flex items-end gap-1">
               <span class="text-3xl font-bold text-gray-1000">
-                {{ plan.is_free ? 'Free' : planPrice(plan) }}
+                {{ plan.is_free ? t('billing.plan.free') : planPrice(plan) }}
               </span>
-              <span v-if="!plan.is_free" class="text-gray-700 text-sm mb-0.5">/mo</span>
+              <span v-if="!plan.is_free" class="text-gray-700 text-sm mb-0.5">{{ t('billing.plan.perMonth') }}</span>
             </div>
             <div v-if="billingInterval === 'annual' && !plan.is_free" class="text-xs text-gray-700 mt-1">
-              Billed {{ plan.prices[selectedCurrency].annual_display }}/year
+              {{ t('billing.plan.billedAnnual', { price: plan.prices[selectedCurrency].annual_display }) }}
               <span v-if="annualSaving(plan)" class="text-green-400 font-medium ml-1">{{ annualSaving(plan) }}</span>
             </div>
           </div>
@@ -378,10 +396,10 @@ function featureLabel(key: string, val: boolean | number | null): string {
             ]"
           >
             <Icon v-if="isInitializing" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin inline mr-1.5" />
-            {{ plan.is_free ? 'Downgrade to Free' : `Upgrade to ${plan.name}` }}
+            {{ plan.is_free ? t('billing.plan.downgradeFree') : t('billing.plan.upgradeTo', { name: plan.name }) }}
           </button>
           <div v-else class="w-full py-2.5 rounded-lg text-sm text-center text-gray-700 border border-gray-500 mb-5 cursor-default">
-            Current plan
+            {{ t('billing.plan.current') }}
           </div>
 
           <div class="border-t border-gray-400 pt-4 space-y-2.5">
@@ -412,19 +430,19 @@ function featureLabel(key: string, val: boolean | number | null): string {
         <div class="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center mb-4">
           <Icon icon="lucide:receipt" class="w-6 h-6 text-gray-700" />
         </div>
-        <p class="text-gray-700 text-sm">No billing history yet</p>
-        <p class="text-gray-700/60 text-xs mt-1">Your payment history will appear here after your first upgrade.</p>
+        <p class="text-gray-700 text-sm">{{ t('billing.history.empty') }}</p>
+        <p class="text-gray-700/60 text-xs mt-1">{{ t('billing.history.emptyHint') }}</p>
       </div>
 
       <div v-else class="bg-gray-200 border border-gray-400 rounded-xl overflow-hidden">
         <table class="w-full text-sm">
           <thead>
             <tr class="border-b border-gray-400">
-              <th class="text-left text-[11px] text-gray-700 font-medium px-5 py-3">Date</th>
-              <th class="text-left text-[11px] text-gray-700 font-medium px-5 py-3">Type</th>
-              <th class="text-left text-[11px] text-gray-700 font-medium px-5 py-3">Reference</th>
-              <th class="text-right text-[11px] text-gray-700 font-medium px-5 py-3">Amount</th>
-              <th class="text-right text-[11px] text-gray-700 font-medium px-5 py-3">Status</th>
+              <th class="text-left text-[11px] text-gray-700 font-medium px-5 py-3">{{ t('billing.history.date') }}</th>
+              <th class="text-left text-[11px] text-gray-700 font-medium px-5 py-3">{{ t('billing.history.type') }}</th>
+              <th class="text-left text-[11px] text-gray-700 font-medium px-5 py-3">{{ t('billing.history.reference') }}</th>
+              <th class="text-right text-[11px] text-gray-700 font-medium px-5 py-3">{{ t('billing.history.amount') }}</th>
+              <th class="text-right text-[11px] text-gray-700 font-medium px-5 py-3">{{ t('billing.history.status') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-400">
@@ -436,7 +454,7 @@ function featureLabel(key: string, val: boolean | number | null): string {
               </td>
               <td class="px-5 py-3.5 text-right text-sm font-semibold text-gray-1000">{{ tx.formatted_amount }}</td>
               <td class="px-5 py-3.5 text-right">
-                <span :class="statusBadge(tx.status)">{{ tx.status }}</span>
+                <span :class="statusBadge(tx.status)">{{ statusLabel(tx.status) }}</span>
               </td>
             </tr>
           </tbody>
@@ -448,13 +466,13 @@ function featureLabel(key: string, val: boolean | number | null): string {
             :disabled="txPage <= 1"
             @click="txPage--"
             class="text-xs text-gray-700 hover:text-gray-1000 disabled:opacity-30 transition-colors"
-          >← Prev</button>
-          <span class="text-xs text-gray-700">Page {{ txPage }} of {{ txLastPage }}</span>
+          >{{ t('billing.history.prev') }}</button>
+          <span class="text-xs text-gray-700">{{ t('billing.history.page', { page: txPage, total: txLastPage }) }}</span>
           <button
             :disabled="txPage >= txLastPage"
             @click="txPage++"
             class="text-xs text-gray-700 hover:text-gray-1000 disabled:opacity-30 transition-colors"
-          >Next →</button>
+          >{{ t('billing.history.next') }}</button>
         </div>
       </div>
     </template>
@@ -468,19 +486,19 @@ function featureLabel(key: string, val: boolean | number | null): string {
               <Icon icon="lucide:alert-triangle" class="w-5 h-5 text-red-400" />
             </div>
             <div>
-              <h3 class="text-gray-1000 font-semibold text-sm">Cancel subscription?</h3>
-              <p class="text-gray-700 text-xs mt-0.5">You'll keep access until your current period ends.</p>
+              <h3 class="text-gray-1000 font-semibold text-sm">{{ t('billing.cancelModal.title') }}</h3>
+              <p class="text-gray-700 text-xs mt-0.5">{{ t('billing.cancelModal.subtitle') }}</p>
             </div>
           </div>
           <p class="text-gray-700 text-xs leading-relaxed">
-            After cancellation, your account will automatically downgrade to the Starter plan at the end of your billing period. You will not be charged again.
+            {{ t('billing.cancelModal.body') }}
           </p>
           <div class="flex gap-3 pt-1">
             <button
               @click="showCancelModal = false"
               class="flex-1 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 text-sm transition-colors"
             >
-              Keep plan
+              {{ t('billing.cancelModal.keep') }}
             </button>
             <button
               @click="cancelSubscription"
@@ -488,7 +506,7 @@ function featureLabel(key: string, val: boolean | number | null): string {
               class="flex-1 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-sm font-semibold transition-colors disabled:opacity-50"
             >
               <Icon v-if="isCancelling" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin inline mr-1" />
-              {{ isCancelling ? 'Cancelling…' : 'Yes, cancel' }}
+              {{ isCancelling ? t('billing.cancelModal.cancelling') : t('billing.cancelModal.confirm') }}
             </button>
           </div>
         </div>

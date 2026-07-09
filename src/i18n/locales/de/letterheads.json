@@ -1,0 +1,74 @@
+{
+  "title": "Briefköpfe",
+  "count": "keine gebrandeten Vorlagen | eine gebrandete Vorlage | {count} gebrandete Vorlagen",
+  "new": "Neuer Briefkopf",
+  "stats": {
+    "totalTemplates": "Vorlagen gesamt",
+    "totalUses": "Verwendungen gesamt",
+    "mostUsed": "Am häufigsten genutzt",
+    "confidential": "Vertraulich",
+    "uses": "{count} Verwendungen"
+  },
+  "search": "Briefköpfe suchen…",
+  "empty": {
+    "title": "Keine Briefköpfe gefunden",
+    "hint": "Versuchen Sie eine andere Suche oder erstellen Sie einen neuen"
+  },
+  "preview": {
+    "re": "Betreff:",
+    "dear": "Sehr geehrter Kunde,",
+    "body1": "Wir freuen uns, Ihnen unser Angebot für Ihr bevorstehendes Projekt zu unterbreiten…",
+    "body2": "Anbei finden Sie die Details unserer Zusammenarbeit…",
+    "confidential": "Vertraulich",
+    "page": "Seite 1 von 1"
+  },
+  "themes": {
+    "classic": "Klassisch",
+    "modern": "Modern",
+    "bold": "Auffällig",
+    "minimal": "Minimalistisch",
+    "legal": "Rechtlich",
+    "executive": "Executive"
+  },
+  "card": {
+    "view": "Ansehen",
+    "startFromTemplate": "Mit einer Vorlage beginnen",
+    "usesAndLastUsed": "{uses} Verwendungen · Zuletzt genutzt {lastUsed}"
+  },
+  "table": {
+    "name": "Name",
+    "theme": "Design",
+    "watermark": "Wasserzeichen",
+    "uses": "Verwendungen",
+    "lastUsed": "Zuletzt genutzt"
+  },
+  "actions": {
+    "edit": "Bearbeiten",
+    "share": "Teilen",
+    "delete": "Löschen"
+  },
+  "lastUsed": {
+    "never": "Nie genutzt",
+    "today": "Heute",
+    "dayAgo": "vor 1 Tag",
+    "daysAgo": "vor {n} Tagen",
+    "weekAgo": "vor 1 Woche",
+    "weeksAgo": "vor {n} Wochen",
+    "monthsAgo": "vor {n} Monaten"
+  },
+  "deleteModal": {
+    "title": "Briefkopf löschen",
+    "subtitle": "Diese Aktion kann nicht rückgängig gemacht werden",
+    "confirmBefore": "Möchten Sie ",
+    "confirmAfter": " wirklich löschen?",
+    "cancel": "Abbrechen",
+    "delete": "Löschen"
+  },
+  "toasts": {
+    "loadFailed": "Briefköpfe konnten nicht geladen werden",
+    "deleted": "Briefkopf gelöscht",
+    "deleteFailed": "Briefkopf konnte nicht gelöscht werden"
+  },
+  "notFound": "Briefkopf nicht gefunden",
+  "back": "Zurück zu den Briefköpfen"
+}

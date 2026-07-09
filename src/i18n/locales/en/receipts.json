@@ -1,0 +1,54 @@
+{
+  "seoTitle": "Receipts",
+  "seoDescription": "Manage your receipts and confirm payments received.",
+  "title": "Receipts",
+  "subtitle": "Manage and track all your receipts",
+  "new": "New Receipt",
+  "summary": {
+    "total": "Total Receipts",
+    "finalized": "Finalized",
+    "draft": "Draft"
+  },
+  "filters": {
+    "all": "All",
+    "finalized": "Finalized",
+    "draft": "Draft",
+    "void": "Void"
+  },
+  "search": "Search receipts…",
+  "deleteSelected": "Delete {count} selected",
+  "count": "no receipts | one receipt | {count} receipts",
+  "table": {
+    "receipt": "Receipt",
+    "client": "Client",
+    "amount": "Amount",
+    "status": "Status",
+    "issueDate": "Issue Date",
+    "paymentMethod": "Payment Method",
+    "actions": "Actions"
+  },
+  "actions": {
+    "view": "View",
+    "edit": "Edit",
+    "finalize": "Finalize",
+    "delete": "Delete"
+  },
+  "empty": "No receipts match your filters",
+  "deleteModal": {
+    "title": "Delete {number}?",
+    "body": "This receipt will be permanently deleted. This action cannot be undone.",
+    "cancel": "Cancel",
+    "confirm": "Delete"
+  },
+  "toasts": {
+    "loadFailed": "Failed to load receipts",
+    "finalized": "{number} finalized",
+    "updateFailed": "Failed to update receipt",
+    "deleted": "{number} deleted",
+    "deleteFailed": "Failed to delete receipt",
+    "bulkDeleted": "no receipts deleted | one receipt deleted | {count} receipts deleted",
+    "bulkDeleteFailed": "Failed to delete some receipts"
+  },
+  "notFound": "Receipt not found",
+  "back": "Back to receipts"
+}

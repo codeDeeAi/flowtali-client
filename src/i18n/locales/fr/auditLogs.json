@@ -1,0 +1,24 @@
+{
+  "title": "Journaux d'audit",
+  "subtitle": "Historique complet des activités de votre organisation",
+  "exporting": "Exportation…",
+  "exportCsv": "Exporter en CSV",
+  "allEvents": "Tous les événements",
+  "search": "Rechercher dans les journaux…",
+  "count": "aucun événement | un événement | {count} événements",
+  "table": {
+    "event": "Événement",
+    "user": "Utilisateur",
+    "resource": "Ressource",
+    "ip": "Adresse IP",
+    "timestamp": "Horodatage",
+    "status": "Statut"
+  },
+  "system": "Système",
+  "formerMember": "Ancien membre",
+  "success": "Réussite",
+  "failed": "Échec",
+  "ok": "OK",
+  "fail": "Échec",
+  "empty": "Aucun journal d'audit trouvé"
+}

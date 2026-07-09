@@ -1,0 +1,5 @@
+{
+  "paidOn": "Paid {date}",
+  "noPaymentDate": "Payment date not set",
+  "linksEmptyBody": "Generate a link to share this receipt with clients"
+}

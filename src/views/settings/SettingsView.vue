@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { usePermissions } from '@/composables/usePermissions'
 import { SettingsService, type IOrgSettings, type INotificationPrefs } from '@/services/settings.service'
 
+const { t } = useI18n()
 const authStore = useAuthStore()
 const orgId     = computed(() => authStore.getCurrentOrganization?.id ?? '')
 const org       = computed(() => authStore.getCurrentOrganization)
@@ -14,12 +16,12 @@ const { can } = usePermissions()
 type Tab = 'general' | 'notifications' | 'security' | 'api'
 const activeTab = ref<Tab>('general')
 
-const tabs = [
-  { key: 'general'       as Tab, label: 'General',            icon: 'lucide:settings-2'   },
-  { key: 'notifications' as Tab, label: 'Notifications',      icon: 'lucide:bell'         },
-  { key: 'security'      as Tab, label: 'Security',           icon: 'lucide:shield-check' },
-  { key: 'api'           as Tab, label: 'API & Integrations', icon: 'lucide:code-2'       },
-]
+const tabs = computed(() => [
+  { key: 'general'       as Tab, label: t('settings.tabs.general'),       icon: 'lucide:settings-2'   },
+  { key: 'notifications' as Tab, label: t('settings.tabs.notifications'), icon: 'lucide:bell'         },
+  { key: 'security'      as Tab, label: t('settings.tabs.security'),      icon: 'lucide:shield-check' },
+  { key: 'api'           as Tab, label: t('settings.tabs.api'),           icon: 'lucide:code-2'       },
+])
 
 // ─── General / Security settings ─────────────────────────────────────────────
 
@@ -154,23 +156,23 @@ async function saveNotifPrefs() {
   } catch {} finally { isSavingNotif.value = false }
 }
 
-const notifGroups = [
+const notifGroups = computed(() => [
   {
-    group: 'Invoices',
+    group: t('settings.notifications.groups.invoices'),
     items: [
-      { key: 'invoice_paid'    as keyof INotificationPrefs, label: 'Invoice paid',    desc: 'When a client pays an invoice'         },
-      { key: 'invoice_overdue' as keyof INotificationPrefs, label: 'Invoice overdue', desc: 'When an invoice passes its due date'   },
-      { key: 'invoice_viewed'  as keyof INotificationPrefs, label: 'Invoice viewed',  desc: 'When a client views an invoice'        },
+      { key: 'invoice_paid'    as keyof INotificationPrefs, label: t('settings.notifications.items.invoice_paid.label'),    desc: t('settings.notifications.items.invoice_paid.desc')    },
+      { key: 'invoice_overdue' as keyof INotificationPrefs, label: t('settings.notifications.items.invoice_overdue.label'), desc: t('settings.notifications.items.invoice_overdue.desc') },
+      { key: 'invoice_viewed'  as keyof INotificationPrefs, label: t('settings.notifications.items.invoice_viewed.label'),  desc: t('settings.notifications.items.invoice_viewed.desc')  },
     ],
   },
   {
-    group: 'Team',
+    group: t('settings.notifications.groups.team'),
     items: [
-      { key: 'member_joined' as keyof INotificationPrefs, label: 'Member joined', desc: 'When a team member accepts an invite'  },
-      { key: 'role_changed'  as keyof INotificationPrefs, label: 'Role changed',  desc: 'When a member role is updated'         },
+      { key: 'member_joined' as keyof INotificationPrefs, label: t('settings.notifications.items.member_joined.label'), desc: t('settings.notifications.items.member_joined.desc') },
+      { key: 'role_changed'  as keyof INotificationPrefs, label: t('settings.notifications.items.role_changed.label'),  desc: t('settings.notifications.items.role_changed.desc')  },
     ],
   },
-]
+])
 
 // ─── API keys (static placeholder) ───────────────────────────────────────────
 
@@ -191,8 +193,8 @@ onMounted(async () => {
 
     <!-- Page header -->
     <div>
-      <h1 class="page-title">Settings</h1>
-      <p class="page-subtitle">Organization and account configuration</p>
+      <h1 class="page-title">{{ t('settings.title') }}</h1>
+      <p class="page-subtitle">{{ t('settings.subtitle') }}</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -217,7 +219,7 @@ onMounted(async () => {
 
         <!-- ─── General ─────────────────────────────────────── -->
         <div v-if="activeTab === 'general'" class="bg-gray-200 border border-gray-400 rounded-xl p-5 space-y-5">
-          <h3 class="text-sm font-semibold text-gray-1000">Organization Details</h3>
+          <h3 class="text-sm font-semibold text-gray-1000">{{ t('settings.general.orgDetails') }}</h3>
 
           <!-- Logo upload -->
           <div class="flex items-center gap-5">
@@ -228,8 +230,8 @@ onMounted(async () => {
             </div>
             <!-- Actions -->
             <div>
-              <div class="text-sm font-medium text-gray-1000 mb-1">Organization Logo</div>
-              <div class="text-xs text-gray-700 mb-3">PNG, JPG or WebP · max 2 MB</div>
+              <div class="text-sm font-medium text-gray-1000 mb-1">{{ t('settings.general.logo') }}</div>
+              <div class="text-xs text-gray-700 mb-3">{{ t('settings.general.logoHint') }}</div>
               <div class="flex items-center gap-2">
                 <input ref="logoInput" type="file" accept="image/*" class="hidden" @change="handleLogoChange" />
                 <button
@@ -241,7 +243,7 @@ onMounted(async () => {
                 >
                   <Icon v-if="isUploadingLogo" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
                   <Icon v-else icon="lucide:upload" class="w-3.5 h-3.5" />
-                  {{ isUploadingLogo ? 'Uploading…' : 'Upload logo' }}
+                  {{ isUploadingLogo ? t('settings.general.uploading') : t('settings.general.uploadLogo') }}
                 </button>
                 <button
                   v-if="orgLogoUrl && can('settings.update')"
@@ -250,7 +252,7 @@ onMounted(async () => {
                   class="text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
                   @click="deleteLogo"
                 >
-                  {{ isDeletingLogo ? 'Removing…' : 'Remove' }}
+                  {{ isDeletingLogo ? t('settings.general.removing') : t('settings.general.remove') }}
                 </button>
               </div>
             </div>
@@ -259,13 +261,13 @@ onMounted(async () => {
           <div class="h-px bg-gray-400"></div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label class="app-label">Organization Name</label>
-              <input class="app-inp" v-model="orgName" placeholder="Organization name" />
+              <label class="app-label">{{ t('settings.general.orgName') }}</label>
+              <input class="app-inp" v-model="orgName" :placeholder="t('settings.general.orgNamePlaceholder')" />
             </div>
             <div>
-              <label class="app-label">Industry</label>
+              <label class="app-label">{{ t('settings.general.industry') }}</label>
               <select v-model="settings.industry" class="app-select">
-                <option :value="null">Select industry…</option>
+                <option :value="null">{{ t('settings.general.selectIndustry') }}</option>
                 <option>Design & Creative</option>
                 <option>Technology</option>
                 <option>Finance</option>
@@ -278,9 +280,9 @@ onMounted(async () => {
               </select>
             </div>
             <div>
-              <label class="app-label">Company Size</label>
+              <label class="app-label">{{ t('settings.general.companySize') }}</label>
               <select v-model="settings.company_size" class="app-select">
-                <option :value="null">Select size…</option>
+                <option :value="null">{{ t('settings.general.selectSize') }}</option>
                 <option>1 (Just me)</option>
                 <option>2–10</option>
                 <option>11–50</option>
@@ -288,16 +290,16 @@ onMounted(async () => {
               </select>
             </div>
             <div class="sm:col-span-2">
-              <label class="app-label">Business Address</label>
-              <textarea v-model="settings.address" class="app-inp" rows="3" placeholder="123 Street, City, Country"></textarea>
+              <label class="app-label">{{ t('settings.general.businessAddress') }}</label>
+              <textarea v-model="settings.address" class="app-inp" rows="3" :placeholder="t('settings.general.addressPlaceholder')"></textarea>
             </div>
           </div>
 
           <div class="h-px bg-gray-400"></div>
-          <h3 class="text-sm font-semibold text-gray-1000">Default Invoice Settings</h3>
+          <h3 class="text-sm font-semibold text-gray-1000">{{ t('settings.general.defaultInvoiceSettings') }}</h3>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label class="app-label">Default Currency</label>
+              <label class="app-label">{{ t('settings.general.defaultCurrency') }}</label>
               <select v-model="settings.default_currency" class="app-select">
                 <option value="USD">USD ($)</option>
                 <option value="EUR">EUR (€)</option>
@@ -308,7 +310,7 @@ onMounted(async () => {
               </select>
             </div>
             <div>
-              <label class="app-label">Payment Terms</label>
+              <label class="app-label">{{ t('settings.general.paymentTerms') }}</label>
               <select v-model="settings.payment_terms" class="app-select">
                 <option>Net 30</option>
                 <option>Net 15</option>
@@ -318,7 +320,7 @@ onMounted(async () => {
               </select>
             </div>
             <div>
-              <label class="app-label">Default Tax Rate (%)</label>
+              <label class="app-label">{{ t('settings.general.defaultTaxRate') }}</label>
               <input v-model.number="settings.default_tax_rate" class="app-inp" type="number" min="0" max="100" step="0.01" />
             </div>
           </div>
@@ -330,17 +332,17 @@ onMounted(async () => {
               class="bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-60 flex items-center gap-2"
             >
               <Icon v-if="isSavingGen" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
-              Save Changes
+              {{ t('settings.general.saveChanges') }}
             </button>
             <span v-if="genSaved" class="text-xs text-green-400 flex items-center gap-1">
-              <Icon icon="lucide:check" class="w-3.5 h-3.5" /> Saved
+              <Icon icon="lucide:check" class="w-3.5 h-3.5" /> {{ t('settings.general.saved') }}
             </span>
           </div>
         </div>
 
         <!-- ─── Notifications ───────────────────────────────── -->
         <div v-if="activeTab === 'notifications'" class="bg-gray-200 border border-gray-400 rounded-xl p-5">
-          <h3 class="text-sm font-semibold text-gray-1000 mb-4">Notification Preferences</h3>
+          <h3 class="text-sm font-semibold text-gray-1000 mb-4">{{ t('settings.notifications.title') }}</h3>
           <div v-for="group in notifGroups" :key="group.group" class="mb-5">
             <div class="text-[10px] font-semibold uppercase tracking-widest text-gray-700 mb-3">{{ group.group }}</div>
             <div v-for="item in group.items" :key="item.key" class="flex items-center justify-between py-3 border-b border-gray-400 last:border-0">
@@ -351,11 +353,11 @@ onMounted(async () => {
               <div class="flex items-center gap-4">
                 <label class="flex items-center gap-1.5 cursor-pointer">
                   <input type="checkbox" v-model="notifPrefs[item.key].email" class="accent-green-700 w-3.5 h-3.5" />
-                  <span class="text-xs text-gray-700">Email</span>
+                  <span class="text-xs text-gray-700">{{ t('settings.notifications.email') }}</span>
                 </label>
                 <label class="flex items-center gap-1.5 cursor-pointer">
                   <input type="checkbox" v-model="notifPrefs[item.key].in_app" class="accent-green-700 w-3.5 h-3.5" />
-                  <span class="text-xs text-gray-700">In-app</span>
+                  <span class="text-xs text-gray-700">{{ t('settings.notifications.inApp') }}</span>
                 </label>
               </div>
             </div>
@@ -367,23 +369,23 @@ onMounted(async () => {
               class="bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-60 flex items-center gap-2"
             >
               <Icon v-if="isSavingNotif" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
-              Save Preferences
+              {{ t('settings.notifications.save') }}
             </button>
             <span v-if="notifSaved" class="text-xs text-green-400 flex items-center gap-1">
-              <Icon icon="lucide:check" class="w-3.5 h-3.5" /> Saved
+              <Icon icon="lucide:check" class="w-3.5 h-3.5" /> {{ t('settings.general.saved') }}
             </span>
           </div>
         </div>
 
         <!-- ─── Security ────────────────────────────────────── -->
         <div v-if="activeTab === 'security'" class="bg-gray-200 border border-gray-400 rounded-xl p-5 space-y-5">
-          <h3 class="text-sm font-semibold text-gray-1000">Security Settings</h3>
+          <h3 class="text-sm font-semibold text-gray-1000">{{ t('settings.security.title') }}</h3>
 
           <!-- Two-Factor Authentication -->
           <div class="flex items-start justify-between py-4 border-b border-gray-400">
             <div class="flex-1 pr-4">
-              <div class="text-sm font-medium text-gray-1000">Two-Factor Authentication</div>
-              <div class="text-xs text-gray-700 mt-0.5">Require 2FA for all organization members</div>
+              <div class="text-sm font-medium text-gray-1000">{{ t('settings.security.twoFactor') }}</div>
+              <div class="text-xs text-gray-700 mt-0.5">{{ t('settings.security.twoFactorDesc') }}</div>
             </div>
             <label class="app-toggle shrink-0">
               <input type="checkbox" v-model="settings.require_mfa" />
@@ -393,8 +395,8 @@ onMounted(async () => {
 
           <!-- IP Allowlist -->
           <div>
-            <div class="text-sm font-medium text-gray-1000 mb-1">IP Allowlist</div>
-            <div class="text-xs text-gray-700 mb-3">Restrict access to specific IP ranges. Leave empty to allow all IPs. Enter one IP or CIDR block per line.</div>
+            <div class="text-sm font-medium text-gray-1000 mb-1">{{ t('settings.security.ipAllowlist') }}</div>
+            <div class="text-xs text-gray-700 mb-3">{{ t('settings.security.ipAllowlistDesc') }}</div>
             <textarea
               v-model="ipAllowlistText"
               class="app-inp font-mono text-xs"
@@ -410,10 +412,10 @@ onMounted(async () => {
               class="bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-60 flex items-center gap-2"
             >
               <Icon v-if="isSavingSec" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
-              Save Security Settings
+              {{ t('settings.security.save') }}
             </button>
             <span v-if="secSaved" class="text-xs text-green-400 flex items-center gap-1">
-              <Icon icon="lucide:check" class="w-3.5 h-3.5" /> Saved
+              <Icon icon="lucide:check" class="w-3.5 h-3.5" /> {{ t('settings.general.saved') }}
             </span>
           </div>
         </div>
@@ -422,17 +424,17 @@ onMounted(async () => {
         <div v-if="activeTab === 'api'" class="space-y-4">
           <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
             <div class="flex items-center justify-between mb-4">
-              <h3 class="text-sm font-semibold text-gray-1000">API Keys</h3>
+              <h3 class="text-sm font-semibold text-gray-1000">{{ t('settings.api.title') }}</h3>
               <button class="flex items-center gap-1.5 bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors">
-                <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Generate Key
+                <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> {{ t('settings.api.generateKey') }}
               </button>
             </div>
             <div class="bg-green-700/5 border border-green-700/20 rounded-lg p-3 mb-4">
               <div class="flex items-center gap-2 mb-1">
                 <Icon icon="lucide:zap" class="w-3.5 h-3.5 text-green-700" />
-                <span class="text-xs font-medium text-green-700">API access is available on Pro and Business plans</span>
+                <span class="text-xs font-medium text-green-700">{{ t('settings.api.planNote') }}</span>
               </div>
-              <p class="text-xs text-gray-700">Use API keys to integrate Flowtali with your own systems and automate workflows.</p>
+              <p class="text-xs text-gray-700">{{ t('settings.api.planDesc') }}</p>
             </div>
             <div class="space-y-3">
               <div v-for="key in apiKeys" :key="key.id" class="flex items-center gap-3 p-3 border border-gray-400 rounded-lg">
@@ -441,11 +443,11 @@ onMounted(async () => {
                   <div class="font-mono text-xs text-gray-700 bg-gray-100 px-2 py-1 rounded w-fit">{{ key.masked }}</div>
                 </div>
                 <div class="text-right shrink-0">
-                  <span class="status-badge status-active text-[9px]">Active</span>
-                  <div class="text-[10px] text-gray-700 mt-1">Last used {{ key.lastUsed }}</div>
+                  <span class="status-badge status-active text-[9px]">{{ t('settings.api.active') }}</span>
+                  <div class="text-[10px] text-gray-700 mt-1">{{ t('settings.api.lastUsed', { when: key.lastUsed }) }}</div>
                 </div>
                 <button class="text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 px-2.5 py-1.5 rounded-md transition-colors shrink-0">
-                  Revoke
+                  {{ t('settings.api.revoke') }}
                 </button>
               </div>
             </div>

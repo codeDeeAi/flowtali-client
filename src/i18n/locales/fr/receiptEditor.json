@@ -1,0 +1,55 @@
+{
+  "toolbar": {
+    "receipts": "Reçus",
+    "new": "Nouveau reçu",
+    "edit": "Modifier le reçu",
+    "create": "Créer le reçu"
+  },
+  "from": {
+    "companyIssuedBy": "Entreprise / Émis par",
+    "bankReceivedTo": "Coordonnées bancaires (paiement reçu sur)"
+  },
+  "to": {
+    "selectClient": "Sélectionner un client",
+    "receivedFromName": "Reçu de (nom)",
+    "address": "Adresse"
+  },
+  "items": {
+    "descriptionPlaceholder": "Description du bien ou service",
+    "amountPaid": "Montant payé",
+    "totalReceived": "Total reçu",
+    "balanceDue": "Solde dû"
+  },
+  "design": {
+    "paymentStamp": "Tampon de paiement",
+    "balanceDueLabel": "Solde dû (montant restant dû)",
+    "balanceDueHint": "Affiché sur le reçu sous le total"
+  },
+  "settings": {
+    "receiptNumber": "Numéro de reçu",
+    "paymentDate": "Date de paiement",
+    "paymentMethod": "Mode de paiement",
+    "paymentMethodPlaceholder": "Préciser le mode…",
+    "referenceNumber": "Numéro de référence",
+    "referencePlaceholder": "TXN-123456",
+    "notes": "Notes / Infos complémentaires",
+    "notesPlaceholder": "Merci pour votre paiement…"
+  },
+  "preview": {
+    "receivedFrom": "Reçu de",
+    "reference": "Référence",
+    "method": "Mode",
+    "receivedTo": "Reçu sur",
+    "paymentReceivedTo": "Paiement reçu sur",
+    "issuedBy": "Émis par"
+  },
+  "toasts": {
+    "created": "Reçu créé !",
+    "saved": "Reçu enregistré !",
+    "saveFailed": "Échec de l'enregistrement du reçu."
+  },
+  "validation": {
+    "numberRequired": "Le numéro de reçu est requis.",
+    "descriptionRequired": "Toutes les lignes doivent avoir une description."
+  }
+}

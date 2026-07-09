@@ -1,0 +1,70 @@
+{
+  "title": "Roles & Permissions",
+  "subtitle": "no roles · manage access control | one role · manage access control | {count} roles · manage access control",
+  "businessRequired": "Business plan required",
+  "createRole": "Create Role",
+  "upgrade": {
+    "title": "Roles & Permissions requires Business",
+    "desc": "Create custom roles, assign granular permissions, and control exactly what each team member can access — available on the Business plan.",
+    "cta": "Upgrade to Business"
+  },
+  "rolesCount": "Roles ({count})",
+  "loading": "Loading…",
+  "noRoles": "No roles found.",
+  "system": "System",
+  "custom": "Custom",
+  "disabled": "Disabled",
+  "memberCount": "no members | one member | {count} members",
+  "selectRole": "Select a role to view its permissions",
+  "rolePermissions": "{name} Permissions",
+  "editRole": "Edit Role",
+  "matrix": {
+    "resource": "Resource"
+  },
+  "tags": {
+    "read": "Read",
+    "create": "Create",
+    "update": "Update",
+    "delete": "Delete",
+    "manage": "Manage"
+  },
+  "legend": {
+    "allowed": "Allowed",
+    "denied": "Denied",
+    "na": "N/A"
+  },
+  "createModal": {
+    "title": "Create Role",
+    "roleName": "Role Name",
+    "roleNamePlaceholder": "e.g. Accountant",
+    "description": "Description",
+    "descriptionPlaceholder": "What can this role do?",
+    "permissions": "Permissions",
+    "resetAll": "Reset all permissions",
+    "toggleGroup": "Toggle Group",
+    "cancel": "Cancel",
+    "creating": "Creating…",
+    "create": "Create Role"
+  },
+  "editModal": {
+    "title": "Edit Role",
+    "cancel": "Cancel",
+    "saving": "Saving…",
+    "save": "Save Changes"
+  },
+  "deleteModal": {
+    "title": "Delete \"{name}\"?",
+    "body": "This role will be permanently removed. Members assigned to it will lose these permissions.",
+    "cancel": "Cancel",
+    "delete": "Delete Role"
+  },
+  "toasts": {
+    "loadFailed": "Failed to load roles.",
+    "created": "Role \"{name}\" created",
+    "createFailed": "Failed to create role.",
+    "updated": "Role \"{name}\" updated",
+    "updateFailed": "Failed to update role.",
+    "deleted": "Role \"{name}\" deleted",
+    "deleteFailed": "Failed to delete role."
+  }
+}

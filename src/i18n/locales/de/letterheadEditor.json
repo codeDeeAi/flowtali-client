@@ -1,0 +1,95 @@
+{
+  "toolbar": {
+    "letterheads": "Briefköpfe",
+    "new": "Neuer Briefkopf",
+    "edit": "Briefkopf bearbeiten",
+    "create": "Erstellen"
+  },
+  "toasts": {
+    "created": "Briefkopf erstellt!",
+    "saved": "Briefkopf gespeichert!",
+    "saveFailed": "Briefkopf konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
+  },
+  "tabs": {
+    "company": "Unternehmen",
+    "content": "Inhalt",
+    "design": "Design",
+    "settings": "Einstellungen",
+    "preview": "Vorschau"
+  },
+  "company": {
+    "quickFillClients": "Aus Kunden ausfüllen",
+    "addOne": "Hinzufügen",
+    "companyLogo": "Firmenlogo",
+    "useThisLogo": "Dieses Logo verwenden",
+    "companyName": "Firmenname",
+    "companyNamePlaceholder": "ACME STUDIO",
+    "tagline": "Slogan / Rolle",
+    "taglinePlaceholder": "Kreativagentur & Digitalstudio",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "website": "Website",
+    "address": "Adresse",
+    "regNumber": "Reg.-Nr.",
+    "vatNumber": "USt-IdNr.",
+    "signatureImage": "Unterschriftsbild",
+    "useThisSignature": "Diese Unterschrift verwenden"
+  },
+  "content": {
+    "templateName": "Vorlagenname",
+    "templateNamePlaceholder": "Agenturangebot",
+    "subjectRe": "Betreff / Re:",
+    "subjectPlaceholder": "Betreff: Projektbeauftragung",
+    "salutation": "Anrede",
+    "salutationPlaceholder": "Sehr geehrter [Kundenname],",
+    "bodyText": "Textkörper",
+    "bodyPlaceholder": "Brieftext…",
+    "closing": "Grußformel",
+    "closingPlaceholder": "Mit freundlichen Grüßen,",
+    "signerName": "Name des Unterzeichners",
+    "signerTitle": "Titel des Unterzeichners",
+    "footerColumns": "Fußzeilenspalten",
+    "use": "Verwenden",
+    "left": "Links",
+    "center": "Mitte",
+    "right": "Rechts"
+  },
+  "design": {
+    "palette": "Palette",
+    "headerLayout": "Kopfzeilen-Layout",
+    "stamp": "Stempel",
+    "watermark": "Wasserzeichen",
+    "watermarkColor": "Wasserzeichenfarbe",
+    "layoutLeft": "Links",
+    "layoutCenter": "Mitte",
+    "layoutRight": "Rechts",
+    "layoutSplit": "Geteilt"
+  },
+  "toggles": {
+    "topBar": "Akzentleiste oben",
+    "bottomBar": "Akzentleiste unten",
+    "companyLogo": "Firmenlogo",
+    "headerDivider": "Kopfzeilen-Trennlinie",
+    "footer": "Fußzeile",
+    "date": "Datum",
+    "refNumber": "Referenznummer",
+    "lineNumbers": "Zeilennummern"
+  },
+  "settings": {
+    "templateName": "Vorlagenname",
+    "date": "Datum",
+    "refNumber": "Referenznummer",
+    "paperSize": "Papierformat",
+    "orientation": "Ausrichtung",
+    "portrait": "Hochformat",
+    "landscape": "Querformat"
+  },
+  "themeDesc": {
+    "classic": "Traditionell & professionell",
+    "modern": "Klares Seitenleisten-Layout",
+    "minimal": "Zurückhaltend & elegant",
+    "bold": "Starke Kopfzeilenwirkung",
+    "legal": "Formaler Dokumentstil",
+    "executive": "Premium-Zweispaltig"
+  }
+}

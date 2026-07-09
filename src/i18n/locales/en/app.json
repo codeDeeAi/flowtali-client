@@ -1,0 +1,99 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "invoices": "Invoices",
+    "receipts": "Receipts",
+    "letterheads": "Letterheads",
+    "clients": "Clients",
+    "members": "Members",
+    "roles": "Roles & Permissions",
+    "rolesShort": "Roles",
+    "orgPreferences": "Org Preferences",
+    "auditLogs": "Audit Logs",
+    "analytics": "Analytics",
+    "billing": "Billing",
+    "settings": "Settings",
+    "profile": "My Profile"
+  },
+  "sections": {
+    "documents": "Documents",
+    "organization": "Organization",
+    "workspace": "Workspace",
+    "account": "Account"
+  },
+  "pageTitles": {
+    "dashboard": "Dashboard",
+    "invoices": "Invoices",
+    "invoicesCreate": "New Invoice",
+    "invoicesView": "Invoice",
+    "invoicesEdit": "Edit Invoice",
+    "receipts": "Receipts",
+    "receiptsCreate": "New Receipt",
+    "receiptsView": "Receipt",
+    "receiptsEdit": "Edit Receipt",
+    "letterheads": "Letterheads",
+    "letterheadsCreate": "New Letterhead",
+    "letterheadsView": "Letterhead",
+    "letterheadsEdit": "Edit Letterhead",
+    "projects": "Projects",
+    "projectsCreate": "New Project",
+    "projectsView": "Project",
+    "projectsEdit": "Edit Project",
+    "clients": "Clients",
+    "clientsCreate": "New Client",
+    "clientsView": "Client",
+    "clientsEdit": "Edit Client",
+    "members": "Members",
+    "membersView": "Member",
+    "roles": "Roles & Permissions",
+    "orgPreferences": "Org Preferences",
+    "auditLogs": "Audit Logs",
+    "analytics": "Analytics",
+    "billing": "Billing",
+    "subscription": "Subscription",
+    "settings": "Settings",
+    "profile": "My Profile"
+  },
+  "header": {
+    "toggleSidebar": "Toggle sidebar",
+    "language": "Language",
+    "profileMenu": "Profile menu"
+  },
+  "sidebar": {
+    "selectOrg": "Select organization",
+    "yourOrgs": "Your Organizations",
+    "createOrg": "Create organization",
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar",
+    "close": "Close sidebar",
+    "feedback": "Feedback",
+    "shareFeedback": "Share feedback"
+  },
+  "createOrg": {
+    "title": "Create Organization",
+    "subtitle": "Set up a new workspace for your team or business",
+    "nameLabel": "Organization Name",
+    "typeLabel": "Type",
+    "business": "Business",
+    "businessDesc": "Team & client management",
+    "personal": "Personal",
+    "personalDesc": "Solo freelancer mode",
+    "cancel": "Cancel",
+    "create": "Create",
+    "creating": "Creating…"
+  },
+  "userMenu": {
+    "myProfile": "My Profile",
+    "settings": "Settings",
+    "signOut": "Sign out",
+    "signingOut": "Signing out…"
+  },
+  "bottomNav": {
+    "home": "Home",
+    "invoices": "Invoices",
+    "clients": "Clients",
+    "more": "More",
+    "newInvoice": "New Invoice"
+  }
+}

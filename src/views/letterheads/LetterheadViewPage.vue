@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import { useNotification } from '@/composables/notification'
 import ShareLinkModal from '@/components/modals/ShareLinkModal.vue'
@@ -10,6 +11,7 @@ import { SharedLinksService, type ISharedLink } from '@/services/shared-links.se
 
 const router    = useRouter()
 const route     = useRoute()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const { notify } = useNotification()
 const orgId     = computed(() => authStore.getCurrentOrganization?.id ?? '')
@@ -52,10 +54,7 @@ const activeLinks  = computed(() => links.value.filter(l => l.is_active && !isEx
 const privateLinks = computed(() => links.value.filter(l => l.visibility === 'private').length)
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-const templateLabel: Record<string, string> = {
-  classic: 'Classic', modern: 'Modern', minimal: 'Minimal',
-  bold: 'Bold', legal: 'Legal', executive: 'Executive',
-}
+const templateLabel = (theme: string) => t(`letterheads.themes.${theme}`)
 const templateBadgeClass: Record<string, string> = {
   classic:   'bg-green-700/10 text-green-700 border-green-700/20',
   modern:    'bg-blue-500/10 text-blue-400 border-blue-500/20',
@@ -69,7 +68,7 @@ const formatDate = (d: string | null) => {
   if (!d) return ''
   const [y, m, day] = d.split('-')
   if (!y || !m || !day) return d
-  return new Date(+y, +m - 1, +day).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  return new Date(+y, +m - 1, +day).toLocaleDateString(locale.value, { year: 'numeric', month: 'long', day: 'numeric' })
 }
 const fmtFooter = (s: string | null) => (s ?? '').replace('{page}', '1').replace('{total}', '1')
 
@@ -80,10 +79,10 @@ async function handleDelete() {
   isDeleting.value = true
   try {
     await LetterheadService.delete(orgId.value, lh.value.id)
-    notify(`${lh.value.name} deleted`, 'success')
+    notify(t('letterheads.toasts.deleted'), 'success')
     router.push({ name: 'letterheads' })
   } catch {
-    notify('Failed to delete letterhead', 'error')
+    notify(t('letterheads.toasts.deleteFailed'), 'error')
     isDeleting.value = false
   }
 }
@@ -93,41 +92,41 @@ function linkUrl(token: string): string {
 }
 function copyLink(token: string) {
   navigator.clipboard.writeText(linkUrl(token)).catch(() => {})
-  notify('Link copied to clipboard', 'success')
+  notify(t('invoiceView.toasts.linkCopied'), 'success')
 }
 function isExpired(link: ISharedLink): boolean {
   if (!link.expires_at) return false
   return new Date(link.expires_at) < new Date()
 }
 function statusLabel(link: ISharedLink) {
-  if (!link.is_active)  return { text: 'Revoked', cls: 'text-red-400 bg-red-500/10 border-red-500/20' }
-  if (isExpired(link))  return { text: 'Expired', cls: 'text-amber-400 bg-amber-500/10 border-amber-500/20' }
-  return { text: 'Active', cls: 'text-green-400 bg-green-500/10 border-green-500/20' }
+  if (!link.is_active)  return { text: t('invoiceView.links.statusRevoked'), cls: 'text-red-400 bg-red-500/10 border-red-500/20' }
+  if (isExpired(link))  return { text: t('invoiceView.links.statusExpired'), cls: 'text-amber-400 bg-amber-500/10 border-amber-500/20' }
+  return { text: t('invoiceView.links.statusActive'), cls: 'text-green-400 bg-green-500/10 border-green-500/20' }
 }
 function fmtDate(iso: string | null) {
   if (!iso) return '—'
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  return new Date(iso).toLocaleDateString(locale.value, { month: 'short', day: 'numeric', year: 'numeric' })
 }
 function fmtDateTime(iso: string | null) {
-  if (!iso) return 'Never'
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+  if (!iso) return t('invoiceView.links.never')
+  return new Date(iso).toLocaleDateString(locale.value, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 function expiryLabel(link: ISharedLink) {
-  if (!link.expires_at) return 'Never expires'
-  if (isExpired(link))  return `Expired ${fmtDate(link.expires_at)}`
-  return `Expires ${fmtDate(link.expires_at)}`
+  if (!link.expires_at) return t('invoiceView.links.neverExpires')
+  if (isExpired(link))  return t('invoiceView.links.expiredOn', { date: fmtDate(link.expires_at) })
+  return t('invoiceView.links.expiresOn', { date: fmtDate(link.expires_at) })
 }
 
 function lastUsedLabel(): string {
-  if (!lh.value?.last_used_at) return 'Never used'
+  if (!lh.value?.last_used_at) return t('letterheads.lastUsed.never')
   const d = new Date(lh.value.last_used_at)
   const days = Math.floor((Date.now() - d.getTime()) / 86_400_000)
-  if (days === 0) return 'Today'
-  if (days === 1) return '1 day ago'
-  if (days < 7)  return `${days} days ago`
-  if (days < 14) return '1 week ago'
-  if (days < 30) return `${Math.floor(days / 7)} weeks ago`
-  return `${Math.floor(days / 30)} months ago`
+  if (days === 0) return t('letterheads.lastUsed.today')
+  if (days === 1) return t('letterheads.lastUsed.dayAgo')
+  if (days < 7)  return t('letterheads.lastUsed.daysAgo', { n: days })
+  if (days < 14) return t('letterheads.lastUsed.weekAgo')
+  if (days < 30) return t('letterheads.lastUsed.weeksAgo', { n: Math.floor(days / 7) })
+  return t('letterheads.lastUsed.monthsAgo', { n: Math.floor(days / 30) })
 }
 </script>
 
@@ -141,8 +140,8 @@ function lastUsedLabel(): string {
 
     <!-- Not found -->
     <div v-else-if="notFound" class="flex flex-col items-center justify-center py-24 text-center">
-      <p class="text-gray-700">Letterhead not found</p>
-      <button @click="router.push({ name: 'letterheads' })" class="mt-4 text-green-700 text-sm hover:underline">Back to letterheads</button>
+      <p class="text-gray-700">{{ t('letterheads.notFound') }}</p>
+      <button @click="router.push({ name: 'letterheads' })" class="mt-4 text-green-700 text-sm hover:underline">{{ t('letterheads.back') }}</button>
     </div>
 
     <template v-else-if="lh">
@@ -157,31 +156,31 @@ function lastUsedLabel(): string {
             <div class="flex items-center gap-2 flex-wrap">
               <h1 class="page-title">{{ lh.name }}</h1>
               <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium', templateBadgeClass[lh.theme] ?? 'bg-gray-400 text-gray-700 border-gray-500']">
-                {{ templateLabel[lh.theme] ?? lh.theme }}
+                {{ templateLabel(lh.theme) }}
               </span>
               <span v-if="lh.stamp" class="text-[9px] px-1.5 py-0.5 rounded border font-medium" :style="{ color: stampColor[lh.stamp], borderColor: stampColor[lh.stamp] + '60', backgroundColor: stampColor[lh.stamp] + '15' }">
                 {{ lh.stamp }}
               </span>
             </div>
-            <p class="page-subtitle">{{ lh.company }} · {{ lh.uses }} uses · Last used {{ lastUsedLabel() }}</p>
+            <p class="page-subtitle">{{ t('letterheadView.subtitle', { company: lh.company, uses: lh.uses, lastUsed: lastUsedLabel() }) }}</p>
           </div>
         </div>
         <div class="flex items-center gap-2 ml-9 sm:ml-0">
           <button @click="handlePrint" class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors">
-            <Icon icon="lucide:printer" class="w-3.5 h-3.5" /> Print / PDF
+            <Icon icon="lucide:printer" class="w-3.5 h-3.5" /> {{ t('invoiceView.actions.print') }}
           </button>
           <button
             @click="showShareModal = true"
             class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors"
           >
-            <Icon icon="lucide:share-2" class="w-3.5 h-3.5" /> Share
+            <Icon icon="lucide:share-2" class="w-3.5 h-3.5" /> {{ t('invoiceView.actions.share') }}
             <span v-if="activeLinks > 0" class="ml-0.5 px-1.5 py-0.5 bg-green-700/20 text-green-700 text-[9px] font-bold rounded-full">{{ activeLinks }}</span>
           </button>
           <button
             @click="router.push({ name: 'letterheads.edit', params: { id: lh.id } })"
             class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-green-700 hover:bg-green-700/90 text-bg-100 font-semibold rounded-lg transition-colors"
           >
-            <Icon icon="lucide:pencil" class="w-3.5 h-3.5" /> Edit
+            <Icon icon="lucide:pencil" class="w-3.5 h-3.5" /> {{ t('invoiceView.actions.edit') }}
           </button>
           <button @click="showDeleteConfirm = true" class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-lg transition-colors">
             <Icon icon="lucide:trash-2" class="w-3.5 h-3.5" />
@@ -223,10 +222,10 @@ function lastUsedLabel(): string {
               </div>
               <div v-if="lh.show_divider" class="h-px mb-8" :style="{ backgroundColor: lh.accent_color + '40' }"></div>
               <div v-if="lh.show_date || lh.show_ref" class="flex gap-8 mb-6 text-xs">
-                <div v-if="lh.show_date"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Date</div><div class="font-semibold text-gray-700">{{ formatDate(lh.date) }}</div></div>
-                <div v-if="lh.show_ref"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">Reference</div><div class="font-semibold text-gray-700 font-mono">{{ lh.ref_number }}</div></div>
+                <div v-if="lh.show_date"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('letterheadView.doc.date') }}</div><div class="font-semibold text-gray-700">{{ formatDate(lh.date) }}</div></div>
+                <div v-if="lh.show_ref"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('letterheadView.doc.reference') }}</div><div class="font-semibold text-gray-700 font-mono">{{ lh.ref_number }}</div></div>
               </div>
-              <div v-if="lh.subject" class="mb-6"><span class="font-semibold text-gray-800">Re: </span><span class="text-gray-700">{{ lh.subject }}</span></div>
+              <div v-if="lh.subject" class="mb-6"><span class="font-semibold text-gray-800">{{ t('letterheadView.doc.re') }} </span><span class="text-gray-700">{{ lh.subject }}</span></div>
               <p v-if="lh.salutation" class="text-gray-700 mb-4">{{ lh.salutation }}</p>
               <div class="text-gray-600 leading-relaxed mb-8 whitespace-pre-line" style="line-height:1.8">{{ lh.body }}</div>
               <div class="mb-10">
@@ -237,8 +236,8 @@ function lastUsedLabel(): string {
                 <div class="text-xs text-gray-400">{{ lh.company }}</div>
               </div>
               <div v-if="lh.reg_number || lh.vat_number" class="border-t border-gray-100 pt-4 text-xs text-gray-400 flex flex-wrap gap-x-6">
-                <span v-if="lh.reg_number">Reg. No: {{ lh.reg_number }}</span>
-                <span v-if="lh.vat_number">VAT: {{ lh.vat_number }}</span>
+                <span v-if="lh.reg_number">{{ t('letterheadView.doc.regNo') }} {{ lh.reg_number }}</span>
+                <span v-if="lh.vat_number">{{ t('letterheadView.doc.vat') }} {{ lh.vat_number }}</span>
               </div>
               <div v-if="lh.show_footer" class="absolute bottom-8 left-12 right-12 flex justify-between items-center" style="font-size:10px">
                 <span class="text-gray-400">{{ fmtFooter(lh.footer_left) || lh.website }}</span>
@@ -269,17 +268,17 @@ function lastUsedLabel(): string {
               <div v-if="lh.tagline" class="text-white/70 text-xs mb-6">{{ lh.tagline }}</div>
               <div class="space-y-4 mt-auto">
                 <div>
-                  <div class="text-white/50 uppercase tracking-widest mb-1" style="font-size:9px">Contact</div>
+                  <div class="text-white/50 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('letterheadView.doc.contact') }}</div>
                   <div v-if="lh.email"   class="text-white/80 text-xs">{{ lh.email }}</div>
                   <div v-if="lh.phone"   class="text-white/80 text-xs">{{ lh.phone }}</div>
                   <div v-if="lh.website" class="text-white/80 text-xs">{{ lh.website }}</div>
                 </div>
                 <div v-if="lh.address">
-                  <div class="text-white/50 uppercase tracking-widest mb-1" style="font-size:9px">Address</div>
+                  <div class="text-white/50 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('letterheadView.doc.address') }}</div>
                   <div class="text-white/80 text-xs whitespace-pre-line leading-relaxed">{{ lh.address }}</div>
                 </div>
                 <div v-if="lh.reg_number || lh.vat_number">
-                  <div class="text-white/50 uppercase tracking-widest mb-1" style="font-size:9px">Registration</div>
+                  <div class="text-white/50 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('letterheadView.doc.registration') }}</div>
                   <div v-if="lh.reg_number" class="text-white/70 text-xs font-mono">{{ lh.reg_number }}</div>
                   <div v-if="lh.vat_number" class="text-white/70 text-xs font-mono">{{ lh.vat_number }}</div>
                 </div>
@@ -288,10 +287,10 @@ function lastUsedLabel(): string {
             <!-- Right content -->
             <div class="flex-1 p-10 flex flex-col" style="position:relative;z-index:3">
               <div class="flex justify-end gap-6 mb-8 text-xs">
-                <div v-if="lh.show_date" class="text-right"><div class="text-gray-400 uppercase tracking-widest mb-0.5" style="font-size:9px">Date</div><div class="font-semibold text-gray-700">{{ formatDate(lh.date) }}</div></div>
-                <div v-if="lh.show_ref" class="text-right"><div class="text-gray-400 uppercase tracking-widest mb-0.5" style="font-size:9px">Reference</div><div class="font-semibold text-gray-700 font-mono">{{ lh.ref_number }}</div></div>
+                <div v-if="lh.show_date" class="text-right"><div class="text-gray-400 uppercase tracking-widest mb-0.5" style="font-size:9px">{{ t('letterheadView.doc.date') }}</div><div class="font-semibold text-gray-700">{{ formatDate(lh.date) }}</div></div>
+                <div v-if="lh.show_ref" class="text-right"><div class="text-gray-400 uppercase tracking-widest mb-0.5" style="font-size:9px">{{ t('letterheadView.doc.reference') }}</div><div class="font-semibold text-gray-700 font-mono">{{ lh.ref_number }}</div></div>
               </div>
-              <div v-if="lh.subject" class="text-base font-bold mb-6" :style="{ color: lh.accent_color }">Re: {{ lh.subject }}</div>
+              <div v-if="lh.subject" class="text-base font-bold mb-6" :style="{ color: lh.accent_color }">{{ t('letterheadView.doc.re') }} {{ lh.subject }}</div>
               <p v-if="lh.salutation" class="text-gray-700 mb-4">{{ lh.salutation }}</p>
               <div class="text-gray-600 leading-relaxed mb-10 whitespace-pre-line flex-1" style="line-height:1.8">{{ lh.body }}</div>
               <div class="mb-6">
@@ -373,8 +372,8 @@ function lastUsedLabel(): string {
             </div>
             <div class="p-12" style="position:relative;z-index:3">
               <div class="flex gap-8 mb-8 text-xs">
-                <div v-if="lh.show_date"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Date</div><div class="font-bold text-gray-800">{{ formatDate(lh.date) }}</div></div>
-                <div v-if="lh.show_ref"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Reference</div><div class="font-bold text-gray-800 font-mono">{{ lh.ref_number }}</div></div>
+                <div v-if="lh.show_date"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('letterheadView.doc.date') }}</div><div class="font-bold text-gray-800">{{ formatDate(lh.date) }}</div></div>
+                <div v-if="lh.show_ref"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('letterheadView.doc.reference') }}</div><div class="font-bold text-gray-800 font-mono">{{ lh.ref_number }}</div></div>
               </div>
               <div v-if="lh.subject" class="text-lg font-black text-gray-900 mb-6 pb-3" :style="{ borderBottom: `3px solid ${lh.accent_color}` }">{{ lh.subject }}</div>
               <p v-if="lh.salutation" class="text-gray-700 mb-4">{{ lh.salutation }}</p>
@@ -384,9 +383,9 @@ function lastUsedLabel(): string {
               <div class="font-bold text-gray-800">{{ lh.signer_name }}</div>
               <div class="text-xs text-gray-500">{{ lh.signer_title }}</div>
               <div v-if="lh.address" class="mt-6 p-4 rounded text-xs text-gray-500 leading-relaxed" :style="{ backgroundColor: lh.accent_color + '10', borderLeft: `3px solid ${lh.accent_color}` }">
-                <span class="font-semibold text-gray-700">Address: </span>{{ lh.address.replace(/\n/g, ', ') }}
-                <span v-if="lh.reg_number"> · Reg: {{ lh.reg_number }}</span>
-                <span v-if="lh.vat_number"> · VAT: {{ lh.vat_number }}</span>
+                <span class="font-semibold text-gray-700">{{ t('letterheadView.doc.addressInline') }} </span>{{ lh.address.replace(/\n/g, ', ') }}
+                <span v-if="lh.reg_number"> · {{ t('letterheadView.doc.regShort') }} {{ lh.reg_number }}</span>
+                <span v-if="lh.vat_number"> · {{ t('letterheadView.doc.vat') }} {{ lh.vat_number }}</span>
               </div>
               <div v-if="lh.show_footer" class="absolute bottom-8 left-12 right-12 flex justify-between" style="font-size:10px">
                 <span class="text-gray-400">{{ fmtFooter(lh.footer_left) || lh.website }}</span>
@@ -431,9 +430,9 @@ function lastUsedLabel(): string {
               <div class="text-sm text-gray-600">{{ lh.signer_title }}</div>
               <div class="text-sm text-gray-600">{{ lh.company }}</div>
               <div v-if="lh.reg_number || lh.vat_number" class="mt-4 text-xs text-gray-400">
-                <span v-if="lh.reg_number">Reg. No: {{ lh.reg_number }}</span>
+                <span v-if="lh.reg_number">{{ t('letterheadView.doc.regNo') }} {{ lh.reg_number }}</span>
                 <span v-if="lh.reg_number && lh.vat_number"> · </span>
-                <span v-if="lh.vat_number">VAT: {{ lh.vat_number }}</span>
+                <span v-if="lh.vat_number">{{ t('letterheadView.doc.vat') }} {{ lh.vat_number }}</span>
               </div>
             </div>
             <div v-if="lh.show_footer" class="absolute bottom-0 left-0 right-0 px-12 pb-6">
@@ -476,9 +475,9 @@ function lastUsedLabel(): string {
               </div>
               <div class="flex mb-8" style="height:3px;border-radius:2px" :style="{ backgroundColor: lh.accent_color }"></div>
               <div class="grid grid-cols-3 gap-4 border border-gray-100 rounded p-4 mb-8 text-xs" :style="{ backgroundColor: lh.accent_color + '08' }">
-                <div v-if="lh.show_date"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Date</div><div class="font-semibold text-gray-700">{{ formatDate(lh.date) }}</div></div>
-                <div v-if="lh.show_ref"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Reference</div><div class="font-semibold text-gray-700 font-mono">{{ lh.ref_number }}</div></div>
-                <div v-if="lh.subject"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">Subject</div><div class="font-semibold text-gray-700">{{ lh.subject }}</div></div>
+                <div v-if="lh.show_date"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('letterheadView.doc.date') }}</div><div class="font-semibold text-gray-700">{{ formatDate(lh.date) }}</div></div>
+                <div v-if="lh.show_ref"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('letterheadView.doc.reference') }}</div><div class="font-semibold text-gray-700 font-mono">{{ lh.ref_number }}</div></div>
+                <div v-if="lh.subject"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:9px">{{ t('letterheadView.doc.subject') }}</div><div class="font-semibold text-gray-700">{{ lh.subject }}</div></div>
               </div>
               <p v-if="lh.salutation" class="text-gray-700 mb-5">{{ lh.salutation }}</p>
               <div class="text-gray-600 leading-relaxed mb-10 whitespace-pre-line" style="line-height:1.9">{{ lh.body }}</div>
@@ -488,8 +487,8 @@ function lastUsedLabel(): string {
               <div class="text-xs text-gray-500">{{ lh.signer_title }}</div>
               <div class="text-xs text-gray-400">{{ lh.company }}</div>
               <div v-if="lh.reg_number || lh.vat_number" class="mt-2 text-xs text-gray-400">
-                <span v-if="lh.reg_number">Reg: {{ lh.reg_number }}</span>
-                <span v-if="lh.vat_number"> · VAT: {{ lh.vat_number }}</span>
+                <span v-if="lh.reg_number">{{ t('letterheadView.doc.regShort') }} {{ lh.reg_number }}</span>
+                <span v-if="lh.vat_number"> · {{ t('letterheadView.doc.vat') }} {{ lh.vat_number }}</span>
               </div>
               <div v-if="lh.show_footer" class="absolute bottom-8 left-12 right-12 border-t-2 pt-4 flex justify-between" :style="{ borderColor: lh.accent_color + '40' }">
                 <span class="text-gray-400" style="font-size:10px">{{ fmtFooter(lh.footer_left) || lh.website }}</span>
@@ -507,27 +506,27 @@ function lastUsedLabel(): string {
 
           <!-- Info card -->
           <div class="bg-gray-200 border border-gray-400 rounded-xl p-4 space-y-3">
-            <p class="text-[10px] uppercase tracking-wider text-gray-700 font-semibold">Letterhead Details</p>
+            <p class="text-[10px] uppercase tracking-wider text-gray-700 font-semibold">{{ t('letterheadView.details.title') }}</p>
             <div class="grid grid-cols-2 gap-2">
               <div class="bg-gray-100/50 rounded-lg p-2.5 text-center">
                 <div class="text-lg font-bold text-gray-1000">{{ lh.uses }}</div>
-                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">Total Uses</div>
+                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">{{ t('letterheadView.details.totalUses') }}</div>
               </div>
               <div class="bg-gray-100/50 rounded-lg p-2.5 text-center">
                 <div class="text-lg font-bold text-gray-1000">{{ sortedLinks.length }}</div>
-                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">Shared Links</div>
+                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">{{ t('invoiceView.links.title') }}</div>
               </div>
             </div>
             <div class="space-y-1.5 text-xs text-gray-700 pt-0.5">
               <div class="flex items-center justify-between">
-                <span>Last used</span><span class="text-gray-900">{{ lastUsedLabel() }}</span>
+                <span>{{ t('letterheadView.details.lastUsed') }}</span><span class="text-gray-900">{{ lastUsedLabel() }}</span>
               </div>
               <div class="flex items-center justify-between">
-                <span>Template</span>
-                <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium', templateBadgeClass[lh.theme] ?? '']">{{ templateLabel[lh.theme] }}</span>
+                <span>{{ t('letterheadView.details.template') }}</span>
+                <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium', templateBadgeClass[lh.theme] ?? '']">{{ templateLabel(lh.theme) }}</span>
               </div>
               <div class="flex items-center justify-between">
-                <span>Watermark</span>
+                <span>{{ t('letterheadView.details.watermark') }}</span>
                 <span class="text-gray-900 font-mono text-[10px]">{{ lh.watermark || '—' }}</span>
               </div>
             </div>
@@ -536,31 +535,31 @@ function lastUsedLabel(): string {
           <!-- Link stats -->
           <div class="bg-gray-200 border border-gray-400 rounded-xl p-4 space-y-3">
             <div class="flex items-center justify-between">
-              <p class="text-[10px] uppercase tracking-wider text-gray-700 font-semibold">Shared Links</p>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 font-semibold">{{ t('invoiceView.links.title') }}</p>
               <button
                 @click="showShareModal = true"
                 class="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-green-700 hover:text-green-700/80 bg-green-700/10 hover:bg-green-700/15 rounded-md transition-colors"
               >
-                <Icon icon="lucide:plus" class="w-3 h-3" /> New Link
+                <Icon icon="lucide:plus" class="w-3 h-3" /> {{ t('invoiceView.links.newLink') }}
               </button>
             </div>
             <div class="grid grid-cols-3 gap-2">
               <div class="bg-gray-100/50 rounded-lg p-2.5 text-center">
                 <div class="text-lg font-bold text-gray-1000">{{ sortedLinks.length }}</div>
-                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">Total</div>
+                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">{{ t('invoiceView.links.total') }}</div>
               </div>
               <div class="bg-gray-100/50 rounded-lg p-2.5 text-center">
                 <div class="text-lg font-bold text-green-400">{{ activeLinks }}</div>
-                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">Active</div>
+                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">{{ t('invoiceView.links.active') }}</div>
               </div>
               <div class="bg-gray-100/50 rounded-lg p-2.5 text-center">
                 <div class="text-lg font-bold text-gray-1000">{{ totalViews }}</div>
-                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">Views</div>
+                <div class="text-[9px] text-gray-700 uppercase tracking-wide mt-0.5">{{ t('invoiceView.links.views') }}</div>
               </div>
             </div>
             <div class="flex items-center gap-3 text-xs text-gray-700">
-              <span class="flex items-center gap-1"><Icon icon="lucide:lock" class="w-3 h-3" /> {{ privateLinks }} private</span>
-              <span class="flex items-center gap-1"><Icon icon="lucide:globe" class="w-3 h-3" /> {{ sortedLinks.length - privateLinks }} public</span>
+              <span class="flex items-center gap-1"><Icon icon="lucide:lock" class="w-3 h-3" /> {{ t('invoiceView.links.private', { count: privateLinks }) }}</span>
+              <span class="flex items-center gap-1"><Icon icon="lucide:globe" class="w-3 h-3" /> {{ t('invoiceView.links.public', { count: sortedLinks.length - privateLinks }) }}</span>
             </div>
           </div>
 
@@ -574,13 +573,13 @@ function lastUsedLabel(): string {
               <div class="flex items-start justify-between gap-2">
                 <div class="min-w-0">
                   <div class="flex items-center gap-1.5 flex-wrap">
-                    <span class="text-xs font-semibold text-gray-1000 truncate">{{ link.label || 'Shared Link' }}</span>
+                    <span class="text-xs font-semibold text-gray-1000 truncate">{{ link.label || t('invoiceView.links.defaultLabel') }}</span>
                     <span :class="['text-[9px] px-1.5 py-0.5 rounded border font-medium', statusLabel(link).cls]">{{ statusLabel(link).text }}</span>
                   </div>
                   <p class="text-[10px] text-gray-700 mt-0.5">{{ expiryLabel(link) }}</p>
                 </div>
                 <span class="text-[9px] px-1.5 py-0.5 rounded border font-medium text-gray-700 border-gray-500 bg-gray-400 shrink-0">
-                  {{ link.visibility === 'private' ? 'Private' : 'Public' }}
+                  {{ link.visibility === 'private' ? t('invoiceView.links.visibilityPrivate') : t('invoiceView.links.visibilityPublic') }}
                 </span>
               </div>
               <!-- URL -->
@@ -601,12 +600,12 @@ function lastUsedLabel(): string {
               </div>
               <!-- Stats -->
               <div class="flex items-center gap-3 text-[10px] text-gray-700 border-t border-gray-400/50 pt-2">
-                <span class="flex items-center gap-1"><Icon icon="lucide:eye" class="w-3 h-3" /> {{ link.views }} views</span>
+                <span class="flex items-center gap-1"><Icon icon="lucide:eye" class="w-3 h-3" /> {{ t('letterheadView.viewsCount', { n: link.views }) }}</span>
                 <span class="flex items-center gap-1 ml-auto"><Icon icon="lucide:clock" class="w-3 h-3" /> {{ fmtDateTime(link.last_viewed_at) }}</span>
               </div>
               <!-- View log -->
               <div v-if="link.view_log.length > 0" class="space-y-1 border-t border-gray-400/50 pt-2">
-                <p class="text-[9px] uppercase tracking-wider text-gray-700">Recent Views</p>
+                <p class="text-[9px] uppercase tracking-wider text-gray-700">{{ t('invoiceView.links.recentViews') }}</p>
                 <div v-for="(entry, i) in link.view_log.slice(0, 5)" :key="i" class="flex items-center justify-between text-[10px] text-gray-700">
                   <span>{{ entry.browser }}</span>
                   <span>{{ fmtDateTime(entry.timestamp) }}</span>
@@ -618,13 +617,13 @@ function lastUsedLabel(): string {
           <!-- Empty state -->
           <div v-else-if="sortedLinks.length === 0" class="bg-gray-200 border border-dashed border-gray-500 rounded-xl p-6 flex flex-col items-center text-center gap-2">
             <Icon icon="lucide:share-2" class="w-8 h-8 text-gray-700" />
-            <p class="text-xs font-medium text-gray-900">No shared links yet</p>
-            <p class="text-[11px] text-gray-700">Generate a link to share this letterhead with clients</p>
+            <p class="text-xs font-medium text-gray-900">{{ t('invoiceView.links.emptyTitle') }}</p>
+            <p class="text-[11px] text-gray-700">{{ t('letterheadView.linksEmptyBody') }}</p>
             <button
               @click="showShareModal = true"
               class="mt-2 flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-green-700/10 hover:bg-green-700/15 border border-green-700/20 text-green-700 rounded-lg transition-colors"
             >
-              <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> Create Link
+              <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> {{ t('invoiceView.links.createLink') }}
             </button>
           </div>
 
@@ -644,15 +643,15 @@ function lastUsedLabel(): string {
                 <Icon icon="lucide:trash-2" class="w-4 h-4 text-red-400" />
               </div>
               <div>
-                <h3 class="text-sm font-semibold text-gray-1000">Delete "{{ lh.name }}"?</h3>
-                <p class="text-xs text-gray-700 mt-1 leading-relaxed">This letterhead will be permanently deleted. This action cannot be undone.</p>
+                <h3 class="text-sm font-semibold text-gray-1000">{{ t('letterheadView.deleteTitle', { name: lh.name }) }}</h3>
+                <p class="text-xs text-gray-700 mt-1 leading-relaxed">{{ t('letterheadView.deleteBody') }}</p>
               </div>
             </div>
             <div class="flex justify-end gap-2">
-              <button @click="showDeleteConfirm = false" class="px-4 py-2 text-xs font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors">Cancel</button>
+              <button @click="showDeleteConfirm = false" class="px-4 py-2 text-xs font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors">{{ t('letterheads.deleteModal.cancel') }}</button>
               <button @click="handleDelete" :disabled="isDeleting" class="px-4 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors disabled:opacity-60">
                 <Icon v-if="isDeleting" icon="lucide:loader-2" class="w-3 h-3 animate-spin inline mr-1" />
-                Delete
+                {{ t('letterheads.deleteModal.delete') }}
               </button>
             </div>
           </div>

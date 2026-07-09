@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import { useLoaders } from '@/composables/loaders.ts'
 import { useNotification } from '@/composables/notification.ts'
@@ -11,6 +12,7 @@ import { MemberService } from '@/services/member.service.ts'
 import type { IMember, IMemberRole, IInvitation } from '@/types/member.types'
 
 const router    = useRouter()
+const { t, locale } = useI18n()
 const { notify } = useNotification()
 const { initLoaders, setLoader, getLoader } = useLoaders()
 const authStore = useAuthStore()
@@ -58,7 +60,7 @@ const loadMembers = async (page = 1) => {
     lastPage.value = d.last_page
     total.value = d.total
   } catch {
-    notify('Failed to load members.', 'error')
+    notify(t('members.toasts.loadFailed'), 'error')
   } finally {
     isLoading.value = false
   }
@@ -90,11 +92,11 @@ const loadInvitations = async () => {
 const cancelInvite = async (id: string) => {
   try {
     await MemberService.cancelInvitation(orgId.value, id)
-    notify('Invitation cancelled.', 'success')
+    notify(t('members.toasts.inviteCancelled'), 'success')
     await loadInvitations()
   } catch (e: unknown) {
     const err = e as { response?: { data?: { message?: string } } }
-    const msg = err?.response?.data?.message ?? 'Failed to cancel invitation.'
+    const msg = err?.response?.data?.message ?? t('members.toasts.inviteCancelFailed')
     notify(msg, 'error')
   }
 }
@@ -141,7 +143,7 @@ const toggleAddRole = (roleId: string) => {
 const handleAdd = async () => {
   addEmailError.value = ''
   if (!addForm.value.email.trim()) {
-    addEmailError.value = 'Email is required.'
+    addEmailError.value = t('members.addModal.emailRequired')
     return
   }
   setLoader('isSending', true)
@@ -150,12 +152,12 @@ const handleAdd = async () => {
       email: addForm.value.email.trim(),
       role_ids: addForm.value.role_ids,
     })
-    notify('Invitation sent successfully.', 'success')
+    notify(t('members.toasts.inviteSent'), 'success')
     showAddModal.value = false
     await loadInvitations()
   } catch (e: unknown) {
     const err = e as { response?: { data?: { message?: string } } }
-    const msg = err?.response?.data?.message ?? 'Failed to send invitation.'
+    const msg = err?.response?.data?.message ?? t('members.toasts.inviteFailed')
     addEmailError.value = msg
   } finally {
     setLoader('isSending', false)
@@ -183,12 +185,12 @@ const handleChangeRole = async () => {
     await MemberService.updateRoles(orgId.value, selectedMember.value.id, {
       role_ids: newRoleIds.value,
     })
-    notify('Member roles updated.', 'success')
+    notify(t('members.toasts.rolesUpdated'), 'success')
     showChangeRole.value = false
     await loadMembers(currentPage.value)
   } catch (e: unknown) {
     const err = e as { response?: { data?: { message?: string } } }
-    const msg = err?.response?.data?.message ?? 'Failed to update roles.'
+    const msg = err?.response?.data?.message ?? t('members.toasts.roleUpdateFailed')
     notify(msg, 'error')
   } finally {
     setLoader('isSending', false)
@@ -206,12 +208,12 @@ const handleRemove = async () => {
   setLoader('isSending', true)
   try {
     await MemberService.remove(orgId.value, selectedMember.value.id)
-    notify(`${selectedMember.value.user?.full_name ?? 'Member'} has been removed.`, 'success')
+    notify(t('members.toasts.memberRemoved', { name: selectedMember.value.user?.full_name ?? t('members.toasts.memberFallback') }), 'success')
     showRemoveConfirm.value = false
     await loadMembers(currentPage.value > 1 && members.value.length === 1 ? currentPage.value - 1 : currentPage.value)
   } catch (e: unknown) {
     const err = e as { response?: { data?: { message?: string } } }
-    const msg = err?.response?.data?.message ?? 'Failed to remove member.'
+    const msg = err?.response?.data?.message ?? t('members.toasts.removeFailed')
     notify(msg, 'error')
   } finally {
     setLoader('isSending', false)
@@ -226,23 +228,23 @@ const handleRemove = async () => {
     <div class="flex flex-col gap-3">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="page-title">Team Members</h1>
-          <p class="page-subtitle">{{ total }} member{{ total !== 1 ? 's' : '' }}</p>
+          <h1 class="page-title">{{ t('members.title') }}</h1>
+          <p class="page-subtitle">{{ t('members.count', total) }}</p>
         </div>
         <button v-if="canInvite" @click="openAdd" class="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs px-3 py-2 rounded-lg transition-colors">
           <Icon icon="lucide:user-round-plus" class="w-3.5 h-3.5" />
-          <span class="hidden sm:inline">Add Member</span>
-          <span class="sm:hidden">Add</span>
+          <span class="hidden sm:inline">{{ t('members.add') }}</span>
+          <span class="sm:hidden">{{ t('members.addShort') }}</span>
         </button>
         <button v-else @click="router.push({ name: 'billing' })" class="flex items-center gap-1.5 border border-green-700/40 text-green-700 text-xs px-3 py-2 rounded-lg transition-colors hover:bg-green-700/10">
           <Icon icon="lucide:lock" class="w-3.5 h-3.5" />
-          <span class="hidden sm:inline">Upgrade to invite</span>
-          <span class="sm:hidden">Upgrade</span>
+          <span class="hidden sm:inline">{{ t('members.upgradeToInvite') }}</span>
+          <span class="sm:hidden">{{ t('members.upgradeShort') }}</span>
         </button>
       </div>
       <div class="relative">
         <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-700" />
-        <input v-model="searchQuery" type="search" @input="onSearch" placeholder="Search members…" class="app-inp pl-8 text-xs py-2 w-full" />
+        <input v-model="searchQuery" type="search" @input="onSearch" :placeholder="t('members.search')" class="app-inp pl-8 text-xs py-2 w-full" />
       </div>
     </div>
 
@@ -256,8 +258,8 @@ const handleRemove = async () => {
       <div class="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center mb-4">
         <Icon icon="lucide:users" class="w-6 h-6 text-gray-700" />
       </div>
-      <p class="text-gray-700 text-sm">No members found</p>
-      <p v-if="searchQuery" class="text-gray-700/60 text-xs mt-1">Try adjusting your search query</p>
+      <p class="text-gray-700 text-sm">{{ t('members.emptyTitle') }}</p>
+      <p v-if="searchQuery" class="text-gray-700/60 text-xs mt-1">{{ t('members.emptySearchHint') }}</p>
     </div>
 
     <!-- Members table -->
@@ -268,11 +270,11 @@ const handleRemove = async () => {
         <table class="app-table">
           <thead>
             <tr>
-              <th>Member</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Joined</th>
-              <th>Actions</th>
+              <th>{{ t('members.table.member') }}</th>
+              <th>{{ t('members.table.role') }}</th>
+              <th>{{ t('members.table.status') }}</th>
+              <th>{{ t('members.table.joined') }}</th>
+              <th>{{ t('members.table.actions') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -296,19 +298,19 @@ const handleRemove = async () => {
                 </div>
               </td>
               <td>
-                <span v-if="m.is_owner" class="status-badge role-owner">Owner</span>
+                <span v-if="m.is_owner" class="status-badge role-owner">{{ t('members.owner') }}</span>
                 <span v-else-if="m.roles.length" class="text-xs text-gray-900">{{ m.roles.map(r => r.name).join(', ') }}</span>
-                <span v-else class="text-xs text-gray-700/50">No role</span>
+                <span v-else class="text-xs text-gray-700/50">{{ t('members.noRole') }}</span>
               </td>
-              <td><span :class="['status-badge', m.is_active ? 'status-active' : 'status-inactive']">{{ m.is_active ? 'Active' : 'Inactive' }}</span></td>
-              <td class="text-xs text-gray-700">{{ new Date(m.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) }}</td>
+              <td><span :class="['status-badge', m.is_active ? 'status-active' : 'status-inactive']">{{ m.is_active ? t('members.active') : t('members.inactive') }}</span></td>
+              <td class="text-xs text-gray-700">{{ new Date(m.created_at).toLocaleDateString(locale, { month: 'short', year: 'numeric' }) }}</td>
               <td @click.stop>
                 <div class="flex items-center gap-1.5">
                   <button v-if="!m.is_owner" @click="openChangeRole(m)" class="text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1 rounded-md transition-colors">
-                    Change Role
+                    {{ t('members.changeRole') }}
                   </button>
                   <button v-if="!m.is_owner" @click="openRemove(m)" class="text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 px-2.5 py-1 rounded-md transition-colors">
-                    Remove
+                    {{ t('members.remove') }}
                   </button>
                 </div>
               </td>
@@ -337,11 +339,11 @@ const handleRemove = async () => {
             </div>
           </div>
           <div class="flex flex-col items-end gap-1.5">
-            <span v-if="m.is_owner" class="status-badge role-owner">Owner</span>
+            <span v-if="m.is_owner" class="status-badge role-owner">{{ t('members.owner') }}</span>
             <span v-else-if="m.roles.length" class="text-xs text-gray-900">{{ m.roles[0]?.name }}</span>
             <div v-if="!m.is_owner" class="flex items-center gap-1.5" @click.stop>
-              <button @click="openChangeRole(m)" class="text-[10px] text-gray-900 hover:text-gray-1000 bg-gray-400 px-2 py-0.5 rounded transition-colors">Role</button>
-              <button @click="openRemove(m)" class="text-[10px] text-red-400 hover:text-red-300 bg-red-500/10 px-2 py-0.5 rounded transition-colors">Remove</button>
+              <button @click="openChangeRole(m)" class="text-[10px] text-gray-900 hover:text-gray-1000 bg-gray-400 px-2 py-0.5 rounded transition-colors">{{ t('members.roleShort') }}</button>
+              <button @click="openRemove(m)" class="text-[10px] text-red-400 hover:text-red-300 bg-red-500/10 px-2 py-0.5 rounded transition-colors">{{ t('members.remove') }}</button>
             </div>
           </div>
         </div>
@@ -352,7 +354,7 @@ const handleRemove = async () => {
 
     <!-- Pending Invitations -->
     <div v-if="isLoadingInvitations || pendingInvitations.length" class="mt-6">
-      <h2 class="text-sm font-semibold text-gray-1000 mb-3">Pending Invitations</h2>
+      <h2 class="text-sm font-semibold text-gray-1000 mb-3">{{ t('members.pendingTitle') }}</h2>
 
       <div v-if="isLoadingInvitations" class="flex justify-center py-8">
         <Icon icon="lucide:loader-2" class="w-5 h-5 text-gray-700 animate-spin" />
@@ -363,16 +365,16 @@ const handleRemove = async () => {
           <div>
             <div class="text-sm text-gray-1000">{{ inv.email }}</div>
             <div class="text-xs text-gray-700 mt-0.5">
-              <span v-if="inv.role_ids.length">{{ inv.role_ids.length }} role{{ inv.role_ids.length !== 1 ? 's' : '' }}</span>
-              <span v-else>No roles assigned</span>
-              &middot; Expires {{ new Date(inv.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) }}
+              <span v-if="inv.role_ids.length">{{ t('members.roleCount', inv.role_ids.length) }}</span>
+              <span v-else>{{ t('members.noRolesAssignedInvite') }}</span>
+              &middot; {{ t('members.expires', { date: new Date(inv.expires_at).toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' }) }) }}
             </div>
           </div>
           <button
             @click="cancelInvite(inv.id)"
             class="text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 px-2.5 py-1 rounded-md transition-colors whitespace-nowrap"
           >
-            Cancel
+            {{ t('members.cancel') }}
           </button>
         </div>
       </div>
@@ -387,8 +389,8 @@ const handleRemove = async () => {
         <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
           <div class="flex items-center justify-between mb-5">
             <div>
-              <h2 class="font-sans text-lg font-semibold text-gray-1000">Add Team Member</h2>
-              <p class="text-xs text-gray-700 mt-0.5">An invitation email will be sent to the address</p>
+              <h2 class="font-sans text-lg font-semibold text-gray-1000">{{ t('members.addModal.title') }}</h2>
+              <p class="text-xs text-gray-700 mt-0.5">{{ t('members.addModal.subtitle') }}</p>
             </div>
             <button @click="showAddModal = false" class="p-1.5 rounded-lg hover:bg-gray-400 text-gray-700 hover:text-gray-1000 transition-colors">
               <Icon icon="lucide:x" class="w-4 h-4" />
@@ -397,19 +399,19 @@ const handleRemove = async () => {
 
           <div class="space-y-4 mb-5">
             <div class="space-y-1">
-              <label class="flex text-sm text-gray-700">Email Address <span class="text-red-400 ml-0.5">*</span></label>
+              <label class="flex text-sm text-gray-700">{{ t('members.addModal.email') }} <span class="text-red-400 ml-0.5">*</span></label>
               <input
                 v-model="addForm.email"
                 type="email"
                 class="app-inp px-2 py-2 text-sm w-full"
-                placeholder="colleague@company.com"
+                :placeholder="t('members.addModal.emailPlaceholder')"
                 autocomplete="off"
               />
               <small v-if="addEmailError" class="text-red-400 text-xs">{{ addEmailError }}</small>
             </div>
 
             <div v-if="availableRoles.length" class="space-y-1">
-              <label class="text-sm text-gray-700">Assign Roles <span class="text-gray-700/50 text-xs">(optional)</span></label>
+              <label class="text-sm text-gray-700">{{ t('members.addModal.assignRoles') }} <span class="text-gray-700/50 text-xs">{{ t('members.addModal.optional') }}</span></label>
               <div class="space-y-1.5 max-h-48 overflow-y-auto">
                 <label
                   v-for="role in availableRoles" :key="role.id"
@@ -427,18 +429,18 @@ const handleRemove = async () => {
               </div>
             </div>
 
-            <div v-else class="text-xs text-gray-700/70 text-center py-2">No roles available — create roles first.</div>
+            <div v-else class="text-xs text-gray-700/70 text-center py-2">{{ t('members.addModal.noRolesAvailable') }}</div>
           </div>
 
           <div class="flex gap-2">
-            <button @click="showAddModal = false" class="flex-1 py-2.5 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-sm transition-colors">Cancel</button>
+            <button @click="showAddModal = false" class="flex-1 py-2.5 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-sm transition-colors">{{ t('members.changeRoleModal.cancel') }}</button>
             <button
               @click="handleAdd"
               :disabled="getLoader('isSending') || !addForm.email.trim()"
               :class="['flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg font-semibold text-sm transition-colors', addForm.email.trim() && !getLoader('isSending') ? 'bg-green-700 hover:bg-green-800 text-bg-100' : 'bg-green-700/40 text-bg-100/50 cursor-not-allowed']"
             >
               <Icon v-if="getLoader('isSending')" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
-              {{ getLoader('isSending') ? 'Sending…' : 'Send Invite' }}
+              {{ getLoader('isSending') ? t('members.addModal.sending') : t('members.addModal.sendInvite') }}
             </button>
           </div>
         </div>
@@ -452,13 +454,13 @@ const handleRemove = async () => {
       <div v-if="showChangeRole && selectedMember" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4" @click.self="showChangeRole = false">
         <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
           <div class="flex items-center justify-between mb-2">
-            <h2 class="font-sans text-lg font-semibold text-gray-1000">Change Roles</h2>
+            <h2 class="font-sans text-lg font-semibold text-gray-1000">{{ t('members.changeRoleModal.title') }}</h2>
             <button @click="showChangeRole = false" class="p-1.5 rounded-lg hover:bg-gray-400 text-gray-700 hover:text-gray-1000 transition-colors">
               <Icon icon="lucide:x" class="w-4 h-4" />
             </button>
           </div>
           <p class="text-xs text-gray-700 mb-5">
-            Updating roles for <span class="text-gray-1000 font-medium">{{ selectedMember.user?.full_name }}</span>
+            {{ t('members.changeRoleModal.updatingForBefore') }}<span class="text-gray-1000 font-medium">{{ selectedMember.user?.full_name }}</span>
           </p>
 
           <div class="space-y-1.5 mb-5 max-h-60 overflow-y-auto">
@@ -475,18 +477,18 @@ const handleRemove = async () => {
                 <div v-if="role.description" class="text-xs text-gray-700 mt-0.5">{{ role.description }}</div>
               </div>
             </label>
-            <div v-if="!availableRoles.length" class="text-xs text-gray-700/70 text-center py-3">No roles available.</div>
+            <div v-if="!availableRoles.length" class="text-xs text-gray-700/70 text-center py-3">{{ t('members.changeRoleModal.noRolesAvailable') }}</div>
           </div>
 
           <div class="flex gap-2">
-            <button @click="showChangeRole = false" class="flex-1 py-2.5 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-sm transition-colors">Cancel</button>
+            <button @click="showChangeRole = false" class="flex-1 py-2.5 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-sm transition-colors">{{ t('members.changeRoleModal.cancel') }}</button>
             <button
               @click="handleChangeRole"
               :disabled="getLoader('isSending')"
               :class="['flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg font-semibold text-sm transition-colors', !getLoader('isSending') ? 'bg-green-700 hover:bg-green-800 text-bg-100' : 'bg-green-700/40 text-bg-100/50 cursor-not-allowed']"
             >
               <Icon v-if="getLoader('isSending')" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
-              {{ getLoader('isSending') ? 'Saving…' : 'Update Roles' }}
+              {{ getLoader('isSending') ? t('members.changeRoleModal.saving') : t('members.changeRoleModal.updateRoles') }}
             </button>
           </div>
         </div>
@@ -504,21 +506,21 @@ const handleRemove = async () => {
               <Icon icon="lucide:user-x" class="w-4 h-4 text-red-400" />
             </div>
             <div>
-              <h3 class="text-sm font-semibold text-gray-1000">Remove member?</h3>
+              <h3 class="text-sm font-semibold text-gray-1000">{{ t('members.removeModal.title') }}</h3>
               <p class="text-xs text-gray-700 mt-1 leading-relaxed">
-                <span class="text-gray-1000 font-medium">{{ selectedMember.user?.full_name }}</span> will lose access immediately.
+                <span class="text-gray-1000 font-medium">{{ selectedMember.user?.full_name }}</span>{{ t('members.removeModal.willLoseAccess') }}
               </p>
             </div>
           </div>
           <div class="flex items-center justify-end gap-2">
-            <button @click="showRemoveConfirm = false" class="px-4 py-2 text-xs font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors">Cancel</button>
+            <button @click="showRemoveConfirm = false" class="px-4 py-2 text-xs font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors">{{ t('members.removeModal.cancel') }}</button>
             <button
               @click="handleRemove"
               :disabled="getLoader('isSending')"
               class="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors disabled:opacity-60"
             >
               <Icon v-if="getLoader('isSending')" icon="lucide:loader-2" class="w-3 h-3 animate-spin" />
-              Remove member
+              {{ t('members.removeModal.remove') }}
             </button>
           </div>
         </div>

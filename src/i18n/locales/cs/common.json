@@ -1,0 +1,21 @@
+{
+  "status": {
+    "paid": "Zaplaceno",
+    "sent": "Odesláno",
+    "overdue": "Po splatnosti",
+    "draft": "Koncept",
+    "void": "Neplatné",
+    "finalized": "Dokončeno",
+    "unknown": "Neznámý"
+  },
+  "table": {
+    "client": "Klient",
+    "recipient": "Příjemce",
+    "amount": "Částka",
+    "status": "Stav",
+    "date": "Datum"
+  },
+  "actions": {
+    "viewAll": "Zobrazit vše"
+  }
+}

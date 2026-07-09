@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 import { Icon } from '@iconify/vue'
 import { useLocaleStore } from '@/stores/locale'
@@ -9,6 +10,7 @@ import { SUPPORTED_LOCALES, LOCALE_LABELS, DEFAULT_LOCALE, type Locale } from '@
 
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 const localeStore = useLocaleStore()
 
 const current = computed<Locale>(() => localeStore.current)
@@ -36,7 +38,7 @@ function switchTo(loc: Locale) {
   <Menu as="div" class="relative inline-block text-left">
     <MenuButton
       class="flex items-center gap-1.5 text-sm text-gray-900 hover:text-gray-1000 transition-colors cursor-pointer"
-      :aria-label="'Language: ' + LOCALE_LABELS[current]"
+      :aria-label="t('app.header.language') + ': ' + LOCALE_LABELS[current]"
     >
       <Icon icon="heroicons:language" class="w-4 h-4" />
       <span class="uppercase font-medium">{{ current }}</span>

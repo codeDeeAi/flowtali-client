@@ -1,0 +1,63 @@
+{
+  "dueOn": "Splatnost {date}",
+  "actions": {
+    "print": "Tisk / PDF",
+    "share": "Sdílet",
+    "generateReceipt": "Vytvořit účtenku",
+    "markPaid": "Zaplaceno",
+    "edit": "Upravit",
+    "delete": "Smazat"
+  },
+  "receiptsPanel": {
+    "title": "Účtenky",
+    "generate": "Vytvořit",
+    "empty": "Zatím žádné účtenky",
+    "generateFrom": "Vytvořit z této faktury"
+  },
+  "links": {
+    "title": "Sdílené odkazy",
+    "newLink": "Nový odkaz",
+    "total": "Celkem",
+    "active": "Aktivní",
+    "views": "Zobrazení",
+    "private": "{count} soukromých",
+    "public": "{count} veřejných",
+    "defaultLabel": "Sdílený odkaz",
+    "statusRevoked": "Zrušeno",
+    "statusExpired": "Vypršelo",
+    "statusActive": "Aktivní",
+    "neverExpires": "Nikdy nevyprší",
+    "expiredOn": "Vypršelo {date}",
+    "expiresOn": "Vyprší {date}",
+    "visibilityPrivate": "Soukromé",
+    "visibilityPublic": "Veřejné",
+    "recentViews": "Nedávná zobrazení",
+    "emptyTitle": "Zatím žádné sdílené odkazy",
+    "emptyBody": "Vytvořte odkaz pro sdílení této faktury s klienty",
+    "createLink": "Vytvořit odkaz",
+    "never": "Nikdy"
+  },
+  "generateModal": {
+    "title": "Vytvořit účtenku",
+    "from": "Z {number}",
+    "receiptNumber": "Číslo účtenky",
+    "paymentDate": "Datum platby",
+    "paymentMethod": "Způsob platby",
+    "reference": "Reference",
+    "statusStamp": "Razítko stavu",
+    "balanceDue": "Zbývá uhradit ({currency})",
+    "generate": "Vytvořit účtenku",
+    "paymentMethodPlaceholder": "Bankovní převod"
+  },
+  "stamps": {
+    "paid": "Zaplaceno",
+    "partiallyPaid": "Částečně zaplaceno",
+    "unpaid": "Nezaplaceno",
+    "none": "Žádné"
+  },
+  "toasts": {
+    "linkCopied": "Odkaz zkopírován do schránky",
+    "receiptCreated": "Účtenka {number} vytvořena",
+    "receiptFailed": "Nepodařilo se vytvořit účtenku"
+  }
+}

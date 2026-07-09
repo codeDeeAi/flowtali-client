@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { usePermissions } from '@/composables/usePermissions'
@@ -9,6 +10,7 @@ import { ApiKeyService, type IOrgApiKey } from '@/services/api-key.service'
 import type { IOrgStamp, IOrgBrandColor, IOrgSignature, IOrgLogo, IOrgInvoiceProfile, IOrgBankAccount, IOrgPaymentLink } from '@/types/org-preferences.types'
 
 const authStore = useAuthStore()
+const { t, locale } = useI18n()
 const { isBusinessOrg } = usePermissions()
 const orgId = computed(() => authStore.currentOrganization?.id ?? '')
 const orgName = computed(() => authStore.currentOrganization?.name ?? 'your organization')
@@ -202,7 +204,7 @@ async function onSigFileChange(e: Event) {
     sigMediaId.value = data.data[0]?.id ?? null
     if (data.data[0]?.url) sigPreview.value = data.data[0].url
   } catch {
-    sigUploadError.value = 'Upload failed. Please try again.'
+    sigUploadError.value = t('orgPref.signatures.uploadError')
     sigPreview.value = null
     sigMediaId.value = null
     if (sigFileRef.value) sigFileRef.value.value = ''
@@ -282,7 +284,7 @@ async function onLogoFileChange(e: Event) {
     logoMediaId.value = data.data[0]?.id ?? null
     if (data.data[0]?.url) logoPreview.value = data.data[0].url
   } catch {
-    logoUploadError.value = 'Upload failed. Please try again.'
+    logoUploadError.value = t('orgPref.signatures.uploadError')
     logoPreview.value = null
     logoMediaId.value = null
     if (logoFileRef.value) logoFileRef.value.value = ''
@@ -571,7 +573,7 @@ async function revokeApiKey(keyId: string) {
 }
 
 async function deleteApiKey(keyId: string) {
-  if (!confirm('Delete this API key? Any embeds using it will stop working immediately.')) return
+  if (!confirm(t('orgPref.apiKeys.deleteConfirm'))) return
   apiKeyActionId.value = keyId
   try {
     await ApiKeyService.destroy(orgId.value, keyId)
@@ -599,8 +601,8 @@ onMounted(loadApiKeys)
 
     <!-- Page header -->
     <div>
-      <h1 class="page-title">Organization Preferences</h1>
-      <p class="page-subtitle">Saved assets and defaults for {{ orgName }}</p>
+      <h1 class="page-title">{{ t('orgPref.title') }}</h1>
+      <p class="page-subtitle">{{ t('orgPref.subtitle', { org: orgName }) }}</p>
     </div>
 
     <!-- Loading skeleton -->
@@ -619,12 +621,12 @@ onMounted(loadApiKeys)
       <!-- ── Saved Stamps ────────────────────────────────────────────────── -->
       <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-semibold text-gray-1000">Saved Stamps</h3>
+          <h3 class="text-sm font-semibold text-gray-1000">{{ t('orgPref.stamps.title') }}</h3>
           <button
             class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1.5 rounded-md transition-colors"
             @click="openAddStamp"
           >
-            <Icon icon="lucide:plus" class="w-3 h-3" /> Add Stamp
+            <Icon icon="lucide:plus" class="w-3 h-3" /> {{ t('orgPref.stamps.add') }}
           </button>
         </div>
 
@@ -650,32 +652,32 @@ onMounted(loadApiKeys)
             </button>
           </div>
           <div v-if="!stamps.length" class="col-span-3 text-center py-6 text-xs text-gray-700">
-            No stamps yet.
+            {{ t('orgPref.stamps.empty') }}
           </div>
         </div>
 
         <Transition name="slide-down">
           <div v-if="showStampForm" class="mt-4 p-4 bg-gray-100 border border-gray-500 rounded-lg space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-gray-1000">{{ editStampIndex !== null ? 'Edit' : 'New' }} Stamp</span>
+              <span class="text-xs font-medium text-gray-1000">{{ editStampIndex !== null ? t('orgPref.stamps.formEdit') : t('orgPref.stamps.formNew') }}</span>
               <button class="text-gray-700 hover:text-gray-1000" @click="showStampForm = false">
                 <Icon icon="lucide:x" class="w-4 h-4" />
               </button>
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div class="col-span-2">
-                <label class="text-xs text-gray-700 mb-1 block">Label</label>
-                <input v-model="stampForm.text" type="text" maxlength="20" placeholder="e.g. PAID" class="app-inp w-full text-sm uppercase" />
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.stamps.label') }}</label>
+                <input v-model="stampForm.text" type="text" maxlength="20" :placeholder="t('orgPref.stamps.labelPh')" class="app-inp w-full text-sm uppercase" />
               </div>
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Border & Text Color</label>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.stamps.borderColor') }}</label>
                 <div class="flex items-center gap-2">
                   <input v-model="stampForm.color" type="color" class="w-8 h-8 rounded cursor-pointer bg-transparent border border-gray-500" />
                   <input v-model="stampForm.color" type="text" maxlength="7" placeholder="#4ade80" class="app-inp flex-1 text-xs font-mono" />
                 </div>
               </div>
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Fill Color</label>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.stamps.fillColor') }}</label>
                 <div class="flex items-center gap-2">
                   <input v-model="stampForm.text_color" type="color" class="w-8 h-8 rounded cursor-pointer bg-transparent border border-gray-500" />
                   <input v-model="stampForm.text_color" type="text" maxlength="7" placeholder="#ffffff" class="app-inp flex-1 text-xs font-mono" />
@@ -683,12 +685,12 @@ onMounted(loadApiKeys)
               </div>
             </div>
             <div class="flex justify-end gap-2 pt-1">
-              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showStampForm = false">Cancel</button>
+              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showStampForm = false">{{ t('orgPref.common.cancel') }}</button>
               <button
                 class="text-xs bg-green-700 hover:bg-green-800 text-bg-100 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                 :disabled="stampSaving || !stampForm.text.trim()"
                 @click="saveStamp"
-              >{{ stampSaving ? 'Saving…' : 'Save' }}</button>
+              >{{ stampSaving ? t('orgPref.common.saving') : t('orgPref.common.save') }}</button>
             </div>
           </div>
         </Transition>
@@ -697,12 +699,12 @@ onMounted(loadApiKeys)
       <!-- ── Saved Signatures ──────────────────────────────────────────────── -->
       <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-semibold text-gray-1000">Saved Signatures</h3>
+          <h3 class="text-sm font-semibold text-gray-1000">{{ t('orgPref.signatures.title') }}</h3>
           <button
             class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1.5 rounded-md transition-colors"
             @click="openSigForm"
           >
-            <Icon icon="lucide:upload" class="w-3 h-3" /> Upload
+            <Icon icon="lucide:upload" class="w-3 h-3" /> {{ t('orgPref.signatures.upload') }}
           </button>
         </div>
 
@@ -723,13 +725,13 @@ onMounted(loadApiKeys)
               <Icon :icon="deletingId === sig.id ? 'lucide:loader-circle' : 'lucide:trash-2'" class="w-3.5 h-3.5" :class="{ 'animate-spin': deletingId === sig.id }" />
             </button>
           </div>
-          <div v-if="!signatures.length && !showSigForm" class="text-center py-4 text-xs text-gray-700">No signatures yet.</div>
+          <div v-if="!signatures.length && !showSigForm" class="text-center py-4 text-xs text-gray-700">{{ t('orgPref.signatures.empty') }}</div>
         </div>
 
         <Transition name="slide-down">
           <div v-if="showSigForm" class="mt-4 p-4 bg-gray-100 border border-gray-500 rounded-lg space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-gray-1000">Upload Signature</span>
+              <span class="text-xs font-medium text-gray-1000">{{ t('orgPref.signatures.formTitle') }}</span>
               <button class="text-gray-700 hover:text-gray-1000" @click="closeSigForm">
                 <Icon icon="lucide:x" class="w-4 h-4" />
               </button>
@@ -737,7 +739,7 @@ onMounted(loadApiKeys)
 
             <!-- File drop zone — upload happens immediately on selection -->
             <div>
-              <label class="text-xs text-gray-700 mb-1 block">Signature Image</label>
+              <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.signatures.image') }}</label>
               <div
                 class="relative border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors"
                 :class="sigUploadError ? 'border-red-500/50 hover:border-red-500/70' : 'border-gray-500 hover:border-gray-500'"
@@ -746,7 +748,7 @@ onMounted(loadApiKeys)
                 <!-- Uploading spinner -->
                 <div v-if="sigUploading" class="flex flex-col items-center gap-2">
                   <Icon icon="lucide:loader-circle" class="w-6 h-6 text-green-700 animate-spin" />
-                  <span class="text-xs text-gray-700">Uploading…</span>
+                  <span class="text-xs text-gray-700">{{ t('orgPref.signatures.uploading') }}</span>
                 </div>
                 <!-- Preview after upload -->
                 <div v-else-if="sigPreview && sigMediaId" class="flex flex-col items-center gap-1.5">
@@ -757,26 +759,26 @@ onMounted(loadApiKeys)
                       class="absolute -top-2 -right-2 w-5 h-5 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white shadow transition-colors disabled:opacity-60"
                       :disabled="sigDeleting"
                       @click.stop="clearSigMedia"
-                      title="Remove uploaded image"
+                      :title="t('orgPref.signatures.removeUploaded')"
                     >
                       <Icon v-if="sigDeleting" icon="lucide:loader-circle" class="w-3 h-3 animate-spin" />
                       <Icon v-else icon="lucide:x" class="w-3 h-3" />
                     </button>
                   </div>
                   <span class="text-[10px] text-green-400 flex items-center gap-1">
-                    <Icon icon="lucide:check-circle" class="w-3 h-3" /> Uploaded — click image area to replace
+                    <Icon icon="lucide:check-circle" class="w-3 h-3" /> {{ t('orgPref.signatures.uploaded') }}
                   </span>
                 </div>
                 <!-- Error state -->
                 <div v-else-if="sigUploadError" class="flex flex-col items-center gap-1">
                   <Icon icon="lucide:alert-circle" class="w-5 h-5 text-red-400" />
                   <span class="text-xs text-red-400">{{ sigUploadError }}</span>
-                  <span class="text-[10px] text-gray-700">Click to try again</span>
+                  <span class="text-[10px] text-gray-700">{{ t('orgPref.signatures.tryAgain') }}</span>
                 </div>
                 <!-- Empty state -->
                 <div v-else class="text-xs text-gray-700">
                   <Icon icon="lucide:image-up" class="w-5 h-5 mx-auto mb-1 text-gray-900" />
-                  Click to select — uploads immediately (PNG, JPG, WebP · max 5 MB)
+                  {{ t('orgPref.signatures.selectHint') }}
                 </div>
                 <input ref="sigFileRef" type="file" accept="image/*" class="hidden" @change="onSigFileChange" />
               </div>
@@ -785,24 +787,24 @@ onMounted(loadApiKeys)
             <!-- Name + role — fill while image uploads -->
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Full Name</label>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.signatures.fullName') }}</label>
                 <input v-model="sigForm.name" type="text" placeholder="Ada Lovelace" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Role / Title</label>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.signatures.role') }}</label>
                 <input v-model="sigForm.role" type="text" placeholder="Creative Director" class="app-inp w-full text-sm" />
               </div>
             </div>
 
             <div class="flex justify-end gap-2 pt-1">
-              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="closeSigForm">Cancel</button>
+              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="closeSigForm">{{ t('orgPref.common.cancel') }}</button>
               <button
                 class="flex items-center gap-1.5 text-xs bg-green-700 hover:bg-green-800 text-bg-100 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                 :disabled="sigSubmitting || sigUploading || !sigMediaId || !sigForm.name.trim() || !sigForm.role.trim()"
                 @click="submitSignature"
               >
                 <Icon v-if="sigUploading" icon="lucide:loader-circle" class="w-3 h-3 animate-spin" />
-                {{ sigSubmitting ? 'Saving…' : sigUploading ? 'Uploading…' : 'Save Signature' }}
+                {{ sigSubmitting ? t('orgPref.common.saving') : sigUploading ? t('orgPref.signatures.uploading') : t('orgPref.signatures.save') }}
               </button>
             </div>
           </div>
@@ -812,12 +814,12 @@ onMounted(loadApiKeys)
       <!-- ── Brand Colors ──────────────────────────────────────────────────── -->
       <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-semibold text-gray-1000">Brand Colors</h3>
+          <h3 class="text-sm font-semibold text-gray-1000">{{ t('orgPref.colors.title') }}</h3>
           <button
             class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1.5 rounded-md transition-colors"
             @click="openAddColor"
           >
-            <Icon icon="lucide:plus" class="w-3 h-3" /> Add Color
+            <Icon icon="lucide:plus" class="w-3 h-3" /> {{ t('orgPref.colors.add') }}
           </button>
         </div>
 
@@ -839,24 +841,24 @@ onMounted(loadApiKeys)
               <Icon icon="lucide:x" class="w-2.5 h-2.5" />
             </button>
           </div>
-          <div v-if="!brandColors.length" class="w-full text-center py-4 text-xs text-gray-700">No brand colors yet.</div>
+          <div v-if="!brandColors.length" class="w-full text-center py-4 text-xs text-gray-700">{{ t('orgPref.colors.empty') }}</div>
         </div>
 
         <Transition name="slide-down">
           <div v-if="showColorForm" class="mt-4 p-4 bg-gray-100 border border-gray-500 rounded-lg space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-gray-1000">{{ editColorIndex !== null ? 'Edit' : 'New' }} Color</span>
+              <span class="text-xs font-medium text-gray-1000">{{ editColorIndex !== null ? t('orgPref.colors.formEdit') : t('orgPref.colors.formNew') }}</span>
               <button class="text-gray-700 hover:text-gray-1000" @click="showColorForm = false">
                 <Icon icon="lucide:x" class="w-4 h-4" />
               </button>
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Color Name</label>
-                <input v-model="colorForm.name" type="text" placeholder="Brand Gold" class="app-inp w-full text-sm" />
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.colors.name') }}</label>
+                <input v-model="colorForm.name" type="text" :placeholder="t('orgPref.colors.namePh')" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Hex Value</label>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.colors.hex') }}</label>
                 <div class="flex items-center gap-2">
                   <input v-model="colorForm.hex" type="color" class="w-8 h-8 rounded cursor-pointer bg-transparent border border-gray-500 shrink-0" />
                   <input v-model="colorForm.hex" type="text" maxlength="7" placeholder="#00c853" class="app-inp flex-1 text-xs font-mono" />
@@ -864,12 +866,12 @@ onMounted(loadApiKeys)
               </div>
             </div>
             <div class="flex justify-end gap-2 pt-1">
-              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showColorForm = false">Cancel</button>
+              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showColorForm = false">{{ t('orgPref.common.cancel') }}</button>
               <button
                 class="text-xs bg-green-700 hover:bg-green-800 text-bg-100 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                 :disabled="colorSaving || !colorForm.name.trim() || !colorForm.hex.trim()"
                 @click="saveColor"
-              >{{ colorSaving ? 'Saving…' : 'Save' }}</button>
+              >{{ colorSaving ? t('orgPref.common.saving') : t('orgPref.common.save') }}</button>
             </div>
           </div>
         </Transition>
@@ -878,12 +880,12 @@ onMounted(loadApiKeys)
       <!-- ── Organization Logos ────────────────────────────────────────────── -->
       <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-semibold text-gray-1000">Organization Logos</h3>
+          <h3 class="text-sm font-semibold text-gray-1000">{{ t('orgPref.logos.title') }}</h3>
           <button
             class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1.5 rounded-md transition-colors"
             @click="openLogoForm"
           >
-            <Icon icon="lucide:upload" class="w-3 h-3" /> Upload
+            <Icon icon="lucide:upload" class="w-3 h-3" /> {{ t('orgPref.logos.upload') }}
           </button>
         </div>
 
@@ -895,7 +897,7 @@ onMounted(loadApiKeys)
             <div class="flex-1 min-w-0">
               <div class="text-sm font-medium text-gray-1000 truncate">{{ logo.extras.label }}</div>
               <div class="text-xs text-gray-700">
-                {{ logo.extras.mime_type?.replace('image/', '').toUpperCase() ?? 'Image' }}
+                {{ logo.extras.mime_type?.replace('image/', '').toUpperCase() ?? t('orgPref.logos.imageFallback') }}
                 <template v-if="logo.extras.size"> · {{ Math.round((logo.extras.size as number) / 1024) }} KB</template>
               </div>
             </div>
@@ -907,13 +909,13 @@ onMounted(loadApiKeys)
               <Icon :icon="deletingId === logo.id ? 'lucide:loader-circle' : 'lucide:trash-2'" class="w-3.5 h-3.5" :class="{ 'animate-spin': deletingId === logo.id }" />
             </button>
           </div>
-          <div v-if="!orgLogos.length && !showLogoForm" class="text-center py-4 text-xs text-gray-700">No logos uploaded yet.</div>
+          <div v-if="!orgLogos.length && !showLogoForm" class="text-center py-4 text-xs text-gray-700">{{ t('orgPref.logos.empty') }}</div>
         </div>
 
         <Transition name="slide-down">
           <div v-if="showLogoForm" class="mt-4 p-4 bg-gray-100 border border-gray-500 rounded-lg space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-gray-1000">Upload Logo</span>
+              <span class="text-xs font-medium text-gray-1000">{{ t('orgPref.logos.formTitle') }}</span>
               <button class="text-gray-700 hover:text-gray-1000" @click="closeLogoForm">
                 <Icon icon="lucide:x" class="w-4 h-4" />
               </button>
@@ -921,7 +923,7 @@ onMounted(loadApiKeys)
 
             <!-- File drop zone — upload happens immediately on selection -->
             <div>
-              <label class="text-xs text-gray-700 mb-1 block">Logo File</label>
+              <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.logos.file') }}</label>
               <div
                 class="relative border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors"
                 :class="logoUploadError ? 'border-red-500/50 hover:border-red-500/70' : 'border-gray-500 hover:border-gray-500'"
@@ -929,7 +931,7 @@ onMounted(loadApiKeys)
               >
                 <div v-if="logoUploading" class="flex flex-col items-center gap-2">
                   <Icon icon="lucide:loader-circle" class="w-6 h-6 text-green-700 animate-spin" />
-                  <span class="text-xs text-gray-700">Uploading…</span>
+                  <span class="text-xs text-gray-700">{{ t('orgPref.signatures.uploading') }}</span>
                 </div>
                 <div v-else-if="logoPreview && logoMediaId" class="flex flex-col items-center gap-1.5">
                   <div class="relative inline-flex">
@@ -939,24 +941,24 @@ onMounted(loadApiKeys)
                       class="absolute -top-2 -right-2 w-5 h-5 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white shadow transition-colors disabled:opacity-60"
                       :disabled="logoDeleting"
                       @click.stop="clearLogoMedia"
-                      title="Remove uploaded image"
+                      :title="t('orgPref.signatures.removeUploaded')"
                     >
                       <Icon v-if="logoDeleting" icon="lucide:loader-circle" class="w-3 h-3 animate-spin" />
                       <Icon v-else icon="lucide:x" class="w-3 h-3" />
                     </button>
                   </div>
                   <span class="text-[10px] text-green-400 flex items-center gap-1">
-                    <Icon icon="lucide:check-circle" class="w-3 h-3" /> Uploaded — click image area to replace
+                    <Icon icon="lucide:check-circle" class="w-3 h-3" /> {{ t('orgPref.signatures.uploaded') }}
                   </span>
                 </div>
                 <div v-else-if="logoUploadError" class="flex flex-col items-center gap-1">
                   <Icon icon="lucide:alert-circle" class="w-5 h-5 text-red-400" />
                   <span class="text-xs text-red-400">{{ logoUploadError }}</span>
-                  <span class="text-[10px] text-gray-700">Click to try again</span>
+                  <span class="text-[10px] text-gray-700">{{ t('orgPref.signatures.tryAgain') }}</span>
                 </div>
                 <div v-else class="text-xs text-gray-700">
                   <Icon icon="lucide:image-up" class="w-5 h-5 mx-auto mb-1 text-gray-900" />
-                  Click to select — uploads immediately (PNG, JPG, WebP · max 10 MB)
+                  {{ t('orgPref.logos.selectHint') }}
                 </div>
                 <input ref="logoFileRef" type="file" accept="image/*" class="hidden" @change="onLogoFileChange" />
               </div>
@@ -964,19 +966,19 @@ onMounted(loadApiKeys)
 
             <!-- Label — fill while image uploads -->
             <div>
-              <label class="text-xs text-gray-700 mb-1 block">Label</label>
-              <input v-model="logoForm.label" type="text" placeholder="e.g. Primary Logo (Light)" class="app-inp w-full text-sm" />
+              <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.logos.label') }}</label>
+              <input v-model="logoForm.label" type="text" :placeholder="t('orgPref.logos.labelPh')" class="app-inp w-full text-sm" />
             </div>
 
             <div class="flex justify-end gap-2 pt-1">
-              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="closeLogoForm">Cancel</button>
+              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="closeLogoForm">{{ t('orgPref.common.cancel') }}</button>
               <button
                 class="flex items-center gap-1.5 text-xs bg-green-700 hover:bg-green-800 text-bg-100 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                 :disabled="logoSubmitting || logoUploading || !logoMediaId || !logoForm.label.trim()"
                 @click="submitLogo"
               >
                 <Icon v-if="logoUploading" icon="lucide:loader-circle" class="w-3 h-3 animate-spin" />
-                {{ logoSubmitting ? 'Saving…' : logoUploading ? 'Uploading…' : 'Save Logo' }}
+                {{ logoSubmitting ? t('orgPref.common.saving') : logoUploading ? t('orgPref.signatures.uploading') : t('orgPref.logos.save') }}
               </button>
             </div>
           </div>
@@ -987,14 +989,14 @@ onMounted(loadApiKeys)
       <div class="bg-gray-200 border border-gray-400 rounded-xl p-5 lg:col-span-2">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h3 class="text-sm font-semibold text-gray-1000">Invoice Quick-Fill Profiles</h3>
-            <p class="text-[11px] text-gray-700 mt-0.5">Saved "From" presets — load any profile when creating an invoice to pre-fill your details.</p>
+            <h3 class="text-sm font-semibold text-gray-1000">{{ t('orgPref.profiles.title') }}</h3>
+            <p class="text-[11px] text-gray-700 mt-0.5">{{ t('orgPref.profiles.subtitle') }}</p>
           </div>
           <button
             class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1.5 rounded-md transition-colors shrink-0"
             @click="openAddProfile"
           >
-            <Icon icon="lucide:plus" class="w-3 h-3" /> Add Profile
+            <Icon icon="lucide:plus" class="w-3 h-3" /> {{ t('orgPref.profiles.add') }}
           </button>
         </div>
 
@@ -1023,55 +1025,55 @@ onMounted(loadApiKeys)
             </div>
           </div>
           <div v-if="!invoiceProfiles.length" class="col-span-full text-center py-6 text-xs text-gray-700">
-            No profiles yet. Add one to speed up invoice creation.
+            {{ t('orgPref.profiles.empty') }}
           </div>
         </div>
 
         <Transition name="slide-down">
           <div v-if="showProfileForm" class="mt-4 p-4 bg-gray-100 border border-gray-500 rounded-lg space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-gray-1000">{{ editProfileIndex !== null ? 'Edit' : 'New' }} Profile</span>
+              <span class="text-xs font-medium text-gray-1000">{{ editProfileIndex !== null ? t('orgPref.profiles.formEdit') : t('orgPref.profiles.formNew') }}</span>
               <button class="text-gray-700 hover:text-gray-1000" @click="showProfileForm = false">
                 <Icon icon="lucide:x" class="w-4 h-4" />
               </button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div class="sm:col-span-2">
-                <label class="text-xs text-gray-700 mb-1 block">Profile Name <span class="text-red-400">*</span></label>
-                <input v-model="profileForm.name" type="text" placeholder="e.g. Acme Design Studio" class="app-inp w-full text-sm" />
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.profiles.name') }} <span class="text-red-400">*</span></label>
+                <input v-model="profileForm.name" type="text" :placeholder="t('orgPref.profiles.namePh')" class="app-inp w-full text-sm" />
               </div>
               <div class="sm:col-span-2">
-                <label class="text-xs text-gray-700 mb-1 block">Tagline / Role</label>
-                <input v-model="profileForm.tagline" type="text" placeholder="e.g. Creative Agency & Digital Studio" class="app-inp w-full text-sm" />
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.profiles.tagline') }}</label>
+                <input v-model="profileForm.tagline" type="text" :placeholder="t('orgPref.profiles.taglinePh')" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Email</label>
-                <input v-model="profileForm.email" type="email" placeholder="hello@studio.com" class="app-inp w-full text-sm" />
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.profiles.email') }}</label>
+                <input v-model="profileForm.email" type="email" :placeholder="t('orgPref.profiles.emailPh')" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Phone</label>
-                <input v-model="profileForm.phone" type="text" placeholder="+1 415 555 0199" class="app-inp w-full text-sm" />
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.profiles.phone') }}</label>
+                <input v-model="profileForm.phone" type="text" :placeholder="t('orgPref.profiles.phonePh')" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Website</label>
-                <input v-model="profileForm.website" type="text" placeholder="www.studio.com" class="app-inp w-full text-sm" />
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.profiles.website') }}</label>
+                <input v-model="profileForm.website" type="text" :placeholder="t('orgPref.profiles.websitePh')" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Logo URL</label>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.profiles.logoUrl') }}</label>
                 <input v-model="profileForm.logo_url" type="text" placeholder="https://…" class="app-inp w-full text-sm" />
               </div>
               <div class="sm:col-span-2">
-                <label class="text-xs text-gray-700 mb-1 block">Address</label>
-                <textarea v-model="profileForm.address" rows="2" placeholder="123 Design Street, San Francisco CA 94105" class="app-inp w-full text-sm resize-none"></textarea>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.profiles.address') }}</label>
+                <textarea v-model="profileForm.address" rows="2" :placeholder="t('orgPref.profiles.addressPh')" class="app-inp w-full text-sm resize-none"></textarea>
               </div>
             </div>
             <div class="flex justify-end gap-2 pt-1">
-              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showProfileForm = false">Cancel</button>
+              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showProfileForm = false">{{ t('orgPref.common.cancel') }}</button>
               <button
                 class="text-xs bg-green-700 hover:bg-green-800 text-bg-100 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                 :disabled="profileSaving || !profileForm.name.trim()"
                 @click="saveProfile"
-              >{{ profileSaving ? 'Saving…' : 'Save Profile' }}</button>
+              >{{ profileSaving ? t('orgPref.common.saving') : t('orgPref.profiles.save') }}</button>
             </div>
           </div>
         </Transition>
@@ -1081,14 +1083,14 @@ onMounted(loadApiKeys)
       <div class="bg-gray-200 border border-gray-400 rounded-xl p-5 lg:col-span-2">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h3 class="text-sm font-semibold text-gray-1000">Bank Accounts</h3>
-            <p class="text-[11px] text-gray-700 mt-0.5">Saved bank details — select one when creating an invoice to pre-fill payment info.</p>
+            <h3 class="text-sm font-semibold text-gray-1000">{{ t('orgPref.banks.title') }}</h3>
+            <p class="text-[11px] text-gray-700 mt-0.5">{{ t('orgPref.banks.subtitle') }}</p>
           </div>
           <button
             class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1.5 rounded-md transition-colors shrink-0"
             @click="openAddBank"
           >
-            <Icon icon="lucide:plus" class="w-3 h-3" /> Add Account
+            <Icon icon="lucide:plus" class="w-3 h-3" /> {{ t('orgPref.banks.add') }}
           </button>
         </div>
 
@@ -1112,69 +1114,69 @@ onMounted(loadApiKeys)
             </div>
             <div class="grid grid-cols-1 gap-0.5 text-[11px] font-mono text-gray-700">
               <span v-if="bank.account_name">{{ bank.account_name }}</span>
-              <span v-if="bank.account_number">Acct: {{ bank.account_number }}</span>
+              <span v-if="bank.account_number">{{ t('orgPref.banks.acct', { n: bank.account_number }) }}</span>
               <span v-if="bank.iban">IBAN: {{ bank.iban }}</span>
-              <span v-if="bank.sort_code">Sort: {{ bank.sort_code }}</span>
+              <span v-if="bank.sort_code">{{ t('orgPref.banks.sort', { n: bank.sort_code }) }}</span>
             </div>
           </div>
           <div v-if="!bankAccounts.length" class="col-span-full text-center py-6 text-xs text-gray-700">
-            No bank accounts yet.
+            {{ t('orgPref.banks.empty') }}
           </div>
         </div>
 
         <Transition name="slide-down">
           <div v-if="showBankForm" class="mt-4 p-4 bg-gray-100 border border-gray-500 rounded-lg space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-gray-1000">{{ editBankIndex !== null ? 'Edit' : 'New' }} Bank Account</span>
+              <span class="text-xs font-medium text-gray-1000">{{ editBankIndex !== null ? t('orgPref.banks.formEdit') : t('orgPref.banks.formNew') }}</span>
               <button class="text-gray-700 hover:text-gray-1000" @click="showBankForm = false">
                 <Icon icon="lucide:x" class="w-4 h-4" />
               </button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Label <span class="text-red-400">*</span></label>
-                <input v-model="bankForm.label" type="text" placeholder="e.g. Main GBP Account" class="app-inp w-full text-sm" />
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.banks.label') }} <span class="text-red-400">*</span></label>
+                <input v-model="bankForm.label" type="text" :placeholder="t('orgPref.banks.labelPh')" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Currency</label>
-                <input v-model="bankForm.currency" type="text" placeholder="GBP / USD / EUR" class="app-inp w-full text-sm" />
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.banks.currency') }}</label>
+                <input v-model="bankForm.currency" type="text" :placeholder="t('orgPref.banks.currencyPh')" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Bank Name</label>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.banks.bankName') }}</label>
                 <input v-model="bankForm.bank_name" type="text" placeholder="Barclays" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Account Name</label>
-                <input v-model="bankForm.account_name" type="text" placeholder="Acme Ltd." class="app-inp w-full text-sm" />
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.banks.accountName') }}</label>
+                <input v-model="bankForm.account_name" type="text" :placeholder="t('orgPref.banks.accountNamePh')" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Account Number</label>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.banks.accountNumber') }}</label>
                 <input v-model="bankForm.account_number" type="text" placeholder="12345678" class="app-inp w-full text-sm font-mono" />
               </div>
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Sort Code</label>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.banks.sortCode') }}</label>
                 <input v-model="bankForm.sort_code" type="text" placeholder="20-00-00" class="app-inp w-full text-sm font-mono" />
               </div>
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">IBAN</label>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.banks.iban') }}</label>
                 <input v-model="bankForm.iban" type="text" placeholder="GB00 BARC 2000 0055 5555 55" class="app-inp w-full text-sm font-mono" />
               </div>
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">SWIFT / BIC</label>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.banks.swift') }}</label>
                 <input v-model="bankForm.swift" type="text" placeholder="BARCGB22" class="app-inp w-full text-sm font-mono" />
               </div>
               <div class="sm:col-span-2">
-                <label class="text-xs text-gray-700 mb-1 block">Notes</label>
-                <input v-model="bankForm.notes" type="text" placeholder="e.g. USD transfers only" class="app-inp w-full text-sm" />
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.banks.notes') }}</label>
+                <input v-model="bankForm.notes" type="text" :placeholder="t('orgPref.banks.notesPh')" class="app-inp w-full text-sm" />
               </div>
             </div>
             <div class="flex justify-end gap-2 pt-1">
-              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showBankForm = false">Cancel</button>
+              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showBankForm = false">{{ t('orgPref.common.cancel') }}</button>
               <button
                 class="text-xs bg-green-700 hover:bg-green-800 text-bg-100 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                 :disabled="bankSaving || !bankForm.label.trim()"
                 @click="saveBank"
-              >{{ bankSaving ? 'Saving…' : 'Save Account' }}</button>
+              >{{ bankSaving ? t('orgPref.common.saving') : t('orgPref.banks.save') }}</button>
             </div>
           </div>
         </Transition>
@@ -1184,14 +1186,14 @@ onMounted(loadApiKeys)
       <div class="bg-gray-200 border border-gray-400 rounded-xl p-5 lg:col-span-2">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h3 class="text-sm font-semibold text-gray-1000">Payment Links</h3>
-            <p class="text-[11px] text-gray-700 mt-0.5">Saved payment links (PayPal, Stripe, etc.) — reuse them on invoices and letterheads.</p>
+            <h3 class="text-sm font-semibold text-gray-1000">{{ t('orgPref.links.title') }}</h3>
+            <p class="text-[11px] text-gray-700 mt-0.5">{{ t('orgPref.links.subtitle') }}</p>
           </div>
           <button
             class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1.5 rounded-md transition-colors shrink-0"
             @click="openAddPaymentLink"
           >
-            <Icon icon="lucide:plus" class="w-3 h-3" /> Add Link
+            <Icon icon="lucide:plus" class="w-3 h-3" /> {{ t('orgPref.links.add') }}
           </button>
         </div>
 
@@ -1220,46 +1222,46 @@ onMounted(loadApiKeys)
             </button>
           </div>
           <div v-if="!paymentLinks.length" class="col-span-full text-center py-6 text-xs text-gray-700">
-            No payment links yet.
+            {{ t('orgPref.links.empty') }}
           </div>
         </div>
 
         <Transition name="slide-down">
           <div v-if="showPaymentLinkForm" class="mt-4 p-4 bg-gray-100 border border-gray-500 rounded-lg space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-gray-1000">{{ editPaymentLinkIndex !== null ? 'Edit' : 'New' }} Payment Link</span>
+              <span class="text-xs font-medium text-gray-1000">{{ editPaymentLinkIndex !== null ? t('orgPref.links.formEdit') : t('orgPref.links.formNew') }}</span>
               <button class="text-gray-700 hover:text-gray-1000" @click="showPaymentLinkForm = false">
                 <Icon icon="lucide:x" class="w-4 h-4" />
               </button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Label <span class="text-red-400">*</span></label>
-                <input v-model="paymentLinkForm.label" type="text" placeholder="e.g. PayPal (Business)" class="app-inp w-full text-sm" />
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.links.label') }} <span class="text-red-400">*</span></label>
+                <input v-model="paymentLinkForm.label" type="text" :placeholder="t('orgPref.links.labelPh')" class="app-inp w-full text-sm" />
               </div>
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Type <span class="text-red-400">*</span></label>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.links.type') }} <span class="text-red-400">*</span></label>
                 <select v-model="paymentLinkForm.type" class="app-select w-full text-sm">
                   <option v-for="t in paymentLinkTypes" :key="t">{{ t }}</option>
                 </select>
               </div>
               <div class="sm:col-span-2">
-                <label class="text-xs text-gray-700 mb-1 block">Link / Username <span class="text-red-400">*</span></label>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.links.value') }} <span class="text-red-400">*</span></label>
                 <input
                   v-model="paymentLinkForm.value"
                   type="text"
-                  :placeholder="paymentLinkForm.type === 'PayPal' ? 'paypal.me/yourusername' : paymentLinkForm.type === 'Venmo' ? '@yourusername' : paymentLinkForm.type === 'Cash App' ? '$yourcashtag' : paymentLinkForm.type === 'Stripe' ? 'https://buy.stripe.com/…' : 'Link or username'"
+                  :placeholder="paymentLinkForm.type === 'PayPal' ? 'paypal.me/yourusername' : paymentLinkForm.type === 'Venmo' ? '@yourusername' : paymentLinkForm.type === 'Cash App' ? '$yourcashtag' : paymentLinkForm.type === 'Stripe' ? 'https://buy.stripe.com/…' : t('orgPref.links.valuePh')"
                   class="app-inp w-full text-sm"
                 />
               </div>
             </div>
             <div class="flex justify-end gap-2 pt-1">
-              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showPaymentLinkForm = false">Cancel</button>
+              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showPaymentLinkForm = false">{{ t('orgPref.common.cancel') }}</button>
               <button
                 class="text-xs bg-green-700 hover:bg-green-800 text-bg-100 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                 :disabled="paymentLinkSaving || !paymentLinkForm.label.trim() || !paymentLinkForm.value.trim()"
                 @click="savePaymentLink"
-              >{{ paymentLinkSaving ? 'Saving…' : 'Save Link' }}</button>
+              >{{ paymentLinkSaving ? t('orgPref.common.saving') : t('orgPref.links.save') }}</button>
             </div>
           </div>
         </Transition>
@@ -1269,14 +1271,14 @@ onMounted(loadApiKeys)
       <div v-if="isBusinessOrg" class="bg-gray-200 border border-gray-400 rounded-xl p-5 lg:col-span-2">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h3 class="text-sm font-semibold text-gray-1000">API Keys</h3>
-            <p class="text-xs text-gray-700 mt-0.5">Use these keys to embed Flowtali in your own product. Keep secret keys server-side only.</p>
+            <h3 class="text-sm font-semibold text-gray-1000">{{ t('orgPref.apiKeys.title') }}</h3>
+            <p class="text-xs text-gray-700 mt-0.5">{{ t('orgPref.apiKeys.subtitle') }}</p>
           </div>
           <button
             class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 px-2.5 py-1.5 rounded-md transition-colors"
             @click="openApiKeyForm"
           >
-            <Icon icon="lucide:plus" class="w-3 h-3" /> New Key
+            <Icon icon="lucide:plus" class="w-3 h-3" /> {{ t('orgPref.apiKeys.new') }}
           </button>
         </div>
 
@@ -1287,7 +1289,7 @@ onMounted(loadApiKeys)
 
         <!-- Empty -->
         <div v-else-if="!apiKeys.length && !showApiKeyForm" class="text-center py-8 text-xs text-gray-700">
-          No API keys yet. Create one to start embedding Flowtali.
+          {{ t('orgPref.apiKeys.empty') }}
         </div>
 
         <!-- Key list -->
@@ -1304,12 +1306,12 @@ onMounted(loadApiKeys)
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="text-xs font-medium text-gray-1000 truncate">{{ key.name }}</span>
-                <span v-if="!key.is_active" class="text-[10px] bg-gray-400 text-gray-700 px-1.5 py-0.5 rounded">Revoked</span>
+                <span v-if="!key.is_active" class="text-[10px] bg-gray-400 text-gray-700 px-1.5 py-0.5 rounded">{{ t('orgPref.apiKeys.revoked') }}</span>
               </div>
               <div class="flex items-center gap-3 mt-0.5 flex-wrap">
                 <code class="text-[11px] text-gray-700 font-mono">{{ maskKey(key.publishable_key) }}</code>
-                <span v-if="key.last_used_at" class="text-[10px] text-gray-700">Last used {{ new Date(key.last_used_at).toLocaleDateString() }}</span>
-                <span v-else class="text-[10px] text-gray-700">Never used</span>
+                <span v-if="key.last_used_at" class="text-[10px] text-gray-700">{{ t('orgPref.apiKeys.lastUsed', { date: new Date(key.last_used_at).toLocaleDateString(locale) }) }}</span>
+                <span v-else class="text-[10px] text-gray-700">{{ t('orgPref.apiKeys.neverUsed') }}</span>
               </div>
             </div>
 
@@ -1323,7 +1325,7 @@ onMounted(loadApiKeys)
                 title="Revoke key"
               >
                 <Icon v-if="apiKeyActionId === key.id" icon="lucide:loader-circle" class="w-3 h-3 animate-spin" />
-                <span v-else>Revoke</span>
+                <span v-else>{{ t('orgPref.apiKeys.revoke') }}</span>
               </button>
               <button
                 class="text-[11px] text-red-400/70 hover:text-red-400 px-2 py-1 rounded hover:bg-gray-400 transition-colors disabled:opacity-40"
@@ -1343,34 +1345,34 @@ onMounted(loadApiKeys)
           <div v-if="showApiKeyForm" class="mt-3 p-4 bg-gray-100 border border-gray-500 rounded-lg space-y-3">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Key name <span class="text-red-400">*</span></label>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.apiKeys.keyName') }} <span class="text-red-400">*</span></label>
                 <input
                   v-model="apiKeyFormName"
                   type="text"
-                  placeholder="e.g. Production App"
+                  :placeholder="t('orgPref.apiKeys.keyNamePh')"
                   class="app-inp w-full text-sm"
                   @keyup.enter="createApiKey"
                 />
               </div>
               <div>
-                <label class="text-xs text-gray-700 mb-1 block">Allowed domains <span class="text-gray-700/50">(optional, comma-separated)</span></label>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.apiKeys.allowedDomains') }} <span class="text-gray-700/50">{{ t('orgPref.apiKeys.allowedDomainsHint') }}</span></label>
                 <input
                   v-model="apiKeyFormDomains"
                   type="text"
-                  placeholder="app.yoursite.com, yoursite.com"
+                  :placeholder="t('orgPref.apiKeys.allowedDomainsPh')"
                   class="app-inp w-full text-sm"
                 />
               </div>
             </div>
             <div class="flex justify-end gap-2 pt-1">
-              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showApiKeyForm = false">Cancel</button>
+              <button class="text-xs text-gray-900 hover:text-gray-1000 px-3 py-1.5 rounded-md hover:bg-gray-400 transition-colors" @click="showApiKeyForm = false">{{ t('orgPref.common.cancel') }}</button>
               <button
                 class="text-xs bg-green-700 hover:bg-green-800 text-bg-100 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
                 :disabled="apiKeySaving || !apiKeyFormName.trim()"
                 @click="createApiKey"
               >
                 <Icon v-if="apiKeySaving" icon="lucide:loader-circle" class="w-3 h-3 animate-spin inline mr-1" />
-                {{ apiKeySaving ? 'Creating…' : 'Create Key' }}
+                {{ apiKeySaving ? t('orgPref.apiKeys.creating') : t('orgPref.apiKeys.create') }}
               </button>
             </div>
           </div>
@@ -1379,8 +1381,8 @@ onMounted(loadApiKeys)
         <!-- Docs link -->
         <div class="mt-3 flex items-center gap-1.5 text-[11px] text-gray-700">
           <Icon icon="lucide:book-open" class="w-3 h-3" />
-          <span>New to the Embed SDK?</span>
-          <router-link to="/docs/embed" class="text-green-700 hover:underline">Read the docs →</router-link>
+          <span>{{ t('orgPref.apiKeys.docsQuestion') }}</span>
+          <router-link to="/docs/embed" class="text-green-700 hover:underline">{{ t('orgPref.apiKeys.readDocs') }}</router-link>
         </div>
       </div>
 
@@ -1397,29 +1399,29 @@ onMounted(loadApiKeys)
                 <Icon icon="lucide:key" class="w-4 h-4 text-green-700" />
               </div>
               <div>
-                <h3 class="text-gray-1000 font-semibold text-sm">Save your secret key</h3>
-                <p class="text-gray-700 text-xs mt-0.5">This is the only time you'll see it. Copy it now and store it securely on your server.</p>
+                <h3 class="text-gray-1000 font-semibold text-sm">{{ t('orgPref.secretModal.title') }}</h3>
+                <p class="text-gray-700 text-xs mt-0.5">{{ t('orgPref.secretModal.subtitle') }}</p>
               </div>
             </div>
 
             <!-- Keys display -->
             <div class="space-y-3 mb-5">
               <div>
-                <div class="text-[10px] text-gray-700 uppercase tracking-wider mb-1">Publishable key (safe for frontend)</div>
+                <div class="text-[10px] text-gray-700 uppercase tracking-wider mb-1">{{ t('orgPref.secretModal.publishable') }}</div>
                 <div class="flex items-center gap-2 bg-gray-100 border border-gray-500 rounded-lg px-3 py-2">
                   <code class="text-xs text-gray-1000 font-mono flex-1 break-all">{{ newSecretModal.key.publishable_key }}</code>
                 </div>
               </div>
               <div>
                 <div class="text-[10px] text-green-700 uppercase tracking-wider mb-1 flex items-center gap-1">
-                  <Icon icon="lucide:alert-triangle" class="w-3 h-3" /> Secret key (server-side only — shown once)
+                  <Icon icon="lucide:alert-triangle" class="w-3 h-3" /> {{ t('orgPref.secretModal.secret') }}
                 </div>
                 <div class="flex items-center gap-2 bg-gray-100 border border-green-700/30 rounded-lg px-3 py-2">
                   <code class="text-xs text-gray-1000 font-mono flex-1 break-all">{{ newSecretModal.secret }}</code>
                   <button
                     class="flex-shrink-0 text-xs text-gray-900 hover:text-green-700 transition-colors"
                     @click="copySecret(newSecretModal!.secret)"
-                    :title="secretCopied ? 'Copied!' : 'Copy'"
+                    :title="secretCopied ? t('orgPref.secretModal.copied') : t('orgPref.secretModal.copy')"
                   >
                     <Icon :icon="secretCopied ? 'lucide:check' : 'lucide:copy'" class="w-3.5 h-3.5" :class="secretCopied ? 'text-green-400' : ''" />
                   </button>
@@ -1431,7 +1433,7 @@ onMounted(loadApiKeys)
               class="w-full bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-sm py-2.5 rounded-lg transition-colors"
               @click="newSecretModal = null; secretCopied = false"
             >
-              I've saved my secret key
+              {{ t('orgPref.secretModal.saved') }}
             </button>
           </div>
         </div>

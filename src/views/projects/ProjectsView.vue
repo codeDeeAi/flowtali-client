@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { Icon } from '@iconify/vue';
 import Pagination from '@/components/ui/Pagination.vue';
 import { useAuthStore } from '@/stores/auth';
@@ -9,6 +10,7 @@ import { useNotification } from '@/composables/notification';
 import type { IProject, IProjectStats } from '@/services/project.service';
 
 const router    = useRouter();
+const { t }     = useI18n();
 const authStore = useAuthStore();
 const { notify } = useNotification();
 
@@ -25,14 +27,14 @@ const total        = ref(0);
 const perPage      = ref(15);
 const isLoading    = ref(true);
 
-const STATUS_OPTIONS = [
-  { value: '', label: 'All' },
-  { value: 'draft', label: 'Draft' },
-  { value: 'active', label: 'Active' },
-  { value: 'on_hold', label: 'On Hold' },
-  { value: 'completed', label: 'Completed' },
-  { value: 'cancelled', label: 'Cancelled' },
-];
+const STATUS_OPTIONS = computed(() => [
+  { value: '', label: t('projects.status.all') },
+  { value: 'draft', label: t('projects.status.draft') },
+  { value: 'active', label: t('projects.status.active') },
+  { value: 'on_hold', label: t('projects.status.on_hold') },
+  { value: 'completed', label: t('projects.status.completed') },
+  { value: 'cancelled', label: t('projects.status.cancelled') },
+]);
 
 const statusBadge = (status: string) => {
   const map: Record<string, string> = {
@@ -45,13 +47,7 @@ const statusBadge = (status: string) => {
   return 'text-[10px] font-semibold px-1.5 py-0.5 rounded-full border ' + (map[status] ?? map.draft);
 };
 
-const statusLabel = (status: string) => {
-  const map: Record<string, string> = {
-    draft: 'Draft', active: 'Active', on_hold: 'On Hold',
-    completed: 'Completed', cancelled: 'Cancelled',
-  };
-  return map[status] ?? status;
-};
+const statusLabel = (status: string) => t(`projects.status.${status}`);
 
 async function fetchProjects() {
   if (!orgId.value) return;
@@ -72,7 +68,7 @@ async function fetchProjects() {
     total.value     = paginated.total;
     stats.value     = statsRes.data.data;
   } catch {
-    notify('Failed to load projects.', 'error');
+    notify(t('projects.toasts.loadFailed'), 'error');
   } finally {
     isLoading.value = false;
   }
@@ -97,8 +93,8 @@ const goToView   = (id: string) => router.push({ name: 'projects.view', params: 
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div>
-        <h1 class="page-title">Projects</h1>
-        <p class="page-subtitle">{{ total }} project{{ total === 1 ? '' : 's' }}</p>
+        <h1 class="page-title">{{ t('projects.title') }}</h1>
+        <p class="page-subtitle">{{ t('projects.count', total) }}</p>
       </div>
       <div class="flex items-center gap-2 shrink-0">
         <!-- Search -->
@@ -108,7 +104,7 @@ const goToView   = (id: string) => router.push({ name: 'projects.view', params: 
             v-model="searchInput"
             @keyup.enter="onSearch"
             @input="!searchInput && onSearch()"
-            placeholder="Search projects…"
+            :placeholder="t('projects.search')"
             class="w-52 bg-gray-100 border border-gray-400 rounded-lg text-gray-1000 text-xs pr-3 pl-8 py-2 outline-none placeholder-gray-700 focus:border-green-700/40 focus:ring-2 focus:ring-green-700/10 transition-colors "
           />
         </div>
@@ -122,7 +118,7 @@ const goToView   = (id: string) => router.push({ name: 'projects.view', params: 
           @click="goToCreate"
           class="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs px-3 py-2 rounded-lg transition-colors whitespace-nowrap"
         >
-          <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> New Project
+          <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> {{ t('projects.new') }}
         </button>
       </div>
     </div>
@@ -153,10 +149,10 @@ const goToView   = (id: string) => router.push({ name: 'projects.view', params: 
       <div class="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center mb-4">
         <Icon icon="lucide:folder-kanban" class="w-6 h-6 text-gray-700" />
       </div>
-      <p class="text-gray-700 text-sm">No projects found</p>
-      <p class="text-gray-700/60 text-xs mt-1">{{ searchQuery || statusFilter ? 'Try adjusting your filters' : 'Create your first project to get started' }}</p>
+      <p class="text-gray-700 text-sm">{{ t('projects.empty.title') }}</p>
+      <p class="text-gray-700/60 text-xs mt-1">{{ searchQuery || statusFilter ? t('projects.empty.filterHint') : t('projects.empty.createHint') }}</p>
       <button v-if="!searchQuery && !statusFilter" @click="goToCreate" class="mt-4 text-xs text-green-700 hover:underline">
-        Create a project
+        {{ t('projects.empty.createLink') }}
       </button>
     </div>
 

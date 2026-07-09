@@ -2,9 +2,11 @@
 import { computed } from 'vue'
 import { Icon } from '@iconify/vue'
 import { RouterLink, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import NotificationsDropdown from '@/components/notifications/NotificationsDropdown.vue'
 import ProfileDropdown from '@/components/profile/ProfileDropdown.vue'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 import FlowtaliLogo from '@/components/ui/FlowtaliLogo.vue'
 
 defineEmits<{
@@ -12,36 +14,50 @@ defineEmits<{
 }>()
 
 const route     = useRoute()
+const { t }     = useI18n()
 const authStore = useAuthStore()
 
 const orgName = computed(() => authStore.currentOrganization?.name ?? '')
 
-const PAGE_TITLES: Record<string, string> = {
-  dashboard:            'Dashboard',
-  invoices:             'Invoices',
-  'invoices.create':    'New Invoice',
-  'invoices.view':      'Invoice',
-  'invoices.edit':      'Edit Invoice',
-  letterheads:          'Letterheads',
-  'letterheads.create': 'New Letterhead',
-  'letterheads.view':   'Letterhead',
-  'letterheads.edit':   'Edit Letterhead',
-  clients:              'Clients',
-  'clients.create':     'New Client',
-  'clients.view':       'Client',
-  'clients.edit':       'Edit Client',
-  members:              'Members',
-  'members.view':       'Member',
-  roles:                'Roles & Permissions',
-  'org-preferences':    'Org Preferences',
-  'audit-logs':         'Audit Logs',
-  analytics:            'Analytics',
-  subscription:         'Subscription',
-  settings:             'Settings',
-  profile:              'My Profile',
+// Map each route name to a dot-free key under app.pageTitles.
+const PAGE_TITLE_KEYS: Record<string, string> = {
+  dashboard:            'dashboard',
+  invoices:             'invoices',
+  'invoices.create':    'invoicesCreate',
+  'invoices.view':      'invoicesView',
+  'invoices.edit':      'invoicesEdit',
+  receipts:             'receipts',
+  'receipts.create':    'receiptsCreate',
+  'receipts.view':      'receiptsView',
+  'receipts.edit':      'receiptsEdit',
+  letterheads:          'letterheads',
+  'letterheads.create': 'letterheadsCreate',
+  'letterheads.view':   'letterheadsView',
+  'letterheads.edit':   'letterheadsEdit',
+  projects:             'projects',
+  'projects.create':    'projectsCreate',
+  'projects.view':      'projectsView',
+  'projects.edit':      'projectsEdit',
+  clients:              'clients',
+  'clients.create':     'clientsCreate',
+  'clients.view':       'clientsView',
+  'clients.edit':       'clientsEdit',
+  members:              'members',
+  'members.view':       'membersView',
+  roles:                'roles',
+  'org-preferences':    'orgPreferences',
+  'audit-logs':         'auditLogs',
+  analytics:            'analytics',
+  billing:              'billing',
+  subscription:         'subscription',
+  settings:             'settings',
+  profile:              'profile',
 }
 
-const pageTitle = computed(() => PAGE_TITLES[String(route.name)] ?? '')
+const pageTitle = computed(() => {
+  const key = PAGE_TITLE_KEYS[String(route.name)]
+  return key ? t(`app.pageTitles.${key}`) : ''
+})
 </script>
 
 <template>
@@ -53,7 +69,7 @@ const pageTitle = computed(() => PAGE_TITLES[String(route.name)] ?? '')
       <button
         class="md:hidden flex items-center justify-center w-8 h-8 rounded-md text-gray-900 hover:text-gray-1000 hover:bg-gray-400 transition-colors"
         @click="$emit('toggleSidebar')"
-        aria-label="Toggle sidebar"
+        :aria-label="t('app.header.toggleSidebar')"
       >
         <Icon icon="lucide:menu" class="w-5 h-5" />
       </button>
@@ -77,6 +93,9 @@ const pageTitle = computed(() => PAGE_TITLES[String(route.name)] ?? '')
 
     <!-- Right: Actions -->
     <div class="flex items-center gap-1.5">
+      <!-- Language switcher -->
+      <LanguageSwitcher />
+
       <!-- Notifications dropdown -->
       <NotificationsDropdown />
 

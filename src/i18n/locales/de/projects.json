@@ -1,0 +1,176 @@
+{
+  "title": "Projekte",
+  "count": "keine Projekte | ein Projekt | {count} Projekte",
+  "new": "Neues Projekt",
+  "search": "Projekte suchen…",
+  "status": {
+    "all": "Alle",
+    "draft": "Entwurf",
+    "active": "Aktiv",
+    "on_hold": "Pausiert",
+    "completed": "Abgeschlossen",
+    "cancelled": "Abgebrochen"
+  },
+  "statusDesc": {
+    "draft": "Noch nicht begonnen",
+    "active": "Läuft derzeit",
+    "on_hold": "Vorübergehend pausiert",
+    "completed": "Erfolgreich abgeschlossen",
+    "cancelled": "Wird nicht fortgesetzt"
+  },
+  "empty": {
+    "title": "Keine Projekte gefunden",
+    "filterHint": "Passen Sie Ihre Filter an",
+    "createHint": "Erstellen Sie Ihr erstes Projekt, um zu beginnen",
+    "createLink": "Projekt erstellen"
+  },
+  "card": {
+    "contract": "Vertrag"
+  },
+  "create": {
+    "title": "Neues Projekt",
+    "subtitle": "Verfolgen Sie Rechnungen, Belege und Dateien in einem Projekt"
+  },
+  "edit": {
+    "title": "Projekt bearbeiten"
+  },
+  "sections": {
+    "identity": "Projektidentität",
+    "status": "Status",
+    "financials": "Finanzen & Zeitplan"
+  },
+  "fields": {
+    "number": "Nummer",
+    "projectNumber": "Projektnummer",
+    "title": "Titel",
+    "description": "Beschreibung",
+    "client": "Kunde",
+    "initialStatus": "Anfangsstatus",
+    "statusTracking": "Statusverfolgung",
+    "currency": "Währung",
+    "contractValue": "Vertragswert",
+    "startDate": "Startdatum",
+    "endDate": "Enddatum"
+  },
+  "placeholders": {
+    "number": "PRJ-001",
+    "title": "z. B. Website-Neugestaltung für Acme Corp",
+    "titleShort": "Website-Neugestaltung",
+    "description": "Umfang, Ziele oder Notizen zu diesem Projekt…",
+    "descriptionShort": "Optionale Projektbeschreibung…",
+    "contractValue": "0,00"
+  },
+  "noClientAssigned": "Kein Kunde zugewiesen",
+  "noClient": "Kein Kunde",
+  "tracking": {
+    "manual": "Manuell",
+    "manualDesc": "Sie steuern Statusänderungen",
+    "auto": "Automatisch",
+    "autoDesc": "Aktualisierung basierend auf Zahlungen",
+    "autoOption": "Automatisch (basierend auf Zahlungen)"
+  },
+  "cancel": "Abbrechen",
+  "creating": "Wird erstellt…",
+  "createProject": "Projekt erstellen",
+  "saving": "Speichern…",
+  "saveChanges": "Änderungen speichern",
+  "tabs": {
+    "overview": "Übersicht",
+    "client": "Kunde",
+    "invoices": "Rechnungen",
+    "receipts": "Belege",
+    "letterheads": "Briefköpfe",
+    "activity": "Aktivität",
+    "files": "Dateien"
+  },
+  "details": {
+    "title": "Details",
+    "number": "Nummer",
+    "client": "Kunde",
+    "statusTracking": "Statusverfolgung",
+    "startDate": "Startdatum",
+    "endDate": "Enddatum",
+    "description": "Beschreibung"
+  },
+  "financials": {
+    "title": "Finanzen",
+    "contractValue": "Vertragswert",
+    "totalInvoiced": "Insgesamt fakturiert",
+    "totalReceived": "Insgesamt erhalten",
+    "balance": "Saldo",
+    "paymentProgress": "Zahlungsfortschritt"
+  },
+  "clientPanel": {
+    "noClientAssigned": "Kein Kunde zugewiesen",
+    "assignHint": "Weisen Sie einen Kunden zu, um zu verfolgen, für wen dieses Projekt ist",
+    "noEmail": "Keine E-Mail hinterlegt",
+    "changeClient": "Kunde ändern",
+    "assignClient": "Kunde zuweisen",
+    "noClientsFound": "Keine Kunden gefunden"
+  },
+  "linked": {
+    "noInvoices": "Keine Rechnungen verknüpft.",
+    "noReceipts": "Keine Belege verknüpft.",
+    "noLetterheads": "Keine Briefköpfe verknüpft.",
+    "noFiles": "Noch keine Dateien.",
+    "noActivity": "Noch keine Aktivität."
+  },
+  "notes": {
+    "add": "Notiz hinzufügen",
+    "addBtn": "Notiz hinzufügen"
+  },
+  "deleteModal": {
+    "title": "Projekt löschen?",
+    "body": "Dies löscht dieses Projekt dauerhaft. Verknüpfte Rechnungen und Belege werden nicht gelöscht.",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "deleting": "Wird gelöscht…"
+  },
+  "linkModal": {
+    "invoice": "Rechnung verknüpfen",
+    "receipt": "Beleg verknüpfen",
+    "letterhead": "Briefkopf verknüpfen",
+    "noInvoices": "Keine Rechnungen gefunden",
+    "noReceipts": "Keine Belege gefunden",
+    "noLetterheads": "Keine Briefköpfe gefunden"
+  },
+  "fileModal": {
+    "title": "Datei hinzufügen",
+    "name": "Name",
+    "type": "Typ",
+    "linkUrl": "Link / URL",
+    "uploadedFile": "Hochgeladene Datei",
+    "cancel": "Abbrechen",
+    "add": "Datei hinzufügen",
+    "adding": "Wird hinzugefügt…"
+  },
+  "notFound": "Projekt nicht gefunden",
+  "back": "Zurück zu den Projekten",
+  "toasts": {
+    "loadFailed": "Projekt konnte nicht geladen werden.",
+    "created": "Projekt erstellt.",
+    "createFailed": "Projekt konnte nicht erstellt werden.",
+    "updated": "Projekt aktualisiert.",
+    "updateFailed": "Projekt konnte nicht aktualisiert werden.",
+    "deleted": "Projekt gelöscht.",
+    "deleteFailed": "Projekt konnte nicht gelöscht werden.",
+    "linked": "Erfolgreich verknüpft.",
+    "removed": "Entfernt.",
+    "removeFailed": "Entfernen fehlgeschlagen.",
+    "nameUrlRequired": "Name und URL sind erforderlich.",
+    "fileAdded": "Datei hinzugefügt.",
+    "fileAddFailed": "Datei konnte nicht hinzugefügt werden.",
+    "fileRemoved": "Datei entfernt.",
+    "fileRemoveFailed": "Datei konnte nicht entfernt werden.",
+    "noteAdded": "Notiz hinzugefügt.",
+    "noteAddFailed": "Notiz konnte nicht hinzugefügt werden.",
+    "clientUpdateFailed": "Kunde konnte nicht aktualisiert werden.",
+    "numberRequired": "Projektnummer ist erforderlich.",
+    "titleRequired": "Projekttitel ist erforderlich.",
+    "numberTitleRequired": "Nummer und Titel sind erforderlich.",
+    "notFound": "Projekt nicht gefunden.",
+    "linkFailed": "Verknüpfen fehlgeschlagen.",
+    "clientAssigned": "Kunde zugewiesen.",
+    "clientRemoved": "Kunde entfernt."
+  }
+}

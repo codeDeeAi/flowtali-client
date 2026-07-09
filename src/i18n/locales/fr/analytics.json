@@ -1,0 +1,50 @@
+{
+  "title": "Analytique",
+  "subtitle": "Aperçus des revenus et indicateurs de performance",
+  "periods": {
+    "30d": "30 derniers jours",
+    "3m": "3 derniers mois",
+    "12m": "12 derniers mois",
+    "all": "Tout l'historique"
+  },
+  "upgrade": {
+    "title": "L'analytique nécessite Business",
+    "desc": "Les graphiques de revenus, les répartitions par client, les analyses de factures et les indicateurs de performance sont disponibles sur le forfait Business.",
+    "cta": "Passer à Business"
+  },
+  "kpi": {
+    "totalRevenue": "Revenu total",
+    "avgInvoiceValue": "Valeur moy. de facture",
+    "collectionRate": "Taux de recouvrement",
+    "avgDaysToPay": "Jours moy. avant paiement",
+    "vsLastPeriod": "vs période précédente",
+    "daysValue": "{n} j"
+  },
+  "revenueTrend": {
+    "title": "Évolution des revenus",
+    "subtitle": "Facturé vs encaissé par mois",
+    "billed": "Facturé",
+    "collected": "Encaissé"
+  },
+  "topClients": {
+    "title": "Meilleurs clients",
+    "subtitle": "Par revenu sur cette période",
+    "empty": "Aucune facture payée sur cette période"
+  },
+  "invoiceVolume": {
+    "title": "Volume mensuel de factures",
+    "subtitle": "Nombre de factures émises par mois"
+  },
+  "receipts": {
+    "title": "Reçus",
+    "subtitle": "Reçus émis sur cette période",
+    "total": "Total des reçus",
+    "finalized": "Finalisés",
+    "drafts": "Brouillons",
+    "void": "Annulés",
+    "volumeTitle": "Volume mensuel de reçus",
+    "volumeSubtitle": "Nombre de reçus émis par mois",
+    "volumeEmpty": "Aucun reçu émis sur cette période"
+  },
+  "noData": "Aucune donnée analytique disponible."
+}

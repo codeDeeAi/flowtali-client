@@ -1,0 +1,74 @@
+{
+  "title": "En-têtes",
+  "count": "aucun modèle de marque | un modèle de marque | {count} modèles de marque",
+  "new": "Nouvel en-tête",
+  "stats": {
+    "totalTemplates": "Total des modèles",
+    "totalUses": "Utilisations totales",
+    "mostUsed": "Le plus utilisé",
+    "confidential": "Confidentiel",
+    "uses": "{count} utilisations"
+  },
+  "search": "Rechercher des en-têtes…",
+  "empty": {
+    "title": "Aucun en-tête trouvé",
+    "hint": "Essayez une autre recherche ou créez-en un nouveau"
+  },
+  "preview": {
+    "re": "Objet :",
+    "dear": "Cher client,",
+    "body1": "Nous sommes heureux de vous présenter notre proposition pour votre prochain projet…",
+    "body2": "Vous trouverez ci-joint les détails de notre collaboration…",
+    "confidential": "Confidentiel",
+    "page": "Page 1 sur 1"
+  },
+  "themes": {
+    "classic": "Classique",
+    "modern": "Moderne",
+    "bold": "Audacieux",
+    "minimal": "Minimaliste",
+    "legal": "Juridique",
+    "executive": "Exécutif"
+  },
+  "card": {
+    "view": "Voir",
+    "startFromTemplate": "Partir d'un modèle",
+    "usesAndLastUsed": "{uses} utilisations · Dernière utilisation {lastUsed}"
+  },
+  "table": {
+    "name": "Nom",
+    "theme": "Thème",
+    "watermark": "Filigrane",
+    "uses": "Utilisations",
+    "lastUsed": "Dernière utilisation"
+  },
+  "actions": {
+    "edit": "Modifier",
+    "share": "Partager",
+    "delete": "Supprimer"
+  },
+  "lastUsed": {
+    "never": "Jamais utilisé",
+    "today": "Aujourd'hui",
+    "dayAgo": "il y a 1 jour",
+    "daysAgo": "il y a {n} jours",
+    "weekAgo": "il y a 1 semaine",
+    "weeksAgo": "il y a {n} semaines",
+    "monthsAgo": "il y a {n} mois"
+  },
+  "deleteModal": {
+    "title": "Supprimer l'en-tête",
+    "subtitle": "Cette action est irréversible",
+    "confirmBefore": "Voulez-vous vraiment supprimer ",
+    "confirmAfter": " ?",
+    "cancel": "Annuler",
+    "delete": "Supprimer"
+  },
+  "toasts": {
+    "loadFailed": "Échec du chargement des en-têtes",
+    "deleted": "En-tête supprimé",
+    "deleteFailed": "Échec de la suppression de l'en-tête"
+  },
+  "notFound": "En-tête introuvable",
+  "back": "Retour aux en-têtes"
+}

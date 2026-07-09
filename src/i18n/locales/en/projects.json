@@ -1,0 +1,176 @@
+{
+  "title": "Projects",
+  "count": "no projects | one project | {count} projects",
+  "new": "New Project",
+  "search": "Search projects…",
+  "status": {
+    "all": "All",
+    "draft": "Draft",
+    "active": "Active",
+    "on_hold": "On Hold",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "statusDesc": {
+    "draft": "Not yet started",
+    "active": "Currently in progress",
+    "on_hold": "Temporarily paused",
+    "completed": "Successfully finished",
+    "cancelled": "No longer proceeding"
+  },
+  "empty": {
+    "title": "No projects found",
+    "filterHint": "Try adjusting your filters",
+    "createHint": "Create your first project to get started",
+    "createLink": "Create a project"
+  },
+  "card": {
+    "contract": "Contract"
+  },
+  "create": {
+    "title": "New Project",
+    "subtitle": "Track invoices, receipts, and files under one project"
+  },
+  "edit": {
+    "title": "Edit Project"
+  },
+  "sections": {
+    "identity": "Project Identity",
+    "status": "Status",
+    "financials": "Financials & Timeline"
+  },
+  "fields": {
+    "number": "Number",
+    "projectNumber": "Project Number",
+    "title": "Title",
+    "description": "Description",
+    "client": "Client",
+    "initialStatus": "Initial Status",
+    "statusTracking": "Status Tracking",
+    "currency": "Currency",
+    "contractValue": "Contract Value",
+    "startDate": "Start Date",
+    "endDate": "End Date"
+  },
+  "placeholders": {
+    "number": "PRJ-001",
+    "title": "e.g. Website Redesign for Acme Corp",
+    "titleShort": "Website Redesign",
+    "description": "Scope, goals, or notes about this project…",
+    "descriptionShort": "Optional project description…",
+    "contractValue": "0.00"
+  },
+  "noClientAssigned": "No client assigned",
+  "noClient": "No client",
+  "tracking": {
+    "manual": "Manual",
+    "manualDesc": "You control status changes",
+    "auto": "Auto",
+    "autoDesc": "Updates based on payments",
+    "autoOption": "Auto (based on payments)"
+  },
+  "cancel": "Cancel",
+  "creating": "Creating…",
+  "createProject": "Create Project",
+  "saving": "Saving…",
+  "saveChanges": "Save Changes",
+  "tabs": {
+    "overview": "Overview",
+    "client": "Client",
+    "invoices": "Invoices",
+    "receipts": "Receipts",
+    "letterheads": "Letterheads",
+    "activity": "Activity",
+    "files": "Files"
+  },
+  "details": {
+    "title": "Details",
+    "number": "Number",
+    "client": "Client",
+    "statusTracking": "Status Tracking",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "description": "Description"
+  },
+  "financials": {
+    "title": "Financials",
+    "contractValue": "Contract Value",
+    "totalInvoiced": "Total Invoiced",
+    "totalReceived": "Total Received",
+    "balance": "Balance",
+    "paymentProgress": "Payment progress"
+  },
+  "clientPanel": {
+    "noClientAssigned": "No client assigned",
+    "assignHint": "Assign a client to track who this project is for",
+    "noEmail": "No email on record",
+    "changeClient": "Change Client",
+    "assignClient": "Assign Client",
+    "noClientsFound": "No clients found"
+  },
+  "linked": {
+    "noInvoices": "No invoices linked.",
+    "noReceipts": "No receipts linked.",
+    "noLetterheads": "No letterheads linked.",
+    "noFiles": "No files yet.",
+    "noActivity": "No activity yet."
+  },
+  "notes": {
+    "add": "Add a Note",
+    "addBtn": "Add Note"
+  },
+  "deleteModal": {
+    "title": "Delete Project?",
+    "body": "This will permanently delete this project. Linked invoices and receipts will not be deleted.",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleting": "Deleting…"
+  },
+  "linkModal": {
+    "invoice": "Link Invoice",
+    "receipt": "Link Receipt",
+    "letterhead": "Link Letterhead",
+    "noInvoices": "No invoices found",
+    "noReceipts": "No receipts found",
+    "noLetterheads": "No letterheads found"
+  },
+  "fileModal": {
+    "title": "Add File",
+    "name": "Name",
+    "type": "Type",
+    "linkUrl": "Link / URL",
+    "uploadedFile": "Uploaded File",
+    "cancel": "Cancel",
+    "add": "Add File",
+    "adding": "Adding…"
+  },
+  "notFound": "Project not found",
+  "back": "Back to projects",
+  "toasts": {
+    "loadFailed": "Failed to load project.",
+    "created": "Project created.",
+    "createFailed": "Failed to create project.",
+    "updated": "Project updated.",
+    "updateFailed": "Failed to update project.",
+    "deleted": "Project deleted.",
+    "deleteFailed": "Failed to delete project.",
+    "linked": "Linked successfully.",
+    "removed": "Removed.",
+    "removeFailed": "Failed to remove.",
+    "nameUrlRequired": "Name and URL are required.",
+    "fileAdded": "File added.",
+    "fileAddFailed": "Failed to add file.",
+    "fileRemoved": "File removed.",
+    "fileRemoveFailed": "Failed to remove file.",
+    "noteAdded": "Note added.",
+    "noteAddFailed": "Failed to add note.",
+    "clientUpdateFailed": "Failed to update client.",
+    "numberRequired": "Project number is required.",
+    "titleRequired": "Project title is required.",
+    "numberTitleRequired": "Number and title are required.",
+    "notFound": "Project not found.",
+    "linkFailed": "Failed to link.",
+    "clientAssigned": "Client assigned.",
+    "clientRemoved": "Client removed."
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "seoTitle": "Belege",
+  "seoDescription": "Verwalten Sie Ihre Belege und bestätigen Sie erhaltene Zahlungen.",
+  "title": "Belege",
+  "subtitle": "Verwalten und verfolgen Sie alle Ihre Belege",
+  "new": "Neuer Beleg",
+  "summary": {
+    "total": "Belege gesamt",
+    "finalized": "Abgeschlossen",
+    "draft": "Entwurf"
+  },
+  "filters": {
+    "all": "Alle",
+    "finalized": "Abgeschlossen",
+    "draft": "Entwurf",
+    "void": "Storniert"
+  },
+  "search": "Belege suchen…",
+  "deleteSelected": "{count} ausgewählte löschen",
+  "count": "keine Belege | ein Beleg | {count} Belege",
+  "table": {
+    "receipt": "Beleg",
+    "client": "Kunde",
+    "amount": "Betrag",
+    "status": "Status",
+    "issueDate": "Ausstellungsdatum",
+    "paymentMethod": "Zahlungsmethode",
+    "actions": "Aktionen"
+  },
+  "actions": {
+    "view": "Ansehen",
+    "edit": "Bearbeiten",
+    "finalize": "Abschließen",
+    "delete": "Löschen"
+  },
+  "empty": "Keine Belege entsprechen Ihren Filtern",
+  "deleteModal": {
+    "title": "{number} löschen?",
+    "body": "Dieser Beleg wird dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "cancel": "Abbrechen",
+    "confirm": "Löschen"
+  },
+  "toasts": {
+    "loadFailed": "Belege konnten nicht geladen werden",
+    "finalized": "{number} abgeschlossen",
+    "updateFailed": "Beleg konnte nicht aktualisiert werden",
+    "deleted": "{number} gelöscht",
+    "deleteFailed": "Beleg konnte nicht gelöscht werden",
+    "bulkDeleted": "keine Belege gelöscht | ein Beleg gelöscht | {count} Belege gelöscht",
+    "bulkDeleteFailed": "Einige Belege konnten nicht gelöscht werden"
+  },
+  "notFound": "Beleg nicht gefunden",
+  "back": "Zurück zu den Belegen"
+}

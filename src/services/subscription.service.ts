@@ -30,6 +30,9 @@ export interface ISubscription {
   current_period_end: string | null
   cancelled_at: string | null
   is_active: boolean
+  has_usable_access: boolean
+  free_window_expired: boolean
+  free_access_ends_at: string | null
   plan: {
     id: string
     slug: string

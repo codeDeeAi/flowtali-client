@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import { useNotification } from '@/composables/notification.ts'
 import { useSeo } from '@/composables/useSeo'
@@ -8,7 +9,8 @@ import Pagination from '@/components/ui/Pagination.vue'
 import { useAuthStore } from '@/stores/auth'
 import { ReceiptService, type IReceipt, type IReceiptStats } from '@/services/receipt.service'
 
-useSeo({ title: 'Receipts', description: 'Manage your receipts and confirm payments received.', noIndex: true })
+const { t, locale } = useI18n()
+useSeo({ title: t('receipts.seoTitle'), description: t('receipts.seoDescription'), noIndex: true })
 
 const router    = useRouter()
 const { notify } = useNotification()
@@ -21,12 +23,12 @@ const filterTab   = ref<StatusFilter>('all')
 const searchQuery = ref('')
 const currentPage = ref(1)
 const perPage     = 15
-const filters: { key: StatusFilter; label: string }[] = [
-  { key: 'all',       label: 'All' },
-  { key: 'finalized', label: 'Finalized' },
-  { key: 'draft',     label: 'Draft' },
-  { key: 'void',      label: 'Void' },
-]
+const filters = computed<{ key: StatusFilter; label: string }[]>(() => [
+  { key: 'all',       label: t('receipts.filters.all') },
+  { key: 'finalized', label: t('receipts.filters.finalized') },
+  { key: 'draft',     label: t('receipts.filters.draft') },
+  { key: 'void',      label: t('receipts.filters.void') },
+])
 const selectedIds = ref<Set<string>>(new Set())
 
 const showDeleteConfirm = ref(false)
@@ -41,9 +43,7 @@ const stats          = ref<IReceiptStats | null>(null)
 const statusClass: Record<string, string> = {
   finalized: 'status-paid', draft: 'status-draft', void: 'status-draft',
 }
-const statusLabel: Record<string, string> = {
-  finalized: 'Finalized', draft: 'Draft', void: 'Void',
-}
+const statusLabel = (status: string) => t(`common.status.${status}`)
 
 const colorPalette = ['#60a5fa', '#a78bfa', '#f87171', '#4ade80', '#00c853', '#38bdf8', '#fb923c', '#34d399']
 const clientColor = (id: string) => colorPalette[id.charCodeAt(id.length - 1) % colorPalette.length]
@@ -55,13 +55,13 @@ function initials(name: string | null) {
 const symMap: Record<string, string> = { USD: '$', EUR: '€', GBP: '£', NGN: '₦', CAD: 'CA$', AUD: 'A$', JPY: '¥', INR: '₹', ZAR: 'R', CHF: 'Fr', AED: 'د.إ' }
 const fmtAmount = (rec: IReceipt) => {
   const s = symMap[rec.currency] ?? '$'
-  return s + rec.totals.total.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  return s + rec.totals.total.toLocaleString(locale.value, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
 const fmtDate = (d: string | null) => {
   if (!d) return '—'
   const [y = '0', m = '1', day = '1'] = d.split('-')
-  return new Date(+y, +m - 1, +day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  return new Date(+y, +m - 1, +day).toLocaleDateString(locale.value, { month: 'short', day: 'numeric' })
 }
 
 async function loadStats() {
@@ -85,7 +85,7 @@ async function loadReceipts() {
     receipts.value = res.data.data.data
     totalReceipts.value = res.data.data.total
   } catch {
-    notify('Failed to load receipts', 'error')
+    notify(t('receipts.toasts.loadFailed'), 'error')
   } finally {
     isLoading.value = false
   }
@@ -121,11 +121,11 @@ const toggleOne = (id: string) => {
 async function finalizeReceipt(rec: IReceipt) {
   try {
     await ReceiptService.update(orgId.value, rec.id, { status: 'finalized' })
-    notify(`${rec.number} finalized`, 'success')
+    notify(t('receipts.toasts.finalized', { number: rec.number }), 'success')
     loadReceipts()
     loadStats()
   } catch {
-    notify('Failed to update receipt', 'error')
+    notify(t('receipts.toasts.updateFailed'), 'error')
   }
 }
 
@@ -139,14 +139,14 @@ async function handleDelete() {
   isDeleting.value = true
   try {
     await ReceiptService.delete(orgId.value, deleteTarget.value.id)
-    notify(`${deleteTarget.value.number} deleted`, 'success')
+    notify(t('receipts.toasts.deleted', { number: deleteTarget.value.number }), 'success')
     showDeleteConfirm.value = false
     deleteTarget.value = null
     selectedIds.value.clear()
     loadReceipts()
     loadStats()
   } catch {
-    notify('Failed to delete receipt', 'error')
+    notify(t('receipts.toasts.deleteFailed'), 'error')
   } finally {
     isDeleting.value = false
   }
@@ -158,11 +158,11 @@ async function deleteSelected() {
   try {
     await Promise.all(ids.map(id => ReceiptService.delete(orgId.value, id)))
     selectedIds.value.clear()
-    notify(`${count} receipt${count > 1 ? 's' : ''} deleted`, 'success')
+    notify(t('receipts.toasts.bulkDeleted', { count }, count), 'success')
     loadReceipts()
     loadStats()
   } catch {
-    notify('Failed to delete some receipts', 'error')
+    notify(t('receipts.toasts.bulkDeleteFailed'), 'error')
   }
 }
 </script>
@@ -173,12 +173,12 @@ async function deleteSelected() {
     <!-- Page header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div>
-        <h1 class="page-title">Receipts</h1>
-        <p class="page-subtitle">Manage and track all your receipts</p>
+        <h1 class="page-title">{{ t('receipts.title') }}</h1>
+        <p class="page-subtitle">{{ t('receipts.subtitle') }}</p>
       </div>
       <div class="flex items-center gap-2">
         <button @click="router.push({ name: 'receipts.create' })" class="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-xs px-3 py-2 rounded-lg transition-colors">
-          <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> New Receipt
+          <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> {{ t('receipts.new') }}
         </button>
       </div>
     </div>
@@ -186,15 +186,15 @@ async function deleteSelected() {
     <!-- Summary cards -->
     <div class="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
       <div class="bg-gray-200 border border-gray-400 rounded-xl p-3 sm:p-4">
-        <div class="text-xs text-gray-700 mb-1">Total Receipts</div>
+        <div class="text-xs text-gray-700 mb-1">{{ t('receipts.summary.total') }}</div>
         <div class="text-xl font-bold text-gray-1000 font-mono">{{ stats?.total ?? '—' }}</div>
       </div>
       <div class="bg-gray-200 border border-gray-400 rounded-xl p-3 sm:p-4">
-        <div class="text-xs text-gray-700 mb-1">Finalized</div>
+        <div class="text-xs text-gray-700 mb-1">{{ t('receipts.summary.finalized') }}</div>
         <div class="text-xl font-bold text-green-400 font-mono">{{ stats?.finalized ?? '—' }}</div>
       </div>
       <div class="bg-gray-200 border border-gray-400 rounded-xl p-3 sm:p-4">
-        <div class="text-xs text-gray-700 mb-1">Draft</div>
+        <div class="text-xs text-gray-700 mb-1">{{ t('receipts.summary.draft') }}</div>
         <div class="text-xl font-bold text-green-700 font-mono">{{ stats?.draft ?? '—' }}</div>
       </div>
     </div>
@@ -217,7 +217,7 @@ async function deleteSelected() {
         <div class="flex items-center gap-3">
           <div class="relative flex-1 sm:flex-initial">
             <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-700" />
-            <input v-model="searchQuery" placeholder="Search receipts…" class="app-inp pl-8 w-full sm:w-48 text-xs py-2" />
+            <input v-model="searchQuery" :placeholder="t('receipts.search')" class="app-inp pl-8 w-full sm:w-48 text-xs py-2" />
           </div>
           <Transition name="fade">
             <button
@@ -226,11 +226,11 @@ async function deleteSelected() {
               class="flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/15 px-3 py-1.5 rounded-lg transition-colors"
             >
               <Icon icon="lucide:trash-2" class="w-3.5 h-3.5" />
-              Delete {{ selectedIds.size }} selected
+              {{ t('receipts.deleteSelected', { count: selectedIds.size }) }}
             </button>
           </Transition>
         </div>
-        <span class="text-xs text-gray-700 shrink-0 hidden sm:block">{{ totalReceipts }} receipt{{ totalReceipts !== 1 ? 's' : '' }}</span>
+        <span class="text-xs text-gray-700 shrink-0 hidden sm:block">{{ t('receipts.count', totalReceipts) }}</span>
       </div>
 
       <!-- Loading -->
@@ -244,13 +244,13 @@ async function deleteSelected() {
           <thead>
             <tr>
               <th class="w-8"><input type="checkbox" class="accent-green-700" :checked="allSelected" @change="toggleAll" /></th>
-              <th>Receipt</th>
-              <th>Client</th>
-              <th>Amount</th>
-              <th>Status</th>
-              <th>Issue Date</th>
-              <th>Payment Method</th>
-              <th>Actions</th>
+              <th>{{ t('receipts.table.receipt') }}</th>
+              <th>{{ t('receipts.table.client') }}</th>
+              <th>{{ t('receipts.table.amount') }}</th>
+              <th>{{ t('receipts.table.status') }}</th>
+              <th>{{ t('receipts.table.issueDate') }}</th>
+              <th>{{ t('receipts.table.paymentMethod') }}</th>
+              <th>{{ t('receipts.table.actions') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -273,7 +273,7 @@ async function deleteSelected() {
                 </div>
               </td>
               <td class="font-mono font-semibold text-gray-1000">{{ fmtAmount(rec) }}</td>
-              <td><span :class="['status-badge', statusClass[rec.status] ?? 'status-draft']">{{ statusLabel[rec.status] ?? rec.status }}</span></td>
+              <td><span :class="['status-badge', statusClass[rec.status] ?? 'status-draft']">{{ statusLabel(rec.status) }}</span></td>
               <td class="text-gray-700 text-xs">{{ fmtDate(rec.issue_date) }}</td>
               <td class="text-gray-700 text-xs">{{ rec.payment_method || '—' }}</td>
               <td @click.stop>
@@ -281,29 +281,29 @@ async function deleteSelected() {
                   <button
                     @click="router.push({ name: 'receipts.view', params: { id: rec.id } })"
                     class="w-7 h-7 flex items-center justify-center rounded-md text-gray-700 hover:text-gray-1000 hover:bg-gray-400 transition-colors"
-                    title="View"
+                    :title="t('receipts.actions.view')"
                   ><Icon icon="lucide:eye" class="w-3.5 h-3.5" /></button>
                   <button
                     @click="router.push({ name: 'receipts.edit', params: { id: rec.id } })"
                     class="w-7 h-7 flex items-center justify-center rounded-md text-gray-700 hover:text-gray-1000 hover:bg-gray-400 transition-colors"
-                    title="Edit"
+                    :title="t('receipts.actions.edit')"
                   ><Icon icon="lucide:pencil" class="w-3.5 h-3.5" /></button>
                   <button
                     v-if="rec.status !== 'finalized'"
                     @click="finalizeReceipt(rec)"
                     class="w-7 h-7 flex items-center justify-center rounded-md text-gray-700 hover:text-green-400 hover:bg-gray-400 transition-colors"
-                    title="Finalize"
+                    :title="t('receipts.actions.finalize')"
                   ><Icon icon="lucide:check-circle" class="w-3.5 h-3.5" /></button>
                   <button
                     @click="openDelete(rec)"
                     class="w-7 h-7 flex items-center justify-center rounded-md text-gray-700 hover:text-red-400 hover:bg-gray-400 transition-colors"
-                    title="Delete"
+                    :title="t('receipts.actions.delete')"
                   ><Icon icon="lucide:trash-2" class="w-3.5 h-3.5" /></button>
                 </div>
               </td>
             </tr>
             <tr v-if="receipts.length === 0">
-              <td colspan="8" class="text-center py-12 text-gray-700 text-sm">No receipts match your filters</td>
+              <td colspan="8" class="text-center py-12 text-gray-700 text-sm">{{ t('receipts.empty') }}</td>
             </tr>
           </tbody>
         </table>
@@ -328,7 +328,7 @@ async function deleteSelected() {
             </div>
             <div class="flex flex-col items-end gap-1.5 shrink-0">
               <span class="text-sm font-semibold font-mono text-gray-1000">{{ fmtAmount(rec) }}</span>
-              <span :class="['status-badge', statusClass[rec.status] ?? 'status-draft']">{{ statusLabel[rec.status] ?? rec.status }}</span>
+              <span :class="['status-badge', statusClass[rec.status] ?? 'status-draft']">{{ statusLabel(rec.status) }}</span>
             </div>
           </div>
           <!-- Quick actions row -->
@@ -337,14 +337,14 @@ async function deleteSelected() {
               @click="router.push({ name: 'receipts.edit', params: { id: rec.id } })"
               class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400/60 hover:bg-gray-400 px-3 py-1.5 rounded-lg transition-colors flex-1 justify-center"
             >
-              <Icon icon="lucide:pencil" class="w-3.5 h-3.5" /> Edit
+              <Icon icon="lucide:pencil" class="w-3.5 h-3.5" /> {{ t('receipts.actions.edit') }}
             </button>
             <button
               v-if="rec.status !== 'finalized'"
               @click="finalizeReceipt(rec)"
               class="flex items-center gap-1.5 text-xs text-green-400 hover:text-green-300 bg-green-500/10 hover:bg-green-500/15 px-3 py-1.5 rounded-lg transition-colors flex-1 justify-center"
             >
-              <Icon icon="lucide:check-circle" class="w-3.5 h-3.5" /> Finalize
+              <Icon icon="lucide:check-circle" class="w-3.5 h-3.5" /> {{ t('receipts.actions.finalize') }}
             </button>
             <button
               @click="openDelete(rec)"
@@ -354,7 +354,7 @@ async function deleteSelected() {
             </button>
           </div>
         </div>
-        <div v-if="receipts.length === 0" class="text-center py-12 text-gray-700 text-sm">No receipts match your filters</div>
+        <div v-if="receipts.length === 0" class="text-center py-12 text-gray-700 text-sm">{{ t('receipts.empty') }}</div>
       </div>
 
       <!-- Pagination row -->
@@ -375,15 +375,15 @@ async function deleteSelected() {
               <Icon icon="lucide:trash-2" class="w-4 h-4 text-red-400" />
             </div>
             <div>
-              <h3 class="text-sm font-semibold text-gray-1000">Delete {{ deleteTarget.number }}?</h3>
-              <p class="text-xs text-gray-700 mt-1 leading-relaxed">This receipt will be permanently deleted. This action cannot be undone.</p>
+              <h3 class="text-sm font-semibold text-gray-1000">{{ t('receipts.deleteModal.title', { number: deleteTarget.number }) }}</h3>
+              <p class="text-xs text-gray-700 mt-1 leading-relaxed">{{ t('receipts.deleteModal.body') }}</p>
             </div>
           </div>
           <div class="flex justify-end gap-2">
-            <button @click="showDeleteConfirm = false" :disabled="isDeleting" class="px-4 py-2 text-xs font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors disabled:opacity-50">Cancel</button>
+            <button @click="showDeleteConfirm = false" :disabled="isDeleting" class="px-4 py-2 text-xs font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors disabled:opacity-50">{{ t('receipts.deleteModal.cancel') }}</button>
             <button @click="handleDelete" :disabled="isDeleting" class="px-4 py-2 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-1.5">
               <Icon v-if="isDeleting" icon="lucide:loader-2" class="w-3 h-3 animate-spin" />
-              Delete
+              {{ t('receipts.deleteModal.confirm') }}
             </button>
           </div>
         </div>

@@ -1,0 +1,28 @@
+{
+  "subtitle": "{company} · {uses} utilisations · Dernière utilisation {lastUsed}",
+  "doc": {
+    "date": "Date",
+    "reference": "Référence",
+    "re": "Objet :",
+    "subject": "Objet",
+    "contact": "Contact",
+    "address": "Adresse",
+    "addressInline": "Adresse :",
+    "registration": "Immatriculation",
+    "regNo": "N° SIREN :",
+    "vat": "TVA :",
+    "regShort": "SIREN :"
+  },
+  "details": {
+    "title": "Détails de l'en-tête",
+    "totalUses": "Utilisations totales",
+    "sharedLinks": "Liens partagés",
+    "lastUsed": "Dernière utilisation",
+    "template": "Modèle",
+    "watermark": "Filigrane"
+  },
+  "viewsCount": "{n} vues",
+  "linksEmptyBody": "Générez un lien pour partager cet en-tête avec vos clients",
+  "deleteTitle": "Supprimer « {name} » ?",
+  "deleteBody": "Cet en-tête sera définitivement supprimé. Cette action est irréversible."
+}

@@ -1,0 +1,54 @@
+{
+  "seoTitle": "Reçus",
+  "seoDescription": "Gérez vos reçus et confirmez les paiements reçus.",
+  "title": "Reçus",
+  "subtitle": "Gérez et suivez tous vos reçus",
+  "new": "Nouveau reçu",
+  "summary": {
+    "total": "Total des reçus",
+    "finalized": "Finalisés",
+    "draft": "Brouillons"
+  },
+  "filters": {
+    "all": "Tous",
+    "finalized": "Finalisés",
+    "draft": "Brouillon",
+    "void": "Annulé"
+  },
+  "search": "Rechercher des reçus…",
+  "deleteSelected": "Supprimer {count} sélectionné(s)",
+  "count": "aucun reçu | un reçu | {count} reçus",
+  "table": {
+    "receipt": "Reçu",
+    "client": "Client",
+    "amount": "Montant",
+    "status": "Statut",
+    "issueDate": "Date d'émission",
+    "paymentMethod": "Mode de paiement",
+    "actions": "Actions"
+  },
+  "actions": {
+    "view": "Voir",
+    "edit": "Modifier",
+    "finalize": "Finaliser",
+    "delete": "Supprimer"
+  },
+  "empty": "Aucun reçu ne correspond à vos filtres",
+  "deleteModal": {
+    "title": "Supprimer {number} ?",
+    "body": "Ce reçu sera définitivement supprimé. Cette action est irréversible.",
+    "cancel": "Annuler",
+    "confirm": "Supprimer"
+  },
+  "toasts": {
+    "loadFailed": "Échec du chargement des reçus",
+    "finalized": "{number} finalisé",
+    "updateFailed": "Échec de la mise à jour du reçu",
+    "deleted": "{number} supprimé",
+    "deleteFailed": "Échec de la suppression du reçu",
+    "bulkDeleted": "aucun reçu supprimé | un reçu supprimé | {count} reçus supprimés",
+    "bulkDeleteFailed": "Échec de la suppression de certains reçus"
+  },
+  "notFound": "Reçu introuvable",
+  "back": "Retour aux reçus"
+}

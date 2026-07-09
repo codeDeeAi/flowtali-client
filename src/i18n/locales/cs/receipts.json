@@ -1,0 +1,54 @@
+{
+  "seoTitle": "Účtenky",
+  "seoDescription": "Spravujte své účtenky a potvrzujte přijaté platby.",
+  "title": "Účtenky",
+  "subtitle": "Spravujte a sledujte všechny své účtenky",
+  "new": "Nová účtenka",
+  "summary": {
+    "total": "Účtenky celkem",
+    "finalized": "Dokončeno",
+    "draft": "Koncept"
+  },
+  "filters": {
+    "all": "Vše",
+    "finalized": "Dokončené",
+    "draft": "Koncept",
+    "void": "Neplatné"
+  },
+  "search": "Hledat účtenky…",
+  "deleteSelected": "Smazat {count} vybraných",
+  "count": "žádné účtenky | jedna účtenka | {count} účtenky | {count} účtenek",
+  "table": {
+    "receipt": "Účtenka",
+    "client": "Klient",
+    "amount": "Částka",
+    "status": "Stav",
+    "issueDate": "Datum vystavení",
+    "paymentMethod": "Způsob platby",
+    "actions": "Akce"
+  },
+  "actions": {
+    "view": "Zobrazit",
+    "edit": "Upravit",
+    "finalize": "Dokončit",
+    "delete": "Smazat"
+  },
+  "empty": "Žádné účtenky neodpovídají vašim filtrům",
+  "deleteModal": {
+    "title": "Smazat {number}?",
+    "body": "Tato účtenka bude trvale smazána. Tuto akci nelze vrátit zpět.",
+    "cancel": "Zrušit",
+    "confirm": "Smazat"
+  },
+  "toasts": {
+    "loadFailed": "Nepodařilo se načíst účtenky",
+    "finalized": "{number} dokončena",
+    "updateFailed": "Nepodařilo se aktualizovat účtenku",
+    "deleted": "{number} smazána",
+    "deleteFailed": "Nepodařilo se smazat účtenku",
+    "bulkDeleted": "žádné účtenky nesmazány | jedna účtenka smazána | {count} účtenky smazány | {count} účtenek smazáno",
+    "bulkDeleteFailed": "Některé účtenky se nepodařilo smazat"
+  },
+  "notFound": "Účtenka nenalezena",
+  "back": "Zpět na účtenky"
+}

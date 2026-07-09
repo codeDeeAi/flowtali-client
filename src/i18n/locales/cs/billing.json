@@ -1,0 +1,105 @@
+{
+  "title": "Fakturace",
+  "subtitle": "Spravujte své předplatné a historii plateb",
+  "verifying": "Ověřování platby…",
+  "verifyingDesc": "Počkejte prosím, než potvrdíme vaši platbu se službou Paystack.",
+  "currentPlan": "Aktuální plán",
+  "statuses": {
+    "active": "Aktivní",
+    "trial": "Zkušební",
+    "past_due": "Po splatnosti",
+    "cancelled": "Zrušeno",
+    "expired": "Vypršelo",
+    "pending": "Čeká",
+    "completed": "Dokončeno",
+    "failed": "Selhalo"
+  },
+  "period": {
+    "cancelledUntil": "Předplatné zrušeno — přístup do",
+    "renewsAnnual": "Roční plán se obnoví",
+    "renewsMonthly": "Měsíční plán se obnoví",
+    "billingCurrency": "Měna fakturace: {currency}",
+    "cancelPlan": "Zrušit plán"
+  },
+  "tabs": {
+    "plans": "Plány",
+    "history": "Historie plateb"
+  },
+  "interval": {
+    "monthly": "Měsíčně",
+    "annual": "Ročně"
+  },
+  "detected": "(zjištěno)",
+  "plan": {
+    "mostPopular": "Nejoblíbenější",
+    "currentPlan": "Aktuální plán",
+    "free": "Zdarma",
+    "perMonth": "/měs.",
+    "billedAnnual": "Účtováno {price}/rok",
+    "save": "Ušetřete {pct} %",
+    "downgradeFree": "Přejít na Zdarma",
+    "upgradeTo": "Upgradovat na {name}",
+    "current": "Aktuální plán"
+  },
+  "history": {
+    "empty": "Zatím žádná historie plateb",
+    "emptyHint": "Historie plateb se zde zobrazí po vašem prvním upgradu.",
+    "date": "Datum",
+    "type": "Typ",
+    "reference": "Reference",
+    "amount": "Částka",
+    "status": "Stav",
+    "prev": "← Předchozí",
+    "next": "Další →",
+    "page": "Strana {page} z {total}"
+  },
+  "txType": {
+    "new_subscription": "Nové předplatné",
+    "renewal": "Obnovení",
+    "upgrade": "Upgrade",
+    "downgrade": "Downgrade"
+  },
+  "cancelModal": {
+    "title": "Zrušit předplatné?",
+    "subtitle": "Přístup si ponecháte do konce aktuálního období.",
+    "body": "Po zrušení bude váš účet na konci fakturačního období automaticky převeden na plán Starter. Nebude vám nic dále účtováno.",
+    "keep": "Ponechat plán",
+    "cancelling": "Rušení…",
+    "confirm": "Ano, zrušit"
+  },
+  "features": {
+    "unlimitedInvoices": "Neomezené faktury",
+    "invoicesPerMonth": "{n} faktur/měsíc",
+    "unlimitedReceipts": "Neomezené účtenky",
+    "receiptsPerMonth": "{n} účtenek/měsíc",
+    "unlimitedLetterheads": "Neomezené hlavičkové papíry",
+    "letterheadsPerMonth": "{n} hlavičkových papírů/měsíc",
+    "unlimitedProjects": "Neomezené projekty",
+    "projectsLimit": "{n} aktivní projekt",
+    "upToTeam": "Až {n} členů týmu",
+    "solo": "Sólo (1 člen)",
+    "customBranding": "Vlastní branding a logo",
+    "removeBranding": "Odebrat branding Flowtali",
+    "allCurrencies": "Všech 11 měn",
+    "allTemplates": "Všech 8 šablon hlavičkových papírů",
+    "stampWatermark": "Razítka a vodoznaky",
+    "prioritySupport": "Prioritní podpora",
+    "teamRoles": "Týmové role a oprávnění",
+    "invoiceAnalytics": "Analytika faktur"
+  },
+  "toasts": {
+    "activated": "Předplatné úspěšně aktivováno!",
+    "verifyFailed": "Ověření platby selhalo.",
+    "loadPlansFailed": "Nepodařilo se načíst cenové plány.",
+    "loadHistoryFailed": "Nepodařilo se načíst historii plateb.",
+    "initPaymentFailed": "Nepodařilo se inicializovat platbu.",
+    "cancelled": "Předplatné zrušeno. Přístup pokračuje do konce vašeho fakturačního období.",
+    "cancelFailed": "Nepodařilo se zrušit předplatné."
+  },
+  "paywall": {
+    "trialEndedTitle": "Vaše bezplatná zkušební verze skončila",
+    "trialEndedBody": "Předplaťte si tarif a pokračujte ve vytváření faktur, účtenek a dalšího. Vaše stávající data zůstanou v bezpečí.",
+    "requiredTitle": "Vyžaduje se předplatné",
+    "requiredBody": "Vaše organizace potřebuje k pokračování aktivní tarif. Níže si vyberte tarif a obnovte přístup."
+  }
+}

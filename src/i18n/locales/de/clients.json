@@ -1,0 +1,91 @@
+{
+  "title": "Kunden",
+  "count": "keine Kunden in Ihrem Adressbuch | ein Kunde in Ihrem Adressbuch | {count} Kunden in Ihrem Adressbuch",
+  "add": "Kunde hinzufügen",
+  "addShort": "Neu",
+  "search": "Kunden suchen…",
+  "gridView": "Rasteransicht",
+  "listView": "Listenansicht",
+  "empty": {
+    "title": "Keine Kunden gefunden",
+    "searchHint": "Passen Sie Ihre Suchanfrage an",
+    "addHint": "Fügen Sie Ihren ersten Kunden hinzu, um zu beginnen"
+  },
+  "types": {
+    "organization": "Organisation",
+    "individual": "Einzelperson",
+    "freelancer": "Freiberufler",
+    "agency": "Agentur",
+    "other": "Sonstige"
+  },
+  "orgShort": "Org.",
+  "table": {
+    "client": "Kunde",
+    "contact": "Kontakt",
+    "type": "Typ"
+  },
+  "editClient": "Kunde bearbeiten",
+  "noCompany": "Kein Unternehmen",
+  "clientSince": "Kunde seit {date}",
+  "create": {
+    "title": "Kunde hinzufügen",
+    "subtitle": "Füllen Sie die Details aus, um einen neuen Kunden hinzuzufügen"
+  },
+  "edit": {
+    "title": "Kunde bearbeiten",
+    "subtitle": "Aktualisieren Sie die Details für diesen Kunden"
+  },
+  "sections": {
+    "basic": "Grundlegende Informationen",
+    "contact": "Kontaktdaten",
+    "notes": "Notizen"
+  },
+  "fields": {
+    "fullName": "Vollständiger Name",
+    "company": "Unternehmen",
+    "clientType": "Kundentyp",
+    "email": "E-Mail-Adresse",
+    "phone": "Telefonnummer",
+    "address": "Adresse",
+    "notes": "Zusätzliche Notizen"
+  },
+  "placeholders": {
+    "fullName": "Max Mustermann",
+    "company": "Acme Inc.",
+    "email": "max{'@'}beispiel.de",
+    "phone": "+49 151 00000000",
+    "address": "Musterstraße 123, Stadt, Land",
+    "notes": "Zusätzliche Informationen über diesen Kunden…"
+  },
+  "cancel": "Abbrechen",
+  "saving": "Speichern…",
+  "saveChanges": "Änderungen speichern",
+  "view": {
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "address": "Adresse",
+    "type": "Typ",
+    "notes": "Notizen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen"
+  },
+  "notFound": "Kunde nicht gefunden",
+  "back": "Zurück zu den Kunden",
+  "deleteModal": {
+    "title": "Kunde löschen?",
+    "bodyBefore": "Dies löscht ",
+    "bodyAfter": " und alle zugehörigen Datensätze dauerhaft. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "delete": "Kunde löschen",
+    "deleting": "Wird gelöscht…"
+  },
+  "toasts": {
+    "loadFailed": "Kunden konnten nicht geladen werden.",
+    "loadOneFailed": "Kunde konnte nicht geladen werden.",
+    "created": "Kunde erfolgreich erstellt!",
+    "createFailed": "Kunde konnte nicht erstellt werden.",
+    "updated": "Kunde erfolgreich aktualisiert!",
+    "updateFailed": "Kunde konnte nicht aktualisiert werden.",
+    "deleted": "Kunde erfolgreich gelöscht.",
+    "deleteFailed": "Kunde konnte nicht gelöscht werden."
+  }
+}

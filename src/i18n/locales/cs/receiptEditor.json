@@ -1,0 +1,55 @@
+{
+  "toolbar": {
+    "receipts": "Účtenky",
+    "new": "Nová účtenka",
+    "edit": "Upravit účtenku",
+    "create": "Vytvořit účtenku"
+  },
+  "from": {
+    "companyIssuedBy": "Firma / Vystavil",
+    "bankReceivedTo": "Bankovní údaje (platba přijata na)"
+  },
+  "to": {
+    "selectClient": "Vybrat klienta",
+    "receivedFromName": "Přijato od (jméno)",
+    "address": "Adresa"
+  },
+  "items": {
+    "descriptionPlaceholder": "Popis zboží nebo služby",
+    "amountPaid": "Zaplacená částka",
+    "totalReceived": "Celkem přijato",
+    "balanceDue": "Zbývá uhradit"
+  },
+  "design": {
+    "paymentStamp": "Platební razítko",
+    "balanceDueLabel": "Zbývá uhradit (zbývající dlužná částka)",
+    "balanceDueHint": "Zobrazeno na účtence pod celkovou částkou"
+  },
+  "settings": {
+    "receiptNumber": "Číslo účtenky",
+    "paymentDate": "Datum platby",
+    "paymentMethod": "Způsob platby",
+    "paymentMethodPlaceholder": "Uveďte způsob…",
+    "referenceNumber": "Referenční číslo",
+    "referencePlaceholder": "TXN-123456",
+    "notes": "Poznámky / Další informace",
+    "notesPlaceholder": "Děkujeme za vaši platbu…"
+  },
+  "preview": {
+    "receivedFrom": "Přijato od",
+    "reference": "Reference",
+    "method": "Způsob",
+    "receivedTo": "Přijato na",
+    "paymentReceivedTo": "Platba přijata na",
+    "issuedBy": "Vystavil"
+  },
+  "toasts": {
+    "created": "Účtenka vytvořena!",
+    "saved": "Účtenka uložena!",
+    "saveFailed": "Účtenku se nepodařilo uložit."
+  },
+  "validation": {
+    "numberRequired": "Číslo účtenky je povinné.",
+    "descriptionRequired": "Všechny položky musí mít popis."
+  }
+}

@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useFeedbackStore } from '@/stores/feedback'
 import { FeedbackService } from '@/services/feedback.service'
@@ -9,14 +10,15 @@ import { FeedbackService } from '@/services/feedback.service'
 const feedbackStore = useFeedbackStore()
 const authStore     = useAuthStore()
 const route         = useRoute()
+const { t } = useI18n()
 
 type FeedbackType = 'general' | 'bug' | 'feature' | 'other'
 
-const types: { id: FeedbackType; label: string; icon: string; desc: string }[] = [
-  { id: 'general', label: 'General',         icon: 'lucide:message-circle', desc: 'Share a thought or comment' },
-  { id: 'bug',     label: 'Bug Report',      icon: 'lucide:bug',            desc: 'Something isn\'t working' },
-  { id: 'feature', label: 'Feature Request', icon: 'lucide:lightbulb',      desc: 'Suggest an improvement' },
-  { id: 'other',   label: 'Other',           icon: 'lucide:more-horizontal', desc: 'Anything else' },
+const types: { id: FeedbackType; icon: string }[] = [
+  { id: 'general', icon: 'lucide:message-circle' },
+  { id: 'bug',     icon: 'lucide:bug' },
+  { id: 'feature', icon: 'lucide:lightbulb' },
+  { id: 'other',   icon: 'lucide:more-horizontal' },
 ]
 
 const selectedType = ref<FeedbackType>('general')
@@ -51,7 +53,7 @@ async function submit() {
     })
     submitted.value = true
   } catch {
-    error.value = 'Something went wrong. Please try again.'
+    error.value = t('feedback.error')
   } finally {
     submitting.value = false
   }
@@ -88,8 +90,8 @@ function close() {
           <!-- Header -->
           <div class="flex items-center justify-between px-5 py-4 border-b border-gray-400">
             <div>
-              <h3 class="text-gray-1000 text-sm font-semibold">Share feedback</h3>
-              <p class="text-gray-700 text-xs mt-0.5">We read every submission</p>
+              <h3 class="text-gray-1000 text-sm font-semibold">{{ t('feedback.title') }}</h3>
+              <p class="text-gray-700 text-xs mt-0.5">{{ t('feedback.subtitle') }}</p>
             </div>
             <button @click="close" class="text-gray-700 hover:text-gray-1000 transition-colors p-1 rounded-lg hover:bg-gray-400">
               <Icon icon="lucide:x" class="w-4 h-4" />
@@ -102,14 +104,14 @@ function close() {
               <Icon icon="lucide:check" class="w-6 h-6 text-green-400" />
             </div>
             <div>
-              <p class="text-gray-1000 font-medium text-sm">Thanks for the feedback!</p>
-              <p class="text-gray-700 text-xs mt-1">It helps us make Flowtali better.</p>
+              <p class="text-gray-1000 font-medium text-sm">{{ t('feedback.success.title') }}</p>
+              <p class="text-gray-700 text-xs mt-1">{{ t('feedback.success.body') }}</p>
             </div>
             <button
               @click="close"
               class="mt-2 text-xs text-green-700 hover:underline"
             >
-              Close
+              {{ t('feedback.success.close') }}
             </button>
           </div>
 
@@ -118,20 +120,20 @@ function close() {
 
             <!-- Type selector -->
             <div>
-              <p class="text-xs font-medium text-gray-700 uppercase tracking-wider mb-2.5">Type</p>
+              <p class="text-xs font-medium text-gray-700 uppercase tracking-wider mb-2.5">{{ t('feedback.typeLabel') }}</p>
               <div class="grid grid-cols-2 gap-2">
                 <button
-                  v-for="t in types" :key="t.id"
-                  @click="selectedType = t.id"
+                  v-for="ft in types" :key="ft.id"
+                  @click="selectedType = ft.id"
                   class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl border text-left transition-all"
-                  :class="selectedType === t.id
+                  :class="selectedType === ft.id
                     ? 'bg-green-700/10 border-green-700/40 text-gray-1000'
                     : 'border-gray-500 text-gray-900 hover:border-gray-500 hover:text-gray-1000 bg-gray-100/40'"
                 >
-                  <Icon :icon="t.icon" class="w-3.5 h-3.5 shrink-0" :class="selectedType === t.id ? 'text-green-700' : ''" />
+                  <Icon :icon="ft.icon" class="w-3.5 h-3.5 shrink-0" :class="selectedType === ft.id ? 'text-green-700' : ''" />
                   <div>
-                    <div class="text-xs font-medium leading-none">{{ t.label }}</div>
-                    <div class="text-[10px] text-gray-700 mt-0.5 leading-none">{{ t.desc }}</div>
+                    <div class="text-xs font-medium leading-none">{{ t('feedback.types.' + ft.id + '.label') }}</div>
+                    <div class="text-[10px] text-gray-700 mt-0.5 leading-none">{{ t('feedback.types.' + ft.id + '.desc') }}</div>
                   </div>
                 </button>
               </div>
@@ -140,7 +142,7 @@ function close() {
             <!-- Rating -->
             <div>
               <p class="text-xs font-medium text-gray-700 uppercase tracking-wider mb-2.5">
-                Overall rating <span class="normal-case text-gray-700/60">(optional)</span>
+                {{ t('feedback.rating.label') }} <span class="normal-case text-gray-700/60">{{ t('feedback.rating.optional') }}</span>
               </p>
               <div class="flex items-center gap-2">
                 <button
@@ -151,18 +153,18 @@ function close() {
                 >
                   ★
                 </button>
-                <span v-if="rating" class="text-xs text-gray-700 ml-1">{{ ['','Awful','Poor','Okay','Good','Great!'][rating] }}</span>
+                <span v-if="rating" class="text-xs text-gray-700 ml-1">{{ t('feedback.rating.labels.' + rating) }}</span>
               </div>
             </div>
 
             <!-- Message -->
             <div>
-              <p class="text-xs font-medium text-gray-700 uppercase tracking-wider mb-2">Message</p>
+              <p class="text-xs font-medium text-gray-700 uppercase tracking-wider mb-2">{{ t('feedback.messageLabel') }}</p>
               <textarea
                 v-model="message"
                 rows="4"
                 maxlength="2000"
-                placeholder="Tell us what's on your mind…"
+                :placeholder="t('feedback.messagePlaceholder')"
                 class="app-inp text-sm resize-none w-full"
               />
               <div class="flex justify-between mt-1">
@@ -178,7 +180,7 @@ function close() {
               class="w-full bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-sm py-2.5 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               <svg v-if="submitting" class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>
-              {{ submitting ? 'Sending…' : 'Send feedback' }}
+              {{ submitting ? t('feedback.sending') : t('feedback.send') }}
             </button>
 
           </div>

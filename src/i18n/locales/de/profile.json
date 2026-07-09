@@ -1,0 +1,100 @@
+{
+  "title": "Mein Profil",
+  "subtitle": "Verwalten Sie Ihre persönlichen Kontoeinstellungen",
+  "changePhoto": "Foto ändern",
+  "fields": {
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "email": "E-Mail-Adresse",
+    "phone": "Telefonnummer",
+    "jobTitle": "Position"
+  },
+  "placeholders": {
+    "phone": "+49 151 12345678",
+    "jobTitle": "Creative Director",
+    "newPassword": "Mind. 8 Zeichen",
+    "otp": "A1B2C3"
+  },
+  "saveChanges": "Änderungen speichern",
+  "password": {
+    "title": "Passwort ändern",
+    "current": "Aktuelles Passwort",
+    "new": "Neues Passwort",
+    "confirm": "Neues Passwort bestätigen",
+    "update": "Passwort aktualisieren"
+  },
+  "mfa": {
+    "title": "Zwei-Faktor-Authentifizierung",
+    "enabled": "Aktiviert",
+    "disabled": "Deaktiviert",
+    "desc": "Fügen Sie eine zusätzliche Sicherheitsebene hinzu — bei jeder Anmeldung wird ein Einmalcode per E-Mail gesendet.",
+    "enterCode": "Geben Sie den 6-stelligen Code ein, der an Ihre E-Mail gesendet wurde:",
+    "verifyEnable": "Verifizieren & aktivieren",
+    "cancel": "Abbrechen",
+    "enable": "2FA aktivieren",
+    "disable": "2FA deaktivieren",
+    "requiredByOrg": "Von Ihrer Organisation vorgeschrieben — kann nicht deaktiviert werden."
+  },
+  "sessions": {
+    "title": "Aktive Sitzungen",
+    "activeCount": "{count} aktiv",
+    "none": "Keine aktiven Sitzungen gefunden.",
+    "current": "Aktuell",
+    "lastActive": "Zuletzt aktiv {when}",
+    "expires": "Läuft ab {date}",
+    "revoke": "Widerrufen",
+    "signOutAll": "Von allen anderen Sitzungen abmelden"
+  },
+  "danger": {
+    "title": "Gefahrenzone",
+    "desc": "Löschen Sie Ihr Konto und alle zugehörigen Daten dauerhaft. Dies kann nicht rückgängig gemacht werden.",
+    "deleteAccount": "Konto löschen"
+  },
+  "deleteModal": {
+    "title": "Konto löschen",
+    "permanent": "Diese Aktion ist dauerhaft",
+    "removeIntro": "Das Löschen Ihres Kontos entfernt dauerhaft:",
+    "removeOrgs": "Alle Organisationen, die Sie besitzen",
+    "removeDocs": "Alle Rechnungen, Kunden und Projekte",
+    "removeProfile": "Ihr Profil und Ihre Authentifizierungsdaten",
+    "codeSentBefore": "Ein Bestätigungscode wird an ",
+    "codeSentAfter": " gesendet, um diese Aktion zu bestätigen.",
+    "cancel": "Abbrechen",
+    "sendCode": "Bestätigungscode senden",
+    "confirmTitle": "Löschung bestätigen",
+    "confirmSubtitle": "Geben Sie den an Ihre E-Mail gesendeten Code ein",
+    "enterCodeBefore": "Geben Sie den 6-stelligen Bestätigungscode ein, der gesendet wurde an ",
+    "resend": "Code erneut senden",
+    "deleteMyAccount": "Mein Konto löschen"
+  },
+  "relative": {
+    "never": "Nie",
+    "justNow": "Gerade eben",
+    "minAgo": "vor {n} Min.",
+    "hourAgo": "vor {n} Std.",
+    "dayAgo": "vor {n} T."
+  },
+  "toasts": {
+    "loadFailed": "Profil konnte nicht geladen werden",
+    "avatarUpdated": "Avatar aktualisiert",
+    "avatarFailed": "Avatar konnte nicht hochgeladen werden",
+    "profileSaved": "Profil gespeichert",
+    "profileFailed": "Profil konnte nicht gespeichert werden",
+    "pwMismatch": "Passwörter stimmen nicht überein",
+    "pwChanged": "Passwort erfolgreich geändert",
+    "pwFailed": "Passwort konnte nicht geändert werden",
+    "sessionRevoked": "Sitzung widerrufen",
+    "sessionRevokeFailed": "Sitzung konnte nicht widerrufen werden",
+    "signedOutOthers": "Von {count} anderen Sitzung(en) abgemeldet",
+    "signOutFailed": "Abmeldung der Sitzungen fehlgeschlagen",
+    "mfaCodeSent": "Bestätigungscode an Ihre E-Mail gesendet",
+    "mfaSendFailed": "Code konnte nicht gesendet werden",
+    "mfaEnabled": "Zwei-Faktor-Authentifizierung aktiviert",
+    "mfaInvalidCode": "Ungültiger Code",
+    "mfaDisabled": "Zwei-Faktor-Authentifizierung deaktiviert",
+    "mfaDisableFailed": "2FA konnte nicht deaktiviert werden",
+    "delCodeSent": "Bestätigungscode an Ihre E-Mail gesendet",
+    "delSendFailed": "Bestätigungscode konnte nicht gesendet werden",
+    "delFailed": "Konto konnte nicht gelöscht werden"
+  }
+}

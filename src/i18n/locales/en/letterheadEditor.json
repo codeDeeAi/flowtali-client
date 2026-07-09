@@ -1,0 +1,95 @@
+{
+  "toolbar": {
+    "letterheads": "Letterheads",
+    "new": "New Letterhead",
+    "edit": "Edit Letterhead",
+    "create": "Create"
+  },
+  "toasts": {
+    "created": "Letterhead created!",
+    "saved": "Letterhead saved!",
+    "saveFailed": "Failed to save letterhead. Please try again."
+  },
+  "tabs": {
+    "company": "Company",
+    "content": "Content",
+    "design": "Design",
+    "settings": "Settings",
+    "preview": "Preview"
+  },
+  "company": {
+    "quickFillClients": "Quick-fill from Clients",
+    "addOne": "Add one",
+    "companyLogo": "Company Logo",
+    "useThisLogo": "Use this logo",
+    "companyName": "Company Name",
+    "companyNamePlaceholder": "ACME STUDIO",
+    "tagline": "Tagline / Role",
+    "taglinePlaceholder": "Creative Agency & Digital Studio",
+    "email": "Email",
+    "phone": "Phone",
+    "website": "Website",
+    "address": "Address",
+    "regNumber": "Reg. Number",
+    "vatNumber": "VAT Number",
+    "signatureImage": "Signature Image",
+    "useThisSignature": "Use this signature"
+  },
+  "content": {
+    "templateName": "Template Name",
+    "templateNamePlaceholder": "Agency Proposal",
+    "subjectRe": "Subject / Re:",
+    "subjectPlaceholder": "Re: Project Engagement",
+    "salutation": "Salutation",
+    "salutationPlaceholder": "Dear [Client Name],",
+    "bodyText": "Body Text",
+    "bodyPlaceholder": "Letter body…",
+    "closing": "Closing",
+    "closingPlaceholder": "Yours sincerely,",
+    "signerName": "Signer Name",
+    "signerTitle": "Signer Title",
+    "footerColumns": "Footer Columns",
+    "use": "Use",
+    "left": "Left",
+    "center": "Center",
+    "right": "Right"
+  },
+  "design": {
+    "palette": "Palette",
+    "headerLayout": "Header Layout",
+    "stamp": "Stamp",
+    "watermark": "Watermark",
+    "watermarkColor": "Watermark color",
+    "layoutLeft": "Left",
+    "layoutCenter": "Center",
+    "layoutRight": "Right",
+    "layoutSplit": "Split"
+  },
+  "toggles": {
+    "topBar": "Top accent bar",
+    "bottomBar": "Bottom accent bar",
+    "companyLogo": "Company logo",
+    "headerDivider": "Header divider",
+    "footer": "Footer",
+    "date": "Date",
+    "refNumber": "Reference number",
+    "lineNumbers": "Line numbers"
+  },
+  "settings": {
+    "templateName": "Template Name",
+    "date": "Date",
+    "refNumber": "Reference Number",
+    "paperSize": "Paper Size",
+    "orientation": "Orientation",
+    "portrait": "Portrait",
+    "landscape": "Landscape"
+  },
+  "themeDesc": {
+    "classic": "Traditional & professional",
+    "modern": "Clean sidebar layout",
+    "minimal": "Understated & elegant",
+    "bold": "Strong header impact",
+    "legal": "Formal document style",
+    "executive": "Premium dual-column"
+  }
+}

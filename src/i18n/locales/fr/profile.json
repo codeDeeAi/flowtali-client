@@ -1,0 +1,100 @@
+{
+  "title": "Mon profil",
+  "subtitle": "Gérez les paramètres de votre compte personnel",
+  "changePhoto": "Changer la photo",
+  "fields": {
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "Adresse e-mail",
+    "phone": "Numéro de téléphone",
+    "jobTitle": "Fonction"
+  },
+  "placeholders": {
+    "phone": "+33 6 00 00 00 00",
+    "jobTitle": "Directeur créatif",
+    "newPassword": "Min. 8 caractères",
+    "otp": "A1B2C3"
+  },
+  "saveChanges": "Enregistrer les modifications",
+  "password": {
+    "title": "Changer le mot de passe",
+    "current": "Mot de passe actuel",
+    "new": "Nouveau mot de passe",
+    "confirm": "Confirmer le nouveau mot de passe",
+    "update": "Mettre à jour le mot de passe"
+  },
+  "mfa": {
+    "title": "Authentification à deux facteurs",
+    "enabled": "Activée",
+    "disabled": "Désactivée",
+    "desc": "Ajoutez une couche de sécurité supplémentaire — un code à usage unique est envoyé par e-mail à chaque connexion.",
+    "enterCode": "Saisissez le code à 6 caractères envoyé à votre e-mail :",
+    "verifyEnable": "Vérifier et activer",
+    "cancel": "Annuler",
+    "enable": "Activer la 2FA",
+    "disable": "Désactiver la 2FA",
+    "requiredByOrg": "Requis par votre organisation — ne peut pas être désactivé."
+  },
+  "sessions": {
+    "title": "Sessions actives",
+    "activeCount": "{count} active(s)",
+    "none": "Aucune session active trouvée.",
+    "current": "Actuelle",
+    "lastActive": "Dernière activité {when}",
+    "expires": "Expire {date}",
+    "revoke": "Révoquer",
+    "signOutAll": "Déconnecter toutes les autres sessions"
+  },
+  "danger": {
+    "title": "Zone de danger",
+    "desc": "Supprimez définitivement votre compte et toutes les données associées. Cette action est irréversible.",
+    "deleteAccount": "Supprimer le compte"
+  },
+  "deleteModal": {
+    "title": "Supprimer le compte",
+    "permanent": "Cette action est permanente",
+    "removeIntro": "La suppression de votre compte supprimera définitivement :",
+    "removeOrgs": "Toutes les organisations que vous possédez",
+    "removeDocs": "Toutes les factures, clients et projets",
+    "removeProfile": "Votre profil et vos données d'authentification",
+    "codeSentBefore": "Un code de vérification sera envoyé à ",
+    "codeSentAfter": " pour confirmer cette action.",
+    "cancel": "Annuler",
+    "sendCode": "Envoyer le code de vérification",
+    "confirmTitle": "Confirmer la suppression",
+    "confirmSubtitle": "Saisissez le code envoyé à votre e-mail",
+    "enterCodeBefore": "Saisissez le code de vérification à 6 caractères envoyé à ",
+    "resend": "Renvoyer le code",
+    "deleteMyAccount": "Supprimer mon compte"
+  },
+  "relative": {
+    "never": "Jamais",
+    "justNow": "À l'instant",
+    "minAgo": "il y a {n} min",
+    "hourAgo": "il y a {n} h",
+    "dayAgo": "il y a {n} j"
+  },
+  "toasts": {
+    "loadFailed": "Échec du chargement du profil",
+    "avatarUpdated": "Avatar mis à jour",
+    "avatarFailed": "Échec du téléversement de l'avatar",
+    "profileSaved": "Profil enregistré",
+    "profileFailed": "Échec de l'enregistrement du profil",
+    "pwMismatch": "Les mots de passe ne correspondent pas",
+    "pwChanged": "Mot de passe changé avec succès",
+    "pwFailed": "Échec du changement de mot de passe",
+    "sessionRevoked": "Session révoquée",
+    "sessionRevokeFailed": "Échec de la révocation de la session",
+    "signedOutOthers": "Déconnecté de {count} autre(s) session(s)",
+    "signOutFailed": "Échec de la déconnexion des sessions",
+    "mfaCodeSent": "Code de vérification envoyé à votre e-mail",
+    "mfaSendFailed": "Échec de l'envoi du code",
+    "mfaEnabled": "Authentification à deux facteurs activée",
+    "mfaInvalidCode": "Code invalide",
+    "mfaDisabled": "Authentification à deux facteurs désactivée",
+    "mfaDisableFailed": "Échec de la désactivation de la 2FA",
+    "delCodeSent": "Code de vérification envoyé à votre e-mail",
+    "delSendFailed": "Échec de l'envoi du code de vérification",
+    "delFailed": "Échec de la suppression du compte"
+  }
+}

@@ -2,25 +2,30 @@
 import { ref, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { ReceiptService, type IReceipt } from '@/services/receipt.service'
 
 const router    = useRouter()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 
 const receipts  = ref<IReceipt[]>([])
 const isLoading = ref(true)
 
-const statusConfig: Record<string, { label: string; classes: string }> = {
-  finalized: { label: 'Finalized', classes: 'bg-green-500/10 text-green-400 border border-green-500/20' },
-  draft:     { label: 'Draft',     classes: 'bg-gray-500 text-gray-900 border border-gray-500' },
-  void:      { label: 'Void',      classes: 'bg-gray-500 text-gray-700 border border-gray-500' },
+const statusClasses: Record<string, string> = {
+  finalized: 'bg-green-500/10 text-green-400 border border-green-500/20',
+  draft:     'bg-gray-500 text-gray-900 border border-gray-500',
+  void:      'bg-gray-500 text-gray-700 border border-gray-500',
+}
+function statusLabel(status: string) {
+  return t(`common.status.${status}`)
 }
 
 const avatarColors = ['#4ade80', '#a78bfa', '#f87171', '#34d399', '#fbbf24', '#38bdf8', '#fb923c', '#e879f9']
 
 function clientName(rec: IReceipt) {
-  return rec.to_name || rec.to_company || 'Unknown'
+  return rec.to_name || rec.to_company || t('common.status.unknown')
 }
 
 function initials(name: string) {
@@ -35,7 +40,7 @@ function avatarColor(id: string) {
 
 function fmtDate(iso: string | null) {
   if (!iso) return '—'
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  return new Date(iso).toLocaleDateString(locale.value, { month: 'short', day: 'numeric' })
 }
 
 function fmtAmount(rec: IReceipt) {
@@ -61,12 +66,12 @@ onMounted(async () => {
   <div class="bg-gray-200 border border-gray-400 rounded-xl">
     <!-- Header -->
     <div class="flex items-center justify-between px-5 py-4 border-b border-gray-400">
-      <h3 class="text-sm font-semibold text-gray-1000">Recent Receipts</h3>
+      <h3 class="text-sm font-semibold text-gray-1000">{{ t('dashboard.recentReceipts.title') }}</h3>
       <router-link
         :to="{ name: 'receipts' }"
         class="text-xs text-green-700 hover:text-green-800 transition-colors flex items-center gap-1"
       >
-        View all <span>→</span>
+        {{ t('common.actions.viewAll') }} <span>→</span>
       </router-link>
     </div>
 
@@ -87,7 +92,7 @@ onMounted(async () => {
     <!-- Empty state -->
     <div v-else-if="receipts.length === 0" class="flex flex-col items-center justify-center py-10 gap-2">
       <Icon icon="lucide:receipt" class="w-8 h-8 text-gray-700/40" />
-      <p class="text-xs text-gray-700">No receipts yet</p>
+      <p class="text-xs text-gray-700">{{ t('dashboard.recentReceipts.empty') }}</p>
     </div>
 
     <template v-else>
@@ -96,10 +101,10 @@ onMounted(async () => {
         <table class="w-full text-sm">
           <thead>
             <tr class="border-b border-gray-400">
-              <th class="text-left text-[10px] font-semibold uppercase tracking-wider text-gray-700 px-5 py-3">Recipient</th>
-              <th class="text-left text-[10px] font-semibold uppercase tracking-wider text-gray-700 px-3 py-3">Amount</th>
-              <th class="text-left text-[10px] font-semibold uppercase tracking-wider text-gray-700 px-3 py-3">Status</th>
-              <th class="text-left text-[10px] font-semibold uppercase tracking-wider text-gray-700 px-3 py-3">Date</th>
+              <th class="text-left text-[10px] font-semibold uppercase tracking-wider text-gray-700 px-5 py-3">{{ t('common.table.recipient') }}</th>
+              <th class="text-left text-[10px] font-semibold uppercase tracking-wider text-gray-700 px-3 py-3">{{ t('common.table.amount') }}</th>
+              <th class="text-left text-[10px] font-semibold uppercase tracking-wider text-gray-700 px-3 py-3">{{ t('common.table.status') }}</th>
+              <th class="text-left text-[10px] font-semibold uppercase tracking-wider text-gray-700 px-3 py-3">{{ t('common.table.date') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -125,8 +130,8 @@ onMounted(async () => {
               </td>
               <td class="px-3 py-3.5 text-sm font-semibold text-gray-1000">{{ fmtAmount(rec) }}</td>
               <td class="px-3 py-3.5">
-                <span :class="['text-xs font-semibold px-2.5 py-1 rounded-full', statusConfig[rec.status]?.classes ?? '']">
-                  {{ statusConfig[rec.status]?.label ?? rec.status }}
+                <span :class="['text-xs font-semibold px-2.5 py-1 rounded-full', statusClasses[rec.status] ?? '']">
+                  {{ statusLabel(rec.status) }}
                 </span>
               </td>
               <td class="px-3 py-3.5 text-sm text-gray-900">{{ fmtDate(rec.issue_date) }}</td>
@@ -157,8 +162,8 @@ onMounted(async () => {
           </div>
           <div class="flex flex-col items-end gap-1.5">
             <span class="text-sm font-semibold text-gray-1000">{{ fmtAmount(rec) }}</span>
-            <span :class="['text-xs font-semibold px-2 py-0.5 rounded-full', statusConfig[rec.status]?.classes ?? '']">
-              {{ statusConfig[rec.status]?.label ?? rec.status }}
+            <span :class="['text-xs font-semibold px-2 py-0.5 rounded-full', statusClasses[rec.status] ?? '']">
+              {{ statusLabel(rec.status) }}
             </span>
           </div>
         </div>

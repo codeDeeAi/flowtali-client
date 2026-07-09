@@ -1,0 +1,91 @@
+{
+  "title": "Klienti",
+  "count": "žádní klienti ve vašem adresáři | jeden klient ve vašem adresáři | {count} klienti ve vašem adresáři | {count} klientů ve vašem adresáři",
+  "add": "Přidat klienta",
+  "addShort": "Nový",
+  "search": "Hledat klienty…",
+  "gridView": "Zobrazení mřížky",
+  "listView": "Zobrazení seznamu",
+  "empty": {
+    "title": "Žádní klienti nenalezeni",
+    "searchHint": "Zkuste upravit hledaný výraz",
+    "addHint": "Přidejte svého prvního klienta a začněte"
+  },
+  "types": {
+    "organization": "Organizace",
+    "individual": "Jednotlivec",
+    "freelancer": "Freelancer",
+    "agency": "Agentura",
+    "other": "Jiné"
+  },
+  "orgShort": "Org.",
+  "table": {
+    "client": "Klient",
+    "contact": "Kontakt",
+    "type": "Typ"
+  },
+  "editClient": "Upravit klienta",
+  "noCompany": "Bez firmy",
+  "clientSince": "Klient od {date}",
+  "create": {
+    "title": "Přidat klienta",
+    "subtitle": "Vyplňte údaje níže a přidejte nového klienta"
+  },
+  "edit": {
+    "title": "Upravit klienta",
+    "subtitle": "Aktualizujte údaje tohoto klienta"
+  },
+  "sections": {
+    "basic": "Základní informace",
+    "contact": "Kontaktní údaje",
+    "notes": "Poznámky"
+  },
+  "fields": {
+    "fullName": "Celé jméno",
+    "company": "Firma",
+    "clientType": "Typ klienta",
+    "email": "E-mailová adresa",
+    "phone": "Telefonní číslo",
+    "address": "Adresa",
+    "notes": "Další poznámky"
+  },
+  "placeholders": {
+    "fullName": "Jan Novák",
+    "company": "Acme Inc.",
+    "email": "jan{'@'}example.cz",
+    "phone": "+420 600 000 000",
+    "address": "Hlavní 123, Město, Země",
+    "notes": "Jakékoli další informace o tomto klientovi…"
+  },
+  "cancel": "Zrušit",
+  "saving": "Ukládání…",
+  "saveChanges": "Uložit změny",
+  "view": {
+    "email": "E-mail",
+    "phone": "Telefon",
+    "address": "Adresa",
+    "type": "Typ",
+    "notes": "Poznámky",
+    "edit": "Upravit",
+    "delete": "Smazat"
+  },
+  "notFound": "Klient nenalezen",
+  "back": "Zpět na klienty",
+  "deleteModal": {
+    "title": "Smazat klienta?",
+    "bodyBefore": "Tímto trvale smažete ",
+    "bodyAfter": " a všechny související záznamy. Tuto akci nelze vrátit zpět.",
+    "delete": "Smazat klienta",
+    "deleting": "Mazání…"
+  },
+  "toasts": {
+    "loadFailed": "Nepodařilo se načíst klienty.",
+    "loadOneFailed": "Nepodařilo se načíst klienta.",
+    "created": "Klient úspěšně vytvořen!",
+    "createFailed": "Nepodařilo se vytvořit klienta.",
+    "updated": "Klient úspěšně aktualizován!",
+    "updateFailed": "Nepodařilo se aktualizovat klienta.",
+    "deleted": "Klient úspěšně smazán.",
+    "deleteFailed": "Nepodařilo se smazat klienta."
+  }
+}

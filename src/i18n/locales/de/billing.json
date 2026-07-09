@@ -1,0 +1,105 @@
+{
+  "title": "Abrechnung",
+  "subtitle": "Verwalten Sie Ihr Abonnement und Ihre Abrechnungshistorie",
+  "verifying": "Zahlung wird überprüft…",
+  "verifyingDesc": "Bitte warten Sie, während wir Ihre Zahlung mit Paystack bestätigen.",
+  "currentPlan": "Aktueller Plan",
+  "statuses": {
+    "active": "Aktiv",
+    "trial": "Testphase",
+    "past_due": "Überfällig",
+    "cancelled": "Gekündigt",
+    "expired": "Abgelaufen",
+    "pending": "Ausstehend",
+    "completed": "Abgeschlossen",
+    "failed": "Fehlgeschlagen"
+  },
+  "period": {
+    "cancelledUntil": "Abonnement gekündigt — Zugriff bis",
+    "renewsAnnual": "Jahresplan verlängert sich am",
+    "renewsMonthly": "Monatsplan verlängert sich am",
+    "billingCurrency": "Abrechnungswährung: {currency}",
+    "cancelPlan": "Plan kündigen"
+  },
+  "tabs": {
+    "plans": "Pläne",
+    "history": "Abrechnungshistorie"
+  },
+  "interval": {
+    "monthly": "Monatlich",
+    "annual": "Jährlich"
+  },
+  "detected": "(erkannt)",
+  "plan": {
+    "mostPopular": "Am beliebtesten",
+    "currentPlan": "Aktueller Plan",
+    "free": "Kostenlos",
+    "perMonth": "/Mon.",
+    "billedAnnual": "Jährlich {price} berechnet",
+    "save": "{pct}% sparen",
+    "downgradeFree": "Auf Kostenlos herabstufen",
+    "upgradeTo": "Upgrade auf {name}",
+    "current": "Aktueller Plan"
+  },
+  "history": {
+    "empty": "Noch keine Abrechnungshistorie",
+    "emptyHint": "Ihre Zahlungshistorie erscheint hier nach Ihrem ersten Upgrade.",
+    "date": "Datum",
+    "type": "Typ",
+    "reference": "Referenz",
+    "amount": "Betrag",
+    "status": "Status",
+    "prev": "← Zurück",
+    "next": "Weiter →",
+    "page": "Seite {page} von {total}"
+  },
+  "txType": {
+    "new_subscription": "Neues Abonnement",
+    "renewal": "Verlängerung",
+    "upgrade": "Upgrade",
+    "downgrade": "Downgrade"
+  },
+  "cancelModal": {
+    "title": "Abonnement kündigen?",
+    "subtitle": "Sie behalten den Zugriff bis zum Ende Ihres aktuellen Zeitraums.",
+    "body": "Nach der Kündigung wird Ihr Konto am Ende Ihres Abrechnungszeitraums automatisch auf den Starter-Plan herabgestuft. Es wird Ihnen nichts mehr berechnet.",
+    "keep": "Plan behalten",
+    "cancelling": "Wird gekündigt…",
+    "confirm": "Ja, kündigen"
+  },
+  "features": {
+    "unlimitedInvoices": "Unbegrenzte Rechnungen",
+    "invoicesPerMonth": "{n} Rechnungen/Monat",
+    "unlimitedReceipts": "Unbegrenzte Belege",
+    "receiptsPerMonth": "{n} Belege/Monat",
+    "unlimitedLetterheads": "Unbegrenzte Briefköpfe",
+    "letterheadsPerMonth": "{n} Briefköpfe/Monat",
+    "unlimitedProjects": "Unbegrenzte Projekte",
+    "projectsLimit": "{n} aktives Projekt",
+    "upToTeam": "Bis zu {n} Teammitglieder",
+    "solo": "Einzeln (1 Mitglied)",
+    "customBranding": "Individuelles Branding & Logo",
+    "removeBranding": "Flowtali-Branding entfernen",
+    "allCurrencies": "Alle 11 Währungen",
+    "allTemplates": "Alle 8 Briefkopfvorlagen",
+    "stampWatermark": "Stempel & Wasserzeichen",
+    "prioritySupport": "Priorisierter Support",
+    "teamRoles": "Teamrollen & Berechtigungen",
+    "invoiceAnalytics": "Rechnungsanalysen"
+  },
+  "toasts": {
+    "activated": "Abonnement erfolgreich aktiviert!",
+    "verifyFailed": "Zahlungsüberprüfung fehlgeschlagen.",
+    "loadPlansFailed": "Preispläne konnten nicht geladen werden.",
+    "loadHistoryFailed": "Abrechnungshistorie konnte nicht geladen werden.",
+    "initPaymentFailed": "Zahlung konnte nicht initialisiert werden.",
+    "cancelled": "Abonnement gekündigt. Der Zugriff bleibt bis zum Ende Ihres Abrechnungszeitraums bestehen.",
+    "cancelFailed": "Abonnement konnte nicht gekündigt werden."
+  },
+  "paywall": {
+    "trialEndedTitle": "Ihre kostenlose Testphase ist beendet",
+    "trialEndedBody": "Abonnieren Sie einen Plan, um weiterhin Rechnungen, Belege und mehr zu erstellen. Ihre vorhandenen Daten bleiben sicher.",
+    "requiredTitle": "Ein Abonnement ist erforderlich",
+    "requiredBody": "Ihre Organisation benötigt einen aktiven Plan, um fortzufahren. Wählen Sie unten einen Plan, um den Zugriff wiederherzustellen."
+  }
+}

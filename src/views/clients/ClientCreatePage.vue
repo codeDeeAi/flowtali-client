@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { Icon } from '@iconify/vue';
 import { useLoaders } from '@/composables/loaders.ts';
 import { useFormErrors } from '@/composables/formErrors';
@@ -14,6 +15,7 @@ import { ClientService } from '@/services/client.service';
 import type { ClientType } from '@/types/client.types';
 
 const router    = useRouter();
+const { t }     = useI18n();
 const authStore = useAuthStore();
 const { notify } = useNotification();
 const { validate } = useYupForm();
@@ -81,10 +83,10 @@ const handleSubmit = async () => {
       notes: form.value.notes || null,
     });
 
-    notify('Client created successfully!', 'success');
+    notify(t('clients.toasts.created'), 'success');
     router.push({ name: 'clients' });
   } catch (error: any) {
-    const msg = error?.response?.data?.message ?? 'Failed to create client.';
+    const msg = error?.response?.data?.message ?? t('clients.toasts.createFailed');
     notify(msg, 'error');
   } finally {
     setLoader('isSaving', false);
@@ -104,8 +106,8 @@ const handleSubmit = async () => {
         <Icon icon="lucide:arrow-left" class="w-4 h-4" />
       </button>
       <div>
-        <h1 class="page-title">Add Client</h1>
-        <p class="page-subtitle">Fill in the details below to add a new client</p>
+        <h1 class="page-title">{{ t('clients.create.title') }}</h1>
+        <p class="page-subtitle">{{ t('clients.create.subtitle') }}</p>
       </div>
     </div>
 
@@ -119,46 +121,46 @@ const handleSubmit = async () => {
 
       <!-- Basic info -->
       <div>
-        <h2 class="text-sm font-semibold text-gray-1000 mb-4">Basic Information</h2>
+        <h2 class="text-sm font-semibold text-gray-1000 mb-4">{{ t('clients.sections.basic') }}</h2>
         <div class="space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <InputField
               v-model="form.full_name"
-              label-text="Full Name"
+              :label-text="t('clients.fields.fullName')"
               type="text"
               :is-required="true"
               :error="getError('full_name').value || ''"
               input-classes="px-2 py-2 text-sm transition-colors"
-              placeholder="John Doe"
+              :placeholder="t('clients.placeholders.fullName')"
             />
             <InputField
               v-model="form.company"
-              label-text="Company"
+              :label-text="t('clients.fields.company')"
               type="text"
               :error="getError('company').value || ''"
               input-classes="px-2 py-2 text-sm transition-colors"
-              placeholder="Acme Inc."
+              :placeholder="t('clients.placeholders.company')"
             />
           </div>
 
           <!-- Client type -->
           <div class="space-y-1">
             <label class="flex text-sm text-gray-700">
-              <span>Client Type</span>
+              <span>{{ t('clients.fields.clientType') }}</span>
               <span class="text-red-400 ml-0.5">*</span>
             </label>
             <div class="flex flex-wrap gap-2">
               <button
-                v-for="t in clientTypes" :key="t.value"
-                @click="form.client_type = t.value"
+                v-for="ct in clientTypes" :key="ct.value"
+                @click="form.client_type = ct.value"
                 :class="[
                   'px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors',
-                  form.client_type === t.value
+                  form.client_type === ct.value
                     ? 'border-green-700 bg-green-700/10 text-green-700'
                     : 'border-gray-500 bg-gray-400/50 text-gray-700 hover:border-gray-500 hover:text-gray-1000'
                 ]"
               >
-                {{ t.label }}
+                {{ t(`clients.types.${ct.value}`) }}
               </button>
             </div>
             <small v-if="getError('client_type').value" class="text-red-400 text-xs">{{ getError('client_type').value }}</small>
@@ -170,33 +172,33 @@ const handleSubmit = async () => {
 
       <!-- Contact info -->
       <div>
-        <h2 class="text-sm font-semibold text-gray-1000 mb-4">Contact Details</h2>
+        <h2 class="text-sm font-semibold text-gray-1000 mb-4">{{ t('clients.sections.contact') }}</h2>
         <div class="space-y-4">
           <InputField
             v-model="form.email"
-            label-text="Email Address"
+            :label-text="t('clients.fields.email')"
             type="email"
             :error="getError('email').value || ''"
             input-classes="px-2 py-2 text-sm transition-colors"
             autocomplete="email"
             autocapitalize="none"
-            placeholder="john@example.com"
+            :placeholder="t('clients.placeholders.email')"
           />
           <InputField
             v-model="form.phone"
-            label-text="Phone Number"
+            :label-text="t('clients.fields.phone')"
             type="text"
             :error="getError('phone').value || ''"
             input-classes="px-2 py-2 text-sm transition-colors"
-            placeholder="+1 555 000 0000"
+            :placeholder="t('clients.placeholders.phone')"
           />
           <InputField
             v-model="form.address"
-            label-text="Address"
+            :label-text="t('clients.fields.address')"
             type="text"
             :error="getError('address').value || ''"
             input-classes="px-2 py-2 text-sm transition-colors"
-            placeholder="123 Main St, City, Country"
+            :placeholder="t('clients.placeholders.address')"
           />
         </div>
       </div>
@@ -205,13 +207,13 @@ const handleSubmit = async () => {
 
       <!-- Notes -->
       <div>
-        <h2 class="text-sm font-semibold text-gray-1000 mb-4">Notes</h2>
+        <h2 class="text-sm font-semibold text-gray-1000 mb-4">{{ t('clients.sections.notes') }}</h2>
         <TextArea
           v-model="form.notes"
-          label-text="Additional Notes"
+          :label-text="t('clients.fields.notes')"
           :error="getError('notes').value || ''"
           input-classes="px-2 py-2 text-sm transition-colors resize-none"
-          placeholder="Any additional information about this client…"
+          :placeholder="t('clients.placeholders.notes')"
           rows="4"
         />
       </div>
@@ -222,7 +224,7 @@ const handleSubmit = async () => {
           @click="router.push({ name: 'clients' })"
           class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-1000 bg-gray-400 hover:bg-gray-500 border border-gray-500 rounded-lg transition-colors"
         >
-          Cancel
+          {{ t('clients.cancel') }}
         </button>
         <button
           @click="handleSubmit"
@@ -231,7 +233,7 @@ const handleSubmit = async () => {
         >
           <Icon v-if="getLoader('isSaving')" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin" />
           <Icon v-else icon="lucide:user-plus" class="w-3.5 h-3.5" />
-          {{ getLoader('isSaving') ? 'Saving…' : 'Add Client' }}
+          {{ getLoader('isSaving') ? t('clients.saving') : t('clients.add') }}
         </button>
       </div>
     </div>

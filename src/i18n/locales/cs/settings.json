@@ -1,0 +1,84 @@
+{
+  "title": "Nastavení",
+  "subtitle": "Konfigurace organizace a účtu",
+  "tabs": {
+    "general": "Obecné",
+    "notifications": "Oznámení",
+    "security": "Zabezpečení",
+    "api": "API a integrace"
+  },
+  "general": {
+    "orgDetails": "Údaje organizace",
+    "logo": "Logo organizace",
+    "logoHint": "PNG, JPG nebo WebP · max. 2 MB",
+    "uploadLogo": "Nahrát logo",
+    "uploading": "Nahrávání…",
+    "removing": "Odebírání…",
+    "remove": "Odebrat",
+    "orgName": "Název organizace",
+    "orgNamePlaceholder": "Název organizace",
+    "industry": "Odvětví",
+    "selectIndustry": "Vyberte odvětví…",
+    "companySize": "Velikost firmy",
+    "selectSize": "Vyberte velikost…",
+    "businessAddress": "Adresa firmy",
+    "addressPlaceholder": "Ulice 123, Město, Země",
+    "defaultInvoiceSettings": "Výchozí nastavení faktur",
+    "defaultCurrency": "Výchozí měna",
+    "paymentTerms": "Platební podmínky",
+    "defaultTaxRate": "Výchozí sazba daně (%)",
+    "saveChanges": "Uložit změny",
+    "saved": "Uloženo"
+  },
+  "notifications": {
+    "title": "Předvolby oznámení",
+    "groups": {
+      "invoices": "Faktury",
+      "team": "Tým"
+    },
+    "items": {
+      "invoice_paid": {
+        "label": "Faktura zaplacena",
+        "desc": "Když klient zaplatí fakturu"
+      },
+      "invoice_overdue": {
+        "label": "Faktura po splatnosti",
+        "desc": "Když faktura překročí datum splatnosti"
+      },
+      "invoice_viewed": {
+        "label": "Faktura zobrazena",
+        "desc": "Když si klient zobrazí fakturu"
+      },
+      "member_joined": {
+        "label": "Člen se připojil",
+        "desc": "Když člen týmu přijme pozvánku"
+      },
+      "role_changed": {
+        "label": "Role změněna",
+        "desc": "Když je aktualizována role člena"
+      }
+    },
+    "email": "E-mail",
+    "inApp": "V aplikaci",
+    "save": "Uložit předvolby",
+    "saved": "Uloženo"
+  },
+  "security": {
+    "title": "Nastavení zabezpečení",
+    "twoFactor": "Dvoufaktorové ověření",
+    "twoFactorDesc": "Vyžadovat 2FA pro všechny členy organizace",
+    "ipAllowlist": "Seznam povolených IP",
+    "ipAllowlistDesc": "Omezte přístup na konkrétní rozsahy IP. Ponechte prázdné pro povolení všech IP. Zadejte jednu IP nebo blok CIDR na řádek.",
+    "save": "Uložit nastavení zabezpečení",
+    "saved": "Uloženo"
+  },
+  "api": {
+    "title": "API klíče",
+    "generateKey": "Vygenerovat klíč",
+    "planNote": "Přístup k API je dostupný v plánech Pro a Business",
+    "planDesc": "Používejte API klíče k integraci Flowtali s vlastními systémy a automatizaci pracovních postupů.",
+    "active": "Aktivní",
+    "lastUsed": "Naposledy použito {when}",
+    "revoke": "Odvolat"
+  }
+}

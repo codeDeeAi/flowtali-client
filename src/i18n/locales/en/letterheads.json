@@ -1,0 +1,74 @@
+{
+  "title": "Letterheads",
+  "count": "no branded templates | one branded template | {count} branded templates",
+  "new": "New Letterhead",
+  "stats": {
+    "totalTemplates": "Total Templates",
+    "totalUses": "Total Uses",
+    "mostUsed": "Most Used",
+    "confidential": "Confidential",
+    "uses": "{count} uses"
+  },
+  "search": "Search letterheads…",
+  "empty": {
+    "title": "No letterheads found",
+    "hint": "Try a different search or create a new one"
+  },
+  "preview": {
+    "re": "Re:",
+    "dear": "Dear Client,",
+    "body1": "We are pleased to present our proposal for your upcoming project…",
+    "body2": "Please find attached the details of our engagement…",
+    "confidential": "Confidential",
+    "page": "Page 1 of 1"
+  },
+  "themes": {
+    "classic": "Classic",
+    "modern": "Modern",
+    "bold": "Bold",
+    "minimal": "Minimal",
+    "legal": "Legal",
+    "executive": "Executive"
+  },
+  "card": {
+    "view": "View",
+    "startFromTemplate": "Start from a template",
+    "usesAndLastUsed": "{uses} uses · Last used {lastUsed}"
+  },
+  "table": {
+    "name": "Name",
+    "theme": "Theme",
+    "watermark": "Watermark",
+    "uses": "Uses",
+    "lastUsed": "Last Used"
+  },
+  "actions": {
+    "edit": "Edit",
+    "share": "Share",
+    "delete": "Delete"
+  },
+  "lastUsed": {
+    "never": "Never used",
+    "today": "Today",
+    "dayAgo": "1 day ago",
+    "daysAgo": "{n} days ago",
+    "weekAgo": "1 week ago",
+    "weeksAgo": "{n} weeks ago",
+    "monthsAgo": "{n} months ago"
+  },
+  "deleteModal": {
+    "title": "Delete Letterhead",
+    "subtitle": "This action cannot be undone",
+    "confirmBefore": "Are you sure you want to delete ",
+    "confirmAfter": "?",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "toasts": {
+    "loadFailed": "Failed to load letterheads",
+    "deleted": "Letterhead deleted",
+    "deleteFailed": "Failed to delete letterhead"
+  },
+  "notFound": "Letterhead not found",
+  "back": "Back to letterheads"
+}

@@ -1,0 +1,70 @@
+{
+  "title": "Rollen & Berechtigungen",
+  "subtitle": "keine Rollen · Zugriffssteuerung verwalten | eine Rolle · Zugriffssteuerung verwalten | {count} Rollen · Zugriffssteuerung verwalten",
+  "businessRequired": "Business-Plan erforderlich",
+  "createRole": "Rolle erstellen",
+  "upgrade": {
+    "title": "Rollen & Berechtigungen erfordern Business",
+    "desc": "Erstellen Sie benutzerdefinierte Rollen, weisen Sie granulare Berechtigungen zu und steuern Sie genau, worauf jedes Teammitglied zugreifen kann — verfügbar im Business-Plan.",
+    "cta": "Auf Business upgraden"
+  },
+  "rolesCount": "Rollen ({count})",
+  "loading": "Wird geladen…",
+  "noRoles": "Keine Rollen gefunden.",
+  "system": "System",
+  "custom": "Benutzerdefiniert",
+  "disabled": "Deaktiviert",
+  "memberCount": "keine Mitglieder | ein Mitglied | {count} Mitglieder",
+  "selectRole": "Wählen Sie eine Rolle, um ihre Berechtigungen anzuzeigen",
+  "rolePermissions": "Berechtigungen: {name}",
+  "editRole": "Rolle bearbeiten",
+  "matrix": {
+    "resource": "Ressource"
+  },
+  "tags": {
+    "read": "Lesen",
+    "create": "Erstellen",
+    "update": "Aktualisieren",
+    "delete": "Löschen",
+    "manage": "Verwalten"
+  },
+  "legend": {
+    "allowed": "Erlaubt",
+    "denied": "Verweigert",
+    "na": "N/V"
+  },
+  "createModal": {
+    "title": "Rolle erstellen",
+    "roleName": "Rollenname",
+    "roleNamePlaceholder": "z. B. Buchhalter",
+    "description": "Beschreibung",
+    "descriptionPlaceholder": "Was kann diese Rolle tun?",
+    "permissions": "Berechtigungen",
+    "resetAll": "Alle Berechtigungen zurücksetzen",
+    "toggleGroup": "Gruppe umschalten",
+    "cancel": "Abbrechen",
+    "creating": "Wird erstellt…",
+    "create": "Rolle erstellen"
+  },
+  "editModal": {
+    "title": "Rolle bearbeiten",
+    "cancel": "Abbrechen",
+    "saving": "Speichern…",
+    "save": "Änderungen speichern"
+  },
+  "deleteModal": {
+    "title": "„{name}\" löschen?",
+    "body": "Diese Rolle wird dauerhaft entfernt. Mitglieder mit dieser Rolle verlieren diese Berechtigungen.",
+    "cancel": "Abbrechen",
+    "delete": "Rolle löschen"
+  },
+  "toasts": {
+    "loadFailed": "Rollen konnten nicht geladen werden.",
+    "created": "Rolle „{name}\" erstellt",
+    "createFailed": "Rolle konnte nicht erstellt werden.",
+    "updated": "Rolle „{name}\" aktualisiert",
+    "updateFailed": "Rolle konnte nicht aktualisiert werden.",
+    "deleted": "Rolle „{name}\" gelöscht",
+    "deleteFailed": "Rolle konnte nicht gelöscht werden."
+  }
+}

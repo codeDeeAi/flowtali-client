@@ -1,0 +1,54 @@
+{
+  "greeting": {
+    "morning": "Bonjour",
+    "afternoon": "Bon après-midi",
+    "evening": "Bonsoir"
+  },
+  "defaultName": "bienvenue",
+  "defaultOrg": "votre organisation",
+  "subtitle": "Voici ce qui se passe avec {org} aujourd'hui",
+  "newInvoice": "Nouvelle facture",
+  "stats": {
+    "totalRevenue": "Revenu total",
+    "outstanding": "En attente",
+    "invoicesSent": "Factures envoyées",
+    "collectionRate": "Taux de recouvrement",
+    "receiptsIssued": "Reçus émis"
+  },
+  "quickActions": {
+    "title": "Actions rapides",
+    "createInvoice": "Créer une facture",
+    "createReceipt": "Créer un reçu",
+    "createLetterhead": "Créer un en-tête",
+    "addClient": "Ajouter un client",
+    "inviteMember": "Inviter un membre"
+  },
+  "planUsage": {
+    "title": "Utilisation du forfait",
+    "invoicesPerMo": "Factures/mois",
+    "receiptsPerMo": "Reçus/mois",
+    "letterheadsPerMo": "En-têtes/mois",
+    "projects": "Projets",
+    "teamMembers": "Membres de l'équipe",
+    "upgrade": "Améliorer le forfait",
+    "manage": "Gérer le forfait"
+  },
+  "revenue": {
+    "title": "Aperçu des revenus",
+    "subtitle": "Paiements de factures reçus",
+    "noData": "Aucune donnée de revenu"
+  },
+  "statusChart": {
+    "title": "Statut des factures",
+    "thisMonth": "Ce mois-ci",
+    "total": "total"
+  },
+  "recentInvoices": {
+    "title": "Factures récentes",
+    "empty": "Aucune facture"
+  },
+  "recentReceipts": {
+    "title": "Reçus récents",
+    "empty": "Aucun reçu"
+  }
+}

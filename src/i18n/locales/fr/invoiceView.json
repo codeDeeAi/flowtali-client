@@ -1,0 +1,63 @@
+{
+  "dueOn": "Échéance le {date}",
+  "actions": {
+    "print": "Imprimer / PDF",
+    "share": "Partager",
+    "generateReceipt": "Générer un reçu",
+    "markPaid": "Payée",
+    "edit": "Modifier",
+    "delete": "Supprimer"
+  },
+  "receiptsPanel": {
+    "title": "Reçus",
+    "generate": "Générer",
+    "empty": "Aucun reçu",
+    "generateFrom": "Générer depuis cette facture"
+  },
+  "links": {
+    "title": "Liens partagés",
+    "newLink": "Nouveau lien",
+    "total": "Total",
+    "active": "Actifs",
+    "views": "Vues",
+    "private": "{count} privé(s)",
+    "public": "{count} public(s)",
+    "defaultLabel": "Lien partagé",
+    "statusRevoked": "Révoqué",
+    "statusExpired": "Expiré",
+    "statusActive": "Actif",
+    "neverExpires": "N'expire jamais",
+    "expiredOn": "Expiré le {date}",
+    "expiresOn": "Expire le {date}",
+    "visibilityPrivate": "Privé",
+    "visibilityPublic": "Public",
+    "recentViews": "Vues récentes",
+    "emptyTitle": "Aucun lien partagé",
+    "emptyBody": "Générez un lien pour partager cette facture avec vos clients",
+    "createLink": "Créer un lien",
+    "never": "Jamais"
+  },
+  "generateModal": {
+    "title": "Générer un reçu",
+    "from": "Depuis {number}",
+    "receiptNumber": "Numéro de reçu",
+    "paymentDate": "Date de paiement",
+    "paymentMethod": "Mode de paiement",
+    "reference": "Référence",
+    "statusStamp": "Tampon de statut",
+    "balanceDue": "Solde dû ({currency})",
+    "generate": "Générer un reçu",
+    "paymentMethodPlaceholder": "Virement bancaire"
+  },
+  "stamps": {
+    "paid": "Payé",
+    "partiallyPaid": "Partiellement payé",
+    "unpaid": "Impayé",
+    "none": "Aucun"
+  },
+  "toasts": {
+    "linkCopied": "Lien copié dans le presse-papiers",
+    "receiptCreated": "Reçu {number} créé",
+    "receiptFailed": "Échec de la création du reçu"
+  }
+}

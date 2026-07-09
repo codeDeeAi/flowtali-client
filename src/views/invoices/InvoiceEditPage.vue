@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { InvoiceService } from '@/services/invoice.service'
 import InvoiceEditor from './InvoiceEditor.vue'
 
 const route     = useRoute()
+const { t }     = useI18n()
 const authStore = useAuthStore()
 const orgId     = computed(() => authStore.getCurrentOrganization?.id ?? '')
 
@@ -81,9 +83,9 @@ onMounted(async () => {
   </div>
 
   <div v-else-if="notFound" class="flex flex-col items-center justify-center h-screen bg-gray-100">
-    <p class="text-gray-700">Invoice not found</p>
+    <p class="text-gray-700">{{ t('invoices.notFound') }}</p>
     <button @click="$router.push({ name: 'invoices' })" class="mt-4 text-green-700 text-sm hover:underline">
-      Back to invoices
+      {{ t('invoices.back') }}
     </button>
   </div>
 

@@ -1,0 +1,99 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "projects": "Projets",
+    "invoices": "Factures",
+    "receipts": "Reçus",
+    "letterheads": "En-têtes",
+    "clients": "Clients",
+    "members": "Membres",
+    "roles": "Rôles et autorisations",
+    "rolesShort": "Rôles",
+    "orgPreferences": "Préférences de l'org.",
+    "auditLogs": "Journaux d'audit",
+    "analytics": "Analytique",
+    "billing": "Facturation",
+    "settings": "Paramètres",
+    "profile": "Mon profil"
+  },
+  "sections": {
+    "documents": "Documents",
+    "organization": "Organisation",
+    "workspace": "Espace de travail",
+    "account": "Compte"
+  },
+  "pageTitles": {
+    "dashboard": "Tableau de bord",
+    "invoices": "Factures",
+    "invoicesCreate": "Nouvelle facture",
+    "invoicesView": "Facture",
+    "invoicesEdit": "Modifier la facture",
+    "receipts": "Reçus",
+    "receiptsCreate": "Nouveau reçu",
+    "receiptsView": "Reçu",
+    "receiptsEdit": "Modifier le reçu",
+    "letterheads": "En-têtes",
+    "letterheadsCreate": "Nouvel en-tête",
+    "letterheadsView": "En-tête",
+    "letterheadsEdit": "Modifier l'en-tête",
+    "projects": "Projets",
+    "projectsCreate": "Nouveau projet",
+    "projectsView": "Projet",
+    "projectsEdit": "Modifier le projet",
+    "clients": "Clients",
+    "clientsCreate": "Nouveau client",
+    "clientsView": "Client",
+    "clientsEdit": "Modifier le client",
+    "members": "Membres",
+    "membersView": "Membre",
+    "roles": "Rôles et autorisations",
+    "orgPreferences": "Préférences de l'org.",
+    "auditLogs": "Journaux d'audit",
+    "analytics": "Analytique",
+    "billing": "Facturation",
+    "subscription": "Abonnement",
+    "settings": "Paramètres",
+    "profile": "Mon profil"
+  },
+  "header": {
+    "toggleSidebar": "Basculer la barre latérale",
+    "language": "Langue",
+    "profileMenu": "Menu du profil"
+  },
+  "sidebar": {
+    "selectOrg": "Sélectionner une organisation",
+    "yourOrgs": "Vos organisations",
+    "createOrg": "Créer une organisation",
+    "collapse": "Réduire la barre latérale",
+    "expand": "Développer la barre latérale",
+    "close": "Fermer la barre latérale",
+    "feedback": "Commentaires",
+    "shareFeedback": "Partager un commentaire"
+  },
+  "createOrg": {
+    "title": "Créer une organisation",
+    "subtitle": "Créez un nouvel espace de travail pour votre équipe ou entreprise",
+    "nameLabel": "Nom de l'organisation",
+    "typeLabel": "Type",
+    "business": "Entreprise",
+    "businessDesc": "Gestion d'équipe et de clients",
+    "personal": "Personnel",
+    "personalDesc": "Mode indépendant solo",
+    "cancel": "Annuler",
+    "create": "Créer",
+    "creating": "Création…"
+  },
+  "userMenu": {
+    "myProfile": "Mon profil",
+    "settings": "Paramètres",
+    "signOut": "Se déconnecter",
+    "signingOut": "Déconnexion…"
+  },
+  "bottomNav": {
+    "home": "Accueil",
+    "invoices": "Factures",
+    "clients": "Clients",
+    "more": "Plus",
+    "newInvoice": "Nouvelle facture"
+  }
+}

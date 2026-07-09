@@ -1,0 +1,50 @@
+{
+  "title": "Analytika",
+  "subtitle": "Přehledy tržeb a výkonnostní metriky",
+  "periods": {
+    "30d": "Posledních 30 dní",
+    "3m": "Poslední 3 měsíce",
+    "12m": "Posledních 12 měsíců",
+    "all": "Celé období"
+  },
+  "upgrade": {
+    "title": "Analytika vyžaduje Business",
+    "desc": "Grafy tržeb, rozpady podle klientů, analýzy faktur a výkonnostní metriky jsou dostupné v plánu Business.",
+    "cta": "Upgradovat na Business"
+  },
+  "kpi": {
+    "totalRevenue": "Celkové tržby",
+    "avgInvoiceValue": "Prům. hodnota faktury",
+    "collectionRate": "Míra inkasa",
+    "avgDaysToPay": "Prům. dnů do zaplacení",
+    "vsLastPeriod": "vs. minulé období",
+    "daysValue": "{n} d"
+  },
+  "revenueTrend": {
+    "title": "Vývoj tržeb",
+    "subtitle": "Měsíčně fakturováno vs. inkasováno",
+    "billed": "Fakturováno",
+    "collected": "Inkasováno"
+  },
+  "topClients": {
+    "title": "Nejlepší klienti",
+    "subtitle": "Podle tržeb v tomto období",
+    "empty": "V tomto období žádné zaplacené faktury"
+  },
+  "invoiceVolume": {
+    "title": "Měsíční objem faktur",
+    "subtitle": "Počet vystavených faktur za měsíc"
+  },
+  "receipts": {
+    "title": "Účtenky",
+    "subtitle": "Účtenky vystavené v tomto období",
+    "total": "Účtenky celkem",
+    "finalized": "Dokončeno",
+    "drafts": "Koncepty",
+    "void": "Neplatné",
+    "volumeTitle": "Měsíční objem účtenek",
+    "volumeSubtitle": "Počet vystavených účtenek za měsíc",
+    "volumeEmpty": "V tomto období nebyly vystaveny žádné účtenky"
+  },
+  "noData": "Nejsou k dispozici žádná analytická data."
+}

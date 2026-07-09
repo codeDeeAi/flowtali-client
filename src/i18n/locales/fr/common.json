@@ -1,0 +1,21 @@
+{
+  "status": {
+    "paid": "Payé",
+    "sent": "Envoyé",
+    "overdue": "En retard",
+    "draft": "Brouillon",
+    "void": "Annulé",
+    "finalized": "Finalisé",
+    "unknown": "Inconnu"
+  },
+  "table": {
+    "client": "Client",
+    "recipient": "Destinataire",
+    "amount": "Montant",
+    "status": "Statut",
+    "date": "Date"
+  },
+  "actions": {
+    "viewAll": "Tout voir"
+  }
+}

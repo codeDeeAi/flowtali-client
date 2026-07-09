@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { Icon } from '@iconify/vue';
 import { useAuthStore } from '@/stores/auth';
 import { ProjectService } from '@/services/project.service';
@@ -11,6 +12,7 @@ import type { IClient } from '@/types/client.types';
 
 const router    = useRouter();
 const route     = useRoute();
+const { t }     = useI18n();
 const authStore = useAuthStore();
 const { notify } = useNotification();
 
@@ -59,10 +61,10 @@ onMounted(async () => {
     };
   } catch (err: any) {
     if (err?.response?.status === 404) {
-      notify('Project not found.', 'error');
+      notify(t('projects.toasts.notFound'), 'error');
       router.push({ name: 'projects' });
     } else {
-      notify('Failed to load project.', 'error');
+      notify(t('projects.toasts.loadFailed'), 'error');
       router.push({ name: 'projects' });
     }
   } finally {
@@ -72,7 +74,7 @@ onMounted(async () => {
 
 async function handleSubmit() {
   if (!form.value.number.trim() || !form.value.title.trim()) {
-    notify('Number and title are required.', 'error');
+    notify(t('projects.toasts.numberTitleRequired'), 'error');
     return;
   }
   isSaving.value = true;
@@ -90,10 +92,10 @@ async function handleSubmit() {
       end_date:        form.value.end_date || null,
     };
     await ProjectService.update(orgId.value, projectId, payload);
-    notify('Project updated.', 'success');
+    notify(t('projects.toasts.updated'), 'success');
     router.push({ name: 'projects.view', params: { id: projectId } });
   } catch (err: any) {
-    const msg = err?.response?.data?.message ?? 'Failed to update project.';
+    const msg = err?.response?.data?.message ?? t('projects.toasts.updateFailed');
     notify(msg, 'error');
   } finally {
     isSaving.value = false;
@@ -110,7 +112,7 @@ async function handleSubmit() {
         <Icon icon="lucide:arrow-left" class="w-4 h-4" />
       </button>
       <div>
-        <h1 class="page-title">Edit Project</h1>
+        <h1 class="page-title">{{ t('projects.edit.title') }}</h1>
         <p class="page-subtitle">{{ project?.number }}</p>
       </div>
     </div>
@@ -124,26 +126,26 @@ async function handleSubmit() {
       <!-- Number + Title -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="app-label">Project Number <span class="text-red-400">*</span></label>
-          <input v-model="form.number" class="app-inp" placeholder="PRJ-001" required />
+          <label class="app-label">{{ t('projects.fields.projectNumber') }} <span class="text-red-400">*</span></label>
+          <input v-model="form.number" class="app-inp" :placeholder="t('projects.placeholders.number')" required />
         </div>
         <div>
-          <label class="app-label">Title <span class="text-red-400">*</span></label>
-          <input v-model="form.title" class="app-inp" placeholder="Website Redesign" required />
+          <label class="app-label">{{ t('projects.fields.title') }} <span class="text-red-400">*</span></label>
+          <input v-model="form.title" class="app-inp" :placeholder="t('projects.placeholders.titleShort')" required />
         </div>
       </div>
 
       <!-- Description -->
       <div>
-        <label class="app-label">Description</label>
-        <textarea v-model="form.description" class="app-inp resize-none" rows="3" placeholder="Optional project description…" />
+        <label class="app-label">{{ t('projects.fields.description') }}</label>
+        <textarea v-model="form.description" class="app-inp resize-none" rows="3" :placeholder="t('projects.placeholders.descriptionShort')" />
       </div>
 
       <!-- Client -->
       <div>
-        <label class="app-label">Client</label>
+        <label class="app-label">{{ t('projects.fields.client') }}</label>
         <select v-model="form.client_id" class="app-inp">
-          <option value="">No client</option>
+          <option value="">{{ t('projects.noClient') }}</option>
           <option v-for="c in clients" :key="c.id" :value="c.id">{{ c.full_name }}{{ c.company ? ` (${c.company})` : '' }}</option>
         </select>
       </div>
@@ -151,20 +153,20 @@ async function handleSubmit() {
       <!-- Status + Tracking -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="app-label">Status</label>
+          <label class="app-label">{{ t('projects.sections.status') }}</label>
           <select v-model="form.status" class="app-inp">
-            <option value="draft">Draft</option>
-            <option value="active">Active</option>
-            <option value="on_hold">On Hold</option>
-            <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
+            <option value="draft">{{ t('projects.status.draft') }}</option>
+            <option value="active">{{ t('projects.status.active') }}</option>
+            <option value="on_hold">{{ t('projects.status.on_hold') }}</option>
+            <option value="completed">{{ t('projects.status.completed') }}</option>
+            <option value="cancelled">{{ t('projects.status.cancelled') }}</option>
           </select>
         </div>
         <div>
-          <label class="app-label">Status Tracking</label>
+          <label class="app-label">{{ t('projects.fields.statusTracking') }}</label>
           <select v-model="form.status_tracking" class="app-inp">
-            <option value="manual">Manual</option>
-            <option value="auto">Auto (based on payments)</option>
+            <option value="manual">{{ t('projects.tracking.manual') }}</option>
+            <option value="auto">{{ t('projects.tracking.autoOption') }}</option>
           </select>
         </div>
       </div>
@@ -172,23 +174,23 @@ async function handleSubmit() {
       <!-- Currency + Contract Value -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="app-label">Currency</label>
-          <input v-model="form.currency" class="app-inp" placeholder="USD" maxlength="10" />
+          <label class="app-label">{{ t('projects.fields.currency') }}</label>
+          <input v-model="form.currency" class="app-inp" :placeholder="t('projects.fields.currency')" maxlength="10" />
         </div>
         <div>
-          <label class="app-label">Contract Value</label>
-          <input v-model="form.contract_value" type="number" min="0" step="0.01" class="app-inp" placeholder="0.00" />
+          <label class="app-label">{{ t('projects.fields.contractValue') }}</label>
+          <input v-model="form.contract_value" type="number" min="0" step="0.01" class="app-inp" :placeholder="t('projects.placeholders.contractValue')" />
         </div>
       </div>
 
       <!-- Dates -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="app-label">Start Date</label>
+          <label class="app-label">{{ t('projects.fields.startDate') }}</label>
           <input v-model="form.start_date" type="date" class="app-inp" />
         </div>
         <div>
-          <label class="app-label">End Date</label>
+          <label class="app-label">{{ t('projects.fields.endDate') }}</label>
           <input v-model="form.end_date" type="date" class="app-inp" />
         </div>
       </div>
@@ -196,7 +198,7 @@ async function handleSubmit() {
       <!-- Actions -->
       <div class="flex items-center justify-end gap-3 pt-2">
         <button type="button" @click="router.push({ name: 'projects.view', params: { id: projectId } })" class="px-4 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 hover:text-gray-1000 text-sm transition-colors">
-          Cancel
+          {{ t('projects.cancel') }}
         </button>
         <button
           type="submit"
@@ -204,7 +206,7 @@ async function handleSubmit() {
           class="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-700 hover:bg-green-800 text-bg-100 font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Icon v-if="isSaving" icon="lucide:loader-2" class="w-4 h-4 animate-spin" />
-          {{ isSaving ? 'Saving…' : 'Save Changes' }}
+          {{ isSaving ? t('projects.saving') : t('projects.saveChanges') }}
         </button>
       </div>
     </form>
