@@ -134,6 +134,7 @@ const notifPrefs = ref<INotificationPrefs>({
   invoice_viewed:  { email: false, in_app: true  },
   member_joined:   { email: true,  in_app: false },
   role_changed:    { email: true,  in_app: true  },
+  marketing_emails: { email: true, in_app: false },
 })
 const isSavingNotif = ref(false)
 const notifSaved    = ref(false)
@@ -170,6 +171,12 @@ const notifGroups = computed(() => [
     items: [
       { key: 'member_joined' as keyof INotificationPrefs, label: t('settings.notifications.items.member_joined.label'), desc: t('settings.notifications.items.member_joined.desc') },
       { key: 'role_changed'  as keyof INotificationPrefs, label: t('settings.notifications.items.role_changed.label'),  desc: t('settings.notifications.items.role_changed.desc')  },
+    ],
+  },
+  {
+    group: t('settings.notifications.groups.marketing'),
+    items: [
+      { key: 'marketing_emails' as keyof INotificationPrefs, label: t('settings.notifications.items.marketing_emails.label'), desc: t('settings.notifications.items.marketing_emails.desc'), emailOnly: true },
     ],
   },
 ])
@@ -355,7 +362,7 @@ onMounted(async () => {
                   <input type="checkbox" v-model="notifPrefs[item.key].email" class="accent-green-700 w-3.5 h-3.5" />
                   <span class="text-xs text-gray-700">{{ t('settings.notifications.email') }}</span>
                 </label>
-                <label class="flex items-center gap-1.5 cursor-pointer">
+                <label v-if="!('emailOnly' in item && item.emailOnly)" class="flex items-center gap-1.5 cursor-pointer">
                   <input type="checkbox" v-model="notifPrefs[item.key].in_app" class="accent-green-700 w-3.5 h-3.5" />
                   <span class="text-xs text-gray-700">{{ t('settings.notifications.inApp') }}</span>
                 </label>

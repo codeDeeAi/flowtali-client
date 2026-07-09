@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useSubscriptionStore } from '@/stores/subscription'
 import { useTourStore } from '@/stores/tour'
 import { useLocaleStore } from '@/stores/locale'
+import { useFeedbackStore } from '@/stores/feedback'
 import { ProfileService } from '@/services/profile.service'
 import { OrgService } from '@/services/org.service'
 import AppHeader from './components/app/AppHeader.vue'
@@ -19,6 +20,7 @@ const authStore = useAuthStore()
 const subStore = useSubscriptionStore()
 const tourStore = useTourStore()
 const localeStore = useLocaleStore()
+const feedbackStore = useFeedbackStore()
 const router = useRouter()
 const route = useRoute()
 
@@ -55,6 +57,14 @@ onMounted(async () => {
 
   if (currentUserEmail.value && !tourStore.hasSeenWelcome(currentUserEmail.value)) {
     showWelcomeModal.value = true
+  }
+
+  // Deep-link from marketing emails: open the feedback panel, then clean the URL.
+  if (route.query.feedback) {
+    feedbackStore.open()
+    const rest = { ...route.query }
+    delete rest.feedback
+    router.replace({ query: rest })
   }
 })
 

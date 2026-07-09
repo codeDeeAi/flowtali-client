@@ -34,7 +34,8 @@
     "title": "Notification Preferences",
     "groups": {
       "invoices": "Invoices",
-      "team": "Team"
+      "team": "Team",
+      "marketing": "Marketing"
     },
     "items": {
       "invoice_paid": {
@@ -56,6 +57,10 @@
       "role_changed": {
         "label": "Role changed",
         "desc": "When a member role is updated"
+      },
+      "marketing_emails": {
+        "label": "Product & marketing emails",
+        "desc": "Occasional updates, tips, and check-ins from Flowtali. No transactional emails affected."
       }
     },
     "email": "Email",

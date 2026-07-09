@@ -34,7 +34,8 @@
     "title": "Benachrichtigungseinstellungen",
     "groups": {
       "invoices": "Rechnungen",
-      "team": "Team"
+      "team": "Team",
+      "marketing": "Marketing"
     },
     "items": {
       "invoice_paid": {
@@ -56,6 +57,10 @@
       "role_changed": {
         "label": "Rolle geändert",
         "desc": "Wenn die Rolle eines Mitglieds aktualisiert wird"
+      },
+      "marketing_emails": {
+        "label": "Produkt- & Marketing-E-Mails",
+        "desc": "Gelegentliche Neuigkeiten, Tipps und Erinnerungen von Flowtali. Transaktionale E-Mails sind nicht betroffen."
       }
     },
     "email": "E-Mail",

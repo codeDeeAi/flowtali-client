@@ -34,7 +34,8 @@
     "title": "Předvolby oznámení",
     "groups": {
       "invoices": "Faktury",
-      "team": "Tým"
+      "team": "Tým",
+      "marketing": "Marketing"
     },
     "items": {
       "invoice_paid": {
@@ -56,6 +57,10 @@
       "role_changed": {
         "label": "Role změněna",
         "desc": "Když je aktualizována role člena"
+      },
+      "marketing_emails": {
+        "label": "Produktové a marketingové e-maily",
+        "desc": "Občasné novinky, tipy a připomenutí od Flowtali. Transakční e-maily tím nejsou dotčeny."
       }
     },
     "email": "E-mail",

@@ -23,6 +23,7 @@ export interface INotificationPrefs {
   invoice_viewed:  INotificationPref
   member_joined:   INotificationPref
   role_changed:    INotificationPref
+  marketing_emails: INotificationPref
 }
 
 export const SettingsService = {

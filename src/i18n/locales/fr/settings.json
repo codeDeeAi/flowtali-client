@@ -34,7 +34,8 @@
     "title": "Préférences de notification",
     "groups": {
       "invoices": "Factures",
-      "team": "Équipe"
+      "team": "Équipe",
+      "marketing": "Marketing"
     },
     "items": {
       "invoice_paid": {
@@ -56,6 +57,10 @@
       "role_changed": {
         "label": "Rôle modifié",
         "desc": "Lorsque le rôle d'un membre est mis à jour"
+      },
+      "marketing_emails": {
+        "label": "E-mails produit et marketing",
+        "desc": "Nouveautés, astuces et rappels occasionnels de Flowtali. Les e-mails transactionnels ne sont pas concernés."
       }
     },
     "email": "E-mail",
