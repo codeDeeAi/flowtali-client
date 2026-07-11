@@ -49,6 +49,9 @@
     "reference": "Reference",
     "amount": "Amount",
     "status": "Status",
+    "invoice": "Invoice",
+    "viewInvoice": "View",
+    "downloadInvoice": "Download",
     "prev": "← Prev",
     "next": "Next →",
     "page": "Page {page} of {total}"
@@ -94,7 +97,8 @@
     "loadHistoryFailed": "Failed to load billing history.",
     "initPaymentFailed": "Failed to initialize payment.",
     "cancelled": "Subscription cancelled. Access continues until the end of your billing period.",
-    "cancelFailed": "Failed to cancel subscription."
+    "cancelFailed": "Failed to cancel subscription.",
+    "invoiceFailed": "Failed to load the invoice. Please try again."
   },
   "paywall": {
     "trialEndedTitle": "Your free trial has ended",

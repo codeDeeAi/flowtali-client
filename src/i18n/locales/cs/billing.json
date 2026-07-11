@@ -49,6 +49,9 @@
     "reference": "Reference",
     "amount": "Částka",
     "status": "Stav",
+    "invoice": "Faktura",
+    "viewInvoice": "Zobrazit",
+    "downloadInvoice": "Stáhnout",
     "prev": "← Předchozí",
     "next": "Další →",
     "page": "Strana {page} z {total}"
@@ -94,7 +97,8 @@
     "loadHistoryFailed": "Nepodařilo se načíst historii plateb.",
     "initPaymentFailed": "Nepodařilo se inicializovat platbu.",
     "cancelled": "Předplatné zrušeno. Přístup pokračuje do konce vašeho fakturačního období.",
-    "cancelFailed": "Nepodařilo se zrušit předplatné."
+    "cancelFailed": "Nepodařilo se zrušit předplatné.",
+    "invoiceFailed": "Fakturu se nepodařilo načíst. Zkuste to prosím znovu."
   },
   "paywall": {
     "trialEndedTitle": "Vaše bezplatná zkušební verze skončila",

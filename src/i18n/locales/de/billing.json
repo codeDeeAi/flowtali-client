@@ -49,6 +49,9 @@
     "reference": "Referenz",
     "amount": "Betrag",
     "status": "Status",
+    "invoice": "Rechnung",
+    "viewInvoice": "Ansehen",
+    "downloadInvoice": "Herunterladen",
     "prev": "← Zurück",
     "next": "Weiter →",
     "page": "Seite {page} von {total}"
@@ -94,7 +97,8 @@
     "loadHistoryFailed": "Abrechnungshistorie konnte nicht geladen werden.",
     "initPaymentFailed": "Zahlung konnte nicht initialisiert werden.",
     "cancelled": "Abonnement gekündigt. Der Zugriff bleibt bis zum Ende Ihres Abrechnungszeitraums bestehen.",
-    "cancelFailed": "Abonnement konnte nicht gekündigt werden."
+    "cancelFailed": "Abonnement konnte nicht gekündigt werden.",
+    "invoiceFailed": "Rechnung konnte nicht geladen werden. Bitte erneut versuchen."
   },
   "paywall": {
     "trialEndedTitle": "Ihre kostenlose Testphase ist beendet",

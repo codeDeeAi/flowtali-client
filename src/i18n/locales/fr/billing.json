@@ -49,6 +49,9 @@
     "reference": "Référence",
     "amount": "Montant",
     "status": "Statut",
+    "invoice": "Facture",
+    "viewInvoice": "Voir",
+    "downloadInvoice": "Télécharger",
     "prev": "← Précédent",
     "next": "Suivant →",
     "page": "Page {page} sur {total}"
@@ -94,7 +97,8 @@
     "loadHistoryFailed": "Échec du chargement de l'historique de facturation.",
     "initPaymentFailed": "Échec de l'initialisation du paiement.",
     "cancelled": "Abonnement annulé. L'accès continue jusqu'à la fin de votre période de facturation.",
-    "cancelFailed": "Échec de l'annulation de l'abonnement."
+    "cancelFailed": "Échec de l'annulation de l'abonnement.",
+    "invoiceFailed": "Impossible de charger la facture. Veuillez réessayer."
   },
   "paywall": {
     "trialEndedTitle": "Votre essai gratuit est terminé",

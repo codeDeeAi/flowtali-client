@@ -87,4 +87,13 @@ export const SubscriptionService = {
       { params: { page } },
     )
   },
+
+  // Fetches the billing invoice PDF for a transaction as an authenticated blob.
+  // `inline` → viewable/printable in a browser tab; `attachment` → download.
+  getInvoice(orgId: string, txId: string, disposition: 'inline' | 'attachment' = 'inline') {
+    return http.get<Blob>(
+      `/api/v1/orgs/${orgId}/subscription/transactions/${txId}/invoice`,
+      { params: { disposition }, responseType: 'blob' },
+    )
+  },
 }

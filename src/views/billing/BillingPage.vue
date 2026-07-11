@@ -38,6 +38,37 @@ const txPage        = ref(1)
 const txLastPage    = ref(1)
 const isLoadingTx   = ref(false)
 
+// ── Invoice download / view ───────────────────────────────────────────────────
+const invoiceBusyId = ref<string | null>(null)
+
+async function openInvoice(tx: ISubscriptionTransaction, disposition: 'inline' | 'attachment') {
+  if (!orgId.value || invoiceBusyId.value) return
+  invoiceBusyId.value = tx.id
+  try {
+    const res  = await SubscriptionService.getInvoice(orgId.value, tx.id, disposition)
+    const blob = new Blob([res.data], { type: 'application/pdf' })
+    const url  = URL.createObjectURL(blob)
+
+    if (disposition === 'attachment') {
+      const a   = document.createElement('a')
+      a.href    = url
+      a.download = `${tx.tx_ref.replace('ft-sub-', 'INV-').toUpperCase()}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+    } else {
+      window.open(url, '_blank', 'noopener')
+    }
+
+    // Revoke after a tick so the new tab / download can consume the URL first.
+    setTimeout(() => URL.revokeObjectURL(url), 60_000)
+  } catch {
+    notify(t('billing.toasts.invoiceFailed'), 'error')
+  } finally {
+    invoiceBusyId.value = null
+  }
+}
+
 // ── Paystack callback handling ────────────────────────────────────────────────
 const isVerifying = ref(false)
 
@@ -443,6 +474,7 @@ function featureLabel(key: string, val: boolean | number | null): string {
               <th class="text-left text-[11px] text-gray-700 font-medium px-5 py-3">{{ t('billing.history.reference') }}</th>
               <th class="text-right text-[11px] text-gray-700 font-medium px-5 py-3">{{ t('billing.history.amount') }}</th>
               <th class="text-right text-[11px] text-gray-700 font-medium px-5 py-3">{{ t('billing.history.status') }}</th>
+              <th class="text-right text-[11px] text-gray-700 font-medium px-5 py-3">{{ t('billing.history.invoice') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-400">
@@ -455,6 +487,29 @@ function featureLabel(key: string, val: boolean | number | null): string {
               <td class="px-5 py-3.5 text-right text-sm font-semibold text-gray-1000">{{ tx.formatted_amount }}</td>
               <td class="px-5 py-3.5 text-right">
                 <span :class="statusBadge(tx.status)">{{ statusLabel(tx.status) }}</span>
+              </td>
+              <td class="px-5 py-3.5 text-right whitespace-nowrap">
+                <template v-if="tx.status === 'completed'">
+                  <button
+                    @click="openInvoice(tx, 'inline')"
+                    :disabled="invoiceBusyId === tx.id"
+                    class="inline-flex items-center gap-1 text-[11px] font-medium text-green-400 hover:text-green-300 disabled:opacity-40 transition-colors"
+                    :title="t('billing.history.viewInvoice')"
+                  >
+                    <Icon :icon="invoiceBusyId === tx.id ? 'lucide:loader-2' : 'lucide:eye'" :class="['w-3.5 h-3.5', invoiceBusyId === tx.id && 'animate-spin']" />
+                    {{ t('billing.history.viewInvoice') }}
+                  </button>
+                  <button
+                    @click="openInvoice(tx, 'attachment')"
+                    :disabled="invoiceBusyId === tx.id"
+                    class="inline-flex items-center gap-1 text-[11px] font-medium text-gray-700 hover:text-gray-1000 disabled:opacity-40 transition-colors ml-3"
+                    :title="t('billing.history.downloadInvoice')"
+                  >
+                    <Icon icon="lucide:download" class="w-3.5 h-3.5" />
+                    {{ t('billing.history.downloadInvoice') }}
+                  </button>
+                </template>
+                <span v-else class="text-[11px] text-gray-700/40">—</span>
               </td>
             </tr>
           </tbody>
