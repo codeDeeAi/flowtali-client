@@ -1,4 +1,21 @@
 {
+  "ai": {
+    "title": "Napsat s AI",
+    "briefPlaceholder": "Popište dopis, který chcete – např. navazující nabídku pro Acme s poděkováním a dalšími kroky.",
+    "recipientPlaceholder": "Příjemce (nepovinné) – např. tým Acme",
+    "tone": "Tón",
+    "tones": { "formal": "Formální", "friendly": "Přátelský", "firm": "Důrazný", "persuasive": "Přesvědčivý" },
+    "length": "Délka",
+    "lengths": { "short": "Krátký", "standard": "Standardní", "detailed": "Podrobný" },
+    "generate": "Vytvořit koncept",
+    "drafting": "Vytváření…",
+    "disclaimer": "AI vyplní předmět, oslovení, tělo a závěr – před uložením zkontrolujte.",
+    "drafted": "Koncept je připraven – zkontrolujte a upravte podle potřeby.",
+    "notConfigured": "Nejprve připojte poskytovatele AI v Nastavení → AI.",
+    "error": "Koncept se nepodařilo vytvořit. Zkuste to prosím znovu.",
+    "rewriteWith": "AI:",
+    "actions": { "rewrite_shorter": "Zkrátit", "rewrite_formal": "Formálněji", "fix_grammar": "Opravit gramatiku", "translate": "Přeložit" }
+  },
   "toolbar": {
     "letterheads": "Hlavičkové papíry",
     "new": "Nový hlavičkový papír",

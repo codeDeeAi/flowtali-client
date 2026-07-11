@@ -1,4 +1,21 @@
 {
+  "ai": {
+    "title": "Rédiger avec l'IA",
+    "briefPlaceholder": "Décrivez la lettre souhaitée – p. ex. une relance de proposition pour Acme les remerciant et détaillant les prochaines étapes.",
+    "recipientPlaceholder": "Destinataire (facultatif) – p. ex. l'équipe Acme",
+    "tone": "Ton",
+    "tones": { "formal": "Formel", "friendly": "Amical", "firm": "Ferme", "persuasive": "Persuasif" },
+    "length": "Longueur",
+    "lengths": { "short": "Court", "standard": "Standard", "detailed": "Détaillé" },
+    "generate": "Générer un brouillon",
+    "drafting": "Rédaction…",
+    "disclaimer": "L'IA remplit l'objet, la salutation, le corps et la formule de politesse – relisez avant d'enregistrer.",
+    "drafted": "Brouillon prêt – relisez et modifiez si nécessaire.",
+    "notConfigured": "Connectez d'abord un fournisseur d'IA dans Paramètres → IA.",
+    "error": "Impossible de générer un brouillon. Veuillez réessayer.",
+    "rewriteWith": "IA :",
+    "actions": { "rewrite_shorter": "Raccourcir", "rewrite_formal": "Plus formel", "fix_grammar": "Corriger la grammaire", "translate": "Traduire" }
+  },
   "toolbar": {
     "letterheads": "En-têtes",
     "new": "Nouvel en-tête",

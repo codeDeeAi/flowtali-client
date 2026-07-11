@@ -1,4 +1,9 @@
 {
+  "ai": {
+    "cleanUp": "Nettoyer avec l’IA",
+    "notConfigured": "Connectez d’abord un fournisseur d’IA dans Paramètres → IA.",
+    "error": "Impossible de reformuler la description. Veuillez réessayer."
+  },
   "toolbar": {
     "receipts": "Reçus",
     "new": "Nouveau reçu",

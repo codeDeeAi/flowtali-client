@@ -1,4 +1,9 @@
 {
+  "ai": {
+    "cleanUp": "Mit KI aufräumen",
+    "notConfigured": "Verbinden Sie zuerst einen KI-Anbieter unter Einstellungen → KI.",
+    "error": "Beschreibung konnte nicht überarbeitet werden. Bitte erneut versuchen."
+  },
   "toolbar": {
     "receipts": "Belege",
     "new": "Neuer Beleg",

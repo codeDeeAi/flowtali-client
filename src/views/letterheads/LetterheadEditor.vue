@@ -9,6 +9,8 @@ import ShareLinkModal from '@/components/modals/ShareLinkModal.vue'
 import { useAuthStore } from '@/stores/auth'
 import { LetterheadService, type ILetterheadDraftData } from '@/services/letterhead.service'
 import { MediaService } from '@/services/media.service'
+import { AiService } from '@/services/ai.service'
+import type { AiTone, AiLength, AiTransformAction } from '@/types/ai.types'
 
 interface Props {
   mode: 'create' | 'edit'
@@ -117,6 +119,75 @@ const tabLabelKeys: Record<Tab, string> = {
   Company: 'company', Content: 'content', Design: 'design', Settings: 'settings', Preview: 'preview',
 }
 const tabLabel = (tb: Tab) => t(`letterheadEditor.tabs.${tabLabelKeys[tb]}`)
+
+// ─── AI drafting (Content tab) ─────────────────────────────────────────────────
+// "Draft with AI" fills the four Content fields from a brief; the body toolbar
+// runs cheap rewrite/translate transforms. Output is always draft → user edits.
+const showAiPanel   = ref(false)
+const aiBrief       = ref('')
+const aiTone        = ref<AiTone>('formal')
+const aiLength      = ref<AiLength>('standard')
+const aiRecipient   = ref('')
+const aiDrafting    = ref(false)
+const aiBusyAction  = ref<AiTransformAction | null>(null)
+const toneOptions:   AiTone[]   = ['formal', 'friendly', 'firm', 'persuasive']
+const lengthOptions: AiLength[] = ['short', 'standard', 'detailed']
+const bodyActions:   AiTransformAction[] = ['rewrite_shorter', 'rewrite_formal', 'fix_grammar', 'translate']
+
+async function draftWithAi() {
+  if (!aiBrief.value.trim() || aiDrafting.value) return
+  aiDrafting.value = true
+  try {
+    const { data } = await AiService.draftLetterhead(orgId.value, {
+      brief: aiBrief.value.trim(),
+      tone: aiTone.value,
+      length: aiLength.value,
+      language: locale.value,
+      recipient: aiRecipient.value.trim() || undefined,
+    })
+    const d = data.data.draft
+    if (d.subject)    form.value.subject    = d.subject
+    if (d.salutation) form.value.salutation = d.salutation
+    if (d.body)       form.value.body       = d.body
+    if (d.closing)    form.value.closing    = d.closing
+    notify(t('letterheadEditor.ai.drafted'), 'success')
+  } catch (e) {
+    handleAiError(e)
+  } finally {
+    aiDrafting.value = false
+  }
+}
+
+async function transformBody(action: AiTransformAction) {
+  if (!form.value.body.trim() || aiBusyAction.value) return
+  aiBusyAction.value = action
+  try {
+    const { data } = await AiService.transformText(orgId.value, {
+      action,
+      text: form.value.body,
+      language: locale.value,
+      context: 'letter',
+    })
+    if (data.data.text) form.value.body = data.data.text
+  } catch (e) {
+    handleAiError(e)
+  } finally {
+    aiBusyAction.value = null
+  }
+}
+
+function handleAiError(e: unknown) {
+  const err = e as { response?: { status?: number; data?: { data?: { not_configured?: boolean; invalid_model?: boolean }; message?: string } } }
+  const b = err.response?.data
+  if (err.response?.status === 409 && b?.data?.not_configured) {
+    notify(t('letterheadEditor.ai.notConfigured'), 'error')
+    router.push({ name: 'settings', query: { tab: 'ai' } })
+  } else if (b?.data?.invalid_model && b.message) {
+    notify(b.message, 'error')
+  } else {
+    notify(t('letterheadEditor.ai.error'), 'error')
+  }
+}
 
 // ─── Zoom ──────────────────────────────────────────────────────────────────────
 const zoom    = ref(0.75)
@@ -504,6 +575,66 @@ const handleSave = async () => {
 
           <!-- ══════════════════════════ CONTENT TAB ══════════════════════════ -->
           <template v-if="tab === 'Content'">
+            <!-- Draft with AI -->
+            <div class="rounded-lg border border-green-700/30 bg-green-700/[0.04] overflow-hidden">
+              <button
+                type="button"
+                class="w-full flex items-center justify-between gap-2 px-3 py-2.5 text-left"
+                @click="showAiPanel = !showAiPanel"
+              >
+                <span class="flex items-center gap-2 text-[12px] font-medium text-gray-1000">
+                  <Icon icon="lucide:sparkles" class="w-4 h-4 text-green-700" />
+                  {{ t('letterheadEditor.ai.title') }}
+                </span>
+                <Icon :icon="showAiPanel ? 'lucide:chevron-up' : 'lucide:chevron-down'" class="w-4 h-4 text-gray-700" />
+              </button>
+
+              <div v-if="showAiPanel" class="px-3 pb-3 space-y-2.5 border-t border-green-700/20 pt-3">
+                <textarea
+                  v-model="aiBrief"
+                  rows="3"
+                  class="app-inp text-sm resize-none"
+                  :placeholder="t('letterheadEditor.ai.briefPlaceholder')"
+                />
+                <input v-model="aiRecipient" class="app-inp text-sm" :placeholder="t('letterheadEditor.ai.recipientPlaceholder')" />
+
+                <div class="space-y-1">
+                  <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.ai.tone') }}</label>
+                  <div class="flex flex-wrap gap-1">
+                    <button
+                      v-for="o in toneOptions" :key="o" type="button"
+                      class="px-2.5 py-1 rounded-md text-[11px] border transition"
+                      :class="aiTone === o ? 'bg-green-700 text-bg-100 border-green-700' : 'border-gray-400 text-gray-700 hover:text-gray-1000'"
+                      @click="aiTone = o"
+                    >{{ t(`letterheadEditor.ai.tones.${o}`) }}</button>
+                  </div>
+                </div>
+
+                <div class="space-y-1">
+                  <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.ai.length') }}</label>
+                  <div class="flex flex-wrap gap-1">
+                    <button
+                      v-for="o in lengthOptions" :key="o" type="button"
+                      class="px-2.5 py-1 rounded-md text-[11px] border transition"
+                      :class="aiLength === o ? 'bg-green-700 text-bg-100 border-green-700' : 'border-gray-400 text-gray-700 hover:text-gray-1000'"
+                      @click="aiLength = o"
+                    >{{ t(`letterheadEditor.ai.lengths.${o}`) }}</button>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  class="btn-primary w-full inline-flex items-center justify-center gap-1.5 text-[12px] py-2 disabled:opacity-50"
+                  :disabled="!aiBrief.trim() || aiDrafting"
+                  @click="draftWithAi"
+                >
+                  <Icon :icon="aiDrafting ? 'lucide:loader-2' : 'lucide:sparkles'" class="w-3.5 h-3.5" :class="aiDrafting && 'animate-spin'" />
+                  {{ aiDrafting ? t('letterheadEditor.ai.drafting') : t('letterheadEditor.ai.generate') }}
+                </button>
+                <p class="text-[10px] text-gray-700/70 leading-snug">{{ t('letterheadEditor.ai.disclaimer') }}</p>
+              </div>
+            </div>
+
             <div class="space-y-1">
               <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.settings.templateName') }}</label>
               <input v-model="form.name" class="app-inp text-sm" :placeholder="t('letterheadEditor.content.templateNamePlaceholder')" />
@@ -519,6 +650,20 @@ const handleSave = async () => {
             <div class="space-y-1">
               <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.content.bodyText') }}</label>
               <textarea v-model="form.body" class="app-inp text-sm resize-none" rows="10" :placeholder="t('letterheadEditor.content.bodyPlaceholder')" />
+              <div v-if="form.body.trim()" class="flex flex-wrap items-center gap-1 pt-0.5">
+                <span class="text-[10px] text-gray-700/70 inline-flex items-center gap-1 mr-0.5">
+                  <Icon icon="lucide:sparkles" class="w-3 h-3 text-green-700" />{{ t('letterheadEditor.ai.rewriteWith') }}
+                </span>
+                <button
+                  v-for="a in bodyActions" :key="a" type="button"
+                  class="px-2 py-0.5 rounded-md text-[10.5px] border border-gray-400 text-gray-700 hover:text-gray-1000 hover:border-gray-500 transition disabled:opacity-50 inline-flex items-center gap-1"
+                  :disabled="!!aiBusyAction"
+                  @click="transformBody(a)"
+                >
+                  <Icon v-if="aiBusyAction === a" icon="lucide:loader-2" class="w-3 h-3 animate-spin" />
+                  {{ t(`letterheadEditor.ai.actions.${a}`) }}
+                </button>
+              </div>
             </div>
             <div class="space-y-1">
               <label class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('letterheadEditor.content.closing') }}</label>

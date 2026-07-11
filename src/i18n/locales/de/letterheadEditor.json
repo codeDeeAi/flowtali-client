@@ -1,4 +1,21 @@
 {
+  "ai": {
+    "title": "Mit KI verfassen",
+    "briefPlaceholder": "Beschreiben Sie den gewünschten Brief – z. B. eine Angebots-Nachfassung für Acme mit Dank und nächsten Schritten.",
+    "recipientPlaceholder": "Empfänger (optional) – z. B. Acme-Team",
+    "tone": "Ton",
+    "tones": { "formal": "Formell", "friendly": "Freundlich", "firm": "Bestimmt", "persuasive": "Überzeugend" },
+    "length": "Länge",
+    "lengths": { "short": "Kurz", "standard": "Standard", "detailed": "Ausführlich" },
+    "generate": "Entwurf erstellen",
+    "drafting": "Wird erstellt…",
+    "disclaimer": "Die KI füllt Betreff, Anrede, Text und Schlussformel – vor dem Speichern prüfen.",
+    "drafted": "Entwurf fertig – prüfen und bei Bedarf bearbeiten.",
+    "notConfigured": "Verbinden Sie zuerst einen KI-Anbieter unter Einstellungen → KI.",
+    "error": "Entwurf konnte nicht erstellt werden. Bitte erneut versuchen.",
+    "rewriteWith": "KI:",
+    "actions": { "rewrite_shorter": "Kürzen", "rewrite_formal": "Formeller", "fix_grammar": "Grammatik korrigieren", "translate": "Übersetzen" }
+  },
   "toolbar": {
     "letterheads": "Briefköpfe",
     "new": "Neuer Briefkopf",

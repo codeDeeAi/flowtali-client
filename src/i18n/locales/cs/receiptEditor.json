@@ -1,4 +1,9 @@
 {
+  "ai": {
+    "cleanUp": "Upravit pomocí AI",
+    "notConfigured": "Nejprve připojte poskytovatele AI v Nastavení → AI.",
+    "error": "Popis se nepodařilo upravit. Zkuste to prosím znovu."
+  },
   "toolbar": {
     "receipts": "Účtenky",
     "new": "Nová účtenka",

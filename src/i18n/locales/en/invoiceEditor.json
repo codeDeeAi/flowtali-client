@@ -1,4 +1,9 @@
 {
+  "ai": {
+    "cleanUp": "Clean up with AI",
+    "notConfigured": "Connect an AI provider in Settings → AI first.",
+    "error": "Couldn’t rewrite the description. Please try again."
+  },
   "toolbar": {
     "invoices": "Invoices",
     "newInvoice": "New Invoice",

@@ -8,7 +8,7 @@ import { usePermissions } from '@/composables/usePermissions'
 import { AiService } from '@/services/ai.service'
 import type { IAiChatMessage } from '@/types/ai.types'
 
-const { t, tm, rt } = useI18n()
+const { t, tm, rt, locale } = useI18n()
 const router = useRouter()
 const authStore = useAuthStore()
 const { can } = usePermissions()
@@ -60,14 +60,18 @@ async function send(text?: string) {
   await scrollToBottom()
 
   try {
-    const { data } = await AiService.chat(orgId.value, messages.value)
+    const { data } = await AiService.chat(orgId.value, messages.value, locale.value)
     modelLabel.value = data.data.model
     messages.value.push({ role: 'assistant', content: data.data.reply })
   } catch (e: unknown) {
-    const err = e as { response?: { status?: number; data?: { data?: { not_configured?: boolean }; message?: string } } }
-    if (err.response?.status === 409 && err.response.data?.data?.not_configured) {
+    const err = e as { response?: { status?: number; data?: { data?: { not_configured?: boolean; invalid_model?: boolean }; message?: string } } }
+    const body = err.response?.data
+    if (err.response?.status === 409 && body?.data?.not_configured) {
       messages.value = []      // clear the conversation and drop to the setup screen
       state.value = 'setup'
+    } else if (body?.data?.invalid_model && body.message) {
+      // Provider rejected the selected model — show the actionable message.
+      messages.value.push({ role: 'assistant', content: body.message })
     } else {
       messages.value.push({ role: 'assistant', content: t('ai.agent.error') })
     }

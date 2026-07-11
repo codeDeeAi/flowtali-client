@@ -1,4 +1,21 @@
 {
+  "ai": {
+    "title": "Draft with AI",
+    "briefPlaceholder": "Describe the letter you want — e.g. a proposal follow-up for Acme thanking them and outlining next steps.",
+    "recipientPlaceholder": "Recipient (optional) — e.g. Acme team",
+    "tone": "Tone",
+    "tones": { "formal": "Formal", "friendly": "Friendly", "firm": "Firm", "persuasive": "Persuasive" },
+    "length": "Length",
+    "lengths": { "short": "Short", "standard": "Standard", "detailed": "Detailed" },
+    "generate": "Generate draft",
+    "drafting": "Drafting…",
+    "disclaimer": "AI fills the subject, greeting, body and closing — review before saving.",
+    "drafted": "Draft ready — review and edit as needed.",
+    "notConfigured": "Connect an AI provider in Settings → AI first.",
+    "error": "Couldn't generate a draft. Please try again.",
+    "rewriteWith": "AI:",
+    "actions": { "rewrite_shorter": "Shorten", "rewrite_formal": "More formal", "fix_grammar": "Fix grammar", "translate": "Translate" }
+  },
   "toolbar": {
     "letterheads": "Letterheads",
     "new": "New Letterhead",

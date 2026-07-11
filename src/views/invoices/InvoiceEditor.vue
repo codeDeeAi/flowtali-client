@@ -9,6 +9,7 @@ import ShareLinkModal from '@/components/modals/ShareLinkModal.vue'
 import { useAuthStore } from '@/stores/auth'
 import { InvoiceService, type IInvoiceDraftData } from '@/services/invoice.service'
 import { MediaService } from '@/services/media.service'
+import { AiService } from '@/services/ai.service'
 
 // ─── Props & Emits ────────────────────────────────────────────────────────────
 interface Props {
@@ -28,6 +29,37 @@ const { t, locale } = useI18n()
 const { notify } = useNotification()
 const { initLoaders, setLoader, getLoader } = useLoaders()
 initLoaders({ isSaving: false })
+
+// ─── AI description assist ──────────────────────────────────────────────────────
+// Turns rough line-item notes into a clean, professional description in the
+// user's language. Output replaces the field; the user can still edit.
+const aiDescBusyId = ref<number | null>(null)
+async function cleanUpDescription(item: { id: number; description: string }) {
+  if (!item.description.trim() || aiDescBusyId.value) return
+  aiDescBusyId.value = item.id
+  try {
+    const { data } = await AiService.transformText(orgId.value, {
+      action: 'describe',
+      text: item.description,
+      language: locale.value,
+      context: 'line_item',
+    })
+    if (data.data.text) item.description = data.data.text
+  } catch (e) {
+    const err = e as { response?: { status?: number; data?: { data?: { not_configured?: boolean; invalid_model?: boolean }; message?: string } } }
+    const b = err.response?.data
+    if (err.response?.status === 409 && b?.data?.not_configured) {
+      notify(t('invoiceEditor.ai.notConfigured'), 'error')
+      router.push({ name: 'settings', query: { tab: 'ai' } })
+    } else if (b?.data?.invalid_model && b.message) {
+      notify(b.message, 'error')
+    } else {
+      notify(t('invoiceEditor.ai.error'), 'error')
+    }
+  } finally {
+    aiDescBusyId.value = null
+  }
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const today = new Date().toISOString().slice(0, 10)
@@ -808,7 +840,19 @@ const handleSaveDraft = () => handleSave('draft')
                     <Icon icon="lucide:x" class="w-3.5 h-3.5" />
                   </button>
                 </div>
-                <input v-model="item.description" class="app-inp text-sm" :placeholder="t('invoiceEditor.items.descriptionPlaceholder')" />
+                <div class="flex items-center gap-1.5">
+                  <input v-model="item.description" class="app-inp text-sm flex-1" :placeholder="t('invoiceEditor.items.descriptionPlaceholder')" />
+                  <button
+                    v-if="item.description.trim()"
+                    type="button"
+                    class="shrink-0 w-8 h-8 flex items-center justify-center rounded-md border border-gray-500 text-gray-700 hover:text-green-700 hover:border-green-700/40 transition disabled:opacity-50"
+                    :disabled="!!aiDescBusyId"
+                    :title="t('invoiceEditor.ai.cleanUp')"
+                    @click="cleanUpDescription(item)"
+                  >
+                    <Icon :icon="aiDescBusyId === item.id ? 'lucide:loader-2' : 'lucide:sparkles'" class="w-3.5 h-3.5" :class="aiDescBusyId === item.id && 'animate-spin'" />
+                  </button>
+                </div>
                 <div class="grid grid-cols-3 gap-2">
                   <div class="space-y-0.5">
                     <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.items.qty') }}</label>

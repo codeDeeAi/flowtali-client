@@ -1,79 +1,79 @@
 {
   "settings": {
-    "title": "AI provider",
+    "title": "Poskytovatel AI",
     "titleTag": "(Bring Your Own Key)",
-    "subtitle": "Connect your own AI provider key to power Flowtali AI for your organization.",
-    "loading": "Loading…",
-    "loadError": "Couldn't load AI settings.",
-    "loadErrorHint": "Check your connection and try again.",
-    "retry": "Retry",
-    "encryptionNote": "Flowtali encrypts your API key at rest and uses it only for {org}'s AI requests. No one — including Flowtali staff — can read it, and it's never shared outside your organization.",
-    "active": "Active",
-    "key": "key",
-    "replace": "Replace key",
-    "disconnect": "Disconnect",
-    "disconnectConfirm": "Disconnect this AI provider? Flowtali AI will stop working until you connect a key again.",
-    "disconnected": "AI provider disconnected.",
-    "connected": "AI provider connected.",
-    "provider": "Provider",
+    "subtitle": "Připojte vlastní klíč poskytovatele AI a využívejte Flowtali AI pro svou organizaci.",
+    "loading": "Načítání…",
+    "loadError": "Nepodařilo se načíst nastavení AI.",
+    "loadErrorHint": "Zkontrolujte připojení a zkuste to znovu.",
+    "retry": "Zkusit znovu",
+    "encryptionNote": "Flowtali šifruje váš API klíč v úložišti a používá jej pouze pro AI požadavky organizace {org}. Nikdo – ani zaměstnanci Flowtali – jej nemůže přečíst a nikdy není sdílen mimo vaši organizaci.",
+    "active": "Aktivní",
+    "key": "klíč",
+    "replace": "Nahradit klíč",
+    "disconnect": "Odpojit",
+    "disconnectConfirm": "Odpojit tohoto poskytovatele AI? Flowtali AI přestane fungovat, dokud znovu nepřipojíte klíč.",
+    "disconnected": "Poskytovatel AI odpojen.",
+    "connected": "Poskytovatel AI připojen.",
+    "provider": "Poskytovatel",
     "model": "Model",
-    "apiKey": "API key",
-    "apiKeyPlaceholder": "Paste your API key",
-    "validateNote": "We validate the key with the provider before saving it — nothing is stored if it's rejected.",
-    "guideTitle": "How to get a {provider} key",
-    "openConsole": "Open {provider} console",
-    "saveKey": "Validate & save",
-    "validating": "Validating…",
-    "cancel": "Cancel",
-    "keyRequired": "Please paste an API key.",
-    "saveError": "Couldn't save the key. Please try again."
+    "apiKey": "API klíč",
+    "apiKeyPlaceholder": "Vložte svůj API klíč",
+    "validateNote": "Klíč před uložením ověříme u poskytovatele – pokud je odmítnut, nic se neuloží.",
+    "guideTitle": "Jak získat klíč {provider}",
+    "openConsole": "Otevřít konzoli {provider}",
+    "saveKey": "Ověřit a uložit",
+    "validating": "Ověřování…",
+    "cancel": "Zrušit",
+    "keyRequired": "Vložte prosím API klíč.",
+    "saveError": "Klíč se nepodařilo uložit. Zkuste to prosím znovu."
   },
   "guides": {
     "claude": {
       "steps": [
-        "Sign in to the Anthropic Console and open Settings → API keys.",
-        "Click “Create Key”, give it a name like “Flowtali”, and copy it — it starts with sk-ant-.",
-        "Make sure your Anthropic account has billing/credits enabled, then paste the key above."
+        "Přihlaste se do Anthropic Console a otevřete Nastavení → API keys.",
+        "Klikněte na „Create Key“, pojmenujte jej například „Flowtali“ a zkopírujte jej – začíná na sk-ant-.",
+        "Ujistěte se, že váš účet Anthropic má povolenou fakturaci/kredity, a poté klíč vložte výše."
       ]
     },
     "openai": {
       "steps": [
-        "Sign in to the OpenAI Platform and open the API keys page.",
-        "Click “Create new secret key”, name it “Flowtali”, and copy it — it starts with sk-. You can only see it once.",
-        "Ensure your OpenAI account has billing set up, then paste the key above."
+        "Přihlaste se do OpenAI Platform a otevřete stránku s API klíči.",
+        "Klikněte na „Create new secret key“, pojmenujte jej „Flowtali“ a zkopírujte jej – začíná na sk-. Zobrazí se pouze jednou.",
+        "Ujistěte se, že máte na účtu OpenAI nastavenou fakturaci, a poté klíč vložte výše."
       ]
     },
     "gemini": {
       "steps": [
-        "Sign in to Google AI Studio and open “Get API key”.",
-        "Click “Create API key”, choose or create a Google Cloud project, and copy the key.",
-        "Paste the key above."
+        "Přihlaste se do Google AI Studio a otevřete „Get API key“.",
+        "Klikněte na „Create API key“, vyberte nebo vytvořte projekt Google Cloud a zkopírujte klíč.",
+        "Vložte klíč výše."
       ]
     }
   },
   "agent": {
     "title": "Flowtali AI",
-    "subtitle": "Your organization's AI assistant",
-    "poweredBy": "Powered by {model}",
-    "newChat": "New chat",
-    "checking": "Checking AI setup…",
-    "setupTitle": "Set up Flowtali AI",
-    "setupBody": "Flowtali AI runs on your organization's own provider key — Claude, OpenAI, or Gemini. Add one to start chatting. Your key is encrypted and used only for your organization.",
-    "setupCta": "Set up AI",
-    "setupAdminNote": "Ask an organization admin to add an AI provider key under Settings → AI.",
-    "notConfiguredTitle": "Connect an AI provider first",
-    "notConfiguredBody": "Flowtali AI runs on your own provider key. Add one under Settings → AI to start chatting.",
-    "connectKey": "Set up AI",
-    "emptyTitle": "How can I help?",
-    "emptyBody": "Ask me to draft a letter, polish an invoice description, or summarize your billing — in any of your languages.",
+    "subtitle": "AI asistent vaší organizace",
+    "poweredBy": "Využívá {model}",
+    "newChat": "Nová konverzace",
+    "checking": "Kontrola nastavení AI…",
+    "setupTitle": "Nastavit Flowtali AI",
+    "setupBody": "Flowtali AI běží na vlastním klíči poskytovatele vaší organizace – Claude, OpenAI nebo Gemini. Přidejte jej a začněte konverzovat. Váš klíč je šifrovaný a používá se pouze pro vaši organizaci.",
+    "setupCta": "Nastavit AI",
+    "setupAdminNote": "Požádejte administrátora organizace, aby přidal klíč poskytovatele AI v Nastavení → AI.",
+    "notConfiguredTitle": "Nejprve připojte poskytovatele AI",
+    "notConfiguredBody": "Flowtali AI běží na vašem vlastním klíči poskytovatele. Přidejte jej v Nastavení → AI a začněte konverzovat.",
+    "connectKey": "Nastavit AI",
+    "emptyTitle": "Jak vám mohu pomoci?",
+    "emptyBody": "Požádejte mě o napsání dopisu, vylepšení popisu faktury nebo shrnutí vaší fakturace – v kterémkoli z vašich jazyků.",
     "suggestions": [
-      "Draft a polite payment reminder to a client whose invoice is 2 weeks overdue.",
-      "Write a professional thank-you note for a client who just paid.",
-      "Turn “logo stuff and 3 revisions” into a clean invoice line-item description.",
-      "Draft a project engagement letter for a new branding client."
+      "Napiš zdvořilou upomínku k platbě klientovi, jehož faktura je 2 týdny po splatnosti.",
+      "Napiš profesionální poděkování klientovi, který právě zaplatil.",
+      "Přeměň „něco s logem a 3 revize“ na přehlednou položku faktury.",
+      "Napiš úvodní dopis k projektu pro nového brandingového klienta."
     ],
-    "error": "Something went wrong reaching your AI provider. Please try again.",
-    "inputPlaceholder": "Message Flowtali AI…",
-    "disclaimer": "Flowtali AI can make mistakes. Review important content before sending."
+    "error": "Při připojení k vašemu poskytovateli AI došlo k chybě. Zkuste to prosím znovu.",
+    "inputPlaceholder": "Zpráva pro Flowtali AI…",
+    "disclaimer": "Flowtali AI může dělat chyby. Před odesláním zkontrolujte důležitý obsah."
   }
 }

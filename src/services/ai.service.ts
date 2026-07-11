@@ -3,7 +3,10 @@ import type {
   IAiChatMessage,
   IAiChatResponse,
   IAiCredential,
+  IAiLetterheadDraft,
+  IAiLetterheadDraftPayload,
   IAiProvider,
+  IAiTransformPayload,
   ISaveAiCredentialPayload,
 } from '@/types/ai.types'
 
@@ -41,10 +44,27 @@ export const AiService = {
     return http.delete(`/api/v1/orgs/${orgId}/ai/credential`)
   },
 
-  /** Send a conversation to the org's connected provider. */
-  chat(orgId: string, messages: IAiChatMessage[]) {
+  /** Send a conversation to the org's connected provider. `locale` steers the reply language. */
+  chat(orgId: string, messages: IAiChatMessage[], locale?: string) {
     return http.post<{ data: IAiChatResponse }>(`/api/v1/orgs/${orgId}/ai/chat`, {
       messages,
+      locale,
     })
+  },
+
+  /** Draft the four Content-tab fields of a letterhead from a natural-language brief. */
+  draftLetterhead(orgId: string, payload: IAiLetterheadDraftPayload) {
+    return http.post<{ data: { draft: IAiLetterheadDraft } }>(
+      `/api/v1/orgs/${orgId}/ai/letterhead/draft`,
+      payload,
+    )
+  },
+
+  /** Rewrite / translate / describe a piece of text. Returns the transformed text. */
+  transformText(orgId: string, payload: IAiTransformPayload) {
+    return http.post<{ data: { text: string } }>(
+      `/api/v1/orgs/${orgId}/ai/text/transform`,
+      payload,
+    )
   },
 }

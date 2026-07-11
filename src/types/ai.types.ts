@@ -40,3 +40,29 @@ export interface IAiChatResponse {
   provider: AiProviderId
   model: string
 }
+
+export type AiTone = 'formal' | 'friendly' | 'firm' | 'persuasive'
+export type AiLength = 'short' | 'standard' | 'detailed'
+export type AiTransformAction = 'rewrite_shorter' | 'rewrite_formal' | 'fix_grammar' | 'translate' | 'describe'
+
+export interface IAiLetterheadDraftPayload {
+  brief: string
+  tone?: AiTone
+  length?: AiLength
+  language?: string
+  recipient?: string
+}
+
+export interface IAiLetterheadDraft {
+  subject: string
+  salutation: string
+  body: string
+  closing: string
+}
+
+export interface IAiTransformPayload {
+  action: AiTransformAction
+  text: string
+  language?: string
+  context?: 'line_item' | 'letter' | 'generic'
+}

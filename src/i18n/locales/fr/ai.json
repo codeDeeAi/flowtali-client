@@ -1,79 +1,79 @@
 {
   "settings": {
-    "title": "AI provider",
+    "title": "Fournisseur d'IA",
     "titleTag": "(Bring Your Own Key)",
-    "subtitle": "Connect your own AI provider key to power Flowtali AI for your organization.",
-    "loading": "Loading…",
-    "loadError": "Couldn't load AI settings.",
-    "loadErrorHint": "Check your connection and try again.",
-    "retry": "Retry",
-    "encryptionNote": "Flowtali encrypts your API key at rest and uses it only for {org}'s AI requests. No one — including Flowtali staff — can read it, and it's never shared outside your organization.",
+    "subtitle": "Connectez votre propre clé de fournisseur d'IA pour alimenter Flowtali AI pour votre organisation.",
+    "loading": "Chargement…",
+    "loadError": "Impossible de charger les paramètres d'IA.",
+    "loadErrorHint": "Vérifiez votre connexion et réessayez.",
+    "retry": "Réessayer",
+    "encryptionNote": "Flowtali chiffre votre clé API au repos et l'utilise uniquement pour les requêtes d'IA de {org}. Personne – y compris le personnel de Flowtali – ne peut la lire, et elle n'est jamais partagée en dehors de votre organisation.",
     "active": "Active",
-    "key": "key",
-    "replace": "Replace key",
-    "disconnect": "Disconnect",
-    "disconnectConfirm": "Disconnect this AI provider? Flowtali AI will stop working until you connect a key again.",
-    "disconnected": "AI provider disconnected.",
-    "connected": "AI provider connected.",
-    "provider": "Provider",
-    "model": "Model",
-    "apiKey": "API key",
-    "apiKeyPlaceholder": "Paste your API key",
-    "validateNote": "We validate the key with the provider before saving it — nothing is stored if it's rejected.",
-    "guideTitle": "How to get a {provider} key",
-    "openConsole": "Open {provider} console",
-    "saveKey": "Validate & save",
-    "validating": "Validating…",
-    "cancel": "Cancel",
-    "keyRequired": "Please paste an API key.",
-    "saveError": "Couldn't save the key. Please try again."
+    "key": "clé",
+    "replace": "Remplacer la clé",
+    "disconnect": "Déconnecter",
+    "disconnectConfirm": "Déconnecter ce fournisseur d'IA ? Flowtali AI cessera de fonctionner jusqu'à ce que vous reconnectiez une clé.",
+    "disconnected": "Fournisseur d'IA déconnecté.",
+    "connected": "Fournisseur d'IA connecté.",
+    "provider": "Fournisseur",
+    "model": "Modèle",
+    "apiKey": "Clé API",
+    "apiKeyPlaceholder": "Collez votre clé API",
+    "validateNote": "Nous validons la clé auprès du fournisseur avant de l'enregistrer — rien n'est stocké si elle est rejetée.",
+    "guideTitle": "Comment obtenir une clé {provider}",
+    "openConsole": "Ouvrir la console {provider}",
+    "saveKey": "Valider et enregistrer",
+    "validating": "Validation…",
+    "cancel": "Annuler",
+    "keyRequired": "Veuillez coller une clé API.",
+    "saveError": "Impossible d'enregistrer la clé. Veuillez réessayer."
   },
   "guides": {
     "claude": {
       "steps": [
-        "Sign in to the Anthropic Console and open Settings → API keys.",
-        "Click “Create Key”, give it a name like “Flowtali”, and copy it — it starts with sk-ant-.",
-        "Make sure your Anthropic account has billing/credits enabled, then paste the key above."
+        "Connectez-vous à la Anthropic Console et ouvrez Paramètres → API keys.",
+        "Cliquez sur « Create Key », donnez-lui un nom comme « Flowtali » et copiez-la – elle commence par sk-ant-.",
+        "Assurez-vous que la facturation/les crédits sont activés sur votre compte Anthropic, puis collez la clé ci-dessus."
       ]
     },
     "openai": {
       "steps": [
-        "Sign in to the OpenAI Platform and open the API keys page.",
-        "Click “Create new secret key”, name it “Flowtali”, and copy it — it starts with sk-. You can only see it once.",
-        "Ensure your OpenAI account has billing set up, then paste the key above."
+        "Connectez-vous à la OpenAI Platform et ouvrez la page des clés API.",
+        "Cliquez sur « Create new secret key », nommez-la « Flowtali » et copiez-la – elle commence par sk-. Vous ne pouvez la voir qu'une seule fois.",
+        "Assurez-vous que la facturation est configurée sur votre compte OpenAI, puis collez la clé ci-dessus."
       ]
     },
     "gemini": {
       "steps": [
-        "Sign in to Google AI Studio and open “Get API key”.",
-        "Click “Create API key”, choose or create a Google Cloud project, and copy the key.",
-        "Paste the key above."
+        "Connectez-vous à Google AI Studio et ouvrez « Get API key ».",
+        "Cliquez sur « Create API key », choisissez ou créez un projet Google Cloud, puis copiez la clé.",
+        "Collez la clé ci-dessus."
       ]
     }
   },
   "agent": {
     "title": "Flowtali AI",
-    "subtitle": "Your organization's AI assistant",
-    "poweredBy": "Powered by {model}",
-    "newChat": "New chat",
-    "checking": "Checking AI setup…",
-    "setupTitle": "Set up Flowtali AI",
-    "setupBody": "Flowtali AI runs on your organization's own provider key — Claude, OpenAI, or Gemini. Add one to start chatting. Your key is encrypted and used only for your organization.",
-    "setupCta": "Set up AI",
-    "setupAdminNote": "Ask an organization admin to add an AI provider key under Settings → AI.",
-    "notConfiguredTitle": "Connect an AI provider first",
-    "notConfiguredBody": "Flowtali AI runs on your own provider key. Add one under Settings → AI to start chatting.",
-    "connectKey": "Set up AI",
-    "emptyTitle": "How can I help?",
-    "emptyBody": "Ask me to draft a letter, polish an invoice description, or summarize your billing — in any of your languages.",
+    "subtitle": "L'assistant IA de votre organisation",
+    "poweredBy": "Propulsé par {model}",
+    "newChat": "Nouvelle conversation",
+    "checking": "Vérification de la configuration de l'IA…",
+    "setupTitle": "Configurer Flowtali AI",
+    "setupBody": "Flowtali AI fonctionne avec la propre clé de fournisseur de votre organisation – Claude, OpenAI ou Gemini. Ajoutez-en une pour commencer à discuter. Votre clé est chiffrée et utilisée uniquement pour votre organisation.",
+    "setupCta": "Configurer l'IA",
+    "setupAdminNote": "Demandez à un administrateur de l'organisation d'ajouter une clé de fournisseur d'IA dans Paramètres → IA.",
+    "notConfiguredTitle": "Connectez d'abord un fournisseur d'IA",
+    "notConfiguredBody": "Flowtali AI fonctionne avec votre propre clé de fournisseur. Ajoutez-en une dans Paramètres → IA pour commencer à discuter.",
+    "connectKey": "Configurer l'IA",
+    "emptyTitle": "Comment puis-je vous aider ?",
+    "emptyBody": "Demandez-moi de rédiger une lettre, d'améliorer la description d'une facture ou de résumer votre facturation – dans n'importe laquelle de vos langues.",
     "suggestions": [
-      "Draft a polite payment reminder to a client whose invoice is 2 weeks overdue.",
-      "Write a professional thank-you note for a client who just paid.",
-      "Turn “logo stuff and 3 revisions” into a clean invoice line-item description.",
-      "Draft a project engagement letter for a new branding client."
+      "Rédige un rappel de paiement poli à un client dont la facture est en retard de 2 semaines.",
+      "Rédige une note de remerciement professionnelle pour un client qui vient de payer.",
+      "Transforme « des trucs de logo et 3 révisions » en une ligne de facture claire.",
+      "Rédige une lettre d'engagement de projet pour un nouveau client de branding."
     ],
-    "error": "Something went wrong reaching your AI provider. Please try again.",
-    "inputPlaceholder": "Message Flowtali AI…",
-    "disclaimer": "Flowtali AI can make mistakes. Review important content before sending."
+    "error": "Un problème est survenu lors de la connexion à votre fournisseur d'IA. Veuillez réessayer.",
+    "inputPlaceholder": "Message à Flowtali AI…",
+    "disclaimer": "Flowtali AI peut faire des erreurs. Vérifiez les contenus importants avant de les envoyer."
   }
 }
