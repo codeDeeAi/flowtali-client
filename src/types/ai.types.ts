@@ -30,15 +30,31 @@ export interface ISaveAiCredentialPayload {
   model?: string | null
 }
 
+/** A resolved deep-link the FE renders as an in-app link (e.g. an invoice number). */
+export interface IAiReferenceLink {
+  label: string
+  href: string
+}
+
 export interface IAiChatMessage {
   role: 'user' | 'assistant'
   content: string
+  /** FE-only: resolved links to linkify inside this (assistant) message. */
+  links?: IAiReferenceLink[]
+}
+
+/** Reference metadata from the API, before the FE resolves it to a route href. */
+export interface IAiReference {
+  label: string
+  type: 'invoice'
+  id: string
 }
 
 export interface IAiChatResponse {
   reply: string
   provider: AiProviderId
   model: string
+  references?: IAiReference[]
 }
 
 export type AiTone = 'formal' | 'friendly' | 'firm' | 'persuasive'

@@ -6,7 +6,8 @@ import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { usePermissions } from '@/composables/usePermissions'
 import { AiService } from '@/services/ai.service'
-import type { IAiChatMessage } from '@/types/ai.types'
+import { renderMarkdown } from '@/services/utils/markdown'
+import type { IAiChatMessage, IAiReference, IAiReferenceLink } from '@/types/ai.types'
 
 const { t, tm, rt, locale } = useI18n()
 const router = useRouter()
@@ -24,6 +25,9 @@ const input = ref('')
 const sending = ref(false)
 const modelLabel = ref('')
 const scroller = ref<HTMLElement | null>(null)
+const composer = ref<HTMLTextAreaElement | null>(null)
+const errored = ref(false)              // last exchange failed → offer retry
+const copiedIndex = ref<number | null>(null)
 
 const suggestions = computed(() => (tm('ai.agent.suggestions') as unknown[]) ?? [])
 const canSend = computed(() => input.value.trim().length > 0 && !sending.value)
@@ -56,13 +60,26 @@ async function send(text?: string) {
 
   messages.value.push({ role: 'user', content })
   input.value = ''
+  await deliver()
+}
+
+// Send the current conversation and append the reply. On a recoverable failure
+// the trailing user message is left in place and `errored` flips so the user can
+// retry the exact same exchange.
+async function deliver() {
+  errored.value = false
   sending.value = true
   await scrollToBottom()
 
   try {
-    const { data } = await AiService.chat(orgId.value, messages.value, locale.value)
+    const outgoing = messages.value.map((m) => ({ role: m.role, content: m.content }))
+    const { data } = await AiService.chat(orgId.value, outgoing, locale.value)
     modelLabel.value = data.data.model
-    messages.value.push({ role: 'assistant', content: data.data.reply })
+    messages.value.push({
+      role: 'assistant',
+      content: data.data.reply,
+      links: resolveLinks(data.data.references),
+    })
   } catch (e: unknown) {
     const err = e as { response?: { status?: number; data?: { data?: { not_configured?: boolean; invalid_model?: boolean }; message?: string } } }
     const body = err.response?.data
@@ -73,12 +90,72 @@ async function send(text?: string) {
       // Provider rejected the selected model — show the actionable message.
       messages.value.push({ role: 'assistant', content: body.message })
     } else {
-      messages.value.push({ role: 'assistant', content: t('ai.agent.error') })
+      errored.value = true     // transient failure → show retry
     }
   } finally {
     sending.value = false
     await scrollToBottom()
   }
+}
+
+// Retry the failed exchange (the trailing user message is still in place).
+function retry() {
+  if (sending.value) return
+  deliver()
+}
+
+// Copy an assistant reply's raw text to the clipboard.
+async function copyMessage(i: number) {
+  const msg = messages.value[i]
+  if (!msg) return
+  try {
+    await navigator.clipboard.writeText(msg.content)
+    copiedIndex.value = i
+    setTimeout(() => { if (copiedIndex.value === i) copiedIndex.value = null }, 1500)
+  } catch {
+    // Clipboard unavailable (insecure context / denied) — silently no-op.
+  }
+}
+
+// Load a user message back into the composer and drop it + everything after,
+// so editing then sending replays the conversation from that point.
+async function editMessage(i: number) {
+  const msg = messages.value[i]
+  if (sending.value || !msg) return
+  input.value = msg.content
+  messages.value = messages.value.slice(0, i)
+  errored.value = false
+  await nextTick()
+  composer.value?.focus()
+}
+
+// Resend a user message unchanged: drop it + everything after, then send again.
+function resendMessage(i: number) {
+  const msg = messages.value[i]
+  if (sending.value || !msg) return
+  messages.value = messages.value.slice(0, i)
+  send(msg.content)
+}
+
+// Map API references (e.g. an invoice number → id) to in-app route hrefs.
+const routeNameForType: Record<string, string> = { invoice: 'invoices.edit' }
+function resolveLinks(refs?: IAiReference[]): IAiReferenceLink[] {
+  if (!refs?.length) return []
+  return refs.flatMap((r) => {
+    const name = routeNameForType[r.type]
+    if (!name) return []
+    return [{ label: r.label, href: router.resolve({ name, params: { id: r.id } }).href }]
+  })
+}
+
+// Linkified references render as <a data-internal>; navigate them via the router
+// so it stays an in-app SPA transition instead of a full page reload.
+function onLinkClick(e: MouseEvent) {
+  const anchor = (e.target as HTMLElement).closest('a[data-internal]') as HTMLAnchorElement | null
+  if (!anchor) return
+  e.preventDefault()
+  const href = anchor.getAttribute('href')
+  if (href) router.push(href)
 }
 
 function onEnter(e: KeyboardEvent) {
@@ -89,6 +166,7 @@ function onEnter(e: KeyboardEvent) {
 
 function newChat() {
   messages.value = []
+  errored.value = false
 }
 
 function goToSetup() {
@@ -175,17 +253,81 @@ onMounted(checkStatus)
 
         <!-- Conversation -->
         <div v-else class="space-y-5">
-          <div v-for="(m, i) in messages" :key="i" class="flex gap-3" :class="m.role === 'user' ? 'flex-row-reverse' : ''">
+          <div v-for="(m, i) in messages" :key="i" class="group flex gap-3" :class="m.role === 'user' ? 'flex-row-reverse' : ''">
             <div
               class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
               :class="m.role === 'user' ? 'bg-gray-300' : 'bg-green-700/10 border border-green-700/20'"
             >
               <Icon :icon="m.role === 'user' ? 'lucide:user' : 'lucide:sparkles'" class="w-3.5 h-3.5" :class="m.role === 'user' ? 'text-gray-1000' : 'text-green-700'" />
             </div>
-            <div
-              class="rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed whitespace-pre-wrap max-w-[80%]"
-              :class="m.role === 'user' ? 'bg-gray-300 text-gray-1000' : 'bg-gray-200 border border-gray-400 text-gray-1000'"
-            >{{ m.content }}</div>
+
+            <div class="flex flex-col gap-1 max-w-[80%] min-w-0" :class="m.role === 'user' ? 'items-end' : 'items-start'">
+              <!-- Assistant replies are Markdown → sanitized HTML; user text stays literal. -->
+              <div
+                v-if="m.role === 'assistant'"
+                class="ai-md rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed max-w-full bg-gray-200 border border-gray-400 text-gray-1000"
+                v-html="renderMarkdown(m.content, m.links)"
+                @click="onLinkClick"
+              ></div>
+              <div
+                v-else
+                class="rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed whitespace-pre-wrap max-w-full bg-gray-300 text-gray-1000"
+              >{{ m.content }}</div>
+
+              <!-- Per-message actions (hover-revealed) -->
+              <div
+                class="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity"
+                :class="m.role === 'user' ? 'flex-row-reverse' : ''"
+              >
+                <!-- Assistant: copy result -->
+                <button
+                  v-if="m.role === 'assistant'"
+                  type="button"
+                  class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[11px] text-gray-700 hover:text-gray-1000 hover:bg-gray-300 transition"
+                  @click="copyMessage(i)"
+                >
+                  <Icon :icon="copiedIndex === i ? 'lucide:check' : 'lucide:copy'" class="w-3.5 h-3.5" :class="copiedIndex === i ? 'text-green-700' : ''" />
+                  {{ copiedIndex === i ? t('ai.agent.copied') : t('ai.agent.copy') }}
+                </button>
+
+                <!-- User: edit + resend -->
+                <template v-else>
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[11px] text-gray-700 hover:text-gray-1000 hover:bg-gray-300 transition disabled:opacity-40"
+                    :disabled="sending"
+                    @click="editMessage(i)"
+                  >
+                    <Icon icon="lucide:pencil" class="w-3.5 h-3.5" /> {{ t('ai.agent.edit') }}
+                  </button>
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[11px] text-gray-700 hover:text-gray-1000 hover:bg-gray-300 transition disabled:opacity-40"
+                    :disabled="sending"
+                    @click="resendMessage(i)"
+                  >
+                    <Icon icon="lucide:refresh-cw" class="w-3.5 h-3.5" /> {{ t('ai.agent.resend') }}
+                  </button>
+                </template>
+              </div>
+            </div>
+          </div>
+
+          <!-- Send failed → retry -->
+          <div v-if="errored" class="flex gap-3">
+            <div class="w-7 h-7 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center flex-shrink-0">
+              <Icon icon="lucide:alert-triangle" class="w-3.5 h-3.5 text-red-400" />
+            </div>
+            <div class="flex items-center gap-3 rounded-2xl px-3.5 py-2.5 bg-red-500/5 border border-red-500/20">
+              <span class="text-[12.5px] text-gray-1000">{{ t('ai.agent.error') }}</span>
+              <button
+                type="button"
+                class="inline-flex items-center gap-1 text-[12px] font-medium text-green-700 hover:text-green-600 transition"
+                @click="retry"
+              >
+                <Icon icon="lucide:rotate-cw" class="w-3.5 h-3.5" /> {{ t('ai.agent.retry') }}
+              </button>
+            </div>
           </div>
 
           <!-- Typing indicator -->
@@ -206,6 +348,7 @@ onMounted(checkStatus)
       <div class="px-4 py-3 border-t border-gray-300">
         <div class="flex items-end gap-2 rounded-2xl border border-gray-400 bg-gray-100 px-3 py-2 focus-within:border-green-700 transition">
           <textarea
+            ref="composer"
             v-model="input"
             rows="1"
             :placeholder="t('ai.agent.inputPlaceholder')"
@@ -237,4 +380,66 @@ onMounted(checkStatus)
   box-shadow: none !important;
   outline: none !important;
 }
+
+/* Markdown-rendered assistant replies. `:deep()` reaches the v-html content,
+   which doesn't carry scoped attributes. Tuned to the app's dark tokens. */
+.ai-md :deep(> :first-child) { margin-top: 0; }
+.ai-md :deep(> :last-child) { margin-bottom: 0; }
+.ai-md :deep(p) { margin: 0.5em 0; }
+.ai-md :deep(h1),
+.ai-md :deep(h2),
+.ai-md :deep(h3),
+.ai-md :deep(h4) { font-weight: 600; line-height: 1.3; margin: 0.9em 0 0.4em; }
+.ai-md :deep(h1) { font-size: 1.15em; }
+.ai-md :deep(h2) { font-size: 1.08em; }
+.ai-md :deep(h3) { font-size: 1em; }
+.ai-md :deep(h4) { font-size: 0.95em; }
+.ai-md :deep(ul),
+.ai-md :deep(ol) { margin: 0.5em 0; padding-left: 1.25em; }
+.ai-md :deep(ul) { list-style: disc; }
+.ai-md :deep(ol) { list-style: decimal; }
+.ai-md :deep(li) { margin: 0.2em 0; }
+.ai-md :deep(li > ul),
+.ai-md :deep(li > ol) { margin: 0.2em 0; }
+.ai-md :deep(strong) { font-weight: 600; }
+.ai-md :deep(em) { font-style: italic; }
+.ai-md :deep(a) {
+  color: var(--color-green-700);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.ai-md :deep(a:hover) { color: var(--color-green-600); }
+.ai-md :deep(code) {
+  font-family: var(--font-mono, ui-monospace, "SFMono-Regular", monospace);
+  font-size: 0.88em;
+  background: var(--color-gray-400);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+.ai-md :deep(pre) {
+  background: var(--color-gray-100);
+  border: 1px solid var(--color-gray-400);
+  border-radius: 8px;
+  padding: 0.75em;
+  overflow-x: auto;
+  margin: 0.6em 0;
+}
+.ai-md :deep(pre code) { background: transparent; padding: 0; font-size: 0.85em; }
+.ai-md :deep(hr) { border: 0; border-top: 1px solid var(--color-gray-400); margin: 0.9em 0; }
+.ai-md :deep(blockquote) {
+  border-left: 2px solid var(--color-gray-500);
+  padding-left: 0.75em;
+  margin: 0.6em 0;
+  color: var(--color-gray-700);
+}
+.ai-md :deep(table) {
+  border-collapse: collapse;
+  margin: 0.6em 0;
+  font-size: 0.92em;
+  display: block;
+  overflow-x: auto;
+}
+.ai-md :deep(th),
+.ai-md :deep(td) { border: 1px solid var(--color-gray-400); padding: 0.3em 0.6em; text-align: left; }
+.ai-md :deep(th) { font-weight: 600; background: var(--color-gray-300); }
 </style>
