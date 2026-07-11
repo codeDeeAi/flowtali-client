@@ -205,7 +205,7 @@ onMounted(checkStatus)
             v-model="input"
             rows="1"
             :placeholder="t('ai.agent.inputPlaceholder')"
-            class="flex-1 bg-transparent resize-none outline-none focus:shadow-none focus-visible:shadow-none text-[13px] text-gray-1000 placeholder:text-gray-700 max-h-40 py-1"
+            class="composer-input flex-1 bg-transparent resize-none outline-none text-[13px] text-gray-1000 placeholder:text-gray-700 max-h-40 py-1"
             @keydown.enter="onEnter"
           />
           <button
@@ -223,3 +223,14 @@ onMounted(checkStatus)
     </template>
   </div>
 </template>
+
+<style scoped>
+/* The global `:focus-visible` rule in main.css is unlayered, so it beats
+   Tailwind's layered focus utilities. Suppress the textarea's own box-shadow
+   ring here — the wrapper's `focus-within` border is the intended affordance. */
+.composer-input:focus,
+.composer-input:focus-visible {
+  box-shadow: none !important;
+  outline: none !important;
+}
+</style>
