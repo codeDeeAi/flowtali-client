@@ -5,6 +5,8 @@ import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { usePermissions } from '@/composables/usePermissions'
 import { SettingsService, type IOrgSettings, type INotificationPrefs } from '@/services/settings.service'
+import { useRoute } from 'vue-router'
+import AiCredentialsSection from './AiCredentialsSection.vue'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
@@ -13,11 +15,13 @@ const org       = computed(() => authStore.getCurrentOrganization)
 
 const { can } = usePermissions()
 
-type Tab = 'general' | 'notifications' | 'security' | 'api'
+type Tab = 'general' | 'notifications' | 'security' | 'api' | 'ai'
+const route = useRoute()
 const activeTab = ref<Tab>('general')
 
 const tabs = computed(() => [
   { key: 'general'       as Tab, label: t('settings.tabs.general'),       icon: 'lucide:settings-2'   },
+  { key: 'ai'            as Tab, label: t('settings.tabs.ai'),            icon: 'lucide:sparkles'     },
   { key: 'notifications' as Tab, label: t('settings.tabs.notifications'), icon: 'lucide:bell'         },
   { key: 'security'      as Tab, label: t('settings.tabs.security'),      icon: 'lucide:shield-check' },
   { key: 'api'           as Tab, label: t('settings.tabs.api'),           icon: 'lucide:code-2'       },
@@ -189,6 +193,12 @@ const apiKeys = [
 ]
 
 onMounted(async () => {
+  // Deep-link support: /app/settings?tab=ai opens the AI tab directly
+  // (used by the "Set up AI" CTA on the /app/ai chat view).
+  const validTabs: Tab[] = ['general', 'ai', 'notifications', 'security', 'api']
+  const q = route.query.tab as Tab | undefined
+  if (q && validTabs.includes(q)) activeTab.value = q
+
   orgName.value    = org.value?.name ?? ''
   orgLogoUrl.value = org.value?.logo ?? null
   await Promise.all([loadSettings(), loadNotifPrefs()])
@@ -459,6 +469,11 @@ onMounted(async () => {
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- AI tab -->
+        <div v-if="activeTab === 'ai'">
+          <AiCredentialsSection :org-id="orgId" :org-name="orgName || org?.name || ''" />
         </div>
 
       </div>

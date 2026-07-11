@@ -12,6 +12,7 @@ export const appRoutes = [
     meta,
     children: [
       { path: 'dashboard',        name: 'dashboard',        component: () => import('@/views/dashboard/DashboardView.vue'),             meta },
+      { path: 'ai',               name: 'ai',               component: () => import('@/views/ai/AiAgentView.vue'),                      meta },
 
       { path: 'projects',              name: 'projects',        component: () => import('@/views/projects/ProjectsView.vue'),        meta: bo('projects.read') },
       { path: 'projects/create',       name: 'projects.create', component: () => import('@/views/projects/ProjectCreatePage.vue'),   meta: bo('projects.create') },

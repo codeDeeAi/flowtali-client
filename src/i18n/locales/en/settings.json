@@ -3,6 +3,7 @@
   "subtitle": "Organization and account configuration",
   "tabs": {
     "general": "General",
+    "ai": "AI",
     "notifications": "Notifications",
     "security": "Security",
     "api": "API & Integrations"

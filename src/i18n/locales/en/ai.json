@@ -1,0 +1,79 @@
+{
+  "settings": {
+    "title": "AI provider",
+    "titleTag": "(Bring Your Own Key)",
+    "subtitle": "Connect your own AI provider key to power Flowtali AI for your organization.",
+    "loading": "Loading…",
+    "loadError": "Couldn't load AI settings.",
+    "loadErrorHint": "Check your connection and try again.",
+    "retry": "Retry",
+    "encryptionNote": "Flowtali encrypts your API key at rest and uses it only for {org}'s AI requests. No one — including Flowtali staff — can read it, and it's never shared outside your organization.",
+    "active": "Active",
+    "key": "key",
+    "replace": "Replace key",
+    "disconnect": "Disconnect",
+    "disconnectConfirm": "Disconnect this AI provider? Flowtali AI will stop working until you connect a key again.",
+    "disconnected": "AI provider disconnected.",
+    "connected": "AI provider connected.",
+    "provider": "Provider",
+    "model": "Model",
+    "apiKey": "API key",
+    "apiKeyPlaceholder": "Paste your API key",
+    "validateNote": "We validate the key with the provider before saving it — nothing is stored if it's rejected.",
+    "guideTitle": "How to get a {provider} key",
+    "openConsole": "Open {provider} console",
+    "saveKey": "Validate & save",
+    "validating": "Validating…",
+    "cancel": "Cancel",
+    "keyRequired": "Please paste an API key.",
+    "saveError": "Couldn't save the key. Please try again."
+  },
+  "guides": {
+    "claude": {
+      "steps": [
+        "Sign in to the Anthropic Console and open Settings → API keys.",
+        "Click “Create Key”, give it a name like “Flowtali”, and copy it — it starts with sk-ant-.",
+        "Make sure your Anthropic account has billing/credits enabled, then paste the key above."
+      ]
+    },
+    "openai": {
+      "steps": [
+        "Sign in to the OpenAI Platform and open the API keys page.",
+        "Click “Create new secret key”, name it “Flowtali”, and copy it — it starts with sk-. You can only see it once.",
+        "Ensure your OpenAI account has billing set up, then paste the key above."
+      ]
+    },
+    "gemini": {
+      "steps": [
+        "Sign in to Google AI Studio and open “Get API key”.",
+        "Click “Create API key”, choose or create a Google Cloud project, and copy the key.",
+        "Paste the key above."
+      ]
+    }
+  },
+  "agent": {
+    "title": "Flowtali AI",
+    "subtitle": "Your organization's AI assistant",
+    "poweredBy": "Powered by {model}",
+    "newChat": "New chat",
+    "checking": "Checking AI setup…",
+    "setupTitle": "Set up Flowtali AI",
+    "setupBody": "Flowtali AI runs on your organization's own provider key — Claude, OpenAI, or Gemini. Add one to start chatting. Your key is encrypted and used only for your organization.",
+    "setupCta": "Set up AI",
+    "setupAdminNote": "Ask an organization admin to add an AI provider key under Settings → AI.",
+    "notConfiguredTitle": "Connect an AI provider first",
+    "notConfiguredBody": "Flowtali AI runs on your own provider key. Add one under Settings → AI to start chatting.",
+    "connectKey": "Set up AI",
+    "emptyTitle": "How can I help?",
+    "emptyBody": "Ask me to draft a letter, polish an invoice description, or summarize your billing — in any of your languages.",
+    "suggestions": [
+      "Draft a polite payment reminder to a client whose invoice is 2 weeks overdue.",
+      "Write a professional thank-you note for a client who just paid.",
+      "Turn “logo stuff and 3 revisions” into a clean invoice line-item description.",
+      "Draft a project engagement letter for a new branding client."
+    ],
+    "error": "Something went wrong reaching your AI provider. Please try again.",
+    "inputPlaceholder": "Message Flowtali AI…",
+    "disclaimer": "Flowtali AI can make mistakes. Review important content before sending."
+  }
+}

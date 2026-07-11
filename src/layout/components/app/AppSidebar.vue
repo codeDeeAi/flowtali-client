@@ -127,6 +127,7 @@ const navSections = computed<NavSection[]>(() => {
   sections.push({
     items: [
       { name: t('app.nav.dashboard'), icon: 'lucide:layout-dashboard', to: '/app/dashboard', dataTour: 'nav-dashboard' },
+      { name: t('app.nav.ai'), icon: 'lucide:sparkles', to: '/app/ai', dataTour: 'nav-ai' },
     ],
   })
 

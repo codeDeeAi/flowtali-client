@@ -1,6 +1,7 @@
 {
   "nav": {
     "dashboard": "Dashboard",
+    "ai": "Flowtali AI",
     "projects": "Projects",
     "invoices": "Invoices",
     "receipts": "Receipts",
