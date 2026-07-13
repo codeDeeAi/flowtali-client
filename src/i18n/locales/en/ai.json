@@ -122,6 +122,15 @@
     "inputPlaceholder": "Message Flowtali AI…",
     "disclaimer": "Flowtali AI can make mistakes. Review important content before sending."
   },
+  "history": {
+    "title": "Chats",
+    "new": "New chat",
+    "empty": "No saved chats yet.",
+    "loadMore": "Load older chats",
+    "retention": "Chats are kept for {days} days, then cleared automatically.",
+    "delete": "Delete chat",
+    "now": "now"
+  },
   "confirm": {
     "title": "Confirm action",
     "confirm": "Confirm",

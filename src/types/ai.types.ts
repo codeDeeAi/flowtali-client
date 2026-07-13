@@ -50,6 +50,21 @@ export interface IAiReference {
   id: string
 }
 
+/** A saved chat in the history sidebar (no message bodies). */
+export interface IAiChatListItem {
+  id: string
+  title: string
+  last_message_at: string | null
+}
+
+/** A full saved chat with its restored messages. */
+export interface IAiChatFull {
+  id: string
+  title: string
+  messages: IAiChatMessage[]
+  last_message_at: string | null
+}
+
 /** A mutating action the agent has prepared, awaiting the user's confirmation. */
 export interface IAiPendingAction {
   name: string

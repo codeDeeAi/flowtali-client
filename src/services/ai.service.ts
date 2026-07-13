@@ -1,6 +1,8 @@
 import http from '@/services/utils/http'
 import type {
   IAiActionResult,
+  IAiChatFull,
+  IAiChatListItem,
   IAiChatMessage,
   IAiChatResponse,
   IAiCredential,
@@ -59,6 +61,27 @@ export const AiService = {
       `/api/v1/orgs/${orgId}/ai/actions/execute`,
       { name, args },
     )
+  },
+
+  // ── Chat history (per user, auto-pruned after 14 days) ────────────────────
+  listChats(orgId: string, cursor?: string | null) {
+    return http.get<{ data: { chats: IAiChatListItem[]; next_cursor: string | null; retention_days: number } }>(
+      `/api/v1/orgs/${orgId}/ai/chats`,
+      { params: { cursor: cursor || undefined } },
+    )
+  },
+
+  getChat(orgId: string, chatId: string) {
+    return http.get<{ data: { chat: IAiChatFull } }>(`/api/v1/orgs/${orgId}/ai/chats/${chatId}`)
+  },
+
+  /** Create-or-update a chat from the current messages. Returns the saved item. */
+  saveChat(orgId: string, payload: { chat_id: string | null; title?: string; messages: IAiChatMessage[] }) {
+    return http.post<{ data: { chat: IAiChatListItem } }>(`/api/v1/orgs/${orgId}/ai/chats/save`, payload)
+  },
+
+  deleteChat(orgId: string, chatId: string) {
+    return http.delete(`/api/v1/orgs/${orgId}/ai/chats/${chatId}`)
   },
 
   /** Draft the four Content-tab fields of a letterhead from a natural-language brief. */

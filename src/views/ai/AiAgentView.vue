@@ -8,7 +8,8 @@ import { usePermissions } from '@/composables/usePermissions'
 import { AiService } from '@/services/ai.service'
 import { renderMarkdown } from '@/services/utils/markdown'
 import AiConfirmActionModal from './AiConfirmActionModal.vue'
-import type { IAiChatMessage, IAiPendingAction, IAiReference, IAiReferenceLink } from '@/types/ai.types'
+import AiChatSidebar from './AiChatSidebar.vue'
+import type { IAiChatListItem, IAiChatMessage, IAiPendingAction, IAiReference, IAiReferenceLink } from '@/types/ai.types'
 
 const { t, tm, rt, locale } = useI18n()
 const router = useRouter()
@@ -34,6 +35,14 @@ const copiedIndex = ref<number | null>(null)
 const pendingActions = ref<IAiPendingAction[]>([])
 const actionBusy = ref(false)
 const currentAction = computed(() => pendingActions.value[0] ?? null)
+
+// Chat history (per user, saved server-side, auto-pruned after 14 days).
+const chats = ref<IAiChatListItem[]>([])
+const currentChatId = ref<string | null>(null)
+const sidebarOpen = ref(false)          // mobile drawer
+const retentionDays = ref(14)
+const chatsCursor = ref<string | null>(null)   // next-page cursor (null = no more)
+const loadingMoreChats = ref(false)
 
 const suggestions = computed(() => (tm('ai.agent.suggestions') as unknown[]) ?? [])
 const canSend = computed(() => input.value.trim().length > 0 && !sending.value)
@@ -103,6 +112,7 @@ async function deliver() {
     if (data.data.pending_actions?.length) {
       pendingActions.value = [...data.data.pending_actions]
     }
+    void persist()
   } catch (e: unknown) {
     const err = e as { response?: { status?: number; data?: { data?: { not_configured?: boolean; invalid_model?: boolean }; message?: string } } }
     const body = err.response?.data
@@ -144,6 +154,7 @@ async function confirmAction() {
   } finally {
     actionBusy.value = false
     pendingActions.value.shift()   // advance to the next queued action (usually none)
+    void persist()
     await scrollToBottom()
   }
 }
@@ -153,6 +164,77 @@ function cancelActions() {
   if (actionBusy.value) return
   pendingActions.value = []
   messages.value.push({ role: 'assistant', content: t('ai.confirm.cancelled') })
+  void persist()
+}
+
+// ── Chat history ──────────────────────────────────────────────────────────
+// Load the first page of chats (resets any loaded pages).
+async function loadChats() {
+  try {
+    const { data } = await AiService.listChats(orgId.value)
+    chats.value = data.data.chats
+    chatsCursor.value = data.data.next_cursor
+    retentionDays.value = data.data.retention_days
+  } catch {
+    // Non-fatal — the chat still works without history.
+  }
+}
+
+// Append the next page of older chats.
+async function loadMoreChats() {
+  if (!chatsCursor.value || loadingMoreChats.value) return
+  loadingMoreChats.value = true
+  try {
+    const { data } = await AiService.listChats(orgId.value, chatsCursor.value)
+    chats.value = [...chats.value, ...data.data.chats]
+    chatsCursor.value = data.data.next_cursor
+  } catch {
+    /* ignore — user can retry */
+  } finally {
+    loadingMoreChats.value = false
+  }
+}
+
+// Save the current conversation (create on first save, update thereafter).
+async function persist() {
+  if (!messages.value.some((m) => m.role === 'user')) return
+  try {
+    const payload = {
+      chat_id: currentChatId.value,
+      messages: messages.value.map((m) => ({ role: m.role, content: m.content, links: m.links })),
+    }
+    const { data } = await AiService.saveChat(orgId.value, payload)
+    currentChatId.value = data.data.chat.id
+    await loadChats()
+  } catch {
+    // Best-effort persistence — never block the chat on a save failure.
+  }
+}
+
+// Open a saved chat into the conversation.
+async function openChat(id: string) {
+  if (id === currentChatId.value) { sidebarOpen.value = false; return }
+  try {
+    const { data } = await AiService.getChat(orgId.value, id)
+    messages.value = data.data.chat.messages ?? []
+    currentChatId.value = data.data.chat.id
+    pendingActions.value = []
+    errored.value = false
+    sidebarOpen.value = false
+    await scrollToBottom()
+  } catch {
+    /* not found → ignore */
+  }
+}
+
+async function removeChat(id: string) {
+  try {
+    await AiService.deleteChat(orgId.value, id)
+    chats.value = chats.value.filter((c) => c.id !== id)
+    if (id === currentChatId.value) newChat()
+  } catch {
+    /* ignore */
+  }
 }
 
 // Copy an assistant reply's raw text to the clipboard.
@@ -218,17 +300,65 @@ function onEnter(e: KeyboardEvent) {
 function newChat() {
   messages.value = []
   errored.value = false
+  pendingActions.value = []
+  currentChatId.value = null
+  sidebarOpen.value = false
 }
 
 function goToSetup() {
   router.push({ name: 'settings', query: { tab: 'ai' } })
 }
 
-onMounted(checkStatus)
+onMounted(async () => {
+  await checkStatus()
+  if (state.value === 'ready') await loadChats()
+})
 </script>
 
 <template>
-  <div class="flex flex-col h-[calc(100vh-4rem)] max-w-3xl mx-auto w-full">
+  <div class="flex h-[calc(100vh-4rem)] w-full">
+    <!-- Chat history rail (desktop) -->
+    <AiChatSidebar
+      v-if="state === 'ready'"
+      class="hidden md:flex w-64 border-r border-gray-300 shrink-0"
+      :chats="chats"
+      :current-id="currentChatId"
+      :retention-days="retentionDays"
+      :has-more="!!chatsCursor"
+      :loading-more="loadingMoreChats"
+      @new="newChat"
+      @open="openChat"
+      @remove="removeChat"
+      @load-more="loadMoreChats"
+    />
+
+    <!-- Chat history drawer (mobile) -->
+    <Teleport to="body">
+      <Transition name="fade">
+        <div v-if="sidebarOpen" class="fixed inset-0 z-40 md:hidden">
+          <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="sidebarOpen = false"></div>
+          <div class="absolute left-0 top-0 h-full w-72 max-w-[80vw]">
+            <AiChatSidebar
+              :chats="chats"
+              :current-id="currentChatId"
+              :retention-days="retentionDays"
+              :has-more="!!chatsCursor"
+              :loading-more="loadingMoreChats"
+              :show-close="true"
+              @new="newChat"
+              @open="openChat"
+              @remove="removeChat"
+              @load-more="loadMoreChats"
+              @close="sidebarOpen = false"
+            />
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- Main column -->
+    <div class="flex flex-col flex-1 min-w-0">
+      <div class="flex flex-col h-full max-w-3xl mx-auto w-full">
     <!-- Header -->
     <div class="flex items-center justify-between px-4 py-3 border-b border-gray-300">
       <div class="flex items-center gap-2.5">
@@ -243,6 +373,9 @@ onMounted(checkStatus)
         </div>
       </div>
       <div v-if="state === 'ready'" class="flex items-center gap-1">
+        <button type="button" class="btn-ghost md:hidden inline-flex items-center justify-center px-2.5 py-1.5" :title="t('ai.history.title')" @click="sidebarOpen = true">
+          <Icon icon="lucide:panel-left" class="w-4 h-4" />
+        </button>
         <button type="button" class="btn-ghost inline-flex items-center justify-center gap-1.5 text-[12px] px-3 py-1.5" @click="showExamples = true">
           <Icon icon="lucide:lightbulb" class="w-3.5 h-3.5" />
           <span class="hidden sm:inline">{{ t('ai.agent.moreExamples') }}</span>
@@ -433,6 +566,8 @@ onMounted(checkStatus)
         <p class="text-[10px] text-gray-700 mt-1.5 text-center">{{ t('ai.agent.disclaimer') }}</p>
       </div>
     </template>
+      </div>
+    </div>
 
     <!-- Example prompts modal -->
     <Teleport to="body">
