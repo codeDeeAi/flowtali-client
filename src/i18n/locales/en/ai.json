@@ -87,31 +87,42 @@
       ] },
       { "label": "Invoices", "items": [
         "List my overdue invoices.",
-        "How many invoices did I issue this month?",
-        "Show me my most recent invoice in detail."
+        "Show me my most recent invoice in detail.",
+        "Create a new invoice for one of my clients."
       ] },
       { "label": "Revenue & receivables", "items": [
         "What's my total revenue and outstanding balance?",
-        "How much is more than 60 days overdue?",
+        "Which clients owe me the most?",
         "Show my receivables aging by bucket."
       ] },
       { "label": "Analytics", "items": [
         "Give me my KPIs for the last 12 months.",
-        "What's my collection rate and average days-to-pay?",
+        "How has my revenue trended month by month?",
         "Who are my top clients by revenue?"
       ] },
       { "label": "Clients & projects", "items": [
         "List my clients and what they owe.",
+        "Start a new project for a client.",
         "Which of my projects are active?"
+      ] },
+      { "label": "Team", "items": [
+        "Invite a teammate by email.",
+        "What roles exist in my organization?",
+        "Who have I invited that hasn't joined yet?"
+      ] },
+      { "label": "Documents & sharing", "items": [
+        "Write a cover letter to a client and save it as a letterhead.",
+        "Create a shareable link for an invoice.",
+        "Turn a paid invoice into a receipt."
       ] },
       { "label": "Subscription & billing", "items": [
         "What plan am I on and when does it renew?",
         "Show my billing history."
       ] },
       { "label": "Actions", "items": [
-        "Draft a new invoice for one of my clients.",
-        "Help me mark an invoice as paid.",
-        "Create a shareable link for an invoice."
+        "Mark an invoice as paid.",
+        "Add a new client.",
+        "Link an invoice to a project."
       ] },
       { "label": "Drafting", "items": [
         "Draft a polite reminder for my most overdue invoice.",

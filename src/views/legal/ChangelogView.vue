@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useSeo } from '@/composables/useSeo'
@@ -14,8 +15,6 @@ useSeo({
   localePath: '/changelog',
 })
 
-// Historical release notes below stay in their original (English) language;
-// only the page chrome, badges, and change-type labels are localized.
 function badgeLabel(badge: string | null): string {
   if (badge === 'Latest') return t('changelog.badges.latest')
   if (badge === 'Launch') return t('changelog.badges.launch')
@@ -31,139 +30,116 @@ interface Release {
   changes: { type: ChangeType; text: string }[]
 }
 
-const releases: Release[] = [
-  {
-    version: 'v1.9',
-    date: 'July 2026',
-    badge: 'Latest',
-    changes: [
-      { type: 'new', text: 'Multilanguage support — Flowtali is now available in English, Czech, German, and French. Switch languages from the header menu, and your preference follows you across every device.' },
-      { type: 'new', text: 'Localized public pages — the landing, Embed SDK docs, and legal pages are served at language-specific URLs (/de/, /cs/, /fr/) with hreflang alternates so search engines index the right version.' },
-      { type: 'improved', text: 'The entire logged-in app is fully translated — dashboard, invoices, receipts, letterheads, clients, projects, members, roles, organization preferences, audit logs, analytics, billing, settings, and profile.' },
-      { type: 'improved', text: 'The in-app feedback panel is now fully translated across all supported languages.' },
-      { type: 'improved', text: 'Dates and numbers throughout the app now format according to your selected language.' },
-    ],
-  },
-  {
-    version: 'v1.8',
-    date: 'June 2026',
-    badge: null,
-    changes: [
-      { type: 'new', text: 'Complete design system overhaul — migrated the entire frontend to a Geist-based dark theme inspired by Vercel\'s design system, with a new green accent palette replacing the previous amber/charcoal scheme.' },
-      { type: 'new', text: 'Geist Sans and Geist Mono variable fonts — self-hosted for faster loading and a sharper, more professional typographic feel across the entire app.' },
-      { type: 'new', text: 'Design reference document (DESIGN.md) — a comprehensive design system guide covering colors, typography, spacing, radii, shadows, motion, components, and content voice guidelines.' },
-      { type: 'improved', text: 'Standardised 10-step color scale for grays, green accent, red (errors), amber (warnings), and blue (info) — every color token now encodes intent, not just lightness.' },
-      { type: 'improved', text: 'All buttons, inputs, toggles, tables, badges, and navigation components rebuilt with consistent Geist tokens — flat design, no gradients, subtle shadows.' },
-      { type: 'improved', text: 'Global focus ring updated to a two-layer green ring for better accessibility across all interactive elements.' },
-      { type: 'improved', text: 'Reduced motion support — all animations now respect the prefers-reduced-motion media query.' },
-      { type: 'improved', text: 'Landing page hero, features, pricing, testimonials, and FAQ sections updated with the new green accent and cleaner typography.' },
-      { type: 'improved', text: 'All legal pages (About, Privacy, Terms, Contact, Changelog) and public document views updated to the new design system.' },
-    ],
-  },
-  {
-    version: 'v1.7',
-    date: 'June 2026',
-    badge: null,
-    changes: [
-      { type: 'new', text: 'First-login welcome modal — new users are greeted with a "Take a tour" prompt on their first sign-in, with the option to skip.' },
-      { type: 'new', text: 'Interactive tour guide — a step-by-step spotlight walkthrough covers key features; steps are automatically tailored to personal vs. organisation accounts.' },
-      { type: 'new', text: 'Mobile bottom navigation — a persistent bottom nav bar on mobile with quick access to Home, Invoices, Clients, and a FAB shortcut to create a new invoice. A slide-up "More" sheet provides access to all other sections.' },
-      { type: 'improved', text: 'Invoices, receipts, clients, and members list views now render mobile-optimised card layouts with inline quick-actions instead of desktop-only tables.' },
-      { type: 'improved', text: 'Invoice, receipt, and letterhead editors now adapt to mobile: the form panel expands to full width, and a new eye-icon "Preview" tab lets you switch to the live document preview without leaving the editor.' },
-      { type: 'improved', text: 'Action button rows on invoice, receipt, and letterhead view pages collapse to icon-only buttons on mobile to prevent overflow, with tooltips preserving discoverability.' },
-      { type: 'fix', text: 'Invoice and receipt document previews on view pages are now horizontally scrollable on mobile — previously the right-hand columns (Rate, Amount) were clipped with no way to reach them.' },
-    ],
-  },
-  {
-    version: 'v1.6',
-    date: 'June 2026',
-    badge: null,
-    changes: [
-      { type: 'fix', text: 'API Keys section in Organization Preferences is now hidden for personal accounts — it is only relevant to organization accounts.' },
-      { type: 'fix', text: 'Stamp selector buttons in the invoice and letterhead editors no longer appear empty — resolved a data normalization issue where stamps saved in a legacy format were not converted before being sent to the frontend.' },
-      { type: 'fix', text: 'Google sign-up profile picture is now correctly downloaded and stored in our own storage on account creation — previously the Google-hosted URL was stored directly, causing broken avatar images.' },
-      { type: 'improved', text: 'Feedback panel now anchors to the bottom-right corner on desktop instead of the centre-right.' },
-    ],
-  },
-  {
-    version: 'v1.5',
-    date: 'June 2026',
-    badge: null,
-    changes: [
-      { type: 'new', text: 'Embed SDK — embed any Flowtali view (invoices, projects, receipts, preferences and more) directly in your own product or website using a lightweight JavaScript SDK.' },
-      { type: 'new', text: 'API key management — generate publishable and secret key pairs per organization to authenticate embedded sessions.' },
-      { type: 'new', text: 'Embed token generation — issue short-lived, permission-scoped JWTs for your users so the embedded view auto-authenticates without a separate login.' },
-      { type: 'new', text: 'Runtime theming — customize the embed appearance (primary color, background, font, border radius) by passing an appearance object to the SDK.' },
-      { type: 'new', text: 'Embed event callbacks — listen for invoice.created, project.created, receipt.created and more from the parent page via ft.on().' },
-      { type: 'fix', text: 'Fixed search icon overlapping placeholder text in all search bar instances across the app.' },
-    ],
-  },
-  {
-    version: 'v1.4',
-    date: 'May 2026',
-    badge: null,
-    changes: [
-      { type: 'new', text: 'Multi-role assignment — members can now hold more than one role per organization.' },
-      { type: 'new', text: 'Tax type configuration — choose between percentage or flat-amount tax on invoices.' },
-      { type: 'new', text: 'Invoice quick-fill profiles in Preferences — save sender details to auto-populate new invoices.' },
-      { type: 'new', text: 'Bank account management — store and reuse payment details across invoices.' },
-      { type: 'new', text: 'Stamp field in Preferences — add a custom text stamp that appears on your documents.' },
-      { type: 'improved', text: 'Permission matrix UI redesigned for clarity when managing roles.' },
-      { type: 'fix', text: 'Fixed an issue where invite emails occasionally landed in spam due to incorrect sender headers.' },
-    ],
-  },
-  {
-    version: 'v1.3',
-    date: 'April 2026',
-    badge: null,
-    changes: [
-      { type: 'new', text: 'Two-factor authentication (2FA) — enable TOTP-based MFA from your security settings.' },
-      { type: 'new', text: 'Dashboard analytics — live charts for invoice volume, revenue, and outstanding balances.' },
-      { type: 'new', text: 'Recent invoices panel on the dashboard for quick access to your latest documents.' },
-      { type: 'new', text: 'Invoice status chart — visual breakdown of paid, pending, and overdue invoices.' },
-      { type: 'improved', text: 'Dashboard now loads 40% faster due to parallelised API requests.' },
-      { type: 'fix', text: 'Fixed date formatting inconsistency on invoices when the system locale is non-English.' },
-    ],
-  },
-  {
-    version: 'v1.2',
-    date: 'March 2026',
-    badge: null,
-    changes: [
-      { type: 'new', text: 'Receipt generator — create and share professional payment receipts.' },
-      { type: 'new', text: 'Client management — store and reuse client details scoped to your organization.' },
-      { type: 'new', text: 'Role-based access control — create custom roles with fine-grained permissions.' },
-      { type: 'new', text: 'Audit log — view a full history of actions taken within your organization.' },
-      { type: 'improved', text: 'Public share pages now render faster and include Open Graph metadata for link previews.' },
-      { type: 'fix', text: 'Resolved a PDF export bug that caused signatures to appear blurred on retina displays.' },
-    ],
-  },
-  {
-    version: 'v1.1',
-    date: 'February 2026',
-    badge: null,
-    changes: [
-      { type: 'new', text: 'Letterhead generator — create branded letterheads with live preview and PDF export.' },
-      { type: 'new', text: 'Six letterhead themes to choose from at launch.' },
-      { type: 'new', text: 'Share links with optional access codes for private document sharing.' },
-      { type: 'new', text: 'Member invitations — invite teammates to your organization by email.' },
-      { type: 'improved', text: 'Invoice editor redesigned with a cleaner layout and inline line-item editing.' },
-      { type: 'fix', text: 'Fixed currency symbol placement for RTL currencies.' },
-    ],
-  },
-  {
-    version: 'v1.0',
-    date: 'January 2026',
-    badge: 'Launch',
-    changes: [
-      { type: 'new', text: 'Invoice generator — create professional invoices with real-time preview.' },
-      { type: 'new', text: 'Organization accounts — manage your team and documents in one workspace.' },
-      { type: 'new', text: 'Google OAuth and magic-link sign-in.' },
-      { type: 'new', text: '11+ currencies supported out of the box.' },
-      { type: 'new', text: 'Subscription billing with free and paid tiers.' },
-    ],
-  },
+// Release chrome (versions, order, badges, change types) lives here; the change
+// text and dates are localized in changelog.json (entries.* / dates.*).
+interface ReleaseMeta {
+  version: string
+  dateKey: string
+  badge: string | null
+  changes: { type: ChangeType; key: string }[]
+}
+
+const releaseMeta: ReleaseMeta[] = [
+  { version: 'v2.0', dateKey: 'jul2026', badge: 'Latest', changes: [
+    { type: 'new', key: 'r20_1' },
+    { type: 'new', key: 'r20_2' },
+    { type: 'new', key: 'r20_3' },
+    { type: 'new', key: 'r20_4' },
+    { type: 'new', key: 'r20_5' },
+    { type: 'improved', key: 'r20_6' },
+    { type: 'improved', key: 'r20_7' },
+  ] },
+  { version: 'v1.9', dateKey: 'jul2026', badge: null, changes: [
+    { type: 'new', key: 'r19_1' },
+    { type: 'new', key: 'r19_2' },
+    { type: 'improved', key: 'r19_3' },
+    { type: 'improved', key: 'r19_4' },
+    { type: 'improved', key: 'r19_5' },
+  ] },
+  { version: 'v1.8', dateKey: 'jun2026', badge: null, changes: [
+    { type: 'new', key: 'r18_1' },
+    { type: 'new', key: 'r18_2' },
+    { type: 'new', key: 'r18_3' },
+    { type: 'improved', key: 'r18_4' },
+    { type: 'improved', key: 'r18_5' },
+    { type: 'improved', key: 'r18_6' },
+    { type: 'improved', key: 'r18_7' },
+    { type: 'improved', key: 'r18_8' },
+    { type: 'improved', key: 'r18_9' },
+  ] },
+  { version: 'v1.7', dateKey: 'jun2026', badge: null, changes: [
+    { type: 'new', key: 'r17_1' },
+    { type: 'new', key: 'r17_2' },
+    { type: 'new', key: 'r17_3' },
+    { type: 'improved', key: 'r17_4' },
+    { type: 'improved', key: 'r17_5' },
+    { type: 'improved', key: 'r17_6' },
+    { type: 'fix', key: 'r17_7' },
+  ] },
+  { version: 'v1.6', dateKey: 'jun2026', badge: null, changes: [
+    { type: 'fix', key: 'r16_1' },
+    { type: 'fix', key: 'r16_2' },
+    { type: 'fix', key: 'r16_3' },
+    { type: 'improved', key: 'r16_4' },
+  ] },
+  { version: 'v1.5', dateKey: 'jun2026', badge: null, changes: [
+    { type: 'new', key: 'r15_1' },
+    { type: 'new', key: 'r15_2' },
+    { type: 'new', key: 'r15_3' },
+    { type: 'new', key: 'r15_4' },
+    { type: 'new', key: 'r15_5' },
+    { type: 'fix', key: 'r15_6' },
+  ] },
+  { version: 'v1.4', dateKey: 'may2026', badge: null, changes: [
+    { type: 'new', key: 'r14_1' },
+    { type: 'new', key: 'r14_2' },
+    { type: 'new', key: 'r14_3' },
+    { type: 'new', key: 'r14_4' },
+    { type: 'new', key: 'r14_5' },
+    { type: 'improved', key: 'r14_6' },
+    { type: 'fix', key: 'r14_7' },
+  ] },
+  { version: 'v1.3', dateKey: 'apr2026', badge: null, changes: [
+    { type: 'new', key: 'r13_1' },
+    { type: 'new', key: 'r13_2' },
+    { type: 'new', key: 'r13_3' },
+    { type: 'new', key: 'r13_4' },
+    { type: 'improved', key: 'r13_5' },
+    { type: 'fix', key: 'r13_6' },
+  ] },
+  { version: 'v1.2', dateKey: 'mar2026', badge: null, changes: [
+    { type: 'new', key: 'r12_1' },
+    { type: 'new', key: 'r12_2' },
+    { type: 'new', key: 'r12_3' },
+    { type: 'new', key: 'r12_4' },
+    { type: 'improved', key: 'r12_5' },
+    { type: 'fix', key: 'r12_6' },
+  ] },
+  { version: 'v1.1', dateKey: 'feb2026', badge: null, changes: [
+    { type: 'new', key: 'r11_1' },
+    { type: 'new', key: 'r11_2' },
+    { type: 'new', key: 'r11_3' },
+    { type: 'new', key: 'r11_4' },
+    { type: 'improved', key: 'r11_5' },
+    { type: 'fix', key: 'r11_6' },
+  ] },
+  { version: 'v1.0', dateKey: 'jan2026', badge: 'Launch', changes: [
+    { type: 'new', key: 'r10_1' },
+    { type: 'new', key: 'r10_2' },
+    { type: 'new', key: 'r10_3' },
+    { type: 'new', key: 'r10_4' },
+    { type: 'new', key: 'r10_5' },
+  ] },
 ]
+
+const releases = computed<Release[]>(() =>
+  releaseMeta.map((r) => ({
+    version: r.version,
+    date: t(`changelog.dates.${r.dateKey}`),
+    badge: r.badge,
+    changes: r.changes.map((c) => ({ type: c.type, text: t(`changelog.entries.${c.key}`) })),
+  })),
+)
 
 const typeConfig: Record<ChangeType, { label: string; classes: string }> = {
   new:      { label: 'New',      classes: 'bg-green-700/10 text-green-700 border-green-700/20' },

@@ -87,31 +87,42 @@
       ] },
       { "label": "Factures", "items": [
         "Liste mes factures en retard.",
-        "Combien de factures ai-je émises ce mois-ci ?",
-        "Montre-moi ma facture la plus récente en détail."
+        "Montre-moi ma facture la plus récente en détail.",
+        "Crée une nouvelle facture pour un de mes clients."
       ] },
       { "label": "Revenus & créances", "items": [
         "Quel est mon chiffre d'affaires total et mon solde impayé ?",
-        "Combien est en retard de plus de 60 jours ?",
+        "Quels clients me doivent le plus ?",
         "Montre-moi l'ancienneté de mes créances par tranche."
       ] },
       { "label": "Analyses", "items": [
         "Donne-moi mes indicateurs des 12 derniers mois.",
-        "Quel est mon taux de recouvrement et mon délai de paiement moyen ?",
+        "Comment mon chiffre d'affaires a-t-il évolué mois par mois ?",
         "Qui sont mes meilleurs clients par chiffre d'affaires ?"
       ] },
       { "label": "Clients & projets", "items": [
         "Liste mes clients et ce qu'ils doivent.",
+        "Démarre un nouveau projet pour un client.",
         "Lesquels de mes projets sont actifs ?"
+      ] },
+      { "label": "Équipe", "items": [
+        "Invite un collègue par e-mail.",
+        "Quels rôles existent dans mon organisation ?",
+        "Qui ai-je invité qui n'a pas encore rejoint ?"
+      ] },
+      { "label": "Documents & partage", "items": [
+        "Rédige une lettre d'accompagnement à un client et enregistre-la comme en-tête.",
+        "Crée un lien partageable pour une facture.",
+        "Transforme une facture payée en reçu."
       ] },
       { "label": "Abonnement & facturation", "items": [
         "Quel est mon forfait et quand se renouvelle-t-il ?",
         "Montre-moi mon historique de facturation."
       ] },
       { "label": "Actions", "items": [
-        "Crée un brouillon de facture pour un de mes clients.",
-        "Aide-moi à marquer une facture comme payée.",
-        "Crée un lien partageable pour une facture."
+        "Marque une facture comme payée.",
+        "Ajoute un nouveau client.",
+        "Lie une facture à un projet."
       ] },
       { "label": "Rédaction", "items": [
         "Rédige une relance polie pour ma facture la plus en retard.",

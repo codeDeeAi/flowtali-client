@@ -87,31 +87,42 @@
       ] },
       { "label": "Faktury", "items": [
         "Vypiš mé faktury po splatnosti.",
-        "Kolik faktur jsem tento měsíc vystavil?",
-        "Ukaž mi detail mé nejnovější faktury."
+        "Ukaž mi detail mé nejnovější faktury.",
+        "Vytvoř novou fakturu pro jednoho z mých klientů."
       ] },
       { "label": "Tržby a pohledávky", "items": [
         "Jaké jsou mé celkové tržby a nesplacený zůstatek?",
-        "Kolik je po splatnosti více než 60 dní?",
+        "Kteří klienti mi dluží nejvíc?",
         "Ukaž stáří mých pohledávek podle pásem."
       ] },
       { "label": "Analýzy", "items": [
         "Dej mi mé KPI za posledních 12 měsíců.",
-        "Jaká je má míra inkasa a průměrná doba splatnosti?",
+        "Jak se vyvíjely mé tržby měsíc po měsíci?",
         "Kdo jsou mí nejlepší klienti podle tržeb?"
       ] },
       { "label": "Klienti a projekty", "items": [
         "Vypiš mé klienty a jejich dlužné částky.",
+        "Založ nový projekt pro klienta.",
         "Které z mých projektů jsou aktivní?"
+      ] },
+      { "label": "Tým", "items": [
+        "Pozvi kolegu e-mailem.",
+        "Jaké role existují v mé organizaci?",
+        "Koho jsem pozval, kdo se ještě nepřipojil?"
+      ] },
+      { "label": "Dokumenty a sdílení", "items": [
+        "Napiš průvodní dopis klientovi a ulož ho jako hlavičkový dopis.",
+        "Vytvoř sdílený odkaz na fakturu.",
+        "Vytvoř doklad ze zaplacené faktury."
       ] },
       { "label": "Předplatné a fakturace", "items": [
         "Jaký mám tarif a kdy se obnovuje?",
         "Ukaž mi historii plateb."
       ] },
       { "label": "Akce", "items": [
-        "Vytvoř koncept faktury pro jednoho z mých klientů.",
-        "Pomoz mi označit fakturu jako zaplacenou.",
-        "Vytvoř sdílený odkaz na fakturu."
+        "Označ fakturu jako zaplacenou.",
+        "Přidej nového klienta.",
+        "Připoj fakturu k projektu."
       ] },
       { "label": "Psaní textů", "items": [
         "Napiš zdvořilou upomínku pro mou nejdéle nezaplacenou fakturu.",

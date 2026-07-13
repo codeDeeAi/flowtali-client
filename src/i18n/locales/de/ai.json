@@ -87,31 +87,42 @@
       ] },
       { "label": "Rechnungen", "items": [
         "Liste meine überfälligen Rechnungen auf.",
-        "Wie viele Rechnungen habe ich diesen Monat erstellt?",
-        "Zeig mir meine neueste Rechnung im Detail."
+        "Zeig mir meine neueste Rechnung im Detail.",
+        "Erstelle eine neue Rechnung für einen meiner Kunden."
       ] },
       { "label": "Umsatz & Forderungen", "items": [
         "Wie hoch sind mein Gesamtumsatz und mein offener Saldo?",
-        "Wie viel ist mehr als 60 Tage überfällig?",
+        "Welche Kunden schulden mir am meisten?",
         "Zeig mir die Fälligkeitsstruktur meiner Forderungen."
       ] },
       { "label": "Analysen", "items": [
         "Gib mir meine KPIs der letzten 12 Monate.",
-        "Wie hoch sind meine Inkassoquote und die durchschnittliche Zahlungsdauer?",
+        "Wie hat sich mein Umsatz Monat für Monat entwickelt?",
         "Wer sind meine umsatzstärksten Kunden?"
       ] },
       { "label": "Kunden & Projekte", "items": [
         "Liste meine Kunden und ihre offenen Beträge auf.",
+        "Starte ein neues Projekt für einen Kunden.",
         "Welche meiner Projekte sind aktiv?"
+      ] },
+      { "label": "Team", "items": [
+        "Lade einen Kollegen per E-Mail ein.",
+        "Welche Rollen gibt es in meiner Organisation?",
+        "Wen habe ich eingeladen, der noch nicht beigetreten ist?"
+      ] },
+      { "label": "Dokumente & Teilen", "items": [
+        "Schreibe ein Anschreiben an einen Kunden und speichere es als Briefkopf.",
+        "Erstelle einen teilbaren Link für eine Rechnung.",
+        "Erstelle aus einer bezahlten Rechnung einen Beleg."
       ] },
       { "label": "Abonnement & Abrechnung", "items": [
         "Welchen Tarif habe ich und wann verlängert er sich?",
         "Zeig mir meine Abrechnungshistorie."
       ] },
       { "label": "Aktionen", "items": [
-        "Erstelle einen Rechnungsentwurf für einen meiner Kunden.",
-        "Hilf mir, eine Rechnung als bezahlt zu markieren.",
-        "Erstelle einen teilbaren Link für eine Rechnung."
+        "Markiere eine Rechnung als bezahlt.",
+        "Füge einen neuen Kunden hinzu.",
+        "Verknüpfe eine Rechnung mit einem Projekt."
       ] },
       { "label": "Textentwürfe", "items": [
         "Verfasse eine höfliche Erinnerung für meine am längsten überfällige Rechnung.",
