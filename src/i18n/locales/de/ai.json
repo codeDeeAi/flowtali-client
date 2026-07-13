@@ -121,5 +121,57 @@
     "error": "Beim Erreichen Ihres KI-Anbieters ist etwas schiefgelaufen. Bitte versuchen Sie es erneut.",
     "inputPlaceholder": "Nachricht an Flowtali AI…",
     "disclaimer": "Flowtali AI kann Fehler machen. Überprüfen Sie wichtige Inhalte, bevor Sie sie senden."
+  },
+  "confirm": {
+    "title": "Aktion bestätigen",
+    "confirm": "Bestätigen",
+    "delete": "Löschen",
+    "cancel": "Abbrechen",
+    "running": "Wird ausgeführt…",
+    "done": "Fertig.",
+    "failed": "Die Aktion konnte nicht abgeschlossen werden. Bitte erneut versuchen.",
+    "cancelled": "Okay, ich mache das nicht.",
+    "openLink": "Link öffnen",
+    "view": "Ansehen",
+    "revenueWarning": "Eine Rechnung als bezahlt zu markieren zählt sie zum Umsatz und zu den Auswertungen.",
+    "warnings": {
+      "delete": "Dadurch wird der Datensatz gelöscht und kann von hier aus nicht rückgängig gemacht werden.",
+      "send": "Dadurch wird dem Kunden eine E-Mail gesendet, die nicht zurückgeholt werden kann."
+    },
+    "actions": {
+      "add_client": "Kunde hinzufügen",
+      "create_invoice_draft": "Rechnungsentwurf erstellen",
+      "create_receipt_from_invoice": "Beleg aus Rechnung erstellen",
+      "create_receipt": "Beleg erstellen",
+      "cancel_invitation": "Einladung stornieren",
+      "create_invoice_share_link": "Teilbaren Rechnungslink erstellen",
+      "update_invoice_status": "Rechnungsstatus ändern",
+      "update_invoice": "Rechnung bearbeiten",
+      "update_client": "Kunde bearbeiten",
+      "create_project": "Projekt erstellen",
+      "update_project": "Projekt bearbeiten",
+      "create_letterhead": "Briefkopf speichern",
+      "invite_team_member": "Teammitglied einladen",
+      "create_receipt_share_link": "Teilbaren Belegs-Link erstellen",
+      "create_letterhead_share_link": "Teilbaren Briefkopf-Link erstellen",
+      "revoke_invoice_share_link": "Rechnungslink widerrufen",
+      "link_invoice_to_project": "Rechnung mit Projekt verknüpfen",
+      "delete_project": "Projekt löschen",
+      "delete_letterhead": "Briefkopf löschen",
+      "send_payment_reminder": "Zahlungserinnerung per E-Mail",
+      "delete_invoice": "Rechnung löschen",
+      "delete_receipt": "Beleg löschen",
+      "delete_client": "Kunde löschen"
+    }
+  },
+  "history": {
+    "title": "Chats",
+    "new": "Neuer Chat",
+    "empty": "Noch keine gespeicherten Chats.",
+    "loadMore": "Ältere Chats laden",
+    "retention": "Chats werden 2 Wochen lang gespeichert und danach automatisch gelöscht.",
+    "retentionNote": "Ihre Chats werden hier 2 Wochen lang gespeichert und danach automatisch gelöscht.",
+    "delete": "Chat löschen",
+    "now": "jetzt"
   }
 }

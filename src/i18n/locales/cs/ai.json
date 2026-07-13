@@ -121,5 +121,57 @@
     "error": "Při připojení k vašemu poskytovateli AI došlo k chybě. Zkuste to prosím znovu.",
     "inputPlaceholder": "Zpráva pro Flowtali AI…",
     "disclaimer": "Flowtali AI může dělat chyby. Před odesláním zkontrolujte důležitý obsah."
+  },
+  "confirm": {
+    "title": "Potvrdit akci",
+    "confirm": "Potvrdit",
+    "delete": "Smazat",
+    "cancel": "Zrušit",
+    "running": "Provádění…",
+    "done": "Hotovo.",
+    "failed": "Akci se nepodařilo dokončit. Zkuste to prosím znovu.",
+    "cancelled": "Dobře, neprovedu to.",
+    "openLink": "Otevřít odkaz",
+    "view": "Zobrazit",
+    "revenueWarning": "Označení faktury jako zaplacené ji započítá do tržeb a výkazů.",
+    "warnings": {
+      "delete": "Tímto se záznam smaže a nelze to odtud vrátit zpět.",
+      "send": "Tímto se odešle e-mail klientovi a nelze jej vzít zpět."
+    },
+    "actions": {
+      "add_client": "Přidat klienta",
+      "create_invoice_draft": "Vytvořit koncept faktury",
+      "create_receipt_from_invoice": "Vytvořit doklad z faktury",
+      "create_receipt": "Vytvořit doklad",
+      "cancel_invitation": "Zrušit pozvánku",
+      "create_invoice_share_link": "Vytvořit sdílený odkaz na fakturu",
+      "update_invoice_status": "Změnit stav faktury",
+      "update_invoice": "Upravit fakturu",
+      "update_client": "Upravit klienta",
+      "create_project": "Vytvořit projekt",
+      "update_project": "Upravit projekt",
+      "create_letterhead": "Uložit hlavičkový dopis",
+      "invite_team_member": "Pozvat člena týmu",
+      "create_receipt_share_link": "Vytvořit sdílený odkaz na doklad",
+      "create_letterhead_share_link": "Vytvořit sdílený odkaz na hlavičkový dopis",
+      "revoke_invoice_share_link": "Zrušit odkaz na fakturu",
+      "link_invoice_to_project": "Připojit fakturu k projektu",
+      "delete_project": "Smazat projekt",
+      "delete_letterhead": "Smazat hlavičkový dopis",
+      "send_payment_reminder": "Odeslat upomínku e-mailem",
+      "delete_invoice": "Smazat fakturu",
+      "delete_receipt": "Smazat doklad",
+      "delete_client": "Smazat klienta"
+    }
+  },
+  "history": {
+    "title": "Konverzace",
+    "new": "Nová konverzace",
+    "empty": "Zatím žádné uložené konverzace.",
+    "loadMore": "Načíst starší konverzace",
+    "retention": "Konverzace se ukládají po dobu 2 týdnů, poté se automaticky vymažou.",
+    "retentionNote": "Vaše konverzace se zde ukládají po dobu 2 týdnů, poté se automaticky vymažou.",
+    "delete": "Smazat konverzaci",
+    "now": "nyní"
   }
 }

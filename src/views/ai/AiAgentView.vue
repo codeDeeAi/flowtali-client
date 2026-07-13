@@ -447,6 +447,10 @@ onMounted(async () => {
           >
             <Icon icon="lucide:lightbulb" class="w-3.5 h-3.5" /> {{ t('ai.agent.moreExamples') }}
           </button>
+
+          <p class="mt-8 inline-flex items-center gap-1.5 text-[11px] text-gray-700">
+            <Icon icon="lucide:clock" class="w-3 h-3" /> {{ t('ai.history.retentionNote') }}
+          </p>
         </div>
 
         <!-- Conversation -->

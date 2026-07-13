@@ -121,5 +121,57 @@
     "error": "Un problème est survenu lors de la connexion à votre fournisseur d'IA. Veuillez réessayer.",
     "inputPlaceholder": "Message à Flowtali AI…",
     "disclaimer": "Flowtali AI peut faire des erreurs. Vérifiez les contenus importants avant de les envoyer."
+  },
+  "confirm": {
+    "title": "Confirmer l'action",
+    "confirm": "Confirmer",
+    "delete": "Supprimer",
+    "cancel": "Annuler",
+    "running": "Exécution…",
+    "done": "Terminé.",
+    "failed": "Cette action n'a pas pu être effectuée. Veuillez réessayer.",
+    "cancelled": "D'accord, je ne le ferai pas.",
+    "openLink": "Ouvrir le lien",
+    "view": "Voir",
+    "revenueWarning": "Marquer une facture comme payée la comptabilise dans le chiffre d'affaires et les rapports.",
+    "warnings": {
+      "delete": "Ceci supprime l'enregistrement et ne peut pas être annulé d'ici.",
+      "send": "Ceci envoie un e-mail au client et ne peut pas être annulé."
+    },
+    "actions": {
+      "add_client": "Ajouter un client",
+      "create_invoice_draft": "Créer un brouillon de facture",
+      "create_receipt_from_invoice": "Créer un reçu à partir d'une facture",
+      "create_receipt": "Créer un reçu",
+      "cancel_invitation": "Annuler l'invitation",
+      "create_invoice_share_link": "Créer un lien de facture partageable",
+      "update_invoice_status": "Modifier le statut de la facture",
+      "update_invoice": "Modifier la facture",
+      "update_client": "Modifier le client",
+      "create_project": "Créer un projet",
+      "update_project": "Modifier le projet",
+      "create_letterhead": "Enregistrer l'en-tête",
+      "invite_team_member": "Inviter un membre",
+      "create_receipt_share_link": "Créer un lien de reçu partageable",
+      "create_letterhead_share_link": "Créer un lien d'en-tête partageable",
+      "revoke_invoice_share_link": "Révoquer le lien de facture",
+      "link_invoice_to_project": "Lier la facture au projet",
+      "delete_project": "Supprimer le projet",
+      "delete_letterhead": "Supprimer l'en-tête",
+      "send_payment_reminder": "Envoyer une relance par e-mail",
+      "delete_invoice": "Supprimer la facture",
+      "delete_receipt": "Supprimer le reçu",
+      "delete_client": "Supprimer le client"
+    }
+  },
+  "history": {
+    "title": "Discussions",
+    "new": "Nouvelle conversation",
+    "empty": "Aucune conversation enregistrée pour le moment.",
+    "loadMore": "Charger les conversations plus anciennes",
+    "retention": "Les conversations sont conservées 2 semaines, puis effacées automatiquement.",
+    "retentionNote": "Vos conversations sont conservées ici 2 semaines, puis effacées automatiquement.",
+    "delete": "Supprimer la conversation",
+    "now": "maintenant"
   }
 }
