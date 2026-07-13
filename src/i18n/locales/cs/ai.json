@@ -72,10 +72,51 @@
     "emptyTitle": "Jak vám mohu pomoci?",
     "emptyBody": "Požádejte mě o napsání dopisu, vylepšení popisu faktury nebo shrnutí vaší fakturace – v kterémkoli z vašich jazyků.",
     "suggestions": [
-      "Napiš zdvořilou upomínku k platbě klientovi, jehož faktura je 2 týdny po splatnosti.",
-      "Napiš profesionální poděkování klientovi, který právě zaplatil.",
-      "Přeměň „něco s logem a 3 revize“ na přehlednou položku faktury.",
-      "Napiš úvodní dopis k projektu pro nového brandingového klienta."
+      "Dej mi rychlý přehled o mém podnikání.",
+      "Vypiš mé faktury po splatnosti.",
+      "Jaké jsou mé celkové tržby a nesplacený zůstatek?",
+      "Napiš zdvořilou upomínku pro mou nejdéle nezaplacenou fakturu."
+    ],
+    "moreExamples": "Další příklady",
+    "examplesTitle": "Na co se mohu zeptat?",
+    "examplesSubtitle": "Klepnutím na otázku začnete. Asistent používá pouze data, ke kterým máte přístup.",
+    "suggestionGroups": [
+      { "label": "Přehled", "items": [
+        "Dej mi rychlý přehled o mém podnikání.",
+        "Jak si celkově vede moje firma?"
+      ] },
+      { "label": "Faktury", "items": [
+        "Vypiš mé faktury po splatnosti.",
+        "Kolik faktur jsem tento měsíc vystavil?",
+        "Ukaž mi detail mé nejnovější faktury."
+      ] },
+      { "label": "Tržby a pohledávky", "items": [
+        "Jaké jsou mé celkové tržby a nesplacený zůstatek?",
+        "Kolik je po splatnosti více než 60 dní?",
+        "Ukaž stáří mých pohledávek podle pásem."
+      ] },
+      { "label": "Analýzy", "items": [
+        "Dej mi mé KPI za posledních 12 měsíců.",
+        "Jaká je má míra inkasa a průměrná doba splatnosti?",
+        "Kdo jsou mí nejlepší klienti podle tržeb?"
+      ] },
+      { "label": "Klienti a projekty", "items": [
+        "Vypiš mé klienty a jejich dlužné částky.",
+        "Které z mých projektů jsou aktivní?"
+      ] },
+      { "label": "Předplatné a fakturace", "items": [
+        "Jaký mám tarif a kdy se obnovuje?",
+        "Ukaž mi historii plateb."
+      ] },
+      { "label": "Akce", "items": [
+        "Vytvoř koncept faktury pro jednoho z mých klientů.",
+        "Pomoz mi označit fakturu jako zaplacenou.",
+        "Vytvoř sdílený odkaz na fakturu."
+      ] },
+      { "label": "Psaní textů", "items": [
+        "Napiš zdvořilou upomínku pro mou nejdéle nezaplacenou fakturu.",
+        "Napiš poděkování klientovi, který právě zaplatil."
+      ] }
     ],
     "error": "Při připojení k vašemu poskytovateli AI došlo k chybě. Zkuste to prosím znovu.",
     "inputPlaceholder": "Zpráva pro Flowtali AI…",

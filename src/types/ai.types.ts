@@ -50,11 +50,30 @@ export interface IAiReference {
   id: string
 }
 
+/** A mutating action the agent has prepared, awaiting the user's confirmation. */
+export interface IAiPendingAction {
+  name: string
+  args: Record<string, unknown>
+}
+
 export interface IAiChatResponse {
   reply: string
   provider: AiProviderId
   model: string
   references?: IAiReference[]
+  /** Actions the agent prepared this turn — the UI confirms them before running. */
+  pending_actions?: IAiPendingAction[]
+}
+
+/** Result of executing a confirmed action. `message`/`link` power the follow-up. */
+export interface IAiActionResult {
+  created?: boolean
+  updated?: boolean
+  error?: string
+  message?: string
+  link?: string
+  url?: string
+  [key: string]: unknown
 }
 
 export type AiTone = 'formal' | 'friendly' | 'firm' | 'persuasive'

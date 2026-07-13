@@ -72,10 +72,51 @@
     "emptyTitle": "Comment puis-je vous aider ?",
     "emptyBody": "Demandez-moi de rédiger une lettre, d'améliorer la description d'une facture ou de résumer votre facturation – dans n'importe laquelle de vos langues.",
     "suggestions": [
-      "Rédige un rappel de paiement poli à un client dont la facture est en retard de 2 semaines.",
-      "Rédige une note de remerciement professionnelle pour un client qui vient de payer.",
-      "Transforme « des trucs de logo et 3 révisions » en une ligne de facture claire.",
-      "Rédige une lettre d'engagement de projet pour un nouveau client de branding."
+      "Fais-moi un point rapide sur mon activité.",
+      "Liste mes factures en retard.",
+      "Quel est mon chiffre d'affaires total et mon solde impayé ?",
+      "Rédige une relance polie pour ma facture la plus en retard."
+    ],
+    "moreExamples": "Plus d'exemples",
+    "examplesTitle": "Que puis-je demander ?",
+    "examplesSubtitle": "Touchez une question pour commencer. L'assistant n'utilise que les données auxquelles vous avez accès.",
+    "suggestionGroups": [
+      { "label": "Vue d'ensemble", "items": [
+        "Fais-moi un point rapide sur mon activité.",
+        "Comment se porte mon activité dans l'ensemble ?"
+      ] },
+      { "label": "Factures", "items": [
+        "Liste mes factures en retard.",
+        "Combien de factures ai-je émises ce mois-ci ?",
+        "Montre-moi ma facture la plus récente en détail."
+      ] },
+      { "label": "Revenus & créances", "items": [
+        "Quel est mon chiffre d'affaires total et mon solde impayé ?",
+        "Combien est en retard de plus de 60 jours ?",
+        "Montre-moi l'ancienneté de mes créances par tranche."
+      ] },
+      { "label": "Analyses", "items": [
+        "Donne-moi mes indicateurs des 12 derniers mois.",
+        "Quel est mon taux de recouvrement et mon délai de paiement moyen ?",
+        "Qui sont mes meilleurs clients par chiffre d'affaires ?"
+      ] },
+      { "label": "Clients & projets", "items": [
+        "Liste mes clients et ce qu'ils doivent.",
+        "Lesquels de mes projets sont actifs ?"
+      ] },
+      { "label": "Abonnement & facturation", "items": [
+        "Quel est mon forfait et quand se renouvelle-t-il ?",
+        "Montre-moi mon historique de facturation."
+      ] },
+      { "label": "Actions", "items": [
+        "Crée un brouillon de facture pour un de mes clients.",
+        "Aide-moi à marquer une facture comme payée.",
+        "Crée un lien partageable pour une facture."
+      ] },
+      { "label": "Rédaction", "items": [
+        "Rédige une relance polie pour ma facture la plus en retard.",
+        "Écris une note de remerciement pour un client qui vient de payer."
+      ] }
     ],
     "error": "Un problème est survenu lors de la connexion à votre fournisseur d'IA. Veuillez réessayer.",
     "inputPlaceholder": "Message à Flowtali AI…",

@@ -1,5 +1,6 @@
 import http from '@/services/utils/http'
 import type {
+  IAiActionResult,
   IAiChatMessage,
   IAiChatResponse,
   IAiCredential,
@@ -50,6 +51,14 @@ export const AiService = {
       messages,
       locale,
     })
+  },
+
+  /** Run a mutating action the user confirmed in the chat modal. */
+  executeAction(orgId: string, name: string, args: Record<string, unknown>) {
+    return http.post<{ data: { result: IAiActionResult } }>(
+      `/api/v1/orgs/${orgId}/ai/actions/execute`,
+      { name, args },
+    )
   },
 
   /** Draft the four Content-tab fields of a letterhead from a natural-language brief. */

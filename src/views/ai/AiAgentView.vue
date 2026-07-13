@@ -7,7 +7,8 @@ import { useAuthStore } from '@/stores/auth'
 import { usePermissions } from '@/composables/usePermissions'
 import { AiService } from '@/services/ai.service'
 import { renderMarkdown } from '@/services/utils/markdown'
-import type { IAiChatMessage, IAiReference, IAiReferenceLink } from '@/types/ai.types'
+import AiConfirmActionModal from './AiConfirmActionModal.vue'
+import type { IAiChatMessage, IAiPendingAction, IAiReference, IAiReferenceLink } from '@/types/ai.types'
 
 const { t, tm, rt, locale } = useI18n()
 const router = useRouter()
@@ -29,8 +30,26 @@ const composer = ref<HTMLTextAreaElement | null>(null)
 const errored = ref(false)              // last exchange failed → offer retry
 const copiedIndex = ref<number | null>(null)
 
+// Actions the agent prepared this turn, awaiting the user's confirmation.
+const pendingActions = ref<IAiPendingAction[]>([])
+const actionBusy = ref(false)
+const currentAction = computed(() => pendingActions.value[0] ?? null)
+
 const suggestions = computed(() => (tm('ai.agent.suggestions') as unknown[]) ?? [])
 const canSend = computed(() => input.value.trim().length > 0 && !sending.value)
+
+// Categorized example prompts shown in the "More examples" modal.
+const showExamples = ref(false)
+const suggestionGroups = computed(() =>
+  (tm('ai.agent.suggestionGroups') as { label: unknown; items: unknown[] }[]).map((g) => ({
+    label: rt(g.label as string),
+    items: (g.items as string[]).map((it) => rt(it)),
+  })),
+)
+function pickSuggestion(text: string) {
+  showExamples.value = false
+  send(text)
+}
 
 async function scrollToBottom() {
   await nextTick()
@@ -80,6 +99,10 @@ async function deliver() {
       content: data.data.reply,
       links: resolveLinks(data.data.references),
     })
+    // Surface any prepared actions for confirmation.
+    if (data.data.pending_actions?.length) {
+      pendingActions.value = [...data.data.pending_actions]
+    }
   } catch (e: unknown) {
     const err = e as { response?: { status?: number; data?: { data?: { not_configured?: boolean; invalid_model?: boolean }; message?: string } } }
     const body = err.response?.data
@@ -102,6 +125,34 @@ async function deliver() {
 function retry() {
   if (sending.value) return
   deliver()
+}
+
+// Run the front-of-queue action after the user confirms it in the modal.
+async function confirmAction() {
+  const action = currentAction.value
+  if (!action || actionBusy.value) return
+  actionBusy.value = true
+  try {
+    const { data } = await AiService.executeAction(orgId.value, action.name, action.args)
+    const result = data.data.result
+    let content = result.error ?? result.message ?? t('ai.confirm.done')
+    if (result.url) content += `\n\n[${t('ai.confirm.openLink')}](${result.url})`
+    else if (result.link) content += `\n\n[${t('ai.confirm.view')}](${result.link})`
+    messages.value.push({ role: 'assistant', content })
+  } catch {
+    messages.value.push({ role: 'assistant', content: t('ai.confirm.failed') })
+  } finally {
+    actionBusy.value = false
+    pendingActions.value.shift()   // advance to the next queued action (usually none)
+    await scrollToBottom()
+  }
+}
+
+// Dismiss all prepared actions without running them.
+function cancelActions() {
+  if (actionBusy.value) return
+  pendingActions.value = []
+  messages.value.push({ role: 'assistant', content: t('ai.confirm.cancelled') })
 }
 
 // Copy an assistant reply's raw text to the clipboard.
@@ -191,10 +242,16 @@ onMounted(checkStatus)
           </p>
         </div>
       </div>
-      <button v-if="state === 'ready' && messages.length" type="button" class="btn-ghost inline-flex items-center justify-center gap-1.5 text-[12px] px-3 py-1.5" @click="newChat">
-        <Icon icon="lucide:plus" class="w-3.5 h-3.5" />
-        {{ t('ai.agent.newChat') }}
-      </button>
+      <div v-if="state === 'ready'" class="flex items-center gap-1">
+        <button type="button" class="btn-ghost inline-flex items-center justify-center gap-1.5 text-[12px] px-3 py-1.5" @click="showExamples = true">
+          <Icon icon="lucide:lightbulb" class="w-3.5 h-3.5" />
+          <span class="hidden sm:inline">{{ t('ai.agent.moreExamples') }}</span>
+        </button>
+        <button v-if="messages.length" type="button" class="btn-ghost inline-flex items-center justify-center gap-1.5 text-[12px] px-3 py-1.5" @click="newChat">
+          <Icon icon="lucide:plus" class="w-3.5 h-3.5" />
+          {{ t('ai.agent.newChat') }}
+        </button>
+      </div>
     </div>
 
     <!-- Checking status -->
@@ -249,6 +306,14 @@ onMounted(checkStatus)
               {{ rt(s as string) }}
             </button>
           </div>
+
+          <button
+            type="button"
+            class="mt-4 inline-flex items-center gap-1.5 text-[12px] text-gray-700 hover:text-gray-1000 transition"
+            @click="showExamples = true"
+          >
+            <Icon icon="lucide:lightbulb" class="w-3.5 h-3.5" /> {{ t('ai.agent.moreExamples') }}
+          </button>
         </div>
 
         <!-- Conversation -->
@@ -368,6 +433,55 @@ onMounted(checkStatus)
         <p class="text-[10px] text-gray-700 mt-1.5 text-center">{{ t('ai.agent.disclaimer') }}</p>
       </div>
     </template>
+
+    <!-- Example prompts modal -->
+    <Teleport to="body">
+      <div
+        v-if="showExamples"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        @click.self="showExamples = false"
+      >
+        <div class="absolute inset-0 bg-gray-100/70" @click="showExamples = false"></div>
+        <div class="relative w-full max-w-lg max-h-[80vh] flex flex-col rounded-2xl bg-gray-200 border border-gray-400 shadow-xl">
+          <div class="flex items-start justify-between gap-3 px-5 py-4 border-b border-gray-400">
+            <div>
+              <h3 class="text-sm font-semibold text-gray-1000">{{ t('ai.agent.examplesTitle') }}</h3>
+              <p class="text-[11.5px] text-gray-700 mt-0.5">{{ t('ai.agent.examplesSubtitle') }}</p>
+            </div>
+            <button type="button" class="text-gray-700 hover:text-gray-1000 transition shrink-0" @click="showExamples = false">
+              <Icon icon="lucide:x" class="w-4 h-4" />
+            </button>
+          </div>
+
+          <div class="overflow-y-auto px-5 py-4 space-y-4">
+            <div v-for="(g, gi) in suggestionGroups" :key="gi">
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-1.5">{{ g.label }}</p>
+              <div class="space-y-1.5">
+                <button
+                  v-for="(item, ii) in g.items"
+                  :key="ii"
+                  type="button"
+                  class="w-full text-left rounded-lg border border-gray-400 bg-gray-100 hover:border-green-700/40 hover:bg-gray-200 px-3 py-2 text-[12.5px] text-gray-900 transition"
+                  @click="pickSuggestion(item)"
+                >
+                  {{ item }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- Confirm a prepared action before it runs -->
+    <AiConfirmActionModal
+      :action="currentAction"
+      :busy="actionBusy"
+      :queue-index="0"
+      :queue-total="pendingActions.length"
+      @confirm="confirmAction"
+      @cancel="cancelActions"
+    />
   </div>
 </template>
 

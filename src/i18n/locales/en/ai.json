@@ -72,13 +72,83 @@
     "emptyTitle": "How can I help?",
     "emptyBody": "Ask me to draft a letter, polish an invoice description, or summarize your billing — in any of your languages.",
     "suggestions": [
-      "Draft a polite payment reminder to a client whose invoice is 2 weeks overdue.",
-      "Write a professional thank-you note for a client who just paid.",
-      "Turn “logo stuff and 3 revisions” into a clean invoice line-item description.",
-      "Draft a project engagement letter for a new branding client."
+      "Give me a quick catch-up on my business.",
+      "List my overdue invoices.",
+      "What's my total revenue and outstanding balance?",
+      "Draft a polite reminder for my most overdue invoice."
+    ],
+    "moreExamples": "More examples",
+    "examplesTitle": "What can I ask?",
+    "examplesSubtitle": "Tap a question to start. The assistant only uses data you have access to.",
+    "suggestionGroups": [
+      { "label": "Overview", "items": [
+        "Give me a quick catch-up on my business.",
+        "How's my business doing overall?"
+      ] },
+      { "label": "Invoices", "items": [
+        "List my overdue invoices.",
+        "How many invoices did I issue this month?",
+        "Show me my most recent invoice in detail."
+      ] },
+      { "label": "Revenue & receivables", "items": [
+        "What's my total revenue and outstanding balance?",
+        "How much is more than 60 days overdue?",
+        "Show my receivables aging by bucket."
+      ] },
+      { "label": "Analytics", "items": [
+        "Give me my KPIs for the last 12 months.",
+        "What's my collection rate and average days-to-pay?",
+        "Who are my top clients by revenue?"
+      ] },
+      { "label": "Clients & projects", "items": [
+        "List my clients and what they owe.",
+        "Which of my projects are active?"
+      ] },
+      { "label": "Subscription & billing", "items": [
+        "What plan am I on and when does it renew?",
+        "Show my billing history."
+      ] },
+      { "label": "Actions", "items": [
+        "Draft a new invoice for one of my clients.",
+        "Help me mark an invoice as paid.",
+        "Create a shareable link for an invoice."
+      ] },
+      { "label": "Drafting", "items": [
+        "Draft a polite reminder for my most overdue invoice.",
+        "Write a thank-you note for a client who just paid."
+      ] }
     ],
     "error": "Something went wrong reaching your AI provider. Please try again.",
     "inputPlaceholder": "Message Flowtali AI…",
     "disclaimer": "Flowtali AI can make mistakes. Review important content before sending."
+  },
+  "confirm": {
+    "title": "Confirm action",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "running": "Running…",
+    "done": "Done.",
+    "failed": "That action couldn't be completed. Please try again.",
+    "cancelled": "Okay, I won't do that.",
+    "openLink": "Open link",
+    "view": "View",
+    "revenueWarning": "Marking an invoice as paid counts it toward revenue and reporting.",
+    "warnings": {
+      "delete": "This deletes the record and can't be undone from here.",
+      "send": "This emails the client and can't be unsent."
+    },
+    "actions": {
+      "add_client": "Add client",
+      "create_invoice_draft": "Create draft invoice",
+      "create_receipt_from_invoice": "Create receipt from invoice",
+      "create_invoice_share_link": "Create shareable invoice link",
+      "update_invoice_status": "Update invoice status",
+      "update_client": "Update client",
+      "send_payment_reminder": "Email payment reminder",
+      "delete_invoice": "Delete invoice",
+      "delete_receipt": "Delete receipt",
+      "delete_client": "Delete client"
+    }
   }
 }
