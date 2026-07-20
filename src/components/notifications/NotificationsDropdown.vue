@@ -26,6 +26,7 @@ const typeMeta: Record<string, { icon: string; color: string }> = {
   subscription_downgraded: { icon: 'lucide:arrow-down-circle', color: '#f87171' },
   trial_ending:            { icon: 'lucide:hourglass',    color: '#fbbf24' },
   trial_ended:             { icon: 'lucide:lock',         color: '#f87171' },
+  subscription_bonus_granted: { icon: 'lucide:gift',      color: '#22c55e' },
 }
 
 function meta(type: string) {
