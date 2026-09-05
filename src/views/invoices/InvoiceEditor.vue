@@ -83,11 +83,10 @@ const form = ref({
   fromPhone: '+1 415 555 0199',
   fromWebsite: 'www.acme.studio',
   fromAddress: '123 Design Street\nSan Francisco, CA 94105',
-  fromBankName: '',
-  fromBankAccountName: '',
-  fromBankAccountNumber: '',
-  fromBankSortCode: '',
-  fromBankIban: '',
+  bankAccounts: [] as {
+    id: number; label: string; bankName: string; accountName: string
+    accountNumber: string; sortCode: string; iban: string; swift: string; currency: string
+  }[],
   paymentLinks: [] as { id: number; type: string; value: string }[],
   logoUrl: '',
 
@@ -205,6 +204,75 @@ const total = computed(() => subtotal.value - discountAmt.value + taxesTotal.val
 const fmtMoney = (n: number) =>
   sym.value + n.toLocaleString(locale.value, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
+// ─── Bank accounts ────────────────────────────────────────────────────────────
+// An invoice may carry up to MAX_BANK_ACCOUNTS; the first one is mirrored onto
+// the legacy flat from_bank_* columns by the API.
+const MAX_BANK_ACCOUNTS = 3
+
+let nextBankId = 100
+const blankBankAccount = () => ({
+  id: nextBankId++, label: '', bankName: '', accountName: '',
+  accountNumber: '', sortCode: '', iban: '', swift: '', currency: '',
+})
+
+const canAddBankAccount = computed(() => form.value.bankAccounts.length < MAX_BANK_ACCOUNTS)
+
+/** Adding an account is a clear intent to show it — flip the toggle for them. */
+const revealBankDetails = () => {
+  if (form.value.bankAccounts.length === 1) form.value.showBankDetails = true
+}
+
+const addBankAccount = () => {
+  if (!canAddBankAccount.value) return
+  form.value.bankAccounts.push(blankBankAccount())
+  revealBankDetails()
+}
+
+const removeBankAccount = (id: number) => {
+  form.value.bankAccounts = form.value.bankAccounts.filter(b => b.id !== id)
+}
+
+/** Quick-fill appends a saved account, ignoring ones already on the invoice. */
+const fillBank = (b: {
+  label?: string | null; bank_name?: string | null; account_name?: string | null
+  account_number?: string | null; sort_code?: string | null; iban?: string | null
+  swift?: string | null; currency?: string | null
+}) => {
+  if (!canAddBankAccount.value) return
+
+  const already = form.value.bankAccounts.some(a =>
+    a.bankName === (b.bank_name ?? '') && a.accountNumber === (b.account_number ?? ''),
+  )
+  if (already) return
+
+  form.value.bankAccounts.push({
+    ...blankBankAccount(),
+    label:         b.label          ?? '',
+    bankName:      b.bank_name      ?? '',
+    accountName:   b.account_name   ?? '',
+    accountNumber: b.account_number ?? '',
+    sortCode:      b.sort_code      ?? '',
+    iban:          b.iban           ?? '',
+    swift:         b.swift          ?? '',
+    currency:      b.currency       ?? '',
+  })
+  revealBankDetails()
+}
+
+/** Serialised shape shared by the save payload and the live preview. */
+const bankAccountsPayload = computed(() =>
+  form.value.bankAccounts.map(b => ({
+    label:          b.label         || null,
+    bank_name:      b.bankName      || null,
+    account_name:   b.accountName   || null,
+    account_number: b.accountNumber || null,
+    sort_code:      b.sortCode      || null,
+    iban:           b.iban          || null,
+    swift:          b.swift         || null,
+    currency:       b.currency      || null,
+  })),
+)
+
 // ─── Live preview document ────────────────────────────────────────────────────
 // The preview, the view page, the shared link and the PDF all render through
 // InvoiceDocument, so the editor maps its camelCase form onto the API shape.
@@ -223,11 +291,12 @@ const previewDoc = computed(() => ({
   from_phone:               form.value.fromPhone || null,
   from_website:             form.value.fromWebsite || null,
   from_address:             form.value.fromAddress || null,
-  from_bank_name:           form.value.fromBankName || null,
-  from_bank_account_name:   form.value.fromBankAccountName || null,
-  from_bank_account_number: form.value.fromBankAccountNumber || null,
-  from_bank_sort_code:      form.value.fromBankSortCode || null,
-  from_bank_iban:           form.value.fromBankIban || null,
+  from_bank_name:           bankAccountsPayload.value[0]?.bank_name ?? null,
+  from_bank_account_name:   bankAccountsPayload.value[0]?.account_name ?? null,
+  from_bank_account_number: bankAccountsPayload.value[0]?.account_number ?? null,
+  from_bank_sort_code:      bankAccountsPayload.value[0]?.sort_code ?? null,
+  from_bank_iban:           bankAccountsPayload.value[0]?.iban ?? null,
+  bank_accounts:            bankAccountsPayload.value,
   logo_url:                 form.value.logoUrl || null,
   payment_links:            form.value.paymentLinks,
   to_name:                  form.value.toName || null,
@@ -331,17 +400,6 @@ const fillFrom = (p: {
   if (p.website  !== undefined) form.value.fromWebsite = p.website  ?? ''
   if (p.address  !== undefined) form.value.fromAddress = p.address  ?? ''
   if (p.logo_url) form.value.logoUrl = p.logo_url
-}
-
-const fillBank = (b: {
-  bank_name?: string | null; account_name?: string | null; account_number?: string | null
-  sort_code?: string | null; iban?: string | null
-}) => {
-  form.value.fromBankName          = b.bank_name      ?? ''
-  form.value.fromBankAccountName   = b.account_name   ?? ''
-  form.value.fromBankAccountNumber = b.account_number ?? ''
-  form.value.fromBankSortCode      = b.sort_code      ?? ''
-  form.value.fromBankIban          = b.iban            ?? ''
 }
 
 const addSavedPaymentLink = (link: { id: string; label: string; type: string; value: string }) => {
@@ -477,11 +535,7 @@ const buildPayload = (overrides?: Record<string, any>) => ({
   from_phone:               form.value.fromPhone || null,
   from_website:             form.value.fromWebsite || null,
   from_address:             form.value.fromAddress || null,
-  from_bank_name:           form.value.fromBankName || null,
-  from_bank_account_name:   form.value.fromBankAccountName || null,
-  from_bank_account_number: form.value.fromBankAccountNumber || null,
-  from_bank_sort_code:      form.value.fromBankSortCode || null,
-  from_bank_iban:           form.value.fromBankIban || null,
+  bank_accounts:            bankAccountsPayload.value,
   logo_url:                 form.value.logoUrl || null,
   payment_links:            form.value.paymentLinks,
   to_name:                  form.value.toName || null,
@@ -742,44 +796,93 @@ const handleSaveDraft = () => handleSave('draft')
               </label>
             </div>
 
-            <!-- Bank / Payment Details -->
+            <!-- Bank / Payment Details — up to MAX_BANK_ACCOUNTS accounts -->
             <div class="h-px bg-gray-400"></div>
             <div class="space-y-3">
               <div class="flex items-center justify-between">
                 <p class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('invoiceEditor.from.bankDetails') }}</p>
+                <span v-if="form.bankAccounts.length" class="text-[10px] text-gray-700/60">
+                  {{ form.bankAccounts.length }} / {{ MAX_BANK_ACCOUNTS }}
+                </span>
               </div>
-              <!-- Saved bank account quick-fill -->
+
+              <!-- Saved bank account quick-add -->
               <div v-if="orgBankAccounts.length" class="space-y-1">
                 <p class="text-[10px] text-gray-700/70 mb-1">{{ t('invoiceEditor.from.quickFillBank') }}</p>
                 <div class="flex flex-wrap gap-1.5">
                   <button
                     v-for="b in orgBankAccounts" :key="b.id"
                     type="button"
+                    :disabled="!canAddBankAccount"
                     @click="fillBank(b)"
-                    class="text-xs px-2.5 py-1 rounded border border-gray-500 text-gray-700 hover:border-green-700/50 hover:text-gray-1000 transition-colors"
+                    class="text-xs px-2.5 py-1 rounded border border-gray-500 text-gray-700 hover:border-green-700/50 hover:text-gray-1000 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-500 disabled:hover:text-gray-700"
                   >{{ b.label }}</button>
                 </div>
               </div>
-              <div class="space-y-1">
-                <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.bankName') }}</label>
-                <input v-model="form.fromBankName" class="app-inp text-sm" :placeholder="t('invoiceEditor.from.bankNamePlaceholder')" />
+
+              <div v-if="!form.bankAccounts.length" class="text-[11px] text-gray-700/60 py-1">
+                {{ t('invoiceEditor.from.noBankAccounts') }}
               </div>
-              <div class="space-y-1">
-                <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.accountName') }}</label>
-                <input v-model="form.fromBankAccountName" class="app-inp text-sm" :placeholder="t('invoiceEditor.from.accountNamePlaceholder')" />
+
+              <div v-else class="space-y-3">
+                <div
+                  v-for="(bank, idx) in form.bankAccounts" :key="bank.id"
+                  class="bg-gray-400/40 border border-gray-500 rounded-lg p-3 space-y-2"
+                >
+                  <div class="flex items-center justify-between">
+                    <span class="text-[10px] uppercase tracking-wider text-gray-700">
+                      {{ idx === 0 ? t('invoiceEditor.from.primaryAccount') : t('invoiceEditor.from.accountN', { n: idx + 1 }) }}
+                    </span>
+                    <button @click="removeBankAccount(bank.id)" class="text-gray-700 hover:text-red-400 transition-colors shrink-0">
+                      <Icon icon="lucide:x" class="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+
+                  <div class="space-y-1">
+                    <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.accountLabel') }} <span class="text-gray-700/50">{{ t('invoiceEditor.common.optional') }}</span></label>
+                    <input v-model="bank.label" class="app-inp text-sm" :placeholder="t('invoiceEditor.from.accountLabelPlaceholder')" />
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.bankName') }}</label>
+                    <input v-model="bank.bankName" class="app-inp text-sm" :placeholder="t('invoiceEditor.from.bankNamePlaceholder')" />
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.accountName') }}</label>
+                    <input v-model="bank.accountName" class="app-inp text-sm" :placeholder="t('invoiceEditor.from.accountNamePlaceholder')" />
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.accountNumber') }}</label>
+                    <input v-model="bank.accountNumber" class="app-inp text-sm font-mono" placeholder="0000000000" />
+                  </div>
+                  <div class="grid grid-cols-2 gap-2">
+                    <div class="space-y-1">
+                      <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.sortCode') }}</label>
+                      <input v-model="bank.sortCode" class="app-inp text-sm font-mono" placeholder="12-34-56" />
+                    </div>
+                    <div class="space-y-1">
+                      <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.currency') }}</label>
+                      <input v-model="bank.currency" class="app-inp text-sm" :placeholder="form.currency" />
+                    </div>
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.iban') }} <span class="text-gray-700/50">{{ t('invoiceEditor.common.optional') }}</span></label>
+                    <input v-model="bank.iban" class="app-inp text-sm font-mono" placeholder="GB29 NWBK 6016 1331 9268 19" />
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.swift') }} <span class="text-gray-700/50">{{ t('invoiceEditor.common.optional') }}</span></label>
+                    <input v-model="bank.swift" class="app-inp text-sm font-mono" placeholder="NWBKGB2L" />
+                  </div>
+                </div>
               </div>
-              <div class="space-y-1">
-                <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.accountNumber') }}</label>
-                <input v-model="form.fromBankAccountNumber" class="app-inp text-sm font-mono" placeholder="0000000000" />
-              </div>
-              <div class="space-y-1">
-                <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.sortCode') }}</label>
-                <input v-model="form.fromBankSortCode" class="app-inp text-sm font-mono" placeholder="12-34-56" />
-              </div>
-              <div class="space-y-1">
-                <label class="text-[10px] text-gray-700">{{ t('invoiceEditor.from.iban') }} <span class="text-gray-700/50">{{ t('invoiceEditor.common.optional') }}</span></label>
-                <input v-model="form.fromBankIban" class="app-inp text-sm font-mono" placeholder="GB29 NWBK 6016 1331 9268 19" />
-              </div>
+
+              <button
+                v-if="canAddBankAccount"
+                @click="addBankAccount"
+                class="w-full flex items-center justify-center gap-2 py-2 border border-dashed border-gray-500 hover:border-green-700/50 rounded-lg text-xs text-gray-700 hover:text-gray-1000 transition-colors"
+              >
+                <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> {{ t('invoiceEditor.from.addBankAccount') }}
+              </button>
+              <p v-else class="text-[10px] text-gray-700/60 text-center">{{ t('invoiceEditor.from.bankAccountLimit', { n: MAX_BANK_ACCOUNTS }) }}</p>
             </div>
 
             <div class="h-px bg-gray-400"></div>

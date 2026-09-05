@@ -8,7 +8,7 @@
  */
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { IInvoice } from '@/services/invoice.service'
+import type { IInvoice, IInvoiceBankAccount } from '@/services/invoice.service'
 
 /** A4 width in CSS pixels at 96dpi — the page is always laid out at this width. */
 const PAGE_WIDTH = 794
@@ -47,6 +47,61 @@ const formatDate = (d: string | null | undefined) => {
   const [y, m, day] = d.slice(0, 10).split('-')
   if (!y || !m || !day) return d
   return new Date(+y, +m - 1, +day).toLocaleDateString(locale.value, { year: 'numeric', month: 'long', day: 'numeric' })
+}
+
+// ─── Bank accounts ────────────────────────────────────────────────────────────
+const BANK_FIELDS = ['bank_name', 'account_name', 'account_number', 'sort_code', 'iban', 'swift'] as const
+
+const hasBankContent = (b: IInvoiceBankAccount) =>
+  BANK_FIELDS.some(f => (b[f] ?? '').toString().trim() !== '')
+
+/**
+ * The accounts to print. The API normalises this, but the editor preview and
+ * any response predating multi-account support may only carry the flat
+ * `from_bank_*` fields — those still render as a single account.
+ */
+const bankAccounts = computed<IInvoiceBankAccount[]>(() => {
+  const list = (props.doc.bank_accounts ?? []).filter(hasBankContent)
+  if (list.length) return list
+
+  const legacy: IInvoiceBankAccount = {
+    bank_name: props.doc.from_bank_name,
+    account_name: props.doc.from_bank_account_name,
+    account_number: props.doc.from_bank_account_number,
+    sort_code: props.doc.from_bank_sort_code,
+    iban: props.doc.from_bank_iban,
+  }
+  return hasBankContent(legacy) ? [legacy] : []
+})
+
+/** Rows for one account, blanks dropped. `compact` shortens the sort-code label. */
+const bankRows = (b: IInvoiceBankAccount, compact = false) => {
+  const rows: { label: string; value: string; mono: boolean }[] = [
+    { label: t('document.bankInline.bank'), value: b.bank_name ?? '', mono: false },
+    { label: t('document.bankInline.name'), value: b.account_name ?? '', mono: false },
+    { label: t('document.bankInline.account'), value: b.account_number ?? '', mono: true },
+    { label: t(compact ? 'document.bankInline.sort' : 'document.bankInline.sortCode'), value: b.sort_code ?? '', mono: true },
+    { label: t('document.bankInline.iban'), value: b.iban ?? '', mono: true },
+    { label: t('document.bankInline.swift'), value: b.swift ?? '', mono: true },
+  ]
+  return rows.filter(r => r.value.trim() !== '')
+}
+
+/**
+ * A heading only earns its place when it tells the reader something: a named
+ * or currency-tagged account, or one of several. A lone unlabelled account
+ * renders exactly as it did before multi-account support.
+ */
+const bankHeading = (b: IInvoiceBankAccount, i: number) => {
+  // Users often name an account after its currency — don't print "NGN · NGN".
+  const parts = [b.label, b.currency]
+    .map(v => (v ?? '').trim())
+    .filter(v => v !== '')
+  const named = [...new Set(parts.map(v => v.toUpperCase()))].length === 1
+    ? parts[0]!
+    : parts.join(' · ')
+  if (named) return named
+  return bankAccounts.value.length > 1 ? t('document.accountN', { n: i + 1 }) : ''
 }
 
 // ─── Page scaling ─────────────────────────────────────────────────────────────
@@ -242,12 +297,25 @@ const scalerStyle = computed(() => ({
           <!-- Bank details + Payment links -->
           <div v-if="doc.show_bank_details" style="border-top: 1px solid #f3f4f6; padding-top: 20px; margin-bottom: 16px">
             <div class="text-gray-400 uppercase tracking-widest mb-3" style="font-size:10px">{{ t('document.paymentDetails') }}</div>
-            <div class="grid grid-cols-2 gap-x-6 gap-y-1" style="font-size: 12px">
-              <div v-if="doc.from_bank_name" class="flex gap-2"><span class="text-gray-400">{{ t('document.bankInline.bank') }}:</span><span class="text-gray-700">{{ doc.from_bank_name }}</span></div>
-              <div v-if="doc.from_bank_account_name" class="flex gap-2"><span class="text-gray-400">{{ t('document.bankInline.name') }}:</span><span class="text-gray-700">{{ doc.from_bank_account_name }}</span></div>
-              <div v-if="doc.from_bank_account_number" class="flex gap-2"><span class="text-gray-400">{{ t('document.bankInline.account') }}:</span><span class="font-mono text-gray-700">{{ doc.from_bank_account_number }}</span></div>
-              <div v-if="doc.from_bank_sort_code" class="flex gap-2"><span class="text-gray-400">{{ t('document.bankInline.sortCode') }}:</span><span class="font-mono text-gray-700">{{ doc.from_bank_sort_code }}</span></div>
-              <div v-if="doc.from_bank_iban" class="flex gap-2"><span class="text-gray-400">{{ t('document.bankInline.iban') }}:</span><span class="font-mono text-gray-700">{{ doc.from_bank_iban }}</span></div>
+            <!-- One account keeps the original two-column pair layout; several sit side by side. -->
+            <div
+              v-if="bankAccounts.length === 1"
+              class="grid grid-cols-2 gap-x-6 gap-y-1"
+              style="font-size: 12px"
+            >
+              <div v-for="(row, r) in bankRows(bankAccounts[0]!)" :key="r" class="flex gap-2">
+                <span class="text-gray-400">{{ row.label }}:</span>
+                <span :class="row.mono ? 'font-mono text-gray-700' : 'text-gray-700'">{{ row.value }}</span>
+              </div>
+            </div>
+            <div v-else class="grid gap-x-6 gap-y-3" :style="{ gridTemplateColumns: `repeat(${bankAccounts.length}, minmax(0, 1fr))`, fontSize: '12px' }">
+              <div v-for="(bank, i) in bankAccounts" :key="i">
+                <div class="text-gray-500 font-semibold mb-1" style="font-size: 10px">{{ bankHeading(bank, i) }}</div>
+                <div v-for="(row, r) in bankRows(bank, true)" :key="r" class="flex gap-1.5" style="font-size: 11px">
+                  <span class="text-gray-400 shrink-0">{{ row.label }}:</span>
+                  <span :class="row.mono ? 'font-mono text-gray-700 break-all' : 'text-gray-700'">{{ row.value }}</span>
+                </div>
+              </div>
             </div>
             <div v-if="doc.payment_links.length" class="flex flex-wrap gap-3 mt-3">
               <div v-for="(link, i) in doc.payment_links" :key="i" class="flex items-center gap-1.5" style="font-size: 11px">
@@ -297,13 +365,23 @@ const scalerStyle = computed(() => ({
           <!-- Bank details in sidebar -->
           <div v-if="doc.show_bank_details" class="mt-8 pt-6" style="border-top: 1px solid rgba(255,255,255,0.2)">
             <div class="text-white/50 uppercase tracking-widest mb-3" style="font-size:9px">{{ t('document.bankPayment') }}</div>
-            <div class="space-y-1 text-xs text-white/70">
-              <div v-if="doc.from_bank_name">{{ doc.from_bank_name }}</div>
-              <div v-if="doc.from_bank_account_name">{{ doc.from_bank_account_name }}</div>
-              <div v-if="doc.from_bank_account_number" class="font-mono">{{ doc.from_bank_account_number }}</div>
-              <div v-if="doc.from_bank_sort_code" class="font-mono">{{ doc.from_bank_sort_code }}</div>
-              <div v-if="doc.from_bank_iban" class="font-mono text-[10px]">{{ doc.from_bank_iban }}</div>
-              <div v-for="(link, i) in doc.payment_links" :key="i" class="text-white/60" style="font-size:10px">
+            <!-- The sidebar is only 200px wide, so accounts stack with a hairline between. -->
+            <div class="space-y-2 text-xs text-white/70">
+              <div
+                v-for="(bank, i) in bankAccounts" :key="i"
+                :class="i > 0 ? 'pt-2' : ''"
+                :style="i > 0 ? { borderTop: '1px solid rgba(255,255,255,0.15)' } : {}"
+              >
+                <div v-if="bankHeading(bank, i)" class="text-white/40 uppercase tracking-wider mb-0.5" style="font-size:9px">
+                  {{ bankHeading(bank, i) }}
+                </div>
+                <div
+                  v-for="(row, r) in bankRows(bank, true)" :key="r"
+                  :class="row.mono ? 'font-mono break-all' : ''"
+                  :style="row.mono ? { fontSize: '10px' } : {}"
+                >{{ row.value }}</div>
+              </div>
+              <div v-for="(link, i) in doc.payment_links" :key="`l${i}`" class="text-white/60" style="font-size:10px">
                 <span class="text-white/40">{{ link.type }}:</span> {{ link.value || '—' }}
               </div>
             </div>
@@ -513,13 +591,18 @@ const scalerStyle = computed(() => ({
           <!-- Bank details + Payment links -->
           <div v-if="doc.show_bank_details" style="border-top: 1px solid #f3f4f6; padding-top: 20px; margin-bottom: 16px">
             <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size: 9px">{{ t('document.paymentDetails') }}</div>
-            <div class="text-gray-500 space-y-0.5" style="font-size: 12px">
-              <div v-if="doc.from_bank_name">{{ t('document.bankInline.bank') }}: {{ doc.from_bank_name }}</div>
-              <div v-if="doc.from_bank_account_name">{{ t('document.bankInline.name') }}: {{ doc.from_bank_account_name }}</div>
-              <div v-if="doc.from_bank_account_number" class="font-mono">{{ t('document.bankInline.account') }}: {{ doc.from_bank_account_number }}</div>
-              <div v-if="doc.from_bank_sort_code" class="font-mono">{{ t('document.bankInline.sort') }}: {{ doc.from_bank_sort_code }}</div>
-              <div v-if="doc.from_bank_iban" class="font-mono text-xs">{{ t('document.bankInline.iban') }}: {{ doc.from_bank_iban }}</div>
-              <div v-for="(link, i) in doc.payment_links" :key="i">
+            <div class="text-gray-500" style="font-size: 12px">
+              <div class="grid gap-x-8 gap-y-2" :style="{ gridTemplateColumns: `repeat(${Math.min(bankAccounts.length, 2)}, minmax(0, 1fr))` }">
+                <div v-for="(bank, i) in bankAccounts" :key="i" class="space-y-0.5">
+                  <div v-if="bankHeading(bank, i)" class="text-gray-400 uppercase tracking-wider" style="font-size: 9px">
+                    {{ bankHeading(bank, i) }}
+                  </div>
+                  <div v-for="(row, r) in bankRows(bank, true)" :key="r" :class="row.mono ? 'font-mono break-all' : ''">
+                    {{ row.label }}: {{ row.value }}
+                  </div>
+                </div>
+              </div>
+              <div v-for="(link, i) in doc.payment_links" :key="`l${i}`" class="mt-1">
                 <span class="text-gray-400">{{ link.type }}:</span> <span class="text-blue-500 font-mono text-xs">{{ link.value || '—' }}</span>
               </div>
             </div>
@@ -655,12 +738,23 @@ const scalerStyle = computed(() => ({
           <!-- Bank + Payment links -->
           <div v-if="doc.show_bank_details" style="border-top: 1px solid #f3f4f6; padding-top: 20px; margin-bottom: 16px">
             <div :style="{ color: doc.accent_color }" class="uppercase tracking-widest font-bold mb-2" style="font-size: 10px">{{ t('document.paymentDetails') }}</div>
-            <div class="grid grid-cols-2 gap-x-6 gap-y-1 text-xs text-gray-600">
-              <div v-if="doc.from_bank_name">{{ t('document.bankInline.bank') }}: {{ doc.from_bank_name }}</div>
-              <div v-if="doc.from_bank_account_name">{{ t('document.bankInline.name') }}: {{ doc.from_bank_account_name }}</div>
-              <div v-if="doc.from_bank_account_number" class="font-mono">{{ t('document.bankInline.account') }}: {{ doc.from_bank_account_number }}</div>
-              <div v-if="doc.from_bank_sort_code" class="font-mono">{{ t('document.bankInline.sort') }}: {{ doc.from_bank_sort_code }}</div>
-              <div v-if="doc.from_bank_iban" class="font-mono">{{ t('document.bankInline.iban') }}: {{ doc.from_bank_iban }}</div>
+            <!-- One account keeps the original two-column pair layout; several sit side by side. -->
+            <div v-if="bankAccounts.length === 1" class="grid grid-cols-2 gap-x-6 gap-y-1 text-xs text-gray-600">
+              <div v-for="(row, r) in bankRows(bankAccounts[0]!)" :key="r" :class="row.mono ? 'font-mono' : ''">
+                {{ row.label }}: {{ row.value }}
+              </div>
+            </div>
+            <div v-else class="grid gap-x-6 gap-y-3 text-xs text-gray-600" :style="{ gridTemplateColumns: `repeat(${bankAccounts.length}, minmax(0, 1fr))` }">
+              <div v-for="(bank, i) in bankAccounts" :key="i">
+                <div :style="{ color: doc.accent_color }" class="uppercase tracking-wider font-bold mb-1" style="font-size: 9px">
+                  {{ bankHeading(bank, i) }}
+                </div>
+                <div v-for="(row, r) in bankRows(bank, true)" :key="r" :class="row.mono ? 'font-mono break-all' : ''" style="font-size: 11px">
+                  {{ row.label }}: {{ row.value }}
+                </div>
+              </div>
+            </div>
+            <div v-if="doc.payment_links.length" class="grid grid-cols-2 gap-x-6 gap-y-1 text-xs text-gray-600 mt-2">
               <div v-for="(link, i) in doc.payment_links" :key="i">
                 <span class="text-gray-400">{{ link.type }}:</span> <span class="text-blue-500 font-mono">{{ link.value || '—' }}</span>
               </div>
@@ -774,13 +868,16 @@ const scalerStyle = computed(() => ({
               </div>
               <div v-if="doc.show_bank_details" :class="doc.show_notes && doc.notes ? 'mt-4' : ''">
                 <div :style="{ color: doc.accent_color }" class="uppercase tracking-widest font-bold mb-2" style="font-size: 9px">{{ t('document.paymentDetails') }}</div>
-                <div class="text-xs text-gray-600 space-y-0.5">
-                  <div v-if="doc.from_bank_name">{{ t('document.bankInline.bank') }}: {{ doc.from_bank_name }}</div>
-                  <div v-if="doc.from_bank_account_name">{{ t('document.bankInline.name') }}: {{ doc.from_bank_account_name }}</div>
-                  <div v-if="doc.from_bank_account_number" class="font-mono">{{ t('document.bankInline.account') }}: {{ doc.from_bank_account_number }}</div>
-                  <div v-if="doc.from_bank_sort_code" class="font-mono">{{ t('document.bankInline.sort') }}: {{ doc.from_bank_sort_code }}</div>
-                  <div v-if="doc.from_bank_iban" class="font-mono">{{ t('document.bankInline.iban') }}: {{ doc.from_bank_iban }}</div>
-                  <div v-for="(link, i) in doc.payment_links" :key="i">
+                <div class="text-xs text-gray-600 space-y-2">
+                  <div v-for="(bank, i) in bankAccounts" :key="i" class="space-y-0.5">
+                    <div v-if="bankHeading(bank, i)" class="text-gray-400 uppercase tracking-wider" style="font-size: 9px">
+                      {{ bankHeading(bank, i) }}
+                    </div>
+                    <div v-for="(row, r) in bankRows(bank, true)" :key="r" :class="row.mono ? 'font-mono break-all' : ''">
+                      {{ row.label }}: {{ row.value }}
+                    </div>
+                  </div>
+                  <div v-for="(link, i) in doc.payment_links" :key="`l${i}`">
                     <span class="text-gray-400">{{ link.type }}:</span> <span class="text-blue-500 font-mono">{{ link.value || '—' }}</span>
                   </div>
                 </div>

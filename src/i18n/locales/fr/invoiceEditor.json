@@ -62,7 +62,16 @@
     "paymentLinks": "Liens de paiement",
     "addFromSaved": "Ajouter depuis les enregistrés :",
     "linkGenericPlaceholder": "Lien ou nom d'utilisateur",
-    "addPaymentLink": "Ajouter un lien de paiement"
+    "addPaymentLink": "Ajouter un lien de paiement",
+    "noBankAccounts": "Aucun compte bancaire ajouté.",
+    "primaryAccount": "Compte principal",
+    "accountN": "Compte {n}",
+    "accountLabel": "Libellé",
+    "accountLabelPlaceholder": "ex. compte NGN",
+    "currency": "Devise",
+    "swift": "SWIFT / BIC",
+    "addBankAccount": "Ajouter un compte bancaire",
+    "bankAccountLimit": "Jusqu'à {n} comptes bancaires par facture."
   },
   "to": {
     "selectClient": "Sélectionner un client",

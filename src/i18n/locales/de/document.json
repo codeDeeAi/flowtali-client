@@ -30,6 +30,7 @@
   "number": "Nummer",
   "contact": "Kontakt",
   "address": "Adresse",
+  "accountN": "Konto {n}",
   "summary": "Zusammenfassung",
   "totalDue": "Fälliger Betrag",
   "generatedShort": "Erstellt mit Flowtali",
@@ -39,7 +40,8 @@
     "account": "Konto",
     "sort": "BLZ",
     "sortCode": "BLZ",
-    "iban": "IBAN"
+    "iban": "IBAN",
+    "swift": "SWIFT"
   },
   "invoiceDetails": "Rechnungsdetails",
   "paymentDate": "Zahlungsdatum",

@@ -30,6 +30,7 @@
   "number": "Číslo",
   "contact": "Kontakt",
   "address": "Adresa",
+  "accountN": "Účet {n}",
   "summary": "Souhrn",
   "totalDue": "K úhradě",
   "generatedShort": "Vytvořeno s Flowtali",
@@ -39,7 +40,8 @@
     "account": "Účet",
     "sort": "Kód banky",
     "sortCode": "Kód banky",
-    "iban": "IBAN"
+    "iban": "IBAN",
+    "swift": "SWIFT"
   },
   "invoiceDetails": "Podrobnosti faktury",
   "paymentDate": "Datum platby",

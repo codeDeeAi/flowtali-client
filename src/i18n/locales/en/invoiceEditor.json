@@ -62,7 +62,16 @@
     "paymentLinks": "Payment Links",
     "addFromSaved": "Add from saved:",
     "linkGenericPlaceholder": "Link or username",
-    "addPaymentLink": "Add payment link"
+    "addPaymentLink": "Add payment link",
+    "noBankAccounts": "No bank account added yet.",
+    "primaryAccount": "Primary account",
+    "accountN": "Account {n}",
+    "accountLabel": "Label",
+    "accountLabelPlaceholder": "e.g. NGN account",
+    "currency": "Currency",
+    "swift": "SWIFT / BIC",
+    "addBankAccount": "Add bank account",
+    "bankAccountLimit": "Up to {n} bank accounts per invoice."
   },
   "to": {
     "selectClient": "Select client",

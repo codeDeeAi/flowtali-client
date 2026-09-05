@@ -15,6 +15,18 @@ export interface IInvoiceTax {
   type?: 'percent' | 'flat'
 }
 
+export interface IInvoiceBankAccount {
+  id?: number
+  label?: string | null
+  bank_name?: string | null
+  account_name?: string | null
+  account_number?: string | null
+  sort_code?: string | null
+  iban?: string | null
+  swift?: string | null
+  currency?: string | null
+}
+
 export interface IInvoicePaymentLink {
   id?: number
   type: string
@@ -48,6 +60,8 @@ export interface IInvoice {
   from_bank_account_number: string | null
   from_bank_sort_code: string | null
   from_bank_iban: string | null
+  /** Up to 3. The first mirrors the flat from_bank_* fields above. */
+  bank_accounts: IInvoiceBankAccount[]
   logo_url: string | null
   payment_links: IInvoicePaymentLink[]
   to_name: string | null

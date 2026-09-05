@@ -62,7 +62,16 @@
     "paymentLinks": "Platební odkazy",
     "addFromSaved": "Přidat z uložených:",
     "linkGenericPlaceholder": "Odkaz nebo uživatelské jméno",
-    "addPaymentLink": "Přidat platební odkaz"
+    "addPaymentLink": "Přidat platební odkaz",
+    "noBankAccounts": "Zatím nebyl přidán žádný bankovní účet.",
+    "primaryAccount": "Hlavní účet",
+    "accountN": "Účet {n}",
+    "accountLabel": "Označení",
+    "accountLabelPlaceholder": "např. účet NGN",
+    "currency": "Měna",
+    "swift": "SWIFT / BIC",
+    "addBankAccount": "Přidat bankovní účet",
+    "bankAccountLimit": "Až {n} bankovní účty na fakturu."
   },
   "to": {
     "selectClient": "Vybrat klienta",
