@@ -12,6 +12,7 @@ export interface IInvoiceTax {
   id?: number
   label: string
   rate: number
+  type?: 'percent' | 'flat'
 }
 
 export interface IInvoicePaymentLink {

@@ -6,8 +6,9 @@ import { Icon } from '@iconify/vue'
 import { useLoaders } from '@/composables/loaders.ts'
 import { useNotification } from '@/composables/notification.ts'
 import ShareLinkModal from '@/components/modals/ShareLinkModal.vue'
+import InvoiceDocument from '@/components/invoice/InvoiceDocument.vue'
 import { useAuthStore } from '@/stores/auth'
-import { InvoiceService, type IInvoiceDraftData } from '@/services/invoice.service'
+import { InvoiceService, type IInvoice, type IInvoiceDraftData } from '@/services/invoice.service'
 import { MediaService } from '@/services/media.service'
 import { AiService } from '@/services/ai.service'
 
@@ -204,12 +205,69 @@ const total = computed(() => subtotal.value - discountAmt.value + taxesTotal.val
 const fmtMoney = (n: number) =>
   sym.value + n.toLocaleString(locale.value, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
-const formatDate = (d: string) => {
-  if (!d) return ''
-  const [y, m, day] = d.split('-')
-  if (!y || !m || !day) return d
-  return new Date(+y, +m - 1, +day).toLocaleDateString(locale.value, { year: 'numeric', month: 'long', day: 'numeric' })
-}
+// ─── Live preview document ────────────────────────────────────────────────────
+// The preview, the view page, the shared link and the PDF all render through
+// InvoiceDocument, so the editor maps its camelCase form onto the API shape.
+const previewDoc = computed(() => ({
+  id: props.invoiceId ?? '',
+  status: 'draft',
+  number:                   form.value.number,
+  issue_date:               form.value.issueDate || null,
+  due_date:                 form.value.dueDate || null,
+  payment_terms:            form.value.paymentTerms || null,
+  currency:                 form.value.currency,
+  po_number:                form.value.poNumber || null,
+  from_name:                form.value.fromName || null,
+  from_tagline:             form.value.fromTagline || null,
+  from_email:               form.value.fromEmail || null,
+  from_phone:               form.value.fromPhone || null,
+  from_website:             form.value.fromWebsite || null,
+  from_address:             form.value.fromAddress || null,
+  from_bank_name:           form.value.fromBankName || null,
+  from_bank_account_name:   form.value.fromBankAccountName || null,
+  from_bank_account_number: form.value.fromBankAccountNumber || null,
+  from_bank_sort_code:      form.value.fromBankSortCode || null,
+  from_bank_iban:           form.value.fromBankIban || null,
+  logo_url:                 form.value.logoUrl || null,
+  payment_links:            form.value.paymentLinks,
+  to_name:                  form.value.toName || null,
+  to_company:               form.value.toCompany || null,
+  to_email:                 form.value.toEmail || null,
+  to_phone:                 form.value.toPhone || null,
+  to_address:               form.value.toAddress || null,
+  items:                    form.value.items,
+  taxes:                    form.value.taxes,
+  discount_type:            form.value.discountType,
+  discount:                 form.value.discount,
+  theme:                    form.value.theme,
+  accent_color:             form.value.accentColor,
+  font_family:              form.value.fontFamily || null,
+  signature_url:            form.value.signatureUrl || null,
+  stamp_url:                form.value.stampUrl || null,
+  stamp:                    form.value.stamp || null,
+  stamp_color:              form.value.stamp ? stampColorFor(form.value.stamp) : null,
+  stamp_custom_text:        form.value.stampCustomText || null,
+  show_watermark:           form.value.showWatermark,
+  watermark_text:           form.value.watermarkText || null,
+  show_top_bar:             form.value.showTopBar,
+  show_logo:                form.value.showLogo,
+  show_footer_line:         form.value.showFooterLine,
+  show_notes:               form.value.showNotes,
+  show_bank_details:        form.value.showBankDetails,
+  show_flowtali_tag:        form.value.showFlowtaliTag,
+  notes:                    form.value.notes || null,
+  footer_text:              form.value.footerText || null,
+  uses: 0,
+  last_used_at: null,
+  totals: {
+    subtotal:     subtotal.value,
+    discount_amt: discountAmt.value,
+    taxes_total:  taxesTotal.value,
+    total:        total.value,
+  },
+  created_at: '',
+  updated_at: '',
+}) satisfies IInvoice)
 
 // ─── Payment terms auto-date ───────────────────────────────────────────────────
 const paymentTermsOptions = ['Net 15', 'Net 30', 'Net 45', 'Net 60', 'Due on Receipt', 'Custom']
@@ -1329,726 +1387,7 @@ const handleSaveDraft = () => handleSave('draft')
             }"
           >
 
-            <!-- ══════════════════════════════════════════════════════════════ -->
-            <!-- THEME: CLASSIC                                                  -->
-            <!-- ══════════════════════════════════════════════════════════════ -->
-            <div
-              v-if="form.theme === 'classic'"
-              class="print-document bg-white shadow-2xl relative overflow-hidden"
-              :style="{ fontFamily: form.fontFamily, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
-            >
-              <!-- Top accent bar -->
-              <div v-if="form.showTopBar" class="h-1.5 w-full" :style="{ backgroundColor: form.accentColor }"></div>
-
-              <!-- Watermark -->
-              <div
-                v-if="form.showWatermark && form.watermarkText"
-                class="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
-                style="transform: rotate(-35deg); z-index: 1"
-              >
-                <span class="text-7xl font-black tracking-widest opacity-[0.04] text-gray-800 whitespace-nowrap">{{ form.watermarkText }}</span>
-              </div>
-
-              <!-- Stamp overlay -->
-              <div
-                v-if="form.stamp"
-                class="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
-                style="transform: rotate(-25deg); z-index: 2"
-              >
-                <div
-                  class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]"
-                  :style="{ color: stampColorFor(form.stamp), borderColor: stampColorFor(form.stamp) }"
-                >{{ form.stamp }}</div>
-              </div>
-
-              <div class="p-10" style="position: relative; z-index: 3">
-                <!-- Header -->
-                <div class="flex justify-between items-start mb-8">
-                  <div class="flex items-start gap-4">
-                    <img v-if="form.logoUrl && form.showLogo" :src="form.logoUrl" alt="Logo" class="h-14 w-auto object-contain" />
-                    <div>
-                      <div class="text-xl font-bold mb-0.5" :style="{ color: form.accentColor }">{{ form.fromName || 'Your Studio' }}</div>
-                      <div v-if="form.fromTagline" class="text-xs text-gray-400 mb-1">{{ form.fromTagline }}</div>
-                      <div class="text-xs text-gray-400 whitespace-pre-line leading-relaxed">{{ form.fromAddress }}</div>
-                      <div v-if="form.fromEmail" class="text-xs text-gray-400 mt-1">{{ form.fromEmail }}</div>
-                      <div v-if="form.fromPhone" class="text-xs text-gray-400">{{ form.fromPhone }}</div>
-                      <div v-if="form.fromWebsite" class="text-xs text-gray-400">{{ form.fromWebsite }}</div>
-                    </div>
-                  </div>
-                  <div class="text-right">
-                    <div class="text-4xl font-bold text-gray-200 tracking-widest" style="font-family: var(--font-sans); letter-spacing: 0.15em">{{ t('document.invoiceWord') }}</div>
-                    <div class="font-mono text-sm text-gray-400 mt-1">{{ form.number }}</div>
-                  </div>
-                </div>
-
-                <!-- Divider -->
-                <div class="h-px mb-6" :style="{ backgroundColor: form.accentColor + '30' }"></div>
-
-                <!-- Dates row -->
-                <div class="flex gap-10 mb-8 text-xs">
-                  <div>
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.issueDate') }}</div>
-                    <div class="font-semibold text-gray-700">{{ formatDate(form.issueDate) }}</div>
-                  </div>
-                  <div>
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.dueDate') }}</div>
-                    <div class="font-semibold text-gray-700">{{ formatDate(form.dueDate) }}</div>
-                  </div>
-                  <div v-if="form.currency !== 'USD'">
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.currency') }}</div>
-                    <div class="font-semibold text-gray-700">{{ form.currency }}</div>
-                  </div>
-                  <div v-if="form.poNumber">
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.poNumber') }}</div>
-                    <div class="font-semibold text-gray-700">{{ form.poNumber }}</div>
-                  </div>
-                </div>
-
-                <!-- Bill To -->
-                <div class="mb-8">
-                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:10px">{{ t('document.billTo') }}</div>
-                  <div class="font-semibold text-gray-800 text-sm">{{ form.toName || '—' }}</div>
-                  <div v-if="form.toCompany" class="text-xs text-gray-500">{{ form.toCompany }}</div>
-                  <div v-if="form.toEmail" class="text-xs text-gray-500">{{ form.toEmail }}</div>
-                  <div v-if="form.toPhone" class="text-xs text-gray-500">{{ form.toPhone }}</div>
-                  <div v-if="form.toAddress" class="text-xs text-gray-500 whitespace-pre-line mt-1">{{ form.toAddress }}</div>
-                </div>
-
-                <!-- Items table -->
-                <table class="w-full mb-6" style="border-collapse: collapse;">
-                  <thead>
-                    <tr :style="{ backgroundColor: form.accentColor + '18' }">
-                      <th class="text-left py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.description') }}</th>
-                      <th class="text-center py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.qty') }}</th>
-                      <th class="text-center py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.unit') }}</th>
-                      <th class="text-right py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.rate') }}</th>
-                      <th class="text-right py-2.5 px-3 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.amount') }}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="item in form.items" :key="item.id" style="border-bottom: 1px solid #f3f4f6">
-                      <td class="py-3 px-3 text-gray-700">{{ item.description || '—' }}</td>
-                      <td class="py-3 px-3 text-center text-gray-500">{{ item.qty }}</td>
-                      <td class="py-3 px-3 text-center text-gray-400 text-xs">{{ item.unit }}</td>
-                      <td class="py-3 px-3 text-right text-gray-500">{{ fmtMoney(item.rate) }}</td>
-                      <td class="py-3 px-3 text-right font-semibold text-gray-800">{{ fmtMoney(item.qty * item.rate) }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <!-- Totals -->
-                <div class="flex justify-end mb-8">
-                  <div style="width: 240px" class="space-y-1.5 text-sm">
-                    <div class="flex justify-between text-gray-500">
-                      <span>{{ t('document.subtotal') }}</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span>
-                    </div>
-                    <div v-if="form.discount > 0" class="flex justify-between text-gray-500">
-                      <span>Discount{{ form.discountType === 'percent' ? ` (${form.discount}%)` : '' }}</span>
-                      <span class="font-mono text-red-500">-{{ fmtMoney(discountAmt) }}</span>
-                    </div>
-                    <template v-for="tax in form.taxes" :key="tax.id">
-                      <div v-if="tax.rate > 0" class="flex justify-between text-gray-500">
-                        <span>{{ tax.label }}{{ tax.type !== 'flat' ? ` (${tax.rate}%)` : '' }}</span>
-                        <span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span>
-                      </div>
-                    </template>
-                    <div style="height: 1px; background: #e5e7eb; margin: 8px 0"></div>
-                    <div class="flex justify-between font-bold text-base">
-                      <span class="text-gray-800">{{ t('document.total') }}</span>
-                      <span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Signature -->
-                <div v-if="form.signatureUrl" class="mb-6 flex flex-col items-end">
-                  <img :src="form.signatureUrl" alt="Signature" class="h-12 w-auto object-contain" />
-                  <div style="width: 120px; height: 1px; background: #d1d5db; margin-top: 4px"></div>
-                  <div class="text-gray-400 mt-1" style="font-size: 10px">{{ t('document.authorizedSignature') }}</div>
-                </div>
-
-                <!-- Notes -->
-                <div v-if="form.showNotes && form.notes" style="border-top: 1px solid #f3f4f6; padding-top: 24px; margin-bottom: 16px">
-                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:10px">{{ t('document.notes') }}</div>
-                  <p class="text-gray-500 leading-relaxed whitespace-pre-line" style="font-size: 12px">{{ form.notes }}</p>
-                </div>
-
-                <!-- Bank details + Payment links -->
-                <div v-if="form.showBankDetails" style="border-top: 1px solid #f3f4f6; padding-top: 20px; margin-bottom: 16px">
-                  <div class="text-gray-400 uppercase tracking-widest mb-3" style="font-size:10px">{{ t('invoiceEditor.from.bankDetails') }}</div>
-                  <div class="grid grid-cols-2 gap-x-6 gap-y-1" style="font-size: 12px">
-                    <div v-if="form.fromBankName" class="flex gap-2"><span class="text-gray-400">{{ t('document.bankInline.bank') }}:</span><span class="text-gray-700">{{ form.fromBankName }}</span></div>
-                    <div v-if="form.fromBankAccountName" class="flex gap-2"><span class="text-gray-400">{{ t('document.bankInline.name') }}:</span><span class="text-gray-700">{{ form.fromBankAccountName }}</span></div>
-                    <div v-if="form.fromBankAccountNumber" class="flex gap-2"><span class="text-gray-400">{{ t('document.bankInline.account') }}:</span><span class="font-mono text-gray-700">{{ form.fromBankAccountNumber }}</span></div>
-                    <div v-if="form.fromBankSortCode" class="flex gap-2"><span class="text-gray-400">{{ t('document.bankInline.sortCode') }}:</span><span class="font-mono text-gray-700">{{ form.fromBankSortCode }}</span></div>
-                    <div v-if="form.fromBankIban" class="flex gap-2"><span class="text-gray-400">{{ t('document.bankInline.iban') }}:</span><span class="font-mono text-gray-700">{{ form.fromBankIban }}</span></div>
-                  </div>
-                  <div v-if="form.paymentLinks.length" class="flex flex-wrap gap-3 mt-3">
-                    <div v-for="link in form.paymentLinks" :key="link.id" class="flex items-center gap-1.5" style="font-size: 11px">
-                      <span class="text-gray-400 font-medium">{{ link.type }}:</span>
-                      <span class="text-blue-600 font-mono">{{ link.value || '—' }}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Footer -->
-                <div v-if="form.showFooterLine" style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 24px" class="flex justify-between items-center">
-                  <div class="text-gray-400" style="font-size: 11px">{{ form.footerText || form.fromWebsite }}</div>
-                  <div v-if="form.showFlowtaliTag" class="text-gray-300" style="font-size: 10px">{{ t('document.generatedWith') }}</div>
-                </div>
-                <div v-else-if="form.showFlowtaliTag" class="text-center mt-6 text-gray-300" style="font-size: 10px">{{ t('document.generatedWith') }}</div>
-              </div>
-            </div>
-
-            <!-- ══════════════════════════════════════════════════════════════ -->
-            <!-- THEME: MODERN                                                   -->
-            <!-- ══════════════════════════════════════════════════════════════ -->
-            <div
-              v-else-if="form.theme === 'modern'"
-              class="print-document bg-white shadow-2xl relative overflow-hidden flex"
-              :style="{ fontFamily: form.fontFamily, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
-            >
-              <!-- Watermark -->
-              <div v-if="form.showWatermark && form.watermarkText" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-35deg); z-index: 1">
-                <span class="text-7xl font-black tracking-widest opacity-[0.04] text-gray-800 whitespace-nowrap">{{ form.watermarkText }}</span>
-              </div>
-              <!-- Stamp -->
-              <div v-if="form.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-25deg); z-index: 2">
-                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(form.stamp), borderColor: stampColorFor(form.stamp) }">{{ form.stamp }}</div>
-              </div>
-
-              <!-- Left sidebar -->
-              <div class="shrink-0 flex flex-col p-8" :style="{ backgroundColor: form.accentColor, width: '200px', position: 'relative', zIndex: 3 }">
-                <img v-if="form.logoUrl && form.showLogo" :src="form.logoUrl" alt="Logo" class="h-12 w-auto object-contain mb-6 brightness-0 invert" />
-                <div v-else class="mb-6"></div>
-                <div class="text-white font-bold text-lg leading-tight mb-1">{{ form.fromName }}</div>
-                <div v-if="form.fromTagline" class="text-white/70 text-xs mb-4">{{ form.fromTagline }}</div>
-                <div class="text-white/60 text-xs leading-relaxed whitespace-pre-line mb-2">{{ form.fromAddress }}</div>
-                <div v-if="form.fromEmail" class="text-white/60 text-xs">{{ form.fromEmail }}</div>
-                <div v-if="form.fromPhone" class="text-white/60 text-xs">{{ form.fromPhone }}</div>
-                <div v-if="form.fromWebsite" class="text-white/60 text-xs">{{ form.fromWebsite }}</div>
-
-                <!-- Bank details in sidebar -->
-                <div v-if="form.showBankDetails" class="mt-8 pt-6" style="border-top: 1px solid rgba(255,255,255,0.2)">
-                  <div class="text-white/50 uppercase tracking-widest mb-3" style="font-size:9px">{{ t('document.bankPayment') }}</div>
-                  <div class="space-y-1 text-xs text-white/70">
-                    <div v-if="form.fromBankName">{{ form.fromBankName }}</div>
-                    <div v-if="form.fromBankAccountName">{{ form.fromBankAccountName }}</div>
-                    <div v-if="form.fromBankAccountNumber" class="font-mono">{{ form.fromBankAccountNumber }}</div>
-                    <div v-if="form.fromBankSortCode" class="font-mono">{{ form.fromBankSortCode }}</div>
-                    <div v-if="form.fromBankIban" class="font-mono text-[10px]">{{ form.fromBankIban }}</div>
-                    <div v-for="link in form.paymentLinks" :key="link.id" class="text-white/60" style="font-size:10px">
-                      <span class="text-white/40">{{ link.type }}:</span> {{ link.value || '—' }}
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flex-1"></div>
-                <div v-if="form.showFlowtaliTag" class="text-white/30 text-center" style="font-size:9px">flowtali.com</div>
-              </div>
-
-              <!-- Right content -->
-              <div class="flex-1 p-10" style="position: relative; z-index: 3">
-                <!-- Header row -->
-                <div class="flex justify-between items-start mb-8">
-                  <div>
-                    <div class="text-3xl font-bold text-gray-200 tracking-widest" style="letter-spacing: 0.12em">{{ t('document.invoiceWord') }}</div>
-                    <div class="font-mono text-sm text-gray-400 mt-1">{{ form.number }}</div>
-                  </div>
-                  <div class="text-right text-xs">
-                    <div class="mb-2">
-                      <div class="text-gray-400 uppercase tracking-widest" style="font-size:10px">{{ t('document.issueDate') }}</div>
-                      <div class="font-semibold text-gray-700">{{ formatDate(form.issueDate) }}</div>
-                    </div>
-                    <div>
-                      <div class="text-gray-400 uppercase tracking-widest" style="font-size:10px">{{ t('document.dueDate') }}</div>
-                      <div class="font-semibold text-gray-700">{{ formatDate(form.dueDate) }}</div>
-                    </div>
-                    <div v-if="form.poNumber" class="mt-2">
-                      <div class="text-gray-400 uppercase tracking-widest" style="font-size:10px">{{ t('document.poNumber') }}</div>
-                      <div class="font-semibold text-gray-700">{{ form.poNumber }}</div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Bill To -->
-                <div class="mb-8 p-4 rounded-lg" :style="{ backgroundColor: form.accentColor + '0d' }">
-                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:10px">{{ t('document.billTo') }}</div>
-                  <div class="font-semibold text-gray-800">{{ form.toName || '—' }}</div>
-                  <div v-if="form.toCompany" class="text-xs text-gray-500">{{ form.toCompany }}</div>
-                  <div v-if="form.toEmail" class="text-xs text-gray-500">{{ form.toEmail }}</div>
-                  <div v-if="form.toPhone" class="text-xs text-gray-500">{{ form.toPhone }}</div>
-                  <div v-if="form.toAddress" class="text-xs text-gray-500 whitespace-pre-line mt-1">{{ form.toAddress }}</div>
-                </div>
-
-                <!-- Items table -->
-                <table class="w-full mb-6" style="border-collapse: collapse;">
-                  <thead>
-                    <tr :style="{ borderBottom: `2px solid ${form.accentColor}` }">
-                      <th class="text-left pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.description') }}</th>
-                      <th class="text-center pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.qty') }}</th>
-                      <th class="text-center pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.unit') }}</th>
-                      <th class="text-right pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.rate') }}</th>
-                      <th class="text-right pb-2 text-gray-500 uppercase tracking-wide font-semibold" style="font-size:10px">{{ t('document.table.amount') }}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="item in form.items" :key="item.id" style="border-bottom: 1px solid #f3f4f6">
-                      <td class="py-3 text-gray-700">{{ item.description || '—' }}</td>
-                      <td class="py-3 text-center text-gray-500">{{ item.qty }}</td>
-                      <td class="py-3 text-center text-gray-400 text-xs">{{ item.unit }}</td>
-                      <td class="py-3 text-right text-gray-500">{{ fmtMoney(item.rate) }}</td>
-                      <td class="py-3 text-right font-semibold text-gray-800">{{ fmtMoney(item.qty * item.rate) }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <!-- Totals -->
-                <div class="flex justify-end mb-6">
-                  <div style="width: 240px" class="space-y-1.5 text-sm">
-                    <div class="flex justify-between text-gray-500"><span>{{ t('document.subtotal') }}</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
-                    <div v-if="form.discount > 0" class="flex justify-between text-gray-500"><span>Discount{{ form.discountType === 'percent' ? ` (${form.discount}%)` : '' }}</span><span class="font-mono text-red-500">-{{ fmtMoney(discountAmt) }}</span></div>
-                    <template v-for="tax in form.taxes" :key="tax.id">
-                      <div v-if="tax.rate > 0" class="flex justify-between text-gray-500"><span>{{ tax.label }}{{ tax.type !== 'flat' ? ` (${tax.rate}%)` : '' }}</span><span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span></div>
-                    </template>
-                    <div style="height: 1px; background: #e5e7eb; margin: 8px 0"></div>
-                    <div class="flex justify-between font-bold text-base"><span class="text-gray-800">{{ t('document.total') }}</span><span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span></div>
-                  </div>
-                </div>
-
-                <!-- Signature -->
-                <div v-if="form.signatureUrl" class="mb-4 flex flex-col items-end">
-                  <img :src="form.signatureUrl" alt="Signature" class="h-10 w-auto object-contain" />
-                  <div style="width: 120px; height:1px; background: #d1d5db; margin-top: 4px"></div>
-                  <div class="text-gray-400 mt-1" style="font-size:10px">{{ t('document.authorizedSignature') }}</div>
-                </div>
-
-                <!-- Notes -->
-                <div v-if="form.showNotes && form.notes" style="border-top: 1px solid #f3f4f6; padding-top: 20px">
-                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size:10px">{{ t('document.notes') }}</div>
-                  <p class="text-gray-500 leading-relaxed whitespace-pre-line" style="font-size:12px">{{ form.notes }}</p>
-                </div>
-
-                <div v-if="form.footerText" class="mt-4 text-gray-400 text-xs">{{ form.footerText }}</div>
-              </div>
-            </div>
-
-            <!-- ══════════════════════════════════════════════════════════════ -->
-            <!-- THEME: MINIMAL                                                  -->
-            <!-- ══════════════════════════════════════════════════════════════ -->
-            <div
-              v-else-if="form.theme === 'minimal'"
-              class="print-document bg-white shadow-2xl relative overflow-hidden"
-              :style="{ fontFamily: form.fontFamily, color: '#374151', fontSize: '13px', minHeight: '1080px' }"
-            >
-              <!-- Watermark -->
-              <div v-if="form.showWatermark && form.watermarkText" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-35deg); z-index: 1">
-                <span class="text-7xl font-black tracking-widest opacity-[0.04] text-gray-800 whitespace-nowrap">{{ form.watermarkText }}</span>
-              </div>
-              <!-- Stamp -->
-              <div v-if="form.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-25deg); z-index: 2">
-                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(form.stamp), borderColor: stampColorFor(form.stamp) }">{{ form.stamp }}</div>
-              </div>
-
-              <div class="p-12" style="position: relative; z-index: 3">
-                <!-- Header -->
-                <div class="flex justify-between items-start mb-10">
-                  <div>
-                    <img v-if="form.logoUrl && form.showLogo" :src="form.logoUrl" alt="Logo" class="h-8 w-auto object-contain mb-3" />
-                    <div class="font-semibold text-gray-900 uppercase tracking-widest text-sm">{{ form.fromName }}</div>
-                    <div v-if="form.fromTagline" class="text-gray-400 text-xs mt-0.5">{{ form.fromTagline }}</div>
-                  </div>
-                  <div class="text-right">
-                    <div class="text-4xl font-light text-gray-200 tracking-widest uppercase">{{ t('document.invoiceWord') }}</div>
-                    <div class="font-mono text-xs text-gray-400 mt-2">{{ form.number }}</div>
-                  </div>
-                </div>
-
-                <div style="height: 1px; background: #e5e7eb; margin-bottom: 32px"></div>
-
-                <!-- Info row -->
-                <div class="flex gap-16 mb-8 text-xs">
-                  <div>
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size: 9px">{{ t('document.from') }}</div>
-                    <div class="text-gray-500 whitespace-pre-line leading-relaxed">{{ form.fromAddress }}</div>
-                    <div v-if="form.fromEmail" class="text-gray-500">{{ form.fromEmail }}</div>
-                    <div v-if="form.fromPhone" class="text-gray-500">{{ form.fromPhone }}</div>
-                  </div>
-                  <div>
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size: 9px">{{ t('document.billTo') }}</div>
-                    <div class="font-medium text-gray-700">{{ form.toName || '—' }}</div>
-                    <div v-if="form.toCompany" class="text-gray-500">{{ form.toCompany }}</div>
-                    <div v-if="form.toEmail" class="text-gray-500">{{ form.toEmail }}</div>
-                    <div v-if="form.toAddress" class="text-gray-500 whitespace-pre-line">{{ form.toAddress }}</div>
-                  </div>
-                  <div>
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size: 9px">{{ t('document.dates') }}</div>
-                    <div class="text-gray-400" style="font-size: 10px">{{ t('document.issued') }}</div>
-                    <div class="font-medium text-gray-700 mb-2">{{ formatDate(form.issueDate) }}</div>
-                    <div class="text-gray-400" style="font-size: 10px">{{ t('document.due') }}</div>
-                    <div class="font-medium text-gray-700">{{ formatDate(form.dueDate) }}</div>
-                    <div v-if="form.poNumber" class="mt-2">
-                      <div class="text-gray-400" style="font-size: 10px">{{ t('document.po') }}</div>
-                      <div class="font-medium text-gray-700">{{ form.poNumber }}</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div style="height: 1px; background: #e5e7eb; margin-bottom: 24px"></div>
-
-                <!-- Items table -->
-                <table class="w-full mb-6" style="border-collapse: collapse;">
-                  <thead>
-                    <tr style="border-bottom: 1px solid #e5e7eb">
-                      <th class="text-left pb-2 text-gray-400 uppercase tracking-wide font-medium" style="font-size: 9px">{{ t('document.table.description') }}</th>
-                      <th class="text-center pb-2 text-gray-400 uppercase tracking-wide font-medium" style="font-size: 9px">{{ t('document.table.qty') }}</th>
-                      <th class="text-center pb-2 text-gray-400 uppercase tracking-wide font-medium" style="font-size: 9px">{{ t('document.table.unit') }}</th>
-                      <th class="text-right pb-2 text-gray-400 uppercase tracking-wide font-medium" style="font-size: 9px">{{ t('document.table.rate') }}</th>
-                      <th class="text-right pb-2 text-gray-400 uppercase tracking-wide font-medium" style="font-size: 9px">{{ t('document.table.amount') }}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="item in form.items" :key="item.id" style="border-bottom: 1px solid #f9fafb">
-                      <td class="py-3 text-gray-700">{{ item.description || '—' }}</td>
-                      <td class="py-3 text-center text-gray-500">{{ item.qty }}</td>
-                      <td class="py-3 text-center text-gray-400 text-xs">{{ item.unit }}</td>
-                      <td class="py-3 text-right text-gray-500">{{ fmtMoney(item.rate) }}</td>
-                      <td class="py-3 text-right text-gray-800">{{ fmtMoney(item.qty * item.rate) }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <!-- Totals -->
-                <div class="flex justify-end mb-8">
-                  <div style="width: 220px" class="space-y-1.5 text-sm">
-                    <div class="flex justify-between text-gray-400"><span>{{ t('document.subtotal') }}</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
-                    <div v-if="form.discount > 0" class="flex justify-between text-gray-400"><span>{{ t('document.discount') }}</span><span class="font-mono">-{{ fmtMoney(discountAmt) }}</span></div>
-                    <template v-for="tax in form.taxes" :key="tax.id">
-                      <div v-if="tax.rate > 0" class="flex justify-between text-gray-400"><span>{{ tax.label }}</span><span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span></div>
-                    </template>
-                    <div style="height: 1px; background: #111827; margin: 8px 0"></div>
-                    <div class="flex justify-between font-bold text-base text-gray-900"><span>{{ t('document.total') }}</span><span class="font-mono">{{ fmtMoney(total) }}</span></div>
-                  </div>
-                </div>
-
-                <!-- Signature -->
-                <div v-if="form.signatureUrl" class="mb-6 flex flex-col items-end">
-                  <img :src="form.signatureUrl" alt="Signature" class="h-10 w-auto object-contain" />
-                  <div style="width: 120px; height: 1px; background: #d1d5db; margin-top: 4px"></div>
-                  <div class="text-gray-400 mt-1" style="font-size: 10px">{{ t('document.authorizedSignature') }}</div>
-                </div>
-
-                <!-- Notes -->
-                <div v-if="form.showNotes && form.notes" style="border-top: 1px solid #f3f4f6; padding-top: 24px; margin-bottom: 16px">
-                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size: 9px">{{ t('document.notes') }}</div>
-                  <p class="text-gray-400 leading-relaxed whitespace-pre-line" style="font-size: 12px">{{ form.notes }}</p>
-                </div>
-
-                <!-- Bank details + Payment links -->
-                <div v-if="form.showBankDetails" style="border-top: 1px solid #f3f4f6; padding-top: 20px; margin-bottom: 16px">
-                  <div class="text-gray-400 uppercase tracking-widest mb-2" style="font-size: 9px">{{ t('document.paymentDetails') }}</div>
-                  <div class="text-gray-500 space-y-0.5" style="font-size: 12px">
-                    <div v-if="form.fromBankName">{{ t('document.bankInline.bank') }}: {{ form.fromBankName }}</div>
-                    <div v-if="form.fromBankAccountName">{{ t('document.bankInline.name') }}: {{ form.fromBankAccountName }}</div>
-                    <div v-if="form.fromBankAccountNumber" class="font-mono">{{ t('document.bankInline.account') }}: {{ form.fromBankAccountNumber }}</div>
-                    <div v-if="form.fromBankSortCode" class="font-mono">{{ t('document.bankInline.sort') }}: {{ form.fromBankSortCode }}</div>
-                    <div v-if="form.fromBankIban" class="font-mono text-xs">{{ t('document.bankInline.iban') }}: {{ form.fromBankIban }}</div>
-                    <div v-for="link in form.paymentLinks" :key="link.id">
-                      <span class="text-gray-400">{{ link.type }}:</span> <span class="text-blue-500 font-mono text-xs">{{ link.value || '—' }}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div v-if="form.showFooterLine" style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 24px" class="flex justify-between">
-                  <div class="text-gray-400" style="font-size: 11px">{{ form.footerText || form.fromWebsite }}</div>
-                  <div v-if="form.showFlowtaliTag" class="text-gray-300" style="font-size: 10px">{{ t('document.generatedShort') }}</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- ══════════════════════════════════════════════════════════════ -->
-            <!-- THEME: BOLD                                                     -->
-            <!-- ══════════════════════════════════════════════════════════════ -->
-            <div
-              v-else-if="form.theme === 'bold'"
-              class="print-document bg-white shadow-2xl relative overflow-hidden"
-              :style="{ fontFamily: form.fontFamily, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
-            >
-              <!-- Watermark -->
-              <div v-if="form.showWatermark && form.watermarkText" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-35deg); z-index: 1">
-                <span class="text-7xl font-black tracking-widest opacity-[0.04] text-gray-800 whitespace-nowrap">{{ form.watermarkText }}</span>
-              </div>
-              <!-- Stamp -->
-              <div v-if="form.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-25deg); z-index: 2">
-                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(form.stamp), borderColor: stampColorFor(form.stamp) }">{{ form.stamp }}</div>
-              </div>
-
-              <!-- Full-width header -->
-              <div :style="{ backgroundColor: form.accentColor }" class="px-10 py-8 flex justify-between items-center" style="position: relative; z-index: 3">
-                <div class="flex items-center gap-4">
-                  <img v-if="form.logoUrl && form.showLogo" :src="form.logoUrl" alt="Logo" class="h-14 w-auto object-contain brightness-0 invert" />
-                  <div>
-                    <div class="text-white font-bold text-xl">{{ form.fromName }}</div>
-                    <div v-if="form.fromTagline" class="text-white/70 text-sm">{{ form.fromTagline }}</div>
-                  </div>
-                </div>
-                <div class="text-right">
-                  <div class="text-white font-black text-5xl tracking-widest" style="letter-spacing: 0.15em">{{ t('document.invoiceWord') }}</div>
-                  <div class="font-mono text-white/70 text-sm mt-1">{{ form.number }}</div>
-                </div>
-              </div>
-
-              <!-- Company info row -->
-              <div class="grid grid-cols-3 gap-6 px-10 py-5 bg-gray-50 border-b border-gray-200" style="position: relative; z-index: 3">
-                <div class="text-xs">
-                  <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size: 9px">{{ t('document.contact') }}</div>
-                  <div v-if="form.fromEmail" class="text-gray-600">{{ form.fromEmail }}</div>
-                  <div v-if="form.fromPhone" class="text-gray-600">{{ form.fromPhone }}</div>
-                  <div v-if="form.fromWebsite" class="text-gray-600">{{ form.fromWebsite }}</div>
-                </div>
-                <div class="text-xs">
-                  <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size: 9px">{{ t('invoiceEditor.from.address') }}</div>
-                  <div class="text-gray-600 whitespace-pre-line">{{ form.fromAddress }}</div>
-                </div>
-                <div class="text-xs text-right">
-                  <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size: 9px">{{ t('document.issueDate') }}</div>
-                  <div class="text-gray-700 font-medium">{{ formatDate(form.issueDate) }}</div>
-                  <div class="text-gray-400 uppercase tracking-widest mt-2 mb-1" style="font-size: 9px">{{ t('document.dueDate') }}</div>
-                  <div class="text-gray-700 font-medium">{{ formatDate(form.dueDate) }}</div>
-                  <div v-if="form.poNumber" class="mt-2">
-                    <div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size: 9px">{{ t('document.poNumber') }}</div>
-                    <div class="text-gray-700 font-medium">{{ form.poNumber }}</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Content -->
-              <div class="px-10 py-8" style="position: relative; z-index: 3">
-                <!-- Bill To -->
-                <div class="mb-8">
-                  <div :style="{ color: form.accentColor }" class="uppercase tracking-widest font-bold mb-2" style="font-size: 10px">{{ t('document.billTo') }}</div>
-                  <div class="font-semibold text-gray-800 text-sm">{{ form.toName || '—' }}</div>
-                  <div v-if="form.toCompany" class="text-xs text-gray-500">{{ form.toCompany }}</div>
-                  <div v-if="form.toEmail" class="text-xs text-gray-500">{{ form.toEmail }}</div>
-                  <div v-if="form.toPhone" class="text-xs text-gray-500">{{ form.toPhone }}</div>
-                  <div v-if="form.toAddress" class="text-xs text-gray-500 whitespace-pre-line mt-1">{{ form.toAddress }}</div>
-                </div>
-
-                <!-- Items table -->
-                <table class="w-full mb-6" style="border-collapse: collapse;">
-                  <thead>
-                    <tr :style="{ backgroundColor: form.accentColor }">
-                      <th class="text-left py-3 px-4 text-white uppercase tracking-wide font-semibold" style="font-size: 10px">{{ t('document.table.description') }}</th>
-                      <th class="text-center py-3 px-4 text-white uppercase tracking-wide font-semibold" style="font-size: 10px">{{ t('document.table.qty') }}</th>
-                      <th class="text-center py-3 px-4 text-white uppercase tracking-wide font-semibold" style="font-size: 10px">{{ t('document.table.unit') }}</th>
-                      <th class="text-right py-3 px-4 text-white uppercase tracking-wide font-semibold" style="font-size: 10px">{{ t('document.table.rate') }}</th>
-                      <th class="text-right py-3 px-4 text-white uppercase tracking-wide font-semibold" style="font-size: 10px">{{ t('document.table.amount') }}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(item, idx) in form.items" :key="item.id" :style="{ backgroundColor: idx % 2 === 0 ? '#ffffff' : '#f9fafb', borderBottom: '1px solid #f3f4f6' }">
-                      <td class="py-3 px-4 text-gray-700">{{ item.description || '—' }}</td>
-                      <td class="py-3 px-4 text-center text-gray-500">{{ item.qty }}</td>
-                      <td class="py-3 px-4 text-center text-gray-400 text-xs">{{ item.unit }}</td>
-                      <td class="py-3 px-4 text-right text-gray-500">{{ fmtMoney(item.rate) }}</td>
-                      <td class="py-3 px-4 text-right font-semibold text-gray-800">{{ fmtMoney(item.qty * item.rate) }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <!-- Totals -->
-                <div class="flex justify-end mb-8">
-                  <div style="width: 260px">
-                    <div class="space-y-1.5 text-sm">
-                      <div class="flex justify-between text-gray-500"><span>{{ t('document.subtotal') }}</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
-                      <div v-if="form.discount > 0" class="flex justify-between text-gray-500"><span>Discount{{ form.discountType === 'percent' ? ` (${form.discount}%)` : '' }}</span><span class="font-mono text-red-500">-{{ fmtMoney(discountAmt) }}</span></div>
-                      <template v-for="tax in form.taxes" :key="tax.id">
-                        <div v-if="tax.rate > 0" class="flex justify-between text-gray-500"><span>{{ tax.label }}{{ tax.type !== 'flat' ? ` (${tax.rate}%)` : '' }}</span><span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span></div>
-                      </template>
-                    </div>
-                    <div :style="{ backgroundColor: form.accentColor }" class="flex justify-between font-bold text-base text-white px-4 py-3 rounded mt-3">
-                      <span>{{ t('document.totalDue') }}</span>
-                      <span class="font-mono">{{ fmtMoney(total) }}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Signature -->
-                <div v-if="form.signatureUrl" class="mb-6 flex flex-col items-end">
-                  <img :src="form.signatureUrl" alt="Signature" class="h-10 w-auto object-contain" />
-                  <div style="width: 120px; height: 1px; background: #d1d5db; margin-top: 4px"></div>
-                  <div class="text-gray-400 mt-1" style="font-size: 10px">{{ t('document.authorizedSignature') }}</div>
-                </div>
-
-                <!-- Notes -->
-                <div v-if="form.showNotes && form.notes" style="border-top: 1px solid #f3f4f6; padding-top: 20px; margin-bottom: 16px">
-                  <div :style="{ color: form.accentColor }" class="uppercase tracking-widest font-bold mb-2" style="font-size: 10px">{{ t('document.notes') }}</div>
-                  <p class="text-gray-500 leading-relaxed whitespace-pre-line" style="font-size: 12px">{{ form.notes }}</p>
-                </div>
-
-                <!-- Bank + Payment links -->
-                <div v-if="form.showBankDetails" style="border-top: 1px solid #f3f4f6; padding-top: 20px; margin-bottom: 16px">
-                  <div :style="{ color: form.accentColor }" class="uppercase tracking-widest font-bold mb-2" style="font-size: 10px">{{ t('document.paymentDetails') }}</div>
-                  <div class="grid grid-cols-2 gap-x-6 gap-y-1 text-xs text-gray-600">
-                    <div v-if="form.fromBankName">{{ t('document.bankInline.bank') }}: {{ form.fromBankName }}</div>
-                    <div v-if="form.fromBankAccountName">{{ t('document.bankInline.name') }}: {{ form.fromBankAccountName }}</div>
-                    <div v-if="form.fromBankAccountNumber" class="font-mono">{{ t('document.bankInline.account') }}: {{ form.fromBankAccountNumber }}</div>
-                    <div v-if="form.fromBankSortCode" class="font-mono">{{ t('document.bankInline.sort') }}: {{ form.fromBankSortCode }}</div>
-                    <div v-if="form.fromBankIban" class="font-mono">{{ t('document.bankInline.iban') }}: {{ form.fromBankIban }}</div>
-                    <div v-for="link in form.paymentLinks" :key="link.id">
-                      <span class="text-gray-400">{{ link.type }}:</span> <span class="text-blue-500 font-mono">{{ link.value || '—' }}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Footer -->
-                <div v-if="form.showFooterLine" style="border-top: 1px solid #e5e7eb; padding-top: 16px; margin-top: 24px" class="flex justify-between">
-                  <div class="text-gray-400 text-xs">{{ form.footerText || form.fromWebsite }}</div>
-                  <div v-if="form.showFlowtaliTag" class="text-gray-300" style="font-size: 10px">{{ t('document.generatedWith') }}</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- ══════════════════════════════════════════════════════════════ -->
-            <!-- THEME: EXECUTIVE                                                -->
-            <!-- ══════════════════════════════════════════════════════════════ -->
-            <div
-              v-else-if="form.theme === 'executive'"
-              class="print-document bg-white shadow-2xl relative overflow-hidden"
-              :style="{ fontFamily: form.fontFamily, color: '#1f2937', fontSize: '13px', minHeight: '1080px' }"
-            >
-              <!-- Watermark -->
-              <div v-if="form.showWatermark && form.watermarkText" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-35deg); z-index: 1">
-                <span class="text-7xl font-black tracking-widest opacity-[0.04] text-gray-800 whitespace-nowrap">{{ form.watermarkText }}</span>
-              </div>
-              <!-- Stamp -->
-              <div v-if="form.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform: rotate(-25deg); z-index: 2">
-                <div class="text-6xl font-extrabold tracking-widest border-4 px-8 py-4 rounded opacity-[0.15]" :style="{ color: stampColorFor(form.stamp), borderColor: stampColorFor(form.stamp) }">{{ form.stamp }}</div>
-              </div>
-
-              <div class="p-10" style="position: relative; z-index: 3">
-                <!-- Two-col top section -->
-                <div class="grid grid-cols-2 gap-6 mb-8">
-                  <!-- Company details box -->
-                  <div class="p-5 rounded border" :style="{ borderColor: form.accentColor + '40' }">
-                    <div :style="{ color: form.accentColor }" class="uppercase tracking-widest font-bold mb-3" style="font-size: 9px">{{ t('document.from') }}</div>
-                    <img v-if="form.logoUrl && form.showLogo" :src="form.logoUrl" alt="Logo" class="h-10 w-auto object-contain mb-3" />
-                    <div class="font-bold text-gray-800 text-sm">{{ form.fromName }}</div>
-                    <div v-if="form.fromTagline" class="text-xs text-gray-400 mb-2">{{ form.fromTagline }}</div>
-                    <div class="text-xs text-gray-500 whitespace-pre-line leading-relaxed">{{ form.fromAddress }}</div>
-                    <div v-if="form.fromEmail" class="text-xs text-gray-500 mt-1">{{ form.fromEmail }}</div>
-                    <div v-if="form.fromPhone" class="text-xs text-gray-500">{{ form.fromPhone }}</div>
-                    <div v-if="form.fromWebsite" class="text-xs text-gray-500">{{ form.fromWebsite }}</div>
-                  </div>
-                  <!-- Invoice details box -->
-                  <div class="p-5 rounded border" :style="{ borderColor: form.accentColor + '40' }">
-                    <div :style="{ color: form.accentColor }" class="uppercase tracking-widest font-bold mb-3" style="font-size: 9px">{{ t('document.invoiceDetails') }}</div>
-                    <div class="text-3xl font-black tracking-widest text-gray-200 mb-3" style="letter-spacing: 0.1em">{{ t('document.invoiceWord') }}</div>
-                    <div class="space-y-2 text-xs">
-                      <div class="flex justify-between">
-                        <span class="text-gray-400">{{ t('document.number') }}</span>
-                        <span class="font-mono font-semibold text-gray-700">{{ form.number }}</span>
-                      </div>
-                      <div class="flex justify-between">
-                        <span class="text-gray-400">{{ t('document.issueDate') }}</span>
-                        <span class="font-semibold text-gray-700">{{ formatDate(form.issueDate) }}</span>
-                      </div>
-                      <div class="flex justify-between">
-                        <span class="text-gray-400">{{ t('document.dueDate') }}</span>
-                        <span class="font-semibold text-gray-700">{{ formatDate(form.dueDate) }}</span>
-                      </div>
-                      <div v-if="form.currency !== 'USD'" class="flex justify-between">
-                        <span class="text-gray-400">{{ t('document.currency') }}</span>
-                        <span class="font-semibold text-gray-700">{{ form.currency }}</span>
-                      </div>
-                      <div v-if="form.poNumber" class="flex justify-between">
-                        <span class="text-gray-400">{{ t('document.poNumber') }}</span>
-                        <span class="font-semibold text-gray-700">{{ form.poNumber }}</span>
-                      </div>
-                      <div style="border-top: 1px solid #f3f4f6; padding-top: 8px; margin-top: 8px">
-                        <div class="text-gray-400 mb-1" style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em">{{ t('document.billTo') }}</div>
-                        <div class="font-semibold text-gray-800">{{ form.toName || '—' }}</div>
-                        <div v-if="form.toCompany" class="text-gray-500">{{ form.toCompany }}</div>
-                        <div v-if="form.toEmail" class="text-gray-500">{{ form.toEmail }}</div>
-                        <div v-if="form.toAddress" class="text-gray-500 whitespace-pre-line">{{ form.toAddress }}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Items table -->
-                <table class="w-full mb-6" style="border-collapse: collapse; border: 1px solid #e5e7eb">
-                  <thead>
-                    <tr :style="{ backgroundColor: form.accentColor + '14', borderBottom: `2px solid ${form.accentColor}` }">
-                      <th class="text-left py-3 px-4 text-gray-600 uppercase tracking-wide font-semibold" style="font-size: 10px">{{ t('document.table.description') }}</th>
-                      <th class="text-center py-3 px-4 text-gray-600 uppercase tracking-wide font-semibold" style="font-size: 10px">{{ t('document.table.qty') }}</th>
-                      <th class="text-center py-3 px-4 text-gray-600 uppercase tracking-wide font-semibold" style="font-size: 10px">{{ t('document.table.unit') }}</th>
-                      <th class="text-right py-3 px-4 text-gray-600 uppercase tracking-wide font-semibold" style="font-size: 10px">{{ t('document.table.rate') }}</th>
-                      <th class="text-right py-3 px-4 text-gray-600 uppercase tracking-wide font-semibold" style="font-size: 10px">{{ t('document.table.amount') }}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(item, idx) in form.items" :key="item.id" :style="{ backgroundColor: idx % 2 === 0 ? '#ffffff' : '#f9fafb', borderBottom: '1px solid #e5e7eb' }">
-                      <td class="py-3 px-4 text-gray-700">{{ item.description || '—' }}</td>
-                      <td class="py-3 px-4 text-center text-gray-500">{{ item.qty }}</td>
-                      <td class="py-3 px-4 text-center text-gray-400 text-xs">{{ item.unit }}</td>
-                      <td class="py-3 px-4 text-right text-gray-500">{{ fmtMoney(item.rate) }}</td>
-                      <td class="py-3 px-4 text-right font-semibold text-gray-800">{{ fmtMoney(item.qty * item.rate) }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <!-- Totals + Notes row -->
-                <div class="grid grid-cols-2 gap-6 mb-6">
-                  <!-- Notes / Bank -->
-                  <div>
-                    <div v-if="form.showNotes && form.notes">
-                      <div :style="{ color: form.accentColor }" class="uppercase tracking-widest font-bold mb-2" style="font-size: 9px">{{ t('document.notes') }}</div>
-                      <p class="text-gray-500 leading-relaxed whitespace-pre-line" style="font-size: 12px">{{ form.notes }}</p>
-                    </div>
-                    <div v-if="form.showBankDetails" :class="form.showNotes && form.notes ? 'mt-4' : ''">
-                      <div :style="{ color: form.accentColor }" class="uppercase tracking-widest font-bold mb-2" style="font-size: 9px">{{ t('document.paymentDetails') }}</div>
-                      <div class="text-xs text-gray-600 space-y-0.5">
-                        <div v-if="form.fromBankName">{{ t('document.bankInline.bank') }}: {{ form.fromBankName }}</div>
-                        <div v-if="form.fromBankAccountName">{{ t('document.bankInline.name') }}: {{ form.fromBankAccountName }}</div>
-                        <div v-if="form.fromBankAccountNumber" class="font-mono">{{ t('document.bankInline.account') }}: {{ form.fromBankAccountNumber }}</div>
-                        <div v-if="form.fromBankSortCode" class="font-mono">{{ t('document.bankInline.sort') }}: {{ form.fromBankSortCode }}</div>
-                        <div v-if="form.fromBankIban" class="font-mono">{{ t('document.bankInline.iban') }}: {{ form.fromBankIban }}</div>
-                        <div v-for="link in form.paymentLinks" :key="link.id">
-                          <span class="text-gray-400">{{ link.type }}:</span> <span class="text-blue-500 font-mono">{{ link.value || '—' }}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- Totals -->
-                  <div>
-                    <div :style="{ color: form.accentColor }" class="uppercase tracking-widest font-bold mb-3" style="font-size: 9px">{{ t('document.summary') }}</div>
-                    <div class="space-y-1.5 text-sm border rounded p-4" :style="{ borderColor: form.accentColor + '30' }">
-                      <div class="flex justify-between text-gray-500"><span>{{ t('document.subtotal') }}</span><span class="font-mono">{{ fmtMoney(subtotal) }}</span></div>
-                      <div v-if="form.discount > 0" class="flex justify-between text-gray-500"><span>Discount{{ form.discountType === 'percent' ? ` (${form.discount}%)` : '' }}</span><span class="font-mono text-red-500">-{{ fmtMoney(discountAmt) }}</span></div>
-                      <template v-for="tax in form.taxes" :key="tax.id">
-                        <div v-if="tax.rate > 0" class="flex justify-between text-gray-500"><span>{{ tax.label }}{{ tax.type !== 'flat' ? ` (${tax.rate}%)` : '' }}</span><span class="font-mono">{{ fmtMoney(tax.type === 'flat' ? tax.rate : (subtotal - discountAmt) * tax.rate / 100) }}</span></div>
-                      </template>
-                      <div style="height: 1px; background: #e5e7eb; margin: 8px 0"></div>
-                      <div class="flex justify-between font-bold text-base"><span class="text-gray-800">{{ t('document.total') }}</span><span class="font-mono" :style="{ color: form.accentColor }">{{ fmtMoney(total) }}</span></div>
-                    </div>
-
-                    <!-- Signature -->
-                    <div v-if="form.signatureUrl" class="mt-6 flex flex-col items-end">
-                      <img :src="form.signatureUrl" alt="Signature" class="h-10 w-auto object-contain" />
-                      <div style="width: 120px; height: 1px; background: #d1d5db; margin-top: 4px"></div>
-                      <div class="text-gray-400 mt-1" style="font-size: 10px">{{ t('document.authorizedSignature') }}</div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Footer -->
-                <div v-if="form.showFooterLine" style="border-top: 2px solid; margin-top: 24px; padding-top: 16px" :style="{ borderColor: form.accentColor + '40' }" class="flex justify-between">
-                  <div class="text-gray-400 text-xs">{{ form.footerText || form.fromWebsite }}</div>
-                  <div v-if="form.showFlowtaliTag" class="text-gray-300" style="font-size: 10px">{{ t('document.generatedWith') }}</div>
-                </div>
-              </div>
-            </div>
+            <InvoiceDocument :doc="previewDoc" :zoom="1" />
 
           </div><!-- /zoom wrapper -->
         </div><!-- /document wrapper py-8 -->

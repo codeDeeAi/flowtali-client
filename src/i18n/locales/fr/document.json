@@ -29,6 +29,7 @@
   "po": "Cmd",
   "number": "Numéro",
   "contact": "Contact",
+  "address": "Adresse",
   "summary": "Résumé",
   "totalDue": "Total dû",
   "generatedShort": "Généré avec Flowtali",

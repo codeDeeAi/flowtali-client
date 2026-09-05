@@ -8,6 +8,7 @@ import { useAuthStore } from '@/stores/auth'
 import { InvoiceService, InvoiceSharedLinksService, type IInvoice, type IInvoiceSharedLink } from '@/services/invoice.service'
 import { ReceiptService, type IReceipt } from '@/services/receipt.service'
 import ShareLinkModal from '@/components/modals/ShareLinkModal.vue'
+import InvoiceDocument from '@/components/invoice/InvoiceDocument.vue'
 
 const router     = useRouter()
 const route      = useRoute()
@@ -74,9 +75,9 @@ async function refreshReceipts() {
   } catch {}
 }
 
+
 const symMap: Record<string, string> = { USD: '$', EUR: '€', GBP: '£', NGN: '₦', CAD: 'CA$', AUD: 'A$', JPY: '¥', INR: '₹', ZAR: 'R', CHF: 'Fr', AED: 'د.إ' }
 const sym     = computed(() => invoice.value ? (symMap[invoice.value.currency] ?? '$') : '$')
-const fmtMoney = (n: number) => sym.value + n.toLocaleString(locale.value, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 const formatDate = (d: string | null) => {
   if (!d) return '—'
@@ -309,108 +310,9 @@ async function handleDelete() {
       <!-- Two-column: invoice preview + right panel -->
       <div class="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-5">
 
-        <!-- Invoice document preview (classic style) -->
-        <div class="bg-gray-400/30 rounded-xl p-3 sm:p-6 overflow-x-auto">
-          <div
-            class="print-document min-w-[560px] w-full max-w-2xl mx-auto bg-white rounded-lg shadow-2xl overflow-hidden text-gray-800 relative"
-            :style="{ fontFamily: invoice.font_family || 'Geist Sans, sans-serif', fontSize: '13px' }"
-          >
-            <div class="h-1.5 w-full" :style="{ backgroundColor: invoice.accent_color }"></div>
-
-            <!-- Watermark -->
-            <div v-if="invoice.show_watermark && invoice.watermark_text" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
-              <span class="text-7xl font-black tracking-widest opacity-[0.04] text-gray-800 whitespace-nowrap">{{ invoice.watermark_text }}</span>
-            </div>
-            <!-- Stamp -->
-            <div v-if="invoice.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-25deg);z-index:2">
-              <div class="text-5xl font-extrabold tracking-widest border-4 px-6 py-3 rounded opacity-[0.15]"
-                :style="{ color: invoice.stamp_color ?? '#9ca3af', borderColor: invoice.stamp_color ?? '#9ca3af' }"
-              >{{ invoice.stamp }}</div>
-            </div>
-
-            <div class="p-10" style="position:relative;z-index:3">
-              <div class="flex justify-between items-start mb-8">
-                <div class="flex items-start gap-4">
-                  <img v-if="invoice.logo_url && invoice.show_logo" :src="invoice.logo_url" alt="Logo" class="h-12 w-auto object-contain" />
-                  <div>
-                    <div class="text-xl font-bold mb-0.5" :style="{ color: invoice.accent_color }">{{ invoice.from_name }}</div>
-                    <div v-if="invoice.from_tagline" class="text-xs text-gray-400 mb-1">{{ invoice.from_tagline }}</div>
-                    <div class="text-xs text-gray-400 whitespace-pre-line leading-relaxed">{{ invoice.from_address }}</div>
-                    <div v-if="invoice.from_email" class="text-xs text-gray-400 mt-1">{{ invoice.from_email }}</div>
-                    <div v-if="invoice.from_phone" class="text-xs text-gray-400">{{ invoice.from_phone }}</div>
-                  </div>
-                </div>
-                <div class="text-right">
-                  <div class="text-3xl font-bold text-gray-200 tracking-widest" style="font-family:var(--font-sans)">{{ t('document.invoiceWord') }}</div>
-                  <div class="font-mono text-sm text-gray-400 mt-1">{{ invoice.number }}</div>
-                </div>
-              </div>
-
-              <div class="h-px mb-6" :style="{ backgroundColor: invoice.accent_color + '30' }"></div>
-
-              <div class="flex gap-8 mb-8 text-xs">
-                <div><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.issueDate') }}</div><div class="font-semibold text-gray-700">{{ formatDate(invoice.issue_date) }}</div></div>
-                <div><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.dueDate') }}</div><div class="font-semibold text-gray-700">{{ formatDate(invoice.due_date) }}</div></div>
-                <div v-if="invoice.currency !== 'USD'"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.currency') }}</div><div class="font-semibold text-gray-700">{{ invoice.currency }}</div></div>
-                <div v-if="invoice.po_number"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.poNumber') }}</div><div class="font-semibold text-gray-700">{{ invoice.po_number }}</div></div>
-              </div>
-
-              <div class="mb-8">
-                <div class="text-[10px] uppercase tracking-widest text-gray-400 mb-2">{{ t('document.billTo') }}</div>
-                <div class="font-semibold text-gray-800">{{ invoice.to_name || '—' }}</div>
-                <div v-if="invoice.to_company" class="text-xs text-gray-500">{{ invoice.to_company }}</div>
-                <div v-if="invoice.to_email" class="text-xs text-gray-500">{{ invoice.to_email }}</div>
-                <div v-if="invoice.to_phone" class="text-xs text-gray-500">{{ invoice.to_phone }}</div>
-                <div v-if="invoice.to_address" class="text-xs text-gray-500 whitespace-pre-line mt-1">{{ invoice.to_address }}</div>
-              </div>
-
-              <table class="w-full mb-6 text-sm" style="border-collapse:collapse">
-                <thead>
-                  <tr :style="{ backgroundColor: invoice.accent_color + '18' }">
-                    <th class="text-left py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">{{ t('document.table.description') }}</th>
-                    <th class="text-center py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">{{ t('document.table.qty') }}</th>
-                    <th class="text-center py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">{{ t('document.table.unit') }}</th>
-                    <th class="text-right py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">{{ t('document.table.rate') }}</th>
-                    <th class="text-right py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">{{ t('document.table.amount') }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="item in invoice.items" :key="item.id" style="border-bottom:1px solid #f3f4f6">
-                    <td class="py-3 px-3 text-gray-700">{{ item.description }}</td>
-                    <td class="py-3 px-3 text-center text-gray-500">{{ item.qty }}</td>
-                    <td class="py-3 px-3 text-center text-gray-400 text-xs">{{ item.unit }}</td>
-                    <td class="py-3 px-3 text-right text-gray-500">{{ fmtMoney(item.rate) }}</td>
-                    <td class="py-3 px-3 text-right font-medium text-gray-800">{{ fmtMoney(item.qty * item.rate) }}</td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <div class="flex justify-end mb-6">
-                <div class="w-56 space-y-1.5 text-sm">
-                  <div class="flex justify-between text-gray-500"><span>{{ t('document.subtotal') }}</span><span class="font-mono">{{ fmtMoney(invoice.totals.subtotal) }}</span></div>
-                  <div v-if="invoice.totals.discount_amt > 0" class="flex justify-between text-gray-500">
-                    <span>{{ t('document.discount') }}</span><span class="font-mono text-red-500">-{{ fmtMoney(invoice.totals.discount_amt) }}</span>
-                  </div>
-                  <div v-if="invoice.totals.taxes_total > 0" class="flex justify-between text-gray-500">
-                    <span>{{ t('document.tax') }}</span><span class="font-mono">{{ fmtMoney(invoice.totals.taxes_total) }}</span>
-                  </div>
-                  <div class="h-px bg-gray-200 my-2"></div>
-                  <div class="flex justify-between font-bold text-base">
-                    <span>{{ t('document.total') }}</span><span class="font-mono" :style="{ color: invoice.accent_color }">{{ fmtMoney(invoice.totals.total) }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div v-if="invoice.show_notes && invoice.notes" class="border-t border-gray-100 pt-6">
-                <div class="text-[10px] uppercase tracking-widest text-gray-400 mb-1.5">{{ t('document.notes') }}</div>
-                <p class="text-xs text-gray-500 leading-relaxed whitespace-pre-line">{{ invoice.notes }}</p>
-              </div>
-
-              <div v-if="invoice.show_flowtali_tag" class="mt-8 text-center">
-                <div class="text-[10px] text-gray-300">{{ t('document.generatedWith') }}</div>
-              </div>
-            </div>
-          </div>
+        <!-- Invoice document — shared with the editor preview, share link and PDF -->
+        <div class="bg-gray-400/30 rounded-xl p-3 sm:p-6">
+          <InvoiceDocument :doc="invoice" fit class="mx-auto" />
         </div>
 
         <!-- Right column: receipts + shared links -->
@@ -745,6 +647,7 @@ async function handleDelete() {
 <style>
 @media print {
   body * { visibility: hidden; }
+  .print-zoom-wrapper { transform: none !important; width: 100% !important; margin: 0 !important; }
   .print-document, .print-document * {
     visibility: visible;
     -webkit-print-color-adjust: exact !important;

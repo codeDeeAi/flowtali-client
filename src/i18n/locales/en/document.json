@@ -29,6 +29,7 @@
   "po": "PO",
   "number": "Number",
   "contact": "Contact",
+  "address": "Address",
   "summary": "Summary",
   "totalDue": "Total Due",
   "generatedShort": "Generated with Flowtali",
