@@ -185,7 +185,7 @@
     "subtitle": "Klienti platí faktury přes zabezpečený odkaz. Peníze jdou na váš vlastní účet a vaše bankovní údaje se jim nikdy nezobrazí.",
     "add": "Přidat výplatní účet",
     "empty": "Zatím žádné výplatní účty. Přidejte jeden a na faktury se doplní odkaz „Zaplatit“.",
-    "feeNotice": "Flowtali si ponechá {fee}% z každé platby provedené přes platební odkaz. Poplatky platební brány (Paystack nebo Bachs) se rovněž strhávají z vaší výplaty. Zde přijatá sazba zůstává pro účet pevná.",
+    "feeNotice": "Flowtali si ponechá {fee} z každé platby provedené přes platební odkaz. Poplatky platební brány (Paystack nebo Bachs) se rovněž strhávají z vaší výplaty. Zde přijatá sazba zůstává pro účet pevná.",
     "feeShort": "poplatek Flowtali {fee}",
     "formNew": "Nový výplatní účet",
     "status": {
@@ -220,7 +220,7 @@
     },
     "resolving": "Ověřujeme u banky…",
     "resolveFailed": "Tento účet se u banky nepodařilo ověřit.",
-    "acceptFee": "Souhlasím, že si Flowtali ponechá {fee}% z každé platby přes mé platební odkazy a že poplatky {processor} se strhnou z mé výplaty.",
+    "acceptFee": "Souhlasím, že si Flowtali ponechá {fee} z každé platby přes mé platební odkazy a že poplatky {processor} se strhnou z mé výplaty.",
     "save": "Přidat účet",
     "saveAndOnboard": "Pokračovat na Bachs",
     "added": "Výplatní účet přidán.",

@@ -185,7 +185,7 @@
     "subtitle": "Vos clients paient leurs factures via un lien sécurisé. L’argent arrive sur votre propre compte et vos coordonnées bancaires ne leur sont jamais montrées.",
     "add": "Ajouter un compte de versement",
     "empty": "Aucun compte de versement. Ajoutez-en un pour placer un lien « Payer » sur vos factures.",
-    "feeNotice": "Flowtali conserve {fee}% de chaque paiement effectué via un lien de paiement. Les frais du prestataire (Paystack ou Bachs) sont également déduits de votre versement. Le taux accepté ici reste fixé pour ce compte.",
+    "feeNotice": "Flowtali conserve {fee} de chaque paiement effectué via un lien de paiement. Les frais du prestataire (Paystack ou Bachs) sont également déduits de votre versement. Le taux accepté ici reste fixé pour ce compte.",
     "feeShort": "{fee} de frais Flowtali",
     "formNew": "Nouveau compte de versement",
     "status": {
@@ -220,7 +220,7 @@
     },
     "resolving": "Vérification auprès de la banque…",
     "resolveFailed": "Impossible de confirmer ce compte auprès de la banque.",
-    "acceptFee": "J’accepte que Flowtali conserve {fee}% de chaque paiement effectué via mes liens de paiement et que les frais de {processor} soient déduits de mon versement.",
+    "acceptFee": "J’accepte que Flowtali conserve {fee} de chaque paiement effectué via mes liens de paiement et que les frais de {processor} soient déduits de mon versement.",
     "save": "Ajouter le compte",
     "saveAndOnboard": "Continuer vers Bachs",
     "added": "Compte de versement ajouté.",

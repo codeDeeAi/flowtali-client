@@ -17,7 +17,7 @@ import type { ISubAccount, ISubAccountCreateData, PayoutProvider } from '@/types
 
 const props = defineProps<{ orgId: string }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { notify } = useNotification()
 const route = useRoute()
 const router = useRouter()
@@ -29,7 +29,9 @@ const createData = ref<ISubAccountCreateData | null>(null)
 const busyId     = ref<string | null>(null)
 
 const feePercent = computed(() => createData.value?.platform_fee_percent ?? 0.5)
-const fmtFee = (n: number) => `${Number(n).toLocaleString(undefined, { maximumFractionDigits: 2 })}%`
+// The % sign comes from here, not the message, so it follows the locale ("0,5 %" in de/fr).
+const fmtFee = (n: number) =>
+  new Intl.NumberFormat(locale.value, { style: 'percent', maximumFractionDigits: 2 }).format(Number(n) / 100)
 
 // ── Form ──────────────────────────────────────────────────────────────────────
 const showForm   = ref(false)

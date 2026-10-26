@@ -185,7 +185,7 @@
     "subtitle": "Clients pay invoices through a secure link. Money settles into your own account, and your bank details are never shown to them.",
     "add": "Add Payout Account",
     "empty": "No payout accounts yet. Add one to put a “Pay now” link on your invoices.",
-    "feeNotice": "Flowtali keeps {fee}% of every payment made through a pay link. The payment processor’s own fees (Paystack or Bachs) also come out of your payout. The rate you accept here is locked to the account.",
+    "feeNotice": "Flowtali keeps {fee} of every payment made through a pay link. The payment processor’s own fees (Paystack or Bachs) also come out of your payout. The rate you accept here is locked to the account.",
     "feeShort": "{fee} Flowtali fee",
     "formNew": "New Payout Account",
     "status": {
@@ -220,7 +220,7 @@
     },
     "resolving": "Checking with the bank…",
     "resolveFailed": "We couldn’t confirm that account with the bank.",
-    "acceptFee": "I agree that Flowtali keeps {fee}% of each payment made through my pay links, and that {processor}’s processing fees are deducted from my payout.",
+    "acceptFee": "I agree that Flowtali keeps {fee} of each payment made through my pay links, and that {processor}’s processing fees are deducted from my payout.",
     "save": "Add Account",
     "saveAndOnboard": "Continue to Bachs",
     "added": "Payout account added.",
