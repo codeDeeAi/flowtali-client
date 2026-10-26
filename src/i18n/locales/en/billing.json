@@ -19,7 +19,8 @@
     "renewsAnnual": "Annual plan renews on",
     "renewsMonthly": "Monthly plan renews on",
     "billingCurrency": "Billing currency: {currency}",
-    "cancelPlan": "Cancel plan"
+    "cancelPlan": "Cancel plan",
+    "expiresOn": "Plan expires on"
   },
   "tabs": {
     "plans": "Plans",
@@ -98,12 +99,36 @@
     "initPaymentFailed": "Failed to initialize payment.",
     "cancelled": "Subscription cancelled. Access continues until the end of your billing period.",
     "cancelFailed": "Failed to cancel subscription.",
-    "invoiceFailed": "Failed to load the invoice. Please try again."
+    "invoiceFailed": "Failed to load the invoice. Please try again.",
+    "autoRenewOn": "Auto-renew turned on.",
+    "autoRenewOff": "Auto-renew turned off. You'll need to renew manually.",
+    "autoRenewFailed": "Couldn't update auto-renew."
   },
   "paywall": {
     "trialEndedTitle": "Your free trial has ended",
     "trialEndedBody": "Subscribe to a plan to keep creating invoices, receipts and more. Your existing data stays safe.",
     "requiredTitle": "A subscription is required",
     "requiredBody": "Your organization needs an active plan to continue. Choose a plan below to restore access."
+  },
+  "autoRenew": {
+    "card": "Card",
+    "onWith": "Auto-renews with {card}",
+    "off": "Auto-renew off — renew manually",
+    "turnOff": "Turn off auto-renew",
+    "turnOn": "Auto-renew with {card}"
+  },
+  "payMethod": {
+    "title": "How would you like to pay for {name}?",
+    "back": "Back",
+    "card": {
+      "title": "Pay with card",
+      "badge": "Auto-renew",
+      "desc": "Add a card and we'll renew your plan automatically each billing period. Turn auto-renew off anytime."
+    },
+    "checkout": {
+      "title": "One-time payment",
+      "desc": "Pay by card, bank transfer or USSD. You'll renew manually before your plan expires."
+    },
+    "continue": "Continue to payment"
   }
 }

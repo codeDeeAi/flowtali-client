@@ -19,7 +19,8 @@
     "renewsAnnual": "Le forfait annuel se renouvelle le",
     "renewsMonthly": "Le forfait mensuel se renouvelle le",
     "billingCurrency": "Devise de facturation : {currency}",
-    "cancelPlan": "Annuler le forfait"
+    "cancelPlan": "Annuler le forfait",
+    "expiresOn": "Le forfait expire le"
   },
   "tabs": {
     "plans": "Forfaits",
@@ -98,12 +99,36 @@
     "initPaymentFailed": "Échec de l'initialisation du paiement.",
     "cancelled": "Abonnement annulé. L'accès continue jusqu'à la fin de votre période de facturation.",
     "cancelFailed": "Échec de l'annulation de l'abonnement.",
-    "invoiceFailed": "Impossible de charger la facture. Veuillez réessayer."
+    "invoiceFailed": "Impossible de charger la facture. Veuillez réessayer.",
+    "autoRenewOn": "Renouvellement automatique activé.",
+    "autoRenewOff": "Renouvellement automatique désactivé. Vous devrez renouveler manuellement.",
+    "autoRenewFailed": "Impossible de modifier le renouvellement automatique."
   },
   "paywall": {
     "trialEndedTitle": "Votre essai gratuit est terminé",
     "trialEndedBody": "Abonnez-vous à une formule pour continuer à créer des factures, des reçus et plus encore. Vos données existantes restent en sécurité.",
     "requiredTitle": "Un abonnement est requis",
     "requiredBody": "Votre organisation a besoin d'une formule active pour continuer. Choisissez une formule ci-dessous pour rétablir l'accès."
+  },
+  "autoRenew": {
+    "card": "Carte",
+    "onWith": "Renouvellement automatique avec {card}",
+    "off": "Renouvellement automatique désactivé — renouvelez manuellement",
+    "turnOff": "Désactiver le renouvellement automatique",
+    "turnOn": "Renouveler automatiquement avec {card}"
+  },
+  "payMethod": {
+    "title": "Comment souhaitez-vous payer {name} ?",
+    "back": "Retour",
+    "card": {
+      "title": "Payer par carte",
+      "badge": "Renouvellement auto",
+      "desc": "Ajoutez une carte et nous renouvellerons votre forfait automatiquement à chaque période. Désactivable à tout moment."
+    },
+    "checkout": {
+      "title": "Paiement unique",
+      "desc": "Payez par carte, virement bancaire ou USSD. Vous renouvellerez manuellement avant l'expiration de votre forfait."
+    },
+    "continue": "Continuer vers le paiement"
   }
 }

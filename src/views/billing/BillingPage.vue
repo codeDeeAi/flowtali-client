@@ -32,6 +32,12 @@ const isInitializing  = ref(false)
 const isCancelling    = ref(false)
 const showCancelModal = ref(false)
 
+// ── Payment method choice ────────────────────────────────────────────────────
+type PaymentMethod = 'checkout' | 'card'
+const pendingPlan        = ref<ISubscriptionPlan | null>(null)
+const paymentMethod      = ref<PaymentMethod>('card')
+const isTogglingAutoRenew = ref(false)
+
 // ── Billing history ──────────────────────────────────────────────────────────
 const transactions  = ref<ISubscriptionTransaction[]>([])
 const txPage        = ref(1)
@@ -120,15 +126,21 @@ async function loadTransactions() {
   }
 }
 
-async function upgrade(planSlug: string) {
-  if (!orgId.value) return
+function choosePlan(plan: ISubscriptionPlan) {
+  paymentMethod.value = 'card'
+  pendingPlan.value   = plan
+}
+
+async function upgrade() {
+  if (!orgId.value || !pendingPlan.value) return
   isInitializing.value = true
   try {
     const res = await SubscriptionService.initialize(orgId.value, {
-      plan:     planSlug,
+      plan:     pendingPlan.value.slug,
       interval: billingInterval.value,
       currency: selectedCurrency.value,
       redirect_url: window.location.origin,
+      payment_method: paymentMethod.value,
     })
     window.location.href = res.data.data.payment_url
   } catch (err: any) {
@@ -136,6 +148,27 @@ async function upgrade(planSlug: string) {
     isInitializing.value = false
   }
 }
+
+async function toggleAutoRenew(enabled: boolean) {
+  if (!orgId.value || isTogglingAutoRenew.value) return
+  isTogglingAutoRenew.value = true
+  try {
+    const res             = await SubscriptionService.setAutoRenew(orgId.value, enabled)
+    subStore.subscription = res.data.data
+    notify(enabled ? t('billing.toasts.autoRenewOn') : t('billing.toasts.autoRenewOff'), 'success')
+  } catch (err: any) {
+    notify(err?.response?.data?.message ?? t('billing.toasts.autoRenewFailed'), 'error')
+  } finally {
+    isTogglingAutoRenew.value = false
+  }
+}
+
+const cardLabel = computed(() => {
+  const card = subStore.subscription?.card
+  if (!card?.last4) return null
+  const brand = card.brand ? card.brand.charAt(0).toUpperCase() + card.brand.slice(1) : t('billing.autoRenew.card')
+  return `${brand} •••• ${card.last4}`
+})
 
 async function cancelSubscription() {
   if (!orgId.value) return
@@ -296,21 +329,51 @@ function featureLabel(key: string, val: boolean | number | null): string {
             <span v-if="subStore.subscription.status === 'cancelled'">
               {{ t('billing.period.cancelledUntil') }}
             </span>
-            <span v-else>
+            <span v-else-if="subStore.subscription.auto_renew">
               {{ subStore.subscription.billing_interval === 'annual' ? t('billing.period.renewsAnnual') : t('billing.period.renewsMonthly') }}
             </span>
+            <span v-else>{{ t('billing.period.expiresOn') }}</span>
             <span class="font-semibold"> {{ formatDate(subStore.subscription.current_period_end) }}</span>
           </p>
-          <p class="text-xs text-gray-700 mt-0.5">{{ t('billing.period.billingCurrency', { currency: subStore.subscription.billing_currency }) }}</p>
+          <p class="text-xs text-gray-700 mt-0.5">
+            {{ t('billing.period.billingCurrency', { currency: subStore.subscription.billing_currency }) }}
+            <template v-if="subStore.subscription.status !== 'cancelled'">
+              ·
+              <span v-if="subStore.subscription.auto_renew" class="text-green-400">
+                {{ t('billing.autoRenew.onWith', { card: cardLabel ?? t('billing.autoRenew.card') }) }}
+              </span>
+              <span v-else>{{ t('billing.autoRenew.off') }}</span>
+            </template>
+          </p>
         </div>
       </div>
-      <button
-        v-if="subStore.subscription.status === 'active'"
-        @click="showCancelModal = true"
-        class="text-xs text-red-400 hover:text-red-300 transition-colors whitespace-nowrap shrink-0"
-      >
-        {{ t('billing.period.cancelPlan') }}
-      </button>
+      <div class="flex items-center gap-4 shrink-0">
+        <template v-if="subStore.subscription.status === 'active' || subStore.subscription.status === 'past_due'">
+          <button
+            v-if="subStore.subscription.auto_renew"
+            @click="toggleAutoRenew(false)"
+            :disabled="isTogglingAutoRenew"
+            class="text-xs text-gray-700 hover:text-gray-1000 transition-colors whitespace-nowrap disabled:opacity-50"
+          >
+            {{ t('billing.autoRenew.turnOff') }}
+          </button>
+          <button
+            v-else-if="subStore.subscription.card"
+            @click="toggleAutoRenew(true)"
+            :disabled="isTogglingAutoRenew"
+            class="text-xs text-green-400 hover:text-green-300 transition-colors whitespace-nowrap disabled:opacity-50"
+          >
+            {{ t('billing.autoRenew.turnOn', { card: cardLabel }) }}
+          </button>
+        </template>
+        <button
+          v-if="subStore.subscription.status === 'active'"
+          @click="showCancelModal = true"
+          class="text-xs text-red-400 hover:text-red-300 transition-colors whitespace-nowrap"
+        >
+          {{ t('billing.period.cancelPlan') }}
+        </button>
+      </div>
     </div>
 
     <!-- Tabs -->
@@ -417,7 +480,7 @@ function featureLabel(key: string, val: boolean | number | null): string {
           <!-- CTA -->
           <button
             v-if="currentPlanSlug !== plan.slug"
-            @click="plan.is_free ? null : upgrade(plan.slug)"
+            @click="plan.is_free ? null : choosePlan(plan)"
             :disabled="isInitializing || plan.is_free"
             :class="[
               'w-full py-2.5 rounded-lg text-sm font-semibold transition-colors mb-5',
@@ -531,6 +594,64 @@ function featureLabel(key: string, val: boolean | number | null): string {
         </div>
       </div>
     </template>
+
+    <!-- ── Payment method modal ─────────────────────────────────── -->
+    <Teleport to="body">
+      <div v-if="pendingPlan" class="fixed inset-0 bg-gray-100/70 flex items-center justify-center z-50 p-4" @click.self="!isInitializing && (pendingPlan = null)">
+        <div class="bg-gray-200 border border-gray-400 rounded-2xl p-6 max-w-md w-full space-y-4">
+          <div>
+            <h3 class="text-gray-1000 font-semibold text-sm">{{ t('billing.payMethod.title', { name: pendingPlan.name }) }}</h3>
+            <p class="text-gray-700 text-xs mt-0.5">
+              {{ billingInterval === 'annual' ? pendingPlan.prices[selectedCurrency].annual_display + ' / ' + t('billing.interval.annual').toLowerCase() : pendingPlan.prices[selectedCurrency].monthly_display + ' / ' + t('billing.interval.monthly').toLowerCase() }}
+            </p>
+          </div>
+
+          <div class="space-y-2.5">
+            <button
+              v-for="opt in [
+                { key: 'card', icon: 'lucide:credit-card', title: t('billing.payMethod.card.title'), desc: t('billing.payMethod.card.desc'), badge: t('billing.payMethod.card.badge') },
+                { key: 'checkout', icon: 'lucide:wallet', title: t('billing.payMethod.checkout.title'), desc: t('billing.payMethod.checkout.desc'), badge: null },
+              ]"
+              :key="opt.key"
+              type="button"
+              @click="paymentMethod = opt.key as PaymentMethod"
+              :class="[
+                'w-full flex items-start gap-3 text-left rounded-xl border p-4 transition-colors',
+                paymentMethod === opt.key ? 'border-green-700/60 bg-green-700/[0.06]' : 'border-gray-400 hover:border-gray-500',
+              ]"
+            >
+              <Icon :icon="paymentMethod === opt.key ? 'lucide:circle-dot' : 'lucide:circle'" class="w-4 h-4 mt-0.5 shrink-0" :class="paymentMethod === opt.key ? 'text-green-400' : 'text-gray-700'" />
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                  <Icon :icon="opt.icon" class="w-3.5 h-3.5 text-gray-900" />
+                  <span class="text-sm font-medium text-gray-1000">{{ opt.title }}</span>
+                  <span v-if="opt.badge" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-green-700 text-bg-100">{{ opt.badge }}</span>
+                </div>
+                <p class="text-xs text-gray-700 mt-1 leading-relaxed">{{ opt.desc }}</p>
+              </div>
+            </button>
+          </div>
+
+          <div class="flex gap-3 pt-1">
+            <button
+              @click="pendingPlan = null"
+              :disabled="isInitializing"
+              class="flex-1 py-2 rounded-lg bg-gray-400 hover:bg-gray-500 text-gray-900 text-sm transition-colors disabled:opacity-50"
+            >
+              {{ t('billing.payMethod.back') }}
+            </button>
+            <button
+              @click="upgrade"
+              :disabled="isInitializing"
+              class="flex-1 py-2 rounded-lg bg-green-700 hover:bg-green-800 text-bg-100 text-sm font-semibold transition-colors disabled:opacity-50"
+            >
+              <Icon v-if="isInitializing" icon="lucide:loader-2" class="w-3.5 h-3.5 animate-spin inline mr-1" />
+              {{ t('billing.payMethod.continue') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
 
     <!-- ── Cancel modal ─────────────────────────────────────────── -->
     <Teleport to="body">

@@ -19,7 +19,8 @@
     "renewsAnnual": "Jahresplan verlängert sich am",
     "renewsMonthly": "Monatsplan verlängert sich am",
     "billingCurrency": "Abrechnungswährung: {currency}",
-    "cancelPlan": "Plan kündigen"
+    "cancelPlan": "Plan kündigen",
+    "expiresOn": "Plan läuft ab am"
   },
   "tabs": {
     "plans": "Pläne",
@@ -98,12 +99,36 @@
     "initPaymentFailed": "Zahlung konnte nicht initialisiert werden.",
     "cancelled": "Abonnement gekündigt. Der Zugriff bleibt bis zum Ende Ihres Abrechnungszeitraums bestehen.",
     "cancelFailed": "Abonnement konnte nicht gekündigt werden.",
-    "invoiceFailed": "Rechnung konnte nicht geladen werden. Bitte erneut versuchen."
+    "invoiceFailed": "Rechnung konnte nicht geladen werden. Bitte erneut versuchen.",
+    "autoRenewOn": "Automatische Verlängerung aktiviert.",
+    "autoRenewOff": "Automatische Verlängerung deaktiviert. Sie müssen manuell verlängern.",
+    "autoRenewFailed": "Automatische Verlängerung konnte nicht geändert werden."
   },
   "paywall": {
     "trialEndedTitle": "Ihre kostenlose Testphase ist beendet",
     "trialEndedBody": "Abonnieren Sie einen Plan, um weiterhin Rechnungen, Belege und mehr zu erstellen. Ihre vorhandenen Daten bleiben sicher.",
     "requiredTitle": "Ein Abonnement ist erforderlich",
     "requiredBody": "Ihre Organisation benötigt einen aktiven Plan, um fortzufahren. Wählen Sie unten einen Plan, um den Zugriff wiederherzustellen."
+  },
+  "autoRenew": {
+    "card": "Karte",
+    "onWith": "Automatische Verlängerung mit {card}",
+    "off": "Automatische Verlängerung aus — manuell verlängern",
+    "turnOff": "Automatische Verlängerung deaktivieren",
+    "turnOn": "Automatisch verlängern mit {card}"
+  },
+  "payMethod": {
+    "title": "Wie möchten Sie für {name} bezahlen?",
+    "back": "Zurück",
+    "card": {
+      "title": "Mit Karte bezahlen",
+      "badge": "Auto-Verlängerung",
+      "desc": "Hinterlegen Sie eine Karte und wir verlängern Ihren Plan automatisch in jedem Abrechnungszeitraum. Jederzeit deaktivierbar."
+    },
+    "checkout": {
+      "title": "Einmalzahlung",
+      "desc": "Bezahlen Sie per Karte, Banküberweisung oder USSD. Sie verlängern manuell, bevor Ihr Plan abläuft."
+    },
+    "continue": "Weiter zur Zahlung"
   }
 }

@@ -27,6 +27,8 @@ const typeMeta: Record<string, { icon: string; color: string }> = {
   trial_ending:            { icon: 'lucide:hourglass',    color: '#fbbf24' },
   trial_ended:             { icon: 'lucide:lock',         color: '#f87171' },
   subscription_bonus_granted: { icon: 'lucide:gift',      color: '#22c55e' },
+  subscription_renewed:       { icon: 'lucide:credit-card', color: '#4ade80' },
+  subscription_renewal_failed: { icon: 'lucide:credit-card', color: '#f87171' },
 }
 
 function meta(type: string) {

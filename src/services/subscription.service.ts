@@ -33,6 +33,13 @@ export interface ISubscription {
   has_usable_access: boolean
   free_window_expired: boolean
   free_access_ends_at: string | null
+  auto_renew: boolean
+  card: {
+    brand: string | null
+    last4: string | null
+    exp_month: string | null
+    exp_year: string | null
+  } | null
   plan: {
     id: string
     slug: string
@@ -66,7 +73,9 @@ export const SubscriptionService = {
     return http.get<{ data: ISubscription }>(`/api/v1/orgs/${orgId}/subscription`)
   },
 
-  initialize(orgId: string, payload: { plan: string; interval: 'monthly' | 'annual'; currency: 'NGN' | 'USD', redirect_url?: string }) {
+  // payment_method: 'checkout' = one-off Paystack checkout (renew manually);
+  // 'card' = card-only checkout whose saved card is auto-charged on renewal.
+  initialize(orgId: string, payload: { plan: string; interval: 'monthly' | 'annual'; currency: 'NGN' | 'USD', redirect_url?: string, payment_method?: 'checkout' | 'card' }) {
     return http.post<{ data: { payment_url: string; reference: string; amount: number; currency: string, redirect_url?: string } }>(
       `/api/v1/orgs/${orgId}/subscription/initialize`,
       payload,
@@ -75,6 +84,10 @@ export const SubscriptionService = {
 
   verify(orgId: string, reference: string) {
     return http.post<{ data: ISubscription }>(`/api/v1/orgs/${orgId}/subscription/verify`, { reference })
+  },
+
+  setAutoRenew(orgId: string, enabled: boolean) {
+    return http.patch<{ data: ISubscription }>(`/api/v1/orgs/${orgId}/subscription/auto-renew`, { enabled })
   },
 
   cancel(orgId: string) {

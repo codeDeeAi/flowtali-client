@@ -19,7 +19,8 @@
     "renewsAnnual": "Roční plán se obnoví",
     "renewsMonthly": "Měsíční plán se obnoví",
     "billingCurrency": "Měna fakturace: {currency}",
-    "cancelPlan": "Zrušit plán"
+    "cancelPlan": "Zrušit plán",
+    "expiresOn": "Plán vyprší"
   },
   "tabs": {
     "plans": "Plány",
@@ -98,12 +99,36 @@
     "initPaymentFailed": "Nepodařilo se inicializovat platbu.",
     "cancelled": "Předplatné zrušeno. Přístup pokračuje do konce vašeho fakturačního období.",
     "cancelFailed": "Nepodařilo se zrušit předplatné.",
-    "invoiceFailed": "Fakturu se nepodařilo načíst. Zkuste to prosím znovu."
+    "invoiceFailed": "Fakturu se nepodařilo načíst. Zkuste to prosím znovu.",
+    "autoRenewOn": "Automatické obnovení zapnuto.",
+    "autoRenewOff": "Automatické obnovení vypnuto. Plán bude nutné obnovit ručně.",
+    "autoRenewFailed": "Automatické obnovení se nepodařilo změnit."
   },
   "paywall": {
     "trialEndedTitle": "Vaše bezplatná zkušební verze skončila",
     "trialEndedBody": "Předplaťte si tarif a pokračujte ve vytváření faktur, účtenek a dalšího. Vaše stávající data zůstanou v bezpečí.",
     "requiredTitle": "Vyžaduje se předplatné",
     "requiredBody": "Vaše organizace potřebuje k pokračování aktivní tarif. Níže si vyberte tarif a obnovte přístup."
+  },
+  "autoRenew": {
+    "card": "Karta",
+    "onWith": "Automaticky se obnovuje kartou {card}",
+    "off": "Automatické obnovení vypnuto — obnovte ručně",
+    "turnOff": "Vypnout automatické obnovení",
+    "turnOn": "Obnovovat automaticky kartou {card}"
+  },
+  "payMethod": {
+    "title": "Jak chcete zaplatit za {name}?",
+    "back": "Zpět",
+    "card": {
+      "title": "Platba kartou",
+      "badge": "Auto-obnovení",
+      "desc": "Přidejte kartu a váš plán budeme automaticky obnovovat každé zúčtovací období. Automatické obnovení můžete kdykoli vypnout."
+    },
+    "checkout": {
+      "title": "Jednorázová platba",
+      "desc": "Plaťte kartou, bankovním převodem nebo USSD. Před vypršením plánu jej obnovíte ručně."
+    },
+    "continue": "Pokračovat k platbě"
   }
 }
