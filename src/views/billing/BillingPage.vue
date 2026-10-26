@@ -78,12 +78,19 @@ async function openInvoice(tx: ISubscriptionTransaction, disposition: 'inline' |
 // ── Paystack callback handling ────────────────────────────────────────────────
 const isVerifying = ref(false)
 
+// Gateways append their own params to the callback URL (Paystack: trxref/reference,
+// Bachs: checkout_id), sometimes with a second "?" — keep only our own value.
+function queryFlag(key: string): string | undefined {
+  const raw = route.query[key]
+  return typeof raw === 'string' ? raw.split(/[?&#]/)[0] : undefined
+}
+
 async function handleCallbackRef() {
-  const ref = route.query.ref as string | undefined
+  const ref = queryFlag('ref')
   if (!ref || !orgId.value) return
 
-  const isCardSetup = route.query.card_setup === '1'
-  const cancelled   = route.query.cancelled === '1'
+  const isCardSetup = queryFlag('card_setup') === '1'
+  const cancelled   = queryFlag('cancelled') === '1'
   router.replace({ query: {} })
 
   if (cancelled) {
