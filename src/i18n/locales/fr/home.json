@@ -102,6 +102,7 @@
     "mostPopular": "Le plus populaire",
     "perMonth": "/mois",
     "billedNote": "Facturé {amount}/an",
+    "trialNote": "Essai gratuit de 2 mois, puis choisissez un forfait",
     "footnote": "Tous les forfaits incluent le générateur de factures, le générateur de reçus, la gestion de projet et le générateur d'en-têtes. Annulable à tout moment.",
     "plans": {
       "starter": {

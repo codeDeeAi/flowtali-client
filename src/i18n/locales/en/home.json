@@ -102,6 +102,7 @@
     "mostPopular": "Most popular",
     "perMonth": "/mo",
     "billedNote": "Billed {amount}/year",
+    "trialNote": "Free 2-month trial, then choose a plan",
     "footnote": "All plans include Invoice Generator, Receipt Generator, Project Management, and Letterhead Generator. Cancel anytime.",
     "plans": {
       "starter": {

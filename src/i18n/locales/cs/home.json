@@ -102,6 +102,7 @@
     "mostPopular": "Nejoblíbenější",
     "perMonth": "/měs.",
     "billedNote": "Účtováno {amount}/rok",
+    "trialNote": "2měsíční zkušební verze zdarma, poté si zvolte plán",
     "footnote": "Všechny plány zahrnují generátor faktur, generátor účtenek, správu projektů a generátor hlavičkových papírů. Zrušitelné kdykoli.",
     "plans": {
       "starter": {

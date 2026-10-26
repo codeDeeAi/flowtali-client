@@ -146,7 +146,9 @@ const displayPlans = computed(() => {
     const meta = staticPlanData.value[plan.slug] ?? { desc: plan.description, cta: t('home.pricing.plans.pro.cta'), featured: false, features: [] };
     const prices = plan.prices[currency.value];
     const priceDisplay = billing.value === 'annual' && !plan.is_free ? prices.annual_per_month : prices.monthly_display;
-    const billedNote = billing.value === 'annual' && !plan.is_free ? t('home.pricing.billedNote', { amount: prices.annual_display }) : null;
+    const billedNote = plan.is_free
+      ? t('home.pricing.trialNote')
+      : billing.value === 'annual' ? t('home.pricing.billedNote', { amount: prices.annual_display }) : null;
     return { name: plan.name, slug: plan.slug, priceDisplay, billedNote, isFree: plan.is_free, ...meta };
   });
 });

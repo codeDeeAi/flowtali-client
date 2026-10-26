@@ -102,6 +102,7 @@
     "mostPopular": "Am beliebtesten",
     "perMonth": "/Mon.",
     "billedNote": "Abgerechnet {amount}/Jahr",
+    "trialNote": "2 Monate kostenlos testen, danach Plan wählen",
     "footnote": "Alle Pläne enthalten Rechnungsgenerator, Quittungsgenerator, Projektverwaltung und Briefkopf-Generator. Jederzeit kündbar.",
     "plans": {
       "starter": {
