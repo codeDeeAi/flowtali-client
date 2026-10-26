@@ -102,7 +102,10 @@
     "invoiceFailed": "Failed to load the invoice. Please try again.",
     "autoRenewOn": "Auto-renew turned on.",
     "autoRenewOff": "Auto-renew turned off. You'll need to renew manually.",
-    "autoRenewFailed": "Couldn't update auto-renew."
+    "autoRenewFailed": "Couldn't update auto-renew.",
+    "paymentCancelled": "Payment cancelled — nothing was charged.",
+    "cardSaved": "Card saved. Your plan will now renew automatically.",
+    "cardSetupFailed": "Couldn't start card setup."
   },
   "paywall": {
     "trialEndedTitle": "Your free trial has ended",
@@ -115,7 +118,9 @@
     "onWith": "Auto-renews with {card}",
     "off": "Auto-renew off — renew manually",
     "turnOff": "Turn off auto-renew",
-    "turnOn": "Auto-renew with {card}"
+    "turnOn": "Auto-renew with {card}",
+    "addCard": "Add card for auto-renew",
+    "changeCard": "Change card"
   },
   "payMethod": {
     "title": "How would you like to pay for {name}?",
@@ -127,7 +132,8 @@
     },
     "checkout": {
       "title": "One-time payment",
-      "desc": "Pay by card, bank transfer or USSD. You'll renew manually before your plan expires."
+      "desc": "Pay by card, bank transfer or USSD. You'll renew manually before your plan expires.",
+      "descUsd": "Pay once by card. You'll renew manually before your plan expires."
     },
     "continue": "Continue to payment"
   }

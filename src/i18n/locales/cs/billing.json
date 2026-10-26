@@ -102,7 +102,10 @@
     "invoiceFailed": "Fakturu se nepodařilo načíst. Zkuste to prosím znovu.",
     "autoRenewOn": "Automatické obnovení zapnuto.",
     "autoRenewOff": "Automatické obnovení vypnuto. Plán bude nutné obnovit ručně.",
-    "autoRenewFailed": "Automatické obnovení se nepodařilo změnit."
+    "autoRenewFailed": "Automatické obnovení se nepodařilo změnit.",
+    "paymentCancelled": "Platba zrušena — nic nebylo strženo.",
+    "cardSaved": "Karta uložena. Váš plán se nyní bude obnovovat automaticky.",
+    "cardSetupFailed": "Přidání karty se nepodařilo spustit."
   },
   "paywall": {
     "trialEndedTitle": "Vaše bezplatná zkušební verze skončila",
@@ -115,7 +118,9 @@
     "onWith": "Automaticky se obnovuje kartou {card}",
     "off": "Automatické obnovení vypnuto — obnovte ručně",
     "turnOff": "Vypnout automatické obnovení",
-    "turnOn": "Obnovovat automaticky kartou {card}"
+    "turnOn": "Obnovovat automaticky kartou {card}",
+    "addCard": "Přidat kartu pro automatické obnovení",
+    "changeCard": "Změnit kartu"
   },
   "payMethod": {
     "title": "Jak chcete zaplatit za {name}?",
@@ -127,7 +132,8 @@
     },
     "checkout": {
       "title": "Jednorázová platba",
-      "desc": "Plaťte kartou, bankovním převodem nebo USSD. Před vypršením plánu jej obnovíte ručně."
+      "desc": "Plaťte kartou, bankovním převodem nebo USSD. Před vypršením plánu jej obnovíte ručně.",
+      "descUsd": "Zaplaťte jednorázově kartou. Před vypršením plánu jej obnovíte ručně."
     },
     "continue": "Pokračovat k platbě"
   }

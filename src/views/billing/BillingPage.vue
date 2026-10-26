@@ -82,13 +82,21 @@ async function handleCallbackRef() {
   const ref = route.query.ref as string | undefined
   if (!ref || !orgId.value) return
 
-  isVerifying.value = true
+  const isCardSetup = route.query.card_setup === '1'
+  const cancelled   = route.query.cancelled === '1'
   router.replace({ query: {} })
+
+  if (cancelled) {
+    notify(t('billing.toasts.paymentCancelled'), 'info')
+    return
+  }
+
+  isVerifying.value = true
 
   try {
     const res             = await SubscriptionService.verify(orgId.value, ref)
     subStore.subscription = res.data.data
-    notify(t('billing.toasts.activated'), 'success')
+    notify(isCardSetup ? t('billing.toasts.cardSaved') : t('billing.toasts.activated'), 'success')
     activeTab.value = 'plans'
   } catch (err: any) {
     notify(err?.response?.data?.message ?? t('billing.toasts.verifyFailed'), 'error')
@@ -146,6 +154,20 @@ async function upgrade() {
   } catch (err: any) {
     notify(err?.response?.data?.message ?? t('billing.toasts.initPaymentFailed'), 'error')
     isInitializing.value = false
+  }
+}
+
+const isSettingUpCard = ref(false)
+
+async function setupCard() {
+  if (!orgId.value || isSettingUpCard.value) return
+  isSettingUpCard.value = true
+  try {
+    const res = await SubscriptionService.setupCard(orgId.value, window.location.origin)
+    window.location.href = res.data.data.payment_url
+  } catch (err: any) {
+    notify(err?.response?.data?.message ?? t('billing.toasts.cardSetupFailed'), 'error')
+    isSettingUpCard.value = false
   }
 }
 
@@ -364,6 +386,19 @@ function featureLabel(key: string, val: boolean | number | null): string {
             class="text-xs text-green-400 hover:text-green-300 transition-colors whitespace-nowrap disabled:opacity-50"
           >
             {{ t('billing.autoRenew.turnOn', { card: cardLabel }) }}
+          </button>
+          <button
+            @click="setupCard"
+            :disabled="isSettingUpCard"
+            :class="[
+              'inline-flex items-center gap-1.5 text-xs transition-colors whitespace-nowrap disabled:opacity-50',
+              subStore.subscription.card
+                ? 'text-gray-700 hover:text-gray-1000'
+                : 'font-semibold px-3 py-1.5 rounded-lg bg-green-700 hover:bg-green-800 text-bg-100',
+            ]"
+          >
+            <Icon :icon="isSettingUpCard ? 'lucide:loader-2' : 'lucide:credit-card'" :class="['w-3.5 h-3.5', isSettingUpCard && 'animate-spin']" />
+            {{ subStore.subscription.card ? t('billing.autoRenew.changeCard') : t('billing.autoRenew.addCard') }}
           </button>
         </template>
         <button
@@ -610,7 +645,7 @@ function featureLabel(key: string, val: boolean | number | null): string {
             <button
               v-for="opt in [
                 { key: 'card', icon: 'lucide:credit-card', title: t('billing.payMethod.card.title'), desc: t('billing.payMethod.card.desc'), badge: t('billing.payMethod.card.badge') },
-                { key: 'checkout', icon: 'lucide:wallet', title: t('billing.payMethod.checkout.title'), desc: t('billing.payMethod.checkout.desc'), badge: null },
+                { key: 'checkout', icon: 'lucide:wallet', title: t('billing.payMethod.checkout.title'), desc: selectedCurrency === 'NGN' ? t('billing.payMethod.checkout.desc') : t('billing.payMethod.checkout.descUsd'), badge: null },
               ]"
               :key="opt.key"
               type="button"

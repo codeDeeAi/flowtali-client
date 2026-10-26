@@ -102,7 +102,10 @@
     "invoiceFailed": "Impossible de charger la facture. Veuillez réessayer.",
     "autoRenewOn": "Renouvellement automatique activé.",
     "autoRenewOff": "Renouvellement automatique désactivé. Vous devrez renouveler manuellement.",
-    "autoRenewFailed": "Impossible de modifier le renouvellement automatique."
+    "autoRenewFailed": "Impossible de modifier le renouvellement automatique.",
+    "paymentCancelled": "Paiement annulé — rien n'a été débité.",
+    "cardSaved": "Carte enregistrée. Votre forfait sera désormais renouvelé automatiquement.",
+    "cardSetupFailed": "Impossible de lancer l'ajout de la carte."
   },
   "paywall": {
     "trialEndedTitle": "Votre essai gratuit est terminé",
@@ -115,7 +118,9 @@
     "onWith": "Renouvellement automatique avec {card}",
     "off": "Renouvellement automatique désactivé — renouvelez manuellement",
     "turnOff": "Désactiver le renouvellement automatique",
-    "turnOn": "Renouveler automatiquement avec {card}"
+    "turnOn": "Renouveler automatiquement avec {card}",
+    "addCard": "Ajouter une carte pour le renouvellement auto",
+    "changeCard": "Changer de carte"
   },
   "payMethod": {
     "title": "Comment souhaitez-vous payer {name} ?",
@@ -127,7 +132,8 @@
     },
     "checkout": {
       "title": "Paiement unique",
-      "desc": "Payez par carte, virement bancaire ou USSD. Vous renouvellerez manuellement avant l'expiration de votre forfait."
+      "desc": "Payez par carte, virement bancaire ou USSD. Vous renouvellerez manuellement avant l'expiration de votre forfait.",
+      "descUsd": "Payez une fois par carte. Vous renouvellerez manuellement avant l'expiration de votre forfait."
     },
     "continue": "Continuer vers le paiement"
   }

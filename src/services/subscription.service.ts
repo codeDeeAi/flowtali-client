@@ -86,6 +86,15 @@ export const SubscriptionService = {
     return http.post<{ data: ISubscription }>(`/api/v1/orgs/${orgId}/subscription/verify`, { reference })
   },
 
+  // Save a card for auto-renewal without changing the plan. Returns a hosted
+  // checkout URL (Bachs for USD — no charge; Paystack for NGN — small refunded charge).
+  setupCard(orgId: string, redirect_url?: string) {
+    return http.post<{ data: { payment_url: string; reference: string } }>(
+      `/api/v1/orgs/${orgId}/subscription/card`,
+      { redirect_url },
+    )
+  },
+
   setAutoRenew(orgId: string, enabled: boolean) {
     return http.patch<{ data: ISubscription }>(`/api/v1/orgs/${orgId}/subscription/auto-renew`, { enabled })
   },

@@ -102,7 +102,10 @@
     "invoiceFailed": "Rechnung konnte nicht geladen werden. Bitte erneut versuchen.",
     "autoRenewOn": "Automatische Verlängerung aktiviert.",
     "autoRenewOff": "Automatische Verlängerung deaktiviert. Sie müssen manuell verlängern.",
-    "autoRenewFailed": "Automatische Verlängerung konnte nicht geändert werden."
+    "autoRenewFailed": "Automatische Verlängerung konnte nicht geändert werden.",
+    "paymentCancelled": "Zahlung abgebrochen — es wurde nichts belastet.",
+    "cardSaved": "Karte gespeichert. Ihr Plan verlängert sich jetzt automatisch.",
+    "cardSetupFailed": "Karte konnte nicht hinzugefügt werden."
   },
   "paywall": {
     "trialEndedTitle": "Ihre kostenlose Testphase ist beendet",
@@ -115,7 +118,9 @@
     "onWith": "Automatische Verlängerung mit {card}",
     "off": "Automatische Verlängerung aus — manuell verlängern",
     "turnOff": "Automatische Verlängerung deaktivieren",
-    "turnOn": "Automatisch verlängern mit {card}"
+    "turnOn": "Automatisch verlängern mit {card}",
+    "addCard": "Karte für automatische Verlängerung hinzufügen",
+    "changeCard": "Karte ändern"
   },
   "payMethod": {
     "title": "Wie möchten Sie für {name} bezahlen?",
@@ -127,7 +132,8 @@
     },
     "checkout": {
       "title": "Einmalzahlung",
-      "desc": "Bezahlen Sie per Karte, Banküberweisung oder USSD. Sie verlängern manuell, bevor Ihr Plan abläuft."
+      "desc": "Bezahlen Sie per Karte, Banküberweisung oder USSD. Sie verlängern manuell, bevor Ihr Plan abläuft.",
+      "descUsd": "Einmalig per Karte bezahlen. Sie verlängern manuell, bevor Ihr Plan abläuft."
     },
     "continue": "Weiter zur Zahlung"
   }
