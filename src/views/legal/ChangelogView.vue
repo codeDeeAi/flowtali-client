@@ -40,7 +40,19 @@ interface ReleaseMeta {
 }
 
 const releaseMeta: ReleaseMeta[] = [
-  { version: 'v2.1', dateKey: 'oct2026', badge: 'Latest', changes: [
+  { version: 'v2.2', dateKey: 'oct2026', badge: 'Latest', changes: [
+    { type: 'new', key: 'r22_1' },
+    { type: 'new', key: 'r22_2' },
+    { type: 'new', key: 'r22_3' },
+    { type: 'new', key: 'r22_4' },
+    { type: 'new', key: 'r22_5' },
+    { type: 'new', key: 'r22_6' },
+    { type: 'new', key: 'r22_7' },
+    { type: 'improved', key: 'r22_8' },
+    { type: 'improved', key: 'r22_9' },
+    { type: 'improved', key: 'r22_10' },
+  ] },
+  { version: 'v2.1', dateKey: 'oct2026', badge: null, changes: [
     { type: 'new', key: 'r21_1' },
     { type: 'new', key: 'r21_2' },
     { type: 'new', key: 'r21_3' },

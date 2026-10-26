@@ -19,8 +19,9 @@ interface InvoiceRow {
   to_email: string | null
   currency: string
   issue_date: string | null
-  subtotal: number
-  total: number
+  subtotal?: number
+  total?: number
+  totals?: { subtotal: number; total: number }
 }
 
 const invoices = ref<InvoiceRow[]>([])
@@ -59,7 +60,9 @@ function fmtDate(iso: string | null) {
 }
 
 function fmtAmount(inv: InvoiceRow) {
-  return `${inv.currency ?? '$'} ${inv.total.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
+  // The API nests the amount under `totals`.
+  const total = Number(inv.totals?.total ?? inv.total ?? 0)
+  return `${inv.currency ?? '$'} ${total.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
 }
 
 onMounted(async () => {

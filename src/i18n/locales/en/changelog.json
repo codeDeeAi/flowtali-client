@@ -26,6 +26,16 @@
     "oct2026": "October 2026"
   },
   "entries": {
+    "r22_1": "Quick create — make an invoice or receipt on one screen: pick the client, add items, choose when it's due, done. Switch to the full editor at any time without losing what you typed; Flowtali remembers which mode you prefer.",
+    "r22_2": "Describe it — type a sentence like “40 hours web development for Acme at $100/h, due in 2 weeks” and the form fills itself in. Available when your organization has connected an AI provider; nothing is saved until you check it.",
+    "r22_3": "Record payment — log a payment against an invoice in one step. Flowtali issues the receipt, keeps track of partial payments and the balance still owed, and marks the invoice paid once it's settled.",
+    "r22_4": "Email from Flowtali — send invoices, receipts and payment reminders to your client straight from the app. Each email includes a secure link to view and download the document, plus a Pay now button when online payment is on. Replies come to you.",
+    "r22_5": "Recurring invoices — set an invoice to repeat weekly, monthly, quarterly or yearly. Each copy is created on schedule and can be emailed to your client automatically.",
+    "r22_6": "Automatic payment reminders — choose when clients are reminded about unpaid invoices (before, on or after the due date) and Flowtali sends them for you. Invoices past their due date are now marked overdue automatically.",
+    "r22_7": "Document defaults — set your sender details, bank accounts, logo, signature, design, payment terms, tax and notes once under Organization Preferences. Every new invoice and receipt starts with them.",
+    "r22_8": "Automatic numbering — invoices and receipts are numbered for you in order (INV-0001, INV-0002…), with your own prefix. Duplicate numbers are no longer possible.",
+    "r22_9": "Invoice again — duplicate any invoice as a new draft in one click. You can also start an invoice or receipt from a client's page, and invoices created from a project now come with the project's client filled in.",
+    "r22_10": "New invoices start clean — the sample company and line items are gone; documents open with your own details instead.",
     "r21_1": "Online invoice payments — add a \"Pay now\" link to any invoice. Your client pays online from the invoice, the shared link or the PDF, and the money settles straight into your own account. Your bank details are never shown to them.",
     "r21_2": "Payout accounts — add the accounts you get paid into under Organization Preferences → Online payments. Naira accounts are confirmed with your bank instantly; USD, EUR, GBP and more are available after a short identity check.",
     "r21_3": "Multi-currency invoices — EUR, GBP, CAD, AUD and CHF invoices can be paid online too. They are charged in USD at the day's reference rate, and your client sees both amounts before paying.",

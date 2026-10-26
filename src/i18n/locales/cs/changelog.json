@@ -26,6 +26,16 @@
     "oct2026": "Říjen 2026"
   },
   "entries": {
+    "r22_1": "Rychlé vytvoření — fakturu nebo účtenku vytvoříte na jedné obrazovce: vyberte klienta, přidejte položky, zvolte splatnost a hotovo. Kdykoli můžete přepnout do plného editoru, aniž byste přišli o zadané údaje; Flowtali si pamatuje, který režim preferujete.",
+    "r22_2": "Popište to — napište větu jako „40 hodin vývoje webu pro Acme za 2 500 Kč/h, splatné do 14 dnů“ a formulář se vyplní sám. K dispozici, pokud má vaše organizace připojeného poskytovatele AI; nic se neuloží, dokud to nezkontrolujete.",
+    "r22_3": "Zaznamenat platbu — platbu k faktuře zapíšete jedním krokem. Flowtali vystaví účtenku, sleduje částečné platby i zbývající dlužnou částku a po úplném uhrazení označí fakturu jako zaplacenou.",
+    "r22_4": "E-maily z Flowtali — posílejte klientům faktury, účtenky i upomínky přímo z aplikace. Každý e-mail obsahuje zabezpečený odkaz pro zobrazení a stažení dokladu a tlačítko Zaplatit, pokud je zapnutá online platba. Odpovědi chodí vám.",
+    "r22_5": "Opakované faktury — nastavte fakturu, aby se opakovala týdně, měsíčně, čtvrtletně nebo ročně. Každá kopie se vytvoří podle plánu a může se klientovi automaticky odeslat e-mailem.",
+    "r22_6": "Automatické upomínky — zvolte, kdy se mají klientům připomínat nezaplacené faktury (před splatností, v den splatnosti nebo po ní), a Flowtali je odešle za vás. Faktury po splatnosti se nyní automaticky označují jako po splatnosti.",
+    "r22_7": "Výchozí nastavení dokumentů — údaje odesílatele, bankovní účty, logo, podpis, vzhled, platební podmínky, daň a poznámky nastavíte jednou v Předvolbách organizace. Každá nová faktura a účtenka s nimi začíná.",
+    "r22_8": "Automatické číslování — faktury a účtenky se číslují postupně za vás (INV-0001, INV-0002…) s vlastní předponou. Duplicitní čísla už nejsou možná.",
+    "r22_9": "Fakturovat znovu — libovolnou fakturu jedním kliknutím zkopírujete jako nový koncept. Fakturu nebo účtenku můžete začít i ze stránky klienta a faktury vytvořené z projektu mají klienta projektu předvyplněného.",
+    "r22_10": "Nové faktury začínají čistě — ukázková firma a položky zmizely; doklady se otevírají s vašimi vlastními údaji.",
     "r21_1": "Online platby faktur — přidejte ke kterékoli faktuře odkaz „Zaplatit“. Klient zaplatí online z faktury, ze sdíleného odkazu nebo z PDF a peníze dorazí přímo na váš vlastní účet. Vaše bankovní údaje se mu nikdy nezobrazí.",
     "r21_2": "Výplatní účty — účty, na které chcete dostávat platby, přidáte v Předvolbách organizace → Online platby. Účty v nairách se ověří u banky okamžitě; USD, EUR, GBP a další jsou k dispozici po krátkém ověření totožnosti.",
     "r21_3": "Faktury ve více měnách — online lze zaplatit i faktury v EUR, GBP, CAD, AUD a CHF. Strhávají se v USD denním referenčním kurzem a klient před platbou vidí obě částky.",

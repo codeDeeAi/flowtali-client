@@ -26,6 +26,16 @@
     "oct2026": "Oktober 2026"
   },
   "entries": {
+    "r22_1": "Schnell erstellen — Rechnung oder Quittung auf einem Bildschirm: Kunde wählen, Positionen hinzufügen, Fälligkeit festlegen, fertig. Jederzeit in den vollen Editor wechseln, ohne Eingaben zu verlieren; Flowtali merkt sich deinen bevorzugten Modus.",
+    "r22_2": "Beschreiben — tippe einen Satz wie „40 Stunden Webentwicklung für Acme à 100 €/h, fällig in 2 Wochen“ und das Formular füllt sich selbst aus. Verfügbar, wenn deine Organisation einen KI-Anbieter verbunden hat; gespeichert wird erst nach deiner Prüfung.",
+    "r22_3": "Zahlung erfassen — eine Zahlung zu einer Rechnung in einem Schritt eintragen. Flowtali stellt die Quittung aus, verfolgt Teilzahlungen und den offenen Restbetrag und markiert die Rechnung als bezahlt, sobald sie beglichen ist.",
+    "r22_4": "E-Mails aus Flowtali — Rechnungen, Quittungen und Zahlungserinnerungen direkt aus der App an deine Kunden senden. Jede E-Mail enthält einen sicheren Link zum Ansehen und Herunterladen, plus „Jetzt bezahlen“, wenn Online-Zahlung aktiv ist. Antworten gehen an dich.",
+    "r22_5": "Wiederkehrende Rechnungen — lass eine Rechnung wöchentlich, monatlich, vierteljährlich oder jährlich wiederholen. Jede Kopie wird planmäßig erstellt und kann automatisch per E-Mail an den Kunden gehen.",
+    "r22_6": "Automatische Zahlungserinnerungen — lege fest, wann Kunden an offene Rechnungen erinnert werden (vor, am oder nach dem Fälligkeitstag), und Flowtali verschickt sie für dich. Rechnungen nach Fälligkeit werden jetzt automatisch als überfällig markiert.",
+    "r22_7": "Dokument-Standards — Absenderdaten, Bankkonten, Logo, Unterschrift, Design, Zahlungsbedingungen, Steuer und Notizen einmal in den Organisationseinstellungen festlegen. Jede neue Rechnung und Quittung startet damit.",
+    "r22_8": "Automatische Nummerierung — Rechnungen und Quittungen werden fortlaufend für dich nummeriert (INV-0001, INV-0002 …), mit eigenem Präfix. Doppelte Nummern sind nicht mehr möglich.",
+    "r22_9": "Erneut abrechnen — jede Rechnung mit einem Klick als neuen Entwurf duplizieren. Rechnungen und Quittungen lassen sich auch von der Kundenseite aus starten, und aus einem Projekt erstellte Rechnungen haben den Kunden des Projekts bereits eingetragen.",
+    "r22_10": "Neue Rechnungen starten leer — die Beispielfirma und Beispielpositionen sind weg; Dokumente öffnen sich mit deinen eigenen Daten.",
     "r21_1": "Online-Rechnungszahlungen — fügen Sie jeder Rechnung einen „Jetzt bezahlen“-Link hinzu. Ihr Kunde bezahlt online über die Rechnung, den geteilten Link oder das PDF, und das Geld geht direkt auf Ihr eigenes Konto. Ihre Bankdaten werden ihm nie angezeigt.",
     "r21_2": "Auszahlungskonten — hinterlegen Sie die Konten, auf die Sie bezahlt werden, unter Organisationseinstellungen → Online-Zahlungen. Naira-Konten werden sofort bei Ihrer Bank bestätigt; USD, EUR, GBP und mehr stehen nach einer kurzen Identitätsprüfung zur Verfügung.",
     "r21_3": "Rechnungen in mehreren Währungen — auch Rechnungen in EUR, GBP, CAD, AUD und CHF können online bezahlt werden. Sie werden zum Referenzkurs des Tages in USD belastet, und Ihr Kunde sieht vor der Zahlung beide Beträge.",

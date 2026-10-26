@@ -350,7 +350,7 @@ function openFull() {
         <section class="space-y-2">
           <div class="flex items-center justify-between gap-2">
             <h3 class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('quickCreate.items.forWhat') }}</h3>
-            <select v-model="currency" class="app-select text-xs py-1" :aria-label="t('quickCreate.currency')">
+            <select v-model="currency" class="app-select !w-auto shrink-0 text-xs py-1" :aria-label="t('quickCreate.currency')">
               <option v-for="cur in QUICK_CURRENCIES" :key="cur.code" :value="cur.code">{{ cur.code }} ({{ cur.sym }})</option>
             </select>
           </div>

@@ -8,6 +8,8 @@ import { useAuthStore } from '@/stores/auth'
 import { ReceiptService, ReceiptSharedLinksService, type IReceipt, type IReceiptSharedLink } from '@/services/receipt.service'
 import ShareLinkModal from '@/components/modals/ShareLinkModal.vue'
 import SendDocumentModal from '@/components/documents/SendDocumentModal.vue'
+import ReceiptDocument from '@/components/receipt/ReceiptDocument.vue'
+import { receiptToForm } from '@/components/receipt/receiptDocument'
 
 const router     = useRouter()
 const route      = useRoute()
@@ -60,7 +62,6 @@ const paidDisplay   = computed(() => {
   const paid = receipt.value.amount_paid ?? receipt.value.totals.total
   return sym.value + Number(paid).toLocaleString(locale.value, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 })
-const fmtMoney = (n: number) => sym.value + n.toLocaleString(locale.value, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 const formatDate = (d: string | null) => {
   if (!d) return '—'
@@ -204,110 +205,9 @@ async function handleDelete() {
       <!-- Two-column: receipt preview + links analytics -->
       <div class="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-5">
 
-        <!-- Receipt document preview -->
-        <div class="bg-gray-400/30 rounded-xl p-3 sm:p-6 overflow-x-auto">
-          <div
-            class="print-document min-w-[560px] w-full max-w-2xl mx-auto bg-white rounded-lg shadow-2xl overflow-hidden text-gray-800 relative"
-            :style="{ fontFamily: receipt.font_family || 'Geist Sans, sans-serif', fontSize: '13px' }"
-          >
-            <div class="h-1.5 w-full" :style="{ backgroundColor: receipt.accent_color }"></div>
-
-            <!-- Watermark -->
-            <div v-if="receipt.show_watermark && receipt.watermark_text" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-35deg);z-index:1">
-              <span class="text-7xl font-black tracking-widest opacity-[0.04] text-gray-800 whitespace-nowrap">{{ receipt.watermark_text }}</span>
-            </div>
-            <!-- Stamp -->
-            <div v-if="receipt.stamp" class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style="transform:rotate(-25deg);z-index:2">
-              <div class="text-5xl font-extrabold tracking-widest border-4 px-6 py-3 rounded opacity-[0.15]"
-                :style="{ color: receipt.stamp_color ?? '#9ca3af', borderColor: receipt.stamp_color ?? '#9ca3af' }"
-              >{{ receipt.stamp }}</div>
-            </div>
-
-            <div class="p-10" style="position:relative;z-index:3">
-              <div class="flex justify-between items-start mb-8">
-                <div class="flex items-start gap-4">
-                  <img v-if="receipt.logo_url && receipt.show_logo" :src="receipt.logo_url" alt="Logo" class="h-12 w-auto object-contain" />
-                  <div>
-                    <div class="text-xl font-bold mb-0.5" :style="{ color: receipt.accent_color }">{{ receipt.from_name }}</div>
-                    <div v-if="receipt.from_tagline" class="text-xs text-gray-400 mb-1">{{ receipt.from_tagline }}</div>
-                    <div class="text-xs text-gray-400 whitespace-pre-line leading-relaxed">{{ receipt.from_address }}</div>
-                    <div v-if="receipt.from_email" class="text-xs text-gray-400 mt-1">{{ receipt.from_email }}</div>
-                    <div v-if="receipt.from_phone" class="text-xs text-gray-400">{{ receipt.from_phone }}</div>
-                  </div>
-                </div>
-                <div class="text-right">
-                  <div class="text-3xl font-bold text-gray-200 tracking-widest" style="font-family:var(--font-sans)">{{ t('document.receiptWord') }}</div>
-                  <div class="font-mono text-sm text-gray-400 mt-1">{{ receipt.number }}</div>
-                </div>
-              </div>
-
-              <div class="h-px mb-6" :style="{ backgroundColor: receipt.accent_color + '30' }"></div>
-
-              <!-- Dates and payment info -->
-              <div class="flex gap-8 mb-8 text-xs">
-                <div><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.issueDate') }}</div><div class="font-semibold text-gray-700">{{ formatDate(receipt.issue_date) }}</div></div>
-                <div v-if="receipt.paid_at"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.paymentDate') }}</div><div class="font-semibold text-gray-700">{{ formatDate(receipt.paid_at) }}</div></div>
-                <div v-if="receipt.payment_method"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.paymentMethod') }}</div><div class="font-semibold text-gray-700">{{ receipt.payment_method }}</div></div>
-                <div v-if="receipt.reference_number"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.refInvoice') }}</div><div class="font-semibold text-gray-700">{{ receipt.reference_number }}</div></div>
-                <div v-if="receipt.currency !== 'USD'"><div class="text-gray-400 uppercase tracking-widest mb-1" style="font-size:10px">{{ t('document.currency') }}</div><div class="font-semibold text-gray-700">{{ receipt.currency }}</div></div>
-              </div>
-
-              <div class="mb-8">
-                <div class="text-[10px] uppercase tracking-widest text-gray-400 mb-2">{{ t('document.receiptTo') }}</div>
-                <div class="font-semibold text-gray-800">{{ receipt.to_name || '—' }}</div>
-                <div v-if="receipt.to_company" class="text-xs text-gray-500">{{ receipt.to_company }}</div>
-                <div v-if="receipt.to_email" class="text-xs text-gray-500">{{ receipt.to_email }}</div>
-                <div v-if="receipt.to_phone" class="text-xs text-gray-500">{{ receipt.to_phone }}</div>
-                <div v-if="receipt.to_address" class="text-xs text-gray-500 whitespace-pre-line mt-1">{{ receipt.to_address }}</div>
-              </div>
-
-              <table class="w-full mb-6 text-sm" style="border-collapse:collapse">
-                <thead>
-                  <tr :style="{ backgroundColor: receipt.accent_color + '18' }">
-                    <th class="text-left py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">{{ t('document.table.description') }}</th>
-                    <th class="text-center py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">{{ t('document.table.qty') }}</th>
-                    <th class="text-center py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">{{ t('document.table.unit') }}</th>
-                    <th class="text-right py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">{{ t('document.table.rate') }}</th>
-                    <th class="text-right py-2.5 px-3 text-xs font-semibold text-gray-600 uppercase tracking-wide">{{ t('document.table.amount') }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="item in receipt.items" :key="item.id" style="border-bottom:1px solid #f3f4f6">
-                    <td class="py-3 px-3 text-gray-700">{{ item.description }}</td>
-                    <td class="py-3 px-3 text-center text-gray-500">{{ item.qty }}</td>
-                    <td class="py-3 px-3 text-center text-gray-400 text-xs">{{ item.unit }}</td>
-                    <td class="py-3 px-3 text-right text-gray-500">{{ fmtMoney(item.rate) }}</td>
-                    <td class="py-3 px-3 text-right font-medium text-gray-800">{{ fmtMoney(item.qty * item.rate) }}</td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <div class="flex justify-end mb-6">
-                <div class="w-56 space-y-1.5 text-sm">
-                  <div class="flex justify-between text-gray-500"><span>{{ t('document.subtotal') }}</span><span class="font-mono">{{ fmtMoney(receipt.totals.subtotal) }}</span></div>
-                  <div v-if="receipt.totals.discount_amt > 0" class="flex justify-between text-gray-500">
-                    <span>{{ t('document.discount') }}</span><span class="font-mono text-red-500">-{{ fmtMoney(receipt.totals.discount_amt) }}</span>
-                  </div>
-                  <div v-if="receipt.totals.taxes_total > 0" class="flex justify-between text-gray-500">
-                    <span>{{ t('document.tax') }}</span><span class="font-mono">{{ fmtMoney(receipt.totals.taxes_total) }}</span>
-                  </div>
-                  <div class="h-px bg-gray-200 my-2"></div>
-                  <div class="flex justify-between font-bold text-base">
-                    <span>{{ t('document.amountReceived') }}</span><span class="font-mono" :style="{ color: receipt.accent_color }">{{ fmtMoney(receipt.totals.total) }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div v-if="receipt.show_notes && receipt.notes" class="border-t border-gray-100 pt-6">
-                <div class="text-[10px] uppercase tracking-widest text-gray-400 mb-1.5">{{ t('document.notes') }}</div>
-                <p class="text-xs text-gray-500 leading-relaxed whitespace-pre-line">{{ receipt.notes }}</p>
-              </div>
-
-              <div v-if="receipt.show_flowtali_tag" class="mt-8 text-center">
-                <div class="text-[10px] text-gray-300">{{ t('document.generatedWith') }}</div>
-              </div>
-            </div>
-          </div>
+        <!-- Receipt document — shared with the editor preview, share link and PDF -->
+        <div class="bg-gray-400/30 rounded-xl p-3 sm:p-6">
+          <ReceiptDocument :form="receiptToForm(receipt)" :stamp-color="receipt.stamp_color" fit class="mx-auto" />
         </div>
 
         <!-- Right: links analytics -->

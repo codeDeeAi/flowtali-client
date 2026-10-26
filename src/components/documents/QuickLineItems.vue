@@ -43,7 +43,11 @@ const lineTotal = (i: QuickLineItem) =>
       >
         <Icon icon="lucide:trash-2" class="w-3.5 h-3.5" />
       </button>
-      <div class="col-span-2 sm:contents grid grid-cols-3 gap-2">
+      <div class="col-span-2 sm:contents grid grid-cols-3 gap-x-2 gap-y-1">
+        <!-- Column headers are desktop-only; label the fields on phones. -->
+        <span class="sm:hidden text-[10px] uppercase tracking-wider text-gray-700">{{ t('quickCreate.items.qty') }}</span>
+        <span class="sm:hidden text-[10px] uppercase tracking-wider text-gray-700">{{ t('quickCreate.items.rate') }}</span>
+        <span class="sm:hidden text-[10px] uppercase tracking-wider text-gray-700 text-right">{{ t('quickCreate.items.amount') }}</span>
         <input v-model.number="item.qty" type="number" min="0" step="any" class="app-inp text-sm" :aria-label="t('quickCreate.items.qty')" />
         <input v-model.number="item.rate" type="number" min="0" step="any" class="app-inp text-sm" :aria-label="t('quickCreate.items.rate')" />
         <span class="text-sm text-gray-1000 text-right font-mono self-center truncate">{{ symbol }}{{ lineTotal(item) }}</span>

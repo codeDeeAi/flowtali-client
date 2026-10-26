@@ -26,6 +26,16 @@
     "oct2026": "Octobre 2026"
   },
   "entries": {
+    "r22_1": "Création rapide — créez une facture ou un reçu sur un seul écran : choisissez le client, ajoutez les articles, l'échéance, c'est fait. Passez à l'éditeur complet à tout moment sans perdre votre saisie ; Flowtali retient le mode que vous préférez.",
+    "r22_2": "Décrivez-le — tapez une phrase comme « 40 heures de développement web pour Acme à 100 €/h, à payer sous 2 semaines » et le formulaire se remplit tout seul. Disponible si votre organisation a connecté un fournisseur d'IA ; rien n'est enregistré avant votre vérification.",
+    "r22_3": "Enregistrer un paiement — saisissez un paiement sur une facture en une étape. Flowtali émet le reçu, suit les paiements partiels et le solde restant, et marque la facture comme payée une fois réglée.",
+    "r22_4": "E-mails depuis Flowtali — envoyez factures, reçus et relances de paiement à vos clients directement depuis l'application. Chaque e-mail contient un lien sécurisé pour consulter et télécharger le document, ainsi qu'un bouton Payer si le paiement en ligne est activé. Les réponses vous parviennent.",
+    "r22_5": "Factures récurrentes — faites répéter une facture chaque semaine, mois, trimestre ou année. Chaque copie est créée selon le calendrier et peut être envoyée automatiquement au client par e-mail.",
+    "r22_6": "Relances de paiement automatiques — choisissez quand relancer les clients pour les factures impayées (avant, le jour ou après l'échéance) et Flowtali les envoie pour vous. Les factures dont l'échéance est passée sont désormais marquées en retard automatiquement.",
+    "r22_7": "Paramètres par défaut des documents — définissez une seule fois vos coordonnées, comptes bancaires, logo, signature, design, conditions de paiement, taxe et notes dans les Préférences de l'organisation. Chaque nouvelle facture et chaque reçu démarrent avec.",
+    "r22_8": "Numérotation automatique — factures et reçus sont numérotés pour vous dans l'ordre (INV-0001, INV-0002…), avec votre propre préfixe. Les numéros en double ne sont plus possibles.",
+    "r22_9": "Refacturer — dupliquez n'importe quelle facture en nouveau brouillon en un clic. Vous pouvez aussi démarrer une facture ou un reçu depuis la page d'un client, et les factures créées depuis un projet reprennent le client du projet.",
+    "r22_10": "Les nouvelles factures démarrent vierges — la société et les articles d'exemple ont disparu ; les documents s'ouvrent avec vos propres informations.",
     "r21_1": "Paiement des factures en ligne — ajoutez un lien « Payer » à n'importe quelle facture. Votre client paie en ligne depuis la facture, le lien partagé ou le PDF, et l'argent arrive directement sur votre propre compte. Vos coordonnées bancaires ne lui sont jamais montrées.",
     "r21_2": "Comptes de versement — ajoutez les comptes sur lesquels vous êtes payé dans Préférences de l'organisation → Paiements en ligne. Les comptes en naira sont confirmés instantanément auprès de votre banque ; USD, EUR, GBP et plus sont disponibles après une courte vérification d'identité.",
     "r21_3": "Factures multidevises — les factures en EUR, GBP, CAD, AUD et CHF peuvent aussi être payées en ligne. Elles sont débitées en USD au taux de référence du jour, et votre client voit les deux montants avant de payer.",

@@ -6,6 +6,7 @@ import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { ReceiptService } from '@/services/receipt.service'
 import ReceiptEditor from './ReceiptEditor.vue'
+import { receiptToForm } from '@/components/receipt/receiptDocument'
 
 const route     = useRoute()
 const { t }     = useI18n()
@@ -14,63 +15,14 @@ const orgId     = computed(() => authStore.getCurrentOrganization?.id ?? '')
 
 const isLoading   = ref(true)
 const notFound    = ref(false)
-const initialData = ref<Record<string, any> | undefined>(undefined)
+const initialData = ref<ReturnType<typeof receiptToForm> | undefined>(undefined)
 
 onMounted(async () => {
   if (!orgId.value) { isLoading.value = false; return }
   const id = route.params.id as string
   try {
     const res = await ReceiptService.get(orgId.value, id)
-    const rec = res.data.data
-    initialData.value = {
-      number:                   rec.number,
-      issueDate:                rec.issue_date ?? '',
-      paymentMethod:            rec.payment_method ?? '',
-      paidAt:                   rec.paid_at ?? '',
-      referenceNumber:          rec.reference_number ?? '',
-      currency:                 rec.currency,
-      fromName:                 rec.from_name ?? '',
-      fromTagline:              rec.from_tagline ?? '',
-      fromEmail:                rec.from_email ?? '',
-      fromPhone:                rec.from_phone ?? '',
-      fromWebsite:              rec.from_website ?? '',
-      fromAddress:              rec.from_address ?? '',
-      fromBankName:             rec.from_bank_name ?? '',
-      fromBankAccountName:      rec.from_bank_account_name ?? '',
-      fromBankAccountNumber:    rec.from_bank_account_number ?? '',
-      fromBankSortCode:         rec.from_bank_sort_code ?? '',
-      fromBankIban:             rec.from_bank_iban ?? '',
-      logoUrl:                  rec.logo_url ?? '',
-      paymentLinks:             (rec.payment_links ?? []).map((l, i) => ({ id: i + 1, ...l })),
-      toName:                   rec.to_name ?? '',
-      toCompany:                rec.to_company ?? '',
-      toEmail:                  rec.to_email ?? '',
-      toPhone:                  rec.to_phone ?? '',
-      toAddress:                rec.to_address ?? '',
-      items:                    (rec.items ?? []).map((item, i) => ({ id: i + 1, ...item })),
-      taxes:                    (rec.taxes ?? []).map((t, i) => ({ id: i + 1, type: 'percent' as 'percent' | 'flat', ...t })),
-      discountType:             rec.discount_type,
-      discount:                 rec.discount,
-      theme:                    rec.theme,
-      accentColor:              rec.accent_color,
-      fontFamily:               rec.font_family ?? "var(--font-sans)",
-      signatureUrl:             rec.signature_url ?? '',
-      stampUrl:                 rec.stamp_url ?? '',
-      stamp:                    rec.stamp ?? '',
-      balanceDue:               (rec.stamp === 'UNPAID' || rec.stamp === 'PARTIALLY PAID') && rec.stamp_custom_text && isFinite(Number(rec.stamp_custom_text))
-                                  ? Number(rec.stamp_custom_text)
-                                  : 0,
-      showWatermark:            rec.show_watermark,
-      watermarkText:            rec.watermark_text ?? '',
-      showTopBar:               rec.show_top_bar,
-      showLogo:                 rec.show_logo,
-      showFooterLine:           rec.show_footer_line,
-      showNotes:                rec.show_notes,
-      showBankDetails:          rec.show_bank_details,
-      showFlowtaliTag:          rec.show_flowtali_tag,
-      notes:                    rec.notes ?? '',
-      footerText:               rec.footer_text ?? '',
-    }
+    initialData.value = receiptToForm(res.data.data)
   } catch {
     notFound.value = true
   } finally {
