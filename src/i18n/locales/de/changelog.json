@@ -22,9 +22,16 @@
     "apr2026": "April 2026",
     "may2026": "Mai 2026",
     "jun2026": "Juni 2026",
-    "jul2026": "Juli 2026"
+    "jul2026": "Juli 2026",
+    "oct2026": "Oktober 2026"
   },
   "entries": {
+    "r21_1": "Online-Rechnungszahlungen — fügen Sie jeder Rechnung einen „Jetzt bezahlen“-Link hinzu. Ihr Kunde bezahlt online über die Rechnung, den geteilten Link oder das PDF, und das Geld geht direkt auf Ihr eigenes Konto. Ihre Bankdaten werden ihm nie angezeigt.",
+    "r21_2": "Auszahlungskonten — hinterlegen Sie die Konten, auf die Sie bezahlt werden, unter Organisationseinstellungen → Online-Zahlungen. Naira-Konten werden sofort bei Ihrer Bank bestätigt; USD, EUR, GBP und mehr stehen nach einer kurzen Identitätsprüfung zur Verfügung.",
+    "r21_3": "Rechnungen in mehreren Währungen — auch Rechnungen in EUR, GBP, CAD, AUD und CHF können online bezahlt werden. Sie werden zum Referenzkurs des Tages in USD belastet, und Ihr Kunde sieht vor der Zahlung beide Beträge.",
+    "r21_4": "Bezahlte Rechnungen erledigen sich selbst — zahlt ein Kunde online, wird die Rechnung als bezahlt markiert, automatisch eine Quittung ausgestellt und Ihr Team benachrichtigt.",
+    "r21_5": "Transparente Preise — Flowtali behält 0,5 % jeder Online-Zahlung. Die Gebühr wird angezeigt und bestätigt, bevor Sie ein Auszahlungskonto hinzufügen, und der Satz gilt fest für dieses Konto. Zahlungsabwicklungsgebühren werden von Ihrer Auszahlung abgezogen.",
+    "r21_6": "Neue Berechtigungen für Auszahlungen — legen Sie fest, welche Rollen Auszahlungskonten ansehen, hinzufügen, einrichten und deaktivieren dürfen.",
     "r20_1": "Flowtali AI — ein integrierter KI-Assistent, erreichbar über den neuen Eintrag „Flowtali AI“ in der Seitenleiste. Stellen Sie Fragen und erledigen Sie Aufgaben in natürlicher Sprache — in jeder von Flowtali unterstützten Sprache.",
     "r20_2": "Eigenen KI-Schlüssel verwenden — verbinden Sie unter Einstellungen → AI Ihren eigenen API-Schlüssel von Claude (Anthropic), OpenAI oder Google Gemini. Ihr Schlüssel wird verschlüsselt gespeichert und ausschließlich für Ihre Organisation verwendet; Flowtali sieht ihn nie und gibt ihn niemals weiter.",
     "r20_3": "Fragen zu Ihrem Geschäft stellen — der Assistent kann Ihre Rechnungen, Umsätze und offenen Beträge, die Fälligkeitsstruktur der Forderungen, Kunden, Projekte, Belege, Briefköpfe, Teammitglieder, letzte Aktivitäten und Ihr Abonnement abrufen und mit den echten Zahlen antworten.",

@@ -48,5 +48,7 @@
   "paymentMethod": "Způsob platby",
   "refInvoice": "Č. faktury",
   "receiptTo": "Účtenka pro",
-  "amountReceived": "Přijatá částka"
+  "amountReceived": "Přijatá částka",
+  "payOnline": "Zaplatit tuto fakturu online",
+  "payNow": "Zaplatit"
 }

@@ -6,11 +6,13 @@ import { Icon } from '@iconify/vue';
 import { useNotification } from '@/composables/notification.ts';
 import { useAuthStore } from '@/stores/auth';
 import { ClientService } from '@/services/client.service';
+import { usePermissions } from '@/composables/usePermissions';
 import type { IClient } from '@/types/client.types';
 
 const router    = useRouter();
 const route     = useRoute();
 const { t, locale } = useI18n();
+const { can } = usePermissions();
 const authStore = useAuthStore();
 const { notify } = useNotification();
 
@@ -123,7 +125,21 @@ const handleDelete = async () => {
             </p>
           </div>
         </div>
-        <div class="flex items-center gap-2 ml-9 sm:ml-0">
+        <div class="flex items-center flex-wrap gap-2 ml-9 sm:ml-0">
+          <button
+            v-if="can('invoices.create')"
+            @click="router.push({ name: 'invoices.create', query: { client_id: client.id } })"
+            class="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold bg-green-700 hover:bg-green-800 text-bg-100 rounded-lg transition-colors"
+          >
+            <Icon icon="lucide:file-plus" class="w-3.5 h-3.5" /> {{ t('delivery.actions.newInvoice') }}
+          </button>
+          <button
+            v-if="can('receipts.create')"
+            @click="router.push({ name: 'receipts.create', query: { client_id: client.id } })"
+            class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors"
+          >
+            <Icon icon="lucide:receipt" class="w-3.5 h-3.5" /> {{ t('delivery.actions.newReceipt') }}
+          </button>
           <button
             @click="router.push({ name: 'clients.edit', params: { id: client.id } })"
             class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 hover:border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors"

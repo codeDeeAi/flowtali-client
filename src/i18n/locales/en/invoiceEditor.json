@@ -157,5 +157,14 @@
     "itemRequired": "At least one line item is required.",
     "descriptionRequired": "All line items must have a description.",
     "linkValueRequired": "All payment links must have a value."
+  },
+  "payLink": {
+    "title": "Pay online",
+    "none": "Don't add a pay link",
+    "feeNote": "Your client pays through a secure link and the money settles into this account. Flowtali keeps {fee}% of each payment.",
+    "fxNote": "Bachs charges cards in USD, so {currency} is converted at the day’s reference rate.",
+    "noneForCurrency": "None of your payout accounts can take {currency} payments.",
+    "empty": "Let clients pay this invoice by card or transfer, straight into your account.",
+    "setUp": "Set up a payout account"
   }
 }

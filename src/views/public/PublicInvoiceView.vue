@@ -5,6 +5,9 @@ import { Icon } from '@iconify/vue'
 import { InvoiceSharedLinksService, type IInvoice, type IInvoiceSharedLink } from '@/services/invoice.service'
 import FlowtaliLogo from '@/components/ui/FlowtaliLogo.vue'
 import InvoiceDocument from '@/components/invoice/InvoiceDocument.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const route = useRoute()
 const token = route.params.token as string
@@ -126,6 +129,19 @@ const printPage = () => window.print()
       <div v-if="unlocked" class="flex items-center gap-2 px-3 py-2 bg-green-50 border border-green-200 rounded-lg text-xs text-green-700">
         <Icon icon="lucide:unlock" class="w-3.5 h-3.5" /> Access granted
       </div>
+
+      <!-- Pay online -->
+      <a
+        v-if="invoice.pay_url"
+        :href="invoice.pay_url"
+        class="w-full max-w-[794px] flex items-center justify-between gap-4 px-5 py-3.5 bg-white border border-gray-200 rounded-xl shadow-sm hover:border-gray-300 transition-colors"
+      >
+        <span class="flex items-center gap-3 text-sm text-gray-700">
+          <Icon icon="lucide:credit-card" class="w-5 h-5" :style="{ color: invoice.accent_color }" />
+          {{ t('pay.shareBanner') }}
+        </span>
+        <span class="shrink-0 text-sm font-semibold text-white px-4 py-2 rounded-lg" :style="{ background: invoice.accent_color }">{{ t('document.payNow') }}</span>
+      </a>
 
       <!-- Invoice document — shared with the editor preview, view page and PDF -->
       <div class="w-full max-w-[794px]">

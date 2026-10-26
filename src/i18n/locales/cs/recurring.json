@@ -1,0 +1,24 @@
+{
+  "title": "Opakovat fakturu",
+  "subtitle": "V každý termín se vystaví nová kopie {number}.",
+  "action": "Opakovat",
+  "badge": "Opakuje se {freq} · další {date}",
+  "issuedFrom": "Z opakované faktury",
+  "freq": {
+    "weekly": "Týdně",
+    "monthly": "Měsíčně",
+    "quarterly": "Čtvrtletně",
+    "yearly": "Ročně"
+  },
+  "next": "Další faktura dne",
+  "endsAt": "Konec (volitelné)",
+  "autoSend": "Automaticky poslat klientovi e-mailem",
+  "autoSendHint": "Každá kopie se pošle na {email}. Jinak se uloží jako koncept ke kontrole.",
+  "autoSendNoEmail": "Pro automatické odesílání doplňte do faktury e-mail klienta.",
+  "start": "Začít opakovat",
+  "update": "Uložit změny",
+  "stop": "Přestat opakovat",
+  "saved": "Další kopie bude vystavena {date}.",
+  "stopped": "Faktura se už neopakuje.",
+  "failed": "Nastavení opakování se nepodařilo uložit."
+}

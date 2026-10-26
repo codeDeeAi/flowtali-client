@@ -9,6 +9,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { IInvoice, IInvoiceBankAccount } from '@/services/invoice.service'
+import InvoicePayLink from './InvoicePayLink.vue'
 
 /** A4 width in CSS pixels at 96dpi — the page is always laid out at this width. */
 const PAGE_WIDTH = 794
@@ -326,6 +327,7 @@ const scalerStyle = computed(() => ({
           </div>
 
           <!-- Footer -->
+          <InvoicePayLink v-if="doc.pay_url" :url="doc.pay_url" :accent="doc.accent_color" />
           <div v-if="doc.show_footer_line" style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 24px" class="flex justify-between items-center">
             <div class="text-gray-400" style="font-size: 11px">{{ doc.footer_text || doc.from_website }}</div>
             <div v-if="doc.show_flowtali_tag" class="text-gray-300" style="font-size: 10px">{{ t('document.generatedWith') }}</div>
@@ -473,6 +475,7 @@ const scalerStyle = computed(() => ({
             <p class="text-gray-500 leading-relaxed whitespace-pre-line" style="font-size:12px">{{ doc.notes }}</p>
           </div>
 
+          <InvoicePayLink v-if="doc.pay_url" :url="doc.pay_url" :accent="doc.accent_color" />
           <div v-if="doc.footer_text" class="mt-4 text-gray-400 text-xs">{{ doc.footer_text }}</div>
         </div>
       </div>
@@ -608,6 +611,7 @@ const scalerStyle = computed(() => ({
             </div>
           </div>
 
+          <InvoicePayLink v-if="doc.pay_url" :url="doc.pay_url" :accent="doc.accent_color" />
           <div v-if="doc.show_footer_line" style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 24px" class="flex justify-between">
             <div class="text-gray-400" style="font-size: 11px">{{ doc.footer_text || doc.from_website }}</div>
             <div v-if="doc.show_flowtali_tag" class="text-gray-300" style="font-size: 10px">{{ t('document.generatedShort') }}</div>
@@ -762,6 +766,7 @@ const scalerStyle = computed(() => ({
           </div>
 
           <!-- Footer -->
+          <InvoicePayLink v-if="doc.pay_url" :url="doc.pay_url" :accent="doc.accent_color" />
           <div v-if="doc.show_footer_line" style="border-top: 1px solid #e5e7eb; padding-top: 16px; margin-top: 24px" class="flex justify-between">
             <div class="text-gray-400 text-xs">{{ doc.footer_text || doc.from_website }}</div>
             <div v-if="doc.show_flowtali_tag" class="text-gray-300" style="font-size: 10px">{{ t('document.generatedWith') }}</div>
@@ -906,6 +911,7 @@ const scalerStyle = computed(() => ({
           </div>
 
           <!-- Footer -->
+          <InvoicePayLink v-if="doc.pay_url" :url="doc.pay_url" :accent="doc.accent_color" />
           <div v-if="doc.show_footer_line" style="border-top: 2px solid; margin-top: 24px; padding-top: 16px" :style="{ borderColor: doc.accent_color + '40' }" class="flex justify-between">
             <div class="text-gray-400 text-xs">{{ doc.footer_text || doc.from_website }}</div>
             <div v-if="doc.show_flowtali_tag" class="text-gray-300" style="font-size: 10px">{{ t('document.generatedWith') }}</div>

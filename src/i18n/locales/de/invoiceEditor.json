@@ -157,5 +157,14 @@
     "itemRequired": "Mindestens eine Position ist erforderlich.",
     "descriptionRequired": "Alle Positionen müssen eine Beschreibung haben.",
     "linkValueRequired": "Alle Zahlungslinks müssen einen Wert haben."
+  },
+  "payLink": {
+    "title": "Online bezahlen",
+    "none": "Keinen Zahlungslink hinzufügen",
+    "feeNote": "Ihr Kunde zahlt über einen sicheren Link, das Geld geht auf dieses Konto. Flowtali behält {fee}% jeder Zahlung.",
+    "fxNote": "Bachs belastet Karten in USD, daher wird {currency} zum Referenzkurs des Tages umgerechnet.",
+    "noneForCurrency": "Keines Ihrer Auszahlungskonten kann Zahlungen in {currency} annehmen.",
+    "empty": "Lassen Sie Kunden diese Rechnung per Karte oder Überweisung direkt auf Ihr Konto bezahlen.",
+    "setUp": "Auszahlungskonto einrichten"
   }
 }

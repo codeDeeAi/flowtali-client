@@ -48,5 +48,7 @@
   "paymentMethod": "Payment Method",
   "refInvoice": "Ref. Invoice #",
   "receiptTo": "Receipt To",
-  "amountReceived": "Amount Received"
+  "amountReceived": "Amount Received",
+  "payOnline": "Pay this invoice online",
+  "payNow": "Pay now"
 }

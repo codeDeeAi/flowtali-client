@@ -1,0 +1,24 @@
+{
+  "title": "Répéter cette facture",
+  "subtitle": "Une nouvelle copie de {number} est émise à chaque date.",
+  "action": "Répéter",
+  "badge": "Se répète {freq} · prochaine le {date}",
+  "issuedFrom": "Issue d'une facture récurrente",
+  "freq": {
+    "weekly": "Chaque semaine",
+    "monthly": "Chaque mois",
+    "quarterly": "Chaque trimestre",
+    "yearly": "Chaque année"
+  },
+  "next": "Prochaine facture le",
+  "endsAt": "Se termine le (facultatif)",
+  "autoSend": "L'envoyer automatiquement au client par e-mail",
+  "autoSendHint": "Chaque copie est envoyée à {email}. Sinon, elle est enregistrée en brouillon à vérifier.",
+  "autoSendNoEmail": "Ajoutez un e-mail client à cette facture pour envoyer les copies automatiquement.",
+  "start": "Démarrer la répétition",
+  "update": "Enregistrer",
+  "stop": "Arrêter la répétition",
+  "saved": "La prochaine copie sera émise le {date}.",
+  "stopped": "Cette facture ne se répète plus.",
+  "failed": "Impossible d'enregistrer la répétition."
+}

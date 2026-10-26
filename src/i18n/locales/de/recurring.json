@@ -1,0 +1,24 @@
+{
+  "title": "Rechnung wiederholen",
+  "subtitle": "An jedem Termin wird eine neue Kopie von {number} ausgestellt.",
+  "action": "Wiederholen",
+  "badge": "Wiederholt sich {freq} · nächste {date}",
+  "issuedFrom": "Aus einer wiederkehrenden Rechnung",
+  "freq": {
+    "weekly": "Wöchentlich",
+    "monthly": "Monatlich",
+    "quarterly": "Vierteljährlich",
+    "yearly": "Jährlich"
+  },
+  "next": "Nächste Rechnung am",
+  "endsAt": "Endet am (optional)",
+  "autoSend": "Automatisch per E-Mail an den Kunden senden",
+  "autoSendHint": "Jede Kopie geht an {email}. Sonst wird sie als Entwurf zur Prüfung gespeichert.",
+  "autoSendNoEmail": "Füge der Rechnung eine Kunden-E-Mail hinzu, um Kopien automatisch zu senden.",
+  "start": "Wiederholung starten",
+  "update": "Änderungen speichern",
+  "stop": "Wiederholung beenden",
+  "saved": "Die nächste Kopie wird am {date} ausgestellt.",
+  "stopped": "Diese Rechnung wiederholt sich nicht mehr.",
+  "failed": "Wiederholung konnte nicht gespeichert werden."
+}

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import { useLoaders } from '@/composables/loaders.ts'
@@ -17,6 +17,8 @@ interface Props {
   mode: 'create' | 'edit'
   invoiceId?: string
   initialData?: Partial<typeof form.value>
+  /** Create mode: applied on top of org defaults (e.g. carried over from Quick invoice). */
+  prefill?: Partial<typeof form.value>
   projectId?: string
 }
 const props = withDefaults(defineProps<Props>(), { mode: 'create' })
@@ -69,7 +71,7 @@ const plusDays = (n: number) => new Date(Date.now() + n * 864e5).toISOString().s
 // ─── Form state ───────────────────────────────────────────────────────────────
 const form = ref({
   // Invoice meta
-  number: 'INV-0043',
+  number: '',
   issueDate: today,
   dueDate: plusDays(30),
   paymentTerms: 'Net 30',
@@ -77,17 +79,20 @@ const form = ref({
   poNumber: '',
 
   // From
-  fromName: 'Acme Design Studio',
-  fromTagline: 'Creative Agency & Digital Studio',
-  fromEmail: 'hello@acme.studio',
-  fromPhone: '+1 415 555 0199',
-  fromWebsite: 'www.acme.studio',
-  fromAddress: '123 Design Street\nSan Francisco, CA 94105',
+  fromName: '',
+  fromTagline: '',
+  fromEmail: '',
+  fromPhone: '',
+  fromWebsite: '',
+  fromAddress: '',
   bankAccounts: [] as {
     id: number; label: string; bankName: string; accountName: string
     accountNumber: string; sortCode: string; iban: string; swift: string; currency: string
   }[],
   paymentLinks: [] as { id: number; type: string; value: string }[],
+  // Payout account the invoice's "Pay online" link charges into ('' = none).
+  subAccountId: '' as string,
+  payUrl: '' as string,
   logoUrl: '',
 
   // To
@@ -99,8 +104,7 @@ const form = ref({
 
   // Items
   items: [
-    { id: 1, description: 'Brand Design', qty: 1, unit: 'project', rate: 3500 },
-    { id: 2, description: 'Web Development', qty: 40, unit: 'hrs', rate: 100 },
+    { id: 1, description: '', qty: 1, unit: 'hrs', rate: 0 },
   ] as { id: number; description: string; qty: number; unit: string; rate: number }[],
 
   // Taxes
@@ -128,7 +132,7 @@ const form = ref({
   showFlowtaliTag: true,
 
   // Content
-  notes: 'Payment due within 30 days. Bank transfer or Stripe accepted.\nThank you for your business.',
+  notes: '',
   footerText: '',
 })
 
@@ -154,17 +158,14 @@ onMounted(async () => {
     try {
       const res = await InvoiceService.draftData(orgId.value)
       draftData.value = res.data.data
-      if (props.mode === 'create' && !props.initialData && draftData.value?.organization) {
-        const org = draftData.value.organization
-        if (org.name && !form.value.fromName) form.value.fromName = org.name
-        if (org.default_currency) form.value.currency = org.default_currency
-      }
+      if (props.mode === 'create' && !props.initialData) applyOrgDefaults()
     } catch {
       // non-critical
     } finally {
       isDraftLoading.value = false
     }
   }
+  if (props.mode === 'create' && props.prefill) Object.assign(form.value, props.prefill)
 })
 
 // ─── Emits ────────────────────────────────────────────────────────────────────
@@ -299,6 +300,9 @@ const previewDoc = computed(() => ({
   bank_accounts:            bankAccountsPayload.value,
   logo_url:                 form.value.logoUrl || null,
   payment_links:            form.value.paymentLinks,
+  sub_account_id:           form.value.subAccountId || null,
+  // The real URL exists once saved; until then preview where it will sit.
+  pay_url:                  form.value.subAccountId ? (form.value.payUrl || `${window.location.origin}/pay/…`) : null,
   to_name:                  form.value.toName || null,
   to_company:               form.value.toCompany || null,
   to_email:                 form.value.toEmail || null,
@@ -389,6 +393,20 @@ const orgProfiles      = computed(() => draftData.value?.organization?.invoice_p
 const orgBankAccounts  = computed(() => draftData.value?.organization?.bank_accounts ?? [])
 const orgPaymentLinks  = computed(() => draftData.value?.organization?.payment_links ?? [])
 
+// ─── Pay online (payout account) ──────────────────────────────────────────────
+const orgSubAccounts = computed(() => draftData.value?.organization?.sub_accounts ?? [])
+/** Accounts that can charge the invoice's current currency. */
+const payableAccounts = computed(() =>
+  orgSubAccounts.value.filter(a => a.chargeable_currencies.includes(form.value.currency)),
+)
+const selectedSubAccount = computed(() => orgSubAccounts.value.find(a => a.id === form.value.subAccountId))
+// Switching currency can strand the chosen account — drop it rather than save a link that can't charge.
+watch(() => form.value.currency, () => {
+  if (form.value.subAccountId && draftData.value && !payableAccounts.value.some(a => a.id === form.value.subAccountId)) {
+    form.value.subAccountId = ''
+  }
+})
+
 const fillFrom = (p: {
   name: string; tagline?: string | null; email?: string | null; phone?: string | null
   website?: string | null; address?: string | null; logo_url?: string | null
@@ -407,6 +425,41 @@ const addSavedPaymentLink = (link: { id: string; label: string; type: string; va
   if (!already) {
     form.value.paymentLinks.push({ id: nextLinkId++, type: link.type, value: link.value })
   }
+}
+
+// ─── Org defaults (new invoices only) ──────────────────────────────────────────
+// Seeds a fresh invoice from Org Preferences → Document defaults so users don't
+// re-pick sender, bank, branding and terms every time.
+const applyOrgDefaults = () => {
+  const data = draftData.value
+  const org  = data?.organization
+  if (!data || !org) return
+  const d = data.defaults
+
+  if (data.next_number) form.value.number = data.next_number
+  if (org.default_currency) form.value.currency = org.default_currency
+
+  const profile = orgProfiles.value.find(p => p.id === d?.profile_id)
+  if (profile) fillFrom(profile)
+  else if (org.name) form.value.fromName = org.name
+  if (!d) return
+
+  if (d.logo_url) form.value.logoUrl = d.logo_url
+  if (d.signature_url) form.value.signatureUrl = d.signature_url
+  d.bank_account_ids
+    .map(id => orgBankAccounts.value.find(b => b.id === id))
+    .forEach(b => { if (b) fillBank(b) })
+  d.payment_link_ids
+    .map(id => orgPaymentLinks.value.find(l => l.id === id))
+    .forEach(l => { if (l) addSavedPaymentLink(l) })
+
+  if (d.theme) form.value.theme = d.theme
+  if (d.accent_color) form.value.accentColor = d.accent_color
+  if (d.font_family) form.value.fontFamily = d.font_family
+  if (d.payment_terms) form.value.paymentTerms = d.payment_terms
+  if (d.tax?.label) form.value.taxes = [{ id: 1, label: d.tax.label, rate: Number(d.tax.rate) || 0, type: d.tax.type }]
+  if (d.notes) form.value.notes = d.notes
+  if (d.footer_text) form.value.footerText = d.footer_text
 }
 
 // ─── Client quick-fill ────────────────────────────────────────────────────────
@@ -538,6 +591,7 @@ const buildPayload = (overrides?: Record<string, any>) => ({
   bank_accounts:            bankAccountsPayload.value,
   logo_url:                 form.value.logoUrl || null,
   payment_links:            form.value.paymentLinks,
+  sub_account_id:           form.value.subAccountId || null,
   to_name:                  form.value.toName || null,
   to_company:               form.value.toCompany || null,
   to_email:                 form.value.toEmail || null,
@@ -568,7 +622,8 @@ const buildPayload = (overrides?: Record<string, any>) => ({
 })
 
 const validateForm = (): { ok: boolean; message: string; goTab?: Tab } => {
-  if (!form.value.number.trim()) {
+  // A blank number on create is assigned by the API.
+  if (props.mode === 'edit' && !form.value.number.trim()) {
     return { ok: false, message: t('invoiceEditor.validation.numberRequired'), goTab: 'Settings' }
   }
   if (!form.value.items.length) {
@@ -925,6 +980,27 @@ const handleSaveDraft = () => handleSave('draft')
               >
                 <Icon icon="lucide:plus" class="w-3.5 h-3.5" /> {{ t('invoiceEditor.from.addPaymentLink') }}
               </button>
+            </div>
+
+            <div class="h-px bg-gray-400"></div>
+
+            <!-- Pay online: a link the client pays through, straight to the org's payout account -->
+            <div>
+              <p class="text-[10px] uppercase tracking-wider text-gray-700 mb-2">{{ t('invoiceEditor.payLink.title') }}</p>
+              <template v-if="payableAccounts.length">
+                <select v-model="form.subAccountId" class="app-select text-sm w-full">
+                  <option value="">{{ t('invoiceEditor.payLink.none') }}</option>
+                  <option v-for="a in payableAccounts" :key="a.id" :value="a.id">{{ a.label }}</option>
+                </select>
+                <p v-if="selectedSubAccount" class="text-[10.5px] text-gray-700 mt-1.5 leading-relaxed">
+                  {{ t('invoiceEditor.payLink.feeNote', { fee: selectedSubAccount.platform_fee_percent }) }}
+                  <span v-if="selectedSubAccount.provider === 'bachs' && form.currency !== 'USD'">{{ t('invoiceEditor.payLink.fxNote', { currency: form.currency }) }}</span>
+                </p>
+              </template>
+              <p v-else class="text-[11px] text-gray-700 leading-relaxed">
+                {{ orgSubAccounts.length ? t('invoiceEditor.payLink.noneForCurrency', { currency: form.currency }) : t('invoiceEditor.payLink.empty') }}
+                <RouterLink :to="{ name: 'org-preferences' }" class="text-green-700 hover:underline">{{ t('invoiceEditor.payLink.setUp') }}</RouterLink>
+              </p>
             </div>
           </template>
 

@@ -1,0 +1,24 @@
+{
+  "title": "Repeat this invoice",
+  "subtitle": "A new copy of {number} is issued on each date.",
+  "action": "Repeat",
+  "badge": "Repeats {freq} · next {date}",
+  "issuedFrom": "From a repeating invoice",
+  "freq": {
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "quarterly": "Quarterly",
+    "yearly": "Yearly"
+  },
+  "next": "Next invoice on",
+  "endsAt": "Ends on (optional)",
+  "autoSend": "Email it to the client automatically",
+  "autoSendHint": "Each copy is sent to {email}. Otherwise it's saved as a draft for you to review.",
+  "autoSendNoEmail": "Add a client email to this invoice to send copies automatically.",
+  "start": "Start repeating",
+  "update": "Save changes",
+  "stop": "Stop repeating",
+  "saved": "Next copy will be issued on {date}.",
+  "stopped": "This invoice no longer repeats.",
+  "failed": "Couldn't save the repeat settings."
+}

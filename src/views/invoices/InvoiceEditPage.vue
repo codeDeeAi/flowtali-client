@@ -48,6 +48,8 @@ onMounted(async () => {
       })),
       logoUrl:                  inv.logo_url ?? '',
       paymentLinks:             (inv.payment_links ?? []).map((l, i) => ({ id: i + 1, ...l })),
+      subAccountId:             inv.sub_account_id ?? '',
+      payUrl:                   inv.pay_url ?? '',
       toName:                   inv.to_name ?? '',
       toCompany:                inv.to_company ?? '',
       toEmail:                  inv.to_email ?? '',

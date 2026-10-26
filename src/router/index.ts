@@ -56,6 +56,13 @@ const publicShareRoutes = [
     component: () => import('@/views/public/PublicReceiptView.vue'),
     meta: { layout: layouts.Public },
   },
+  {
+    // "Pay online" link printed on invoices; also the gateway's return URL.
+    path: '/pay/:token',
+    name: 'pay.invoice',
+    component: () => import('@/views/public/PublicPayView.vue'),
+    meta: { layout: layouts.Public },
+  },
 ]
 
 // Locale-prefixed public/marketing pages (English bare, /de/…, /cs/…, /fr/…).

@@ -48,5 +48,7 @@
   "paymentMethod": "Mode de paiement",
   "refInvoice": "N° facture réf.",
   "receiptTo": "Reçu pour",
-  "amountReceived": "Montant reçu"
+  "amountReceived": "Montant reçu",
+  "payOnline": "Payer cette facture en ligne",
+  "payNow": "Payer"
 }

@@ -7,6 +7,7 @@ import { useNotification } from '@/composables/notification.ts'
 import { useAuthStore } from '@/stores/auth'
 import { ReceiptService, ReceiptSharedLinksService, type IReceipt, type IReceiptSharedLink } from '@/services/receipt.service'
 import ShareLinkModal from '@/components/modals/ShareLinkModal.vue'
+import SendDocumentModal from '@/components/documents/SendDocumentModal.vue'
 
 const router     = useRouter()
 const route      = useRoute()
@@ -51,6 +52,14 @@ async function refreshLinks() {
 
 const symMap: Record<string, string> = { USD: '$', EUR: '€', GBP: '£', NGN: '₦', CAD: 'CA$', AUD: 'A$', JPY: '¥', INR: '₹', ZAR: 'R', CHF: 'Fr', AED: 'د.إ' }
 const sym     = computed(() => receipt.value ? (symMap[receipt.value.currency] ?? '$') : '$')
+
+// ─── Email ────────────────────────────────────────────────────────────────────
+const showSendModal = ref(false)
+const paidDisplay   = computed(() => {
+  if (!receipt.value) return ''
+  const paid = receipt.value.amount_paid ?? receipt.value.totals.total
+  return sym.value + Number(paid).toLocaleString(locale.value, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+})
 const fmtMoney = (n: number) => sym.value + n.toLocaleString(locale.value, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 const formatDate = (d: string | null) => {
@@ -164,6 +173,13 @@ async function handleDelete() {
           >
             <Icon icon="lucide:share-2" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> {{ t('invoiceView.actions.share') }}</span>
             <span v-if="activeLinks > 0" class="ml-0.5 px-1.5 py-0.5 bg-green-700/20 text-green-700 text-[9px] font-bold rounded-full">{{ activeLinks }}</span>
+          </button>
+          <button
+            @click="showSendModal = true"
+            class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors"
+            :title="t('delivery.receipt.title')"
+          >
+            <Icon icon="lucide:send" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> {{ t('delivery.actions.email') }}</span>
           </button>
           <button
             v-if="receipt.status !== 'finalized'"
@@ -395,6 +411,15 @@ async function handleDelete() {
     </template>
 
     <!-- Share modal -->
+    <SendDocumentModal
+      v-if="receipt"
+      v-model="showSendModal"
+      kind="receipt"
+      :doc="receipt"
+      :amount="paidDisplay"
+      @sent="refreshLinks"
+    />
+
     <ShareLinkModal
       v-if="showShareModal && receipt"
       resource-type="receipt"

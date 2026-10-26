@@ -1,0 +1,49 @@
+{
+  "thereFallback": "",
+  "to": "À",
+  "toPh": "client{'@'}example.com",
+  "subject": "Objet",
+  "message": "Message",
+  "cancel": "Annuler",
+  "failed": "Impossible d'envoyer l'e-mail. Veuillez réessayer.",
+  "noClientEmail": "Ce document n'a pas d'e-mail client — saisissez-en un.",
+  "linkNoteInvoice": "Un lien sécurisé vers la facture est ajouté sous votre message (avec un bouton Payer si le paiement en ligne est activé).",
+  "linkNoteReceipt": "Un lien sécurisé vers le reçu est ajouté sous votre message.",
+  "validation": {
+    "to": "Saisissez une adresse e-mail."
+  },
+  "invoice": {
+    "title": "Envoyer la facture par e-mail",
+    "action": "Envoyer la facture",
+    "sent": "Facture envoyée à {email}.",
+    "subject": "Facture {number} de {org}",
+    "body": "Bonjour {name},\n\nVeuillez trouver la facture {number} d'un montant de {amount}. Vous pouvez la consulter et la télécharger via le lien ci-dessous.\n\nMerci pour votre confiance.\n{org}",
+    "bodyWithDue": "Bonjour {name},\n\nVeuillez trouver la facture {number} d'un montant de {amount}, à régler avant le {due}. Vous pouvez la consulter et la télécharger via le lien ci-dessous.\n\nMerci pour votre confiance.\n{org}"
+  },
+  "reminder": {
+    "title": "Envoyer un rappel de paiement",
+    "action": "Envoyer le rappel",
+    "sent": "Rappel envoyé à {email}.",
+    "subject": "Rappel de paiement — facture {number}",
+    "body": "Bonjour {name},\n\nPetit rappel : la facture {number} d'un montant de {amount} reste impayée. Vous pouvez la consulter via le lien ci-dessous.\n\nSi vous avez déjà réglé, merci d'ignorer ce message.\n{org}",
+    "bodyWithDue": "Bonjour {name},\n\nPetit rappel : la facture {number} d'un montant de {amount}, échue le {due}, reste impayée. Vous pouvez la consulter via le lien ci-dessous.\n\nSi vous avez déjà réglé, merci d'ignorer ce message.\n{org}"
+  },
+  "receipt": {
+    "title": "Envoyer le reçu par e-mail",
+    "action": "Envoyer le reçu",
+    "sent": "Reçu envoyé à {email}.",
+    "subject": "Reçu {number} de {org}",
+    "body": "Bonjour {name},\n\nMerci pour votre paiement de {amount}. Votre reçu {number} est disponible via le lien ci-dessous.\n\n{org}",
+    "bodyWithDue": ""
+  },
+  "actions": {
+    "email": "E-mail",
+    "remind": "Relancer",
+    "duplicate": "Dupliquer",
+    "invoiceAgain": "Refacturer",
+    "duplicated": "{number} créée — copie de {from}.",
+    "duplicateFailed": "Impossible de dupliquer la facture.",
+    "newInvoice": "Nouvelle facture",
+    "newReceipt": "Nouveau reçu"
+  }
+}

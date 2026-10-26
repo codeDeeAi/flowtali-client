@@ -15,6 +15,8 @@ interface Props {
   mode: 'create' | 'edit'
   receiptId?: string
   initialData?: Record<string, any>
+  /** Create mode: applied on top of org defaults (e.g. carried over from Quick receipt). */
+  prefill?: Record<string, any>
   projectId?: string
 }
 const props = withDefaults(defineProps<Props>(), { mode: 'create' })
@@ -62,7 +64,7 @@ async function cleanUpDescription(item: { id: number; description: string }) {
 const today = new Date().toISOString().slice(0, 10)
 
 const form = ref({
-  number:          'REC-0001',
+  number:          '',
   issueDate:       today,
   paidAt:          today,
   paymentMethod:   'Bank Transfer',
@@ -143,15 +145,11 @@ onMounted(async () => {
     try {
       const res = await ReceiptService.draftData(orgId.value)
       draftData.value = res.data.data
-      if (props.mode === 'create' && !props.initialData && draftData.value?.organization) {
-        const org = draftData.value.organization
-        if (org.name && !form.value.fromName) form.value.fromName = org.name
-        if (org.default_currency) form.value.currency = org.default_currency
-      }
+      if (props.mode === 'create' && !props.initialData) applyOrgDefaults()
     } catch {}
     finally { isDraftLoading.value = false }
   }
-
+  if (props.mode === 'create' && props.prefill) Object.assign(form.value, props.prefill)
 })
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -228,6 +226,38 @@ const fillBank = (b: { bank_name?: string | null; account_name?: string | null; 
   form.value.fromBankAccountNumber = b.account_number ?? ''
   form.value.fromBankSortCode      = b.sort_code      ?? ''
   form.value.fromBankIban          = b.iban            ?? ''
+}
+
+// Seeds a fresh receipt from Org Preferences → Document defaults.
+const applyOrgDefaults = () => {
+  const data = draftData.value
+  const org  = data?.organization
+  if (!data || !org) return
+  const d = data.defaults
+
+  if (data.next_number) form.value.number = data.next_number
+  if (org.default_currency) form.value.currency = org.default_currency
+
+  const profile = orgProfiles.value.find(p => p.id === d?.profile_id)
+  if (profile) fillFrom(profile)
+  else if (org.name) form.value.fromName = org.name
+  if (!d) return
+
+  if (d.logo_url) form.value.logoUrl = d.logo_url
+  if (d.signature_url) form.value.signatureUrl = d.signature_url
+  // Receipts carry a single bank account — use the first default.
+  const bank = orgBankAccounts.value.find(b => b.id === d.bank_account_ids[0])
+  if (bank) {
+    fillBank(bank)
+    form.value.showBankDetails = true
+  }
+
+  if (d.theme) form.value.theme = d.theme
+  if (d.accent_color) form.value.accentColor = d.accent_color
+  if (d.font_family) form.value.fontFamily = d.font_family
+  if (d.tax?.label) form.value.taxes = [{ id: 1, label: d.tax.label, rate: Number(d.tax.rate) || 0, type: d.tax.type }]
+  if (d.receipt_notes) form.value.notes = d.receipt_notes
+  if (d.footer_text) form.value.footerText = d.footer_text
 }
 
 const fillTo = (c: { name: string; company: string | null; email: string | null; phone: string | null; address: string | null }) => {
@@ -387,7 +417,8 @@ const buildPayload = (overrides?: Record<string, any>) => ({
 
 const handleSave = async (statusOverride?: string) => {
   if (!orgId.value) return
-  if (!form.value.number.trim()) {
+  // A blank number on create is assigned by the API.
+  if (props.mode === 'edit' && !form.value.number.trim()) {
     notify(t('receiptEditor.validation.numberRequired'), 'error')
     tab.value = 'Settings'
     return

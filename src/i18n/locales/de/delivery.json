@@ -1,0 +1,49 @@
+{
+  "thereFallback": "",
+  "to": "An",
+  "toPh": "kunde{'@'}example.com",
+  "subject": "Betreff",
+  "message": "Nachricht",
+  "cancel": "Abbrechen",
+  "failed": "E-Mail konnte nicht gesendet werden. Bitte erneut versuchen.",
+  "noClientEmail": "Dieses Dokument hat keine Kunden-E-Mail — gib eine ein.",
+  "linkNoteInvoice": "Unter deiner Nachricht wird ein sicherer Link zur Rechnung eingefügt (plus „Jetzt bezahlen“, wenn Online-Zahlung aktiv ist).",
+  "linkNoteReceipt": "Unter deiner Nachricht wird ein sicherer Link zur Quittung eingefügt.",
+  "validation": {
+    "to": "Gib eine E-Mail-Adresse ein."
+  },
+  "invoice": {
+    "title": "Rechnung per E-Mail senden",
+    "action": "Rechnung senden",
+    "sent": "Rechnung an {email} gesendet.",
+    "subject": "Rechnung {number} von {org}",
+    "body": "Hallo {name},\n\nanbei die Rechnung {number} über {amount}. Über den Link unten können Sie sie ansehen und herunterladen.\n\nVielen Dank für Ihren Auftrag.\n{org}",
+    "bodyWithDue": "Hallo {name},\n\nanbei die Rechnung {number} über {amount}, fällig am {due}. Über den Link unten können Sie sie ansehen und herunterladen.\n\nVielen Dank für Ihren Auftrag.\n{org}"
+  },
+  "reminder": {
+    "title": "Zahlungserinnerung senden",
+    "action": "Erinnerung senden",
+    "sent": "Erinnerung an {email} gesendet.",
+    "subject": "Zahlungserinnerung — Rechnung {number}",
+    "body": "Hallo {name},\n\nwir möchten freundlich daran erinnern, dass die Rechnung {number} über {amount} noch offen ist. Über den Link unten können Sie sie ansehen.\n\nFalls Sie bereits bezahlt haben, ignorieren Sie diese Nachricht bitte. Vielen Dank!\n{org}",
+    "bodyWithDue": "Hallo {name},\n\nwir möchten freundlich daran erinnern, dass die Rechnung {number} über {amount} am {due} fällig war und noch offen ist. Über den Link unten können Sie sie ansehen.\n\nFalls Sie bereits bezahlt haben, ignorieren Sie diese Nachricht bitte. Vielen Dank!\n{org}"
+  },
+  "receipt": {
+    "title": "Quittung per E-Mail senden",
+    "action": "Quittung senden",
+    "sent": "Quittung an {email} gesendet.",
+    "subject": "Quittung {number} von {org}",
+    "body": "Hallo {name},\n\nvielen Dank für Ihre Zahlung über {amount}. Ihre Quittung {number} finden Sie unter dem Link unten.\n\n{org}",
+    "bodyWithDue": ""
+  },
+  "actions": {
+    "email": "E-Mail",
+    "remind": "Erinnern",
+    "duplicate": "Duplizieren",
+    "invoiceAgain": "Erneut abrechnen",
+    "duplicated": "{number} erstellt — Kopie von {from}.",
+    "duplicateFailed": "Rechnung konnte nicht dupliziert werden.",
+    "newInvoice": "Neue Rechnung",
+    "newReceipt": "Neue Quittung"
+  }
+}

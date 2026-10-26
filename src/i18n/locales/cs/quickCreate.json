@@ -1,0 +1,102 @@
+{
+  "mode": {
+    "quick": "Rychle",
+    "full": "Plný editor"
+  },
+  "back": "Zpět",
+  "switchToQuick": "Přepnout na rychlý režim",
+  "loading": "Načítání…",
+  "currency": "Měna",
+  "notes": "Poznámka pro klienta",
+  "notesPh": "Volitelné — zobrazí se na dokladu",
+  "subtotal": "Mezisoučet",
+  "total": "Celkem",
+  "saveDraft": "Uložit jako koncept",
+  "openFull": "Otevřít v plném editoru",
+  "numberAuto": "Dostane číslo {number}",
+  "numberAutoShort": "Číslo se přidělí automaticky",
+  "from": "Od {name}",
+  "defaultsHint": "Logo, bankovní údaje a vzhled se berou z vašeho",
+  "defaultsLink": "výchozího nastavení dokumentů",
+  "client": {
+    "searchPh": "Jméno klienta — vyhledejte nebo zadejte nové",
+    "emailPh": "E-mail (volitelné)",
+    "companyPh": "Firma (volitelné)",
+    "saveNew": "Uložit mezi mé klienty",
+    "saved": "Uložený klient"
+  },
+  "items": {
+    "title": "Co fakturujete?",
+    "forWhat": "Za co se platilo?",
+    "description": "Popis",
+    "descriptionPh": "Položka {n}",
+    "qty": "Množ.",
+    "rate": "Cena",
+    "amount": "Částka",
+    "add": "Přidat řádek"
+  },
+  "invoice": {
+    "title": "Nová faktura",
+    "subtitle": "Klient, položky, splatnost — vše ostatní z vašeho výchozího nastavení.",
+    "billTo": "Odběratel",
+    "due": "Splatnost",
+    "dueOnReceipt": "Ihned",
+    "inDays": "Za {n} dní",
+    "dueOn": "Splatné {date}",
+    "saveAndCopyLink": "Uložit a zkopírovat odkaz",
+    "repeatNever": "Nikdy"
+  },
+  "receipt": {
+    "title": "Nová účtenka",
+    "subtitle": "Zaznamenejte platbu během pár sekund.",
+    "invoice": "K faktuře",
+    "invoiceHint": "Označí fakturu jako zaplacenou",
+    "standalone": "Samostatná",
+    "standaloneHint": "Jednorázový prodej",
+    "whichInvoice": "Která faktura byla zaplacena?",
+    "change": "Změnit",
+    "searchInvoicePh": "Hledat podle čísla nebo klienta",
+    "noOpenInvoices": "Žádné nezaplacené faktury.",
+    "amountReceived": "Přijatá částka",
+    "payInFull": "Zaplatit celé",
+    "paidSoFar": "Dosud zaplaceno {amount}",
+    "partial": "Částečná platba — zbude uhradit {balance}",
+    "full": "Uhradí fakturu v plné výši",
+    "receivedFrom": "Přijato od",
+    "paymentDetails": "Platba",
+    "paidOn": "Zaplaceno dne",
+    "reference": "Reference",
+    "referencePh": "ID transakce (volitelné)",
+    "invoiceTotal": "Celkem faktura",
+    "receiving": "Přijímáte",
+    "received": "Přijato",
+    "recordPayment": "Zaznamenat platbu a vystavit účtenku",
+    "issueReceipt": "Vystavit účtenku"
+  },
+  "validation": {
+    "client": "Uveďte, pro koho to je.",
+    "description": "Každý řádek potřebuje popis.",
+    "amount": "Částka musí být větší než nula.",
+    "invoice": "Vyberte zaplacenou fakturu."
+  },
+  "toasts": {
+    "invoiceSaved": "Faktura {number} uložena.",
+    "linkCopied": "Faktura {number} uložena — odkaz zkopírován.",
+    "linkFailed": "Faktura {number} uložena. Odkaz zkopírujte na stránce faktury.",
+    "receiptSaved": "Účtenka {number} vystavena.",
+    "paidRecorded": "Účtenka {number} vystavena — {invoice} je zaplacena.",
+    "partialRecorded": "Účtenka {number} vystavena — zbývá uhradit {balance}.",
+    "clientNotSaved": "Klienta se nepodařilo uložit — pokračujeme.",
+    "saveFailed": "Uložení se nezdařilo. Zkuste to znovu."
+  },
+  "recordPayment": "Zaznamenat platbu",
+  "describe": {
+    "label": "Popište to",
+    "fill": "Vyplnit",
+    "invoicePh": "Popište to — např. „40 hodin vývoje webu pro Acme za 2 500 Kč/h, splatné do 14 dnů“",
+    "receiptPh": "Popište to — např. „Jana zaplatila 5 000 Kč hotově za logo“",
+    "filled": "Formulář vyplněn — před uložením ho zkontrolujte.",
+    "nothing": "Nenašli jsme klienta ani položky. Zkuste doplnit částky.",
+    "failed": "AI text nepřečetla. Zkuste to znovu."
+  }
+}

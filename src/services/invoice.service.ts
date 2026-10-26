@@ -1,4 +1,7 @@
 import http from './utils/http'
+import type { IDocumentDefaults } from '@/types/org-preferences.types'
+
+export type { IDocumentDefaults }
 
 export interface IInvoiceItem {
   id?: number
@@ -62,6 +65,16 @@ export interface IInvoice {
   from_bank_iban: string | null
   /** Up to 3. The first mirrors the flat from_bank_* fields above. */
   bank_accounts: IInvoiceBankAccount[]
+  /** Payout account the pay link charges into, if any. */
+  sub_account_id?: string | null
+  /** Public "pay online" link; null once paid/void or when no account is attached. */
+  pay_url?: string | null
+  paid_at?: string | null
+  /** Set when this invoice repeats; it is the template copies are issued from. */
+  recurrence?: IInvoiceRecurrence | null
+  /** The repeating invoice this one was issued from. */
+  recurrence_parent_id?: string | null
+  last_reminder_at?: string | null
   logo_url: string | null
   payment_links: IInvoicePaymentLink[]
   to_name: string | null
@@ -141,6 +154,14 @@ export interface IInvoiceDraftData {
       type: string
       value: string
     }>
+    /** Live payout accounts a pay link can charge into. */
+    sub_accounts?: Array<{
+      id: string
+      label: string
+      provider: 'paystack' | 'bachs'
+      chargeable_currencies: string[]
+      platform_fee_percent: number
+    }>
   } | null
   clients: Array<{
     id: string
@@ -152,7 +173,10 @@ export interface IInvoiceDraftData {
   }>
   logos: Array<{ id: string; url: string }>
   signatures: Array<{ id: string; url: string }>
+  defaults: IDocumentDefaults
+  next_number: string
 }
+
 
 export interface IInvoiceSharedLink {
   id: string
@@ -194,6 +218,48 @@ export const InvoiceService = {
   delete(orgId: string, invoiceId: string) {
     return http.delete(`/api/v1/orgs/${orgId}/invoices/${invoiceId}`)
   },
+  /** Make the invoice repeat; `frequency: null` stops it. */
+  setRecurrence(orgId: string, invoiceId: string, payload: {
+    frequency: RecurrenceFrequency | null
+    next_issue_at?: string | null
+    ends_at?: string | null
+    auto_send?: boolean
+  }) {
+    return http.put<{ data: IInvoice }>(`/api/v1/orgs/${orgId}/invoices/${invoiceId}/recurrence`, payload)
+  },
+  /** Copy as a new draft with the next number ("Duplicate" / "Invoice again"). */
+  duplicate(orgId: string, invoiceId: string) {
+    return http.post<{ data: IInvoice }>(`/api/v1/orgs/${orgId}/invoices/${invoiceId}/duplicate`, {})
+  },
+  /** Email the invoice with a share link; a draft becomes "sent". */
+  send(orgId: string, invoiceId: string, payload: ISendDocumentPayload) {
+    return http.post<{ data: ISendDocumentResult }>(`/api/v1/orgs/${orgId}/invoices/${invoiceId}/send`, payload)
+  },
+  remind(orgId: string, invoiceId: string, payload: ISendDocumentPayload) {
+    return http.post<{ data: ISendDocumentResult }>(`/api/v1/orgs/${orgId}/invoices/${invoiceId}/remind`, payload)
+  },
+}
+
+export type RecurrenceFrequency = 'weekly' | 'monthly' | 'quarterly' | 'yearly'
+
+export interface IInvoiceRecurrence {
+  frequency: RecurrenceFrequency
+  next_issue_at: string | null
+  ends_at: string | null
+  auto_send: boolean
+}
+
+/** Blank fields fall back to the client email and localized default text. */
+export interface ISendDocumentPayload {
+  to?: string | null
+  subject?: string | null
+  message?: string | null
+}
+
+export interface ISendDocumentResult {
+  recipient: string
+  url: string
+  status?: string
 }
 
 export const InvoiceSharedLinksService = {

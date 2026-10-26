@@ -1,0 +1,102 @@
+{
+  "mode": {
+    "quick": "Quick",
+    "full": "Full editor"
+  },
+  "back": "Back",
+  "switchToQuick": "Switch to quick mode",
+  "loading": "Loading…",
+  "currency": "Currency",
+  "notes": "Note to client",
+  "notesPh": "Optional — shown on the document",
+  "subtotal": "Subtotal",
+  "total": "Total",
+  "saveDraft": "Save as draft",
+  "openFull": "Open in full editor",
+  "numberAuto": "Will be numbered {number}",
+  "numberAutoShort": "Numbered automatically",
+  "from": "From {name}",
+  "defaultsHint": "Logo, bank details and design come from your",
+  "defaultsLink": "document defaults",
+  "client": {
+    "searchPh": "Client name — search or type a new one",
+    "emailPh": "Email (optional)",
+    "companyPh": "Company (optional)",
+    "saveNew": "Save to my clients",
+    "saved": "Saved client"
+  },
+  "items": {
+    "title": "What are you billing for?",
+    "forWhat": "What was paid for?",
+    "description": "Description",
+    "descriptionPh": "Item {n}",
+    "qty": "Qty",
+    "rate": "Price",
+    "amount": "Amount",
+    "add": "Add line"
+  },
+  "invoice": {
+    "title": "New invoice",
+    "subtitle": "Client, items, due date — everything else comes from your defaults.",
+    "billTo": "Bill to",
+    "due": "Payment due",
+    "dueOnReceipt": "On receipt",
+    "inDays": "In {n} days",
+    "dueOn": "Due {date}",
+    "saveAndCopyLink": "Save & copy share link",
+    "repeatNever": "Never"
+  },
+  "receipt": {
+    "title": "New receipt",
+    "subtitle": "Record a payment in a few seconds.",
+    "invoice": "For an invoice",
+    "invoiceHint": "Marks the invoice paid",
+    "standalone": "Standalone",
+    "standaloneHint": "Walk-in or one-off sale",
+    "whichInvoice": "Which invoice was paid?",
+    "change": "Change",
+    "searchInvoicePh": "Search by number or client",
+    "noOpenInvoices": "No unpaid invoices found.",
+    "amountReceived": "Amount received",
+    "payInFull": "Pay in full",
+    "paidSoFar": "{amount} paid so far",
+    "partial": "Partial payment — {balance} will remain due",
+    "full": "Settles the invoice in full",
+    "receivedFrom": "Received from",
+    "paymentDetails": "Payment",
+    "paidOn": "Paid on",
+    "reference": "Reference",
+    "referencePh": "Transaction ID (optional)",
+    "invoiceTotal": "Invoice total",
+    "receiving": "Receiving",
+    "received": "Received",
+    "recordPayment": "Record payment & issue receipt",
+    "issueReceipt": "Issue receipt"
+  },
+  "validation": {
+    "client": "Add who this is for.",
+    "description": "Every line needs a description.",
+    "amount": "The amount must be more than zero.",
+    "invoice": "Pick the invoice that was paid."
+  },
+  "toasts": {
+    "invoiceSaved": "Invoice {number} saved.",
+    "linkCopied": "Invoice {number} saved — share link copied.",
+    "linkFailed": "Invoice {number} saved. Copy the share link from the invoice page.",
+    "receiptSaved": "Receipt {number} issued.",
+    "paidRecorded": "Receipt {number} issued — {invoice} is now paid.",
+    "partialRecorded": "Receipt {number} issued — {balance} still due.",
+    "clientNotSaved": "Couldn't save the client to your list — continuing.",
+    "saveFailed": "Couldn't save. Please try again."
+  },
+  "recordPayment": "Record payment",
+  "describe": {
+    "label": "Describe it",
+    "fill": "Fill form",
+    "invoicePh": "Describe it — e.g. “40 hours web development for Acme at $100/h, due in 2 weeks”",
+    "receiptPh": "Describe it — e.g. “Jane paid $250 cash for a logo design”",
+    "filled": "Form filled — check it before saving.",
+    "nothing": "Couldn't find a client or items in that. Try adding amounts.",
+    "failed": "The AI couldn't read that. Please try again."
+  }
+}

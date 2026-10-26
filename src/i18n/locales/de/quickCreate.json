@@ -1,0 +1,102 @@
+{
+  "mode": {
+    "quick": "Schnell",
+    "full": "Voller Editor"
+  },
+  "back": "Zurück",
+  "switchToQuick": "Zum Schnellmodus wechseln",
+  "loading": "Wird geladen…",
+  "currency": "Währung",
+  "notes": "Hinweis an den Kunden",
+  "notesPh": "Optional — erscheint auf dem Dokument",
+  "subtotal": "Zwischensumme",
+  "total": "Gesamt",
+  "saveDraft": "Als Entwurf speichern",
+  "openFull": "Im vollen Editor öffnen",
+  "numberAuto": "Erhält die Nummer {number}",
+  "numberAutoShort": "Wird automatisch nummeriert",
+  "from": "Von {name}",
+  "defaultsHint": "Logo, Bankdaten und Design kommen aus deinen",
+  "defaultsLink": "Dokument-Standards",
+  "client": {
+    "searchPh": "Kundenname — suchen oder neu eingeben",
+    "emailPh": "E-Mail (optional)",
+    "companyPh": "Firma (optional)",
+    "saveNew": "In meinen Kunden speichern",
+    "saved": "Gespeicherter Kunde"
+  },
+  "items": {
+    "title": "Was stellst du in Rechnung?",
+    "forWhat": "Wofür wurde bezahlt?",
+    "description": "Beschreibung",
+    "descriptionPh": "Position {n}",
+    "qty": "Menge",
+    "rate": "Preis",
+    "amount": "Betrag",
+    "add": "Zeile hinzufügen"
+  },
+  "invoice": {
+    "title": "Neue Rechnung",
+    "subtitle": "Kunde, Positionen, Fälligkeit — alles andere aus deinen Standards.",
+    "billTo": "Rechnung an",
+    "due": "Zahlbar",
+    "dueOnReceipt": "Sofort",
+    "inDays": "In {n} Tagen",
+    "dueOn": "Fällig am {date}",
+    "saveAndCopyLink": "Speichern & Link kopieren",
+    "repeatNever": "Nie"
+  },
+  "receipt": {
+    "title": "Neue Quittung",
+    "subtitle": "Erfasse eine Zahlung in Sekunden.",
+    "invoice": "Zu einer Rechnung",
+    "invoiceHint": "Markiert die Rechnung als bezahlt",
+    "standalone": "Eigenständig",
+    "standaloneHint": "Laufkundschaft oder Einzelverkauf",
+    "whichInvoice": "Welche Rechnung wurde bezahlt?",
+    "change": "Ändern",
+    "searchInvoicePh": "Nach Nummer oder Kunde suchen",
+    "noOpenInvoices": "Keine offenen Rechnungen gefunden.",
+    "amountReceived": "Erhaltener Betrag",
+    "payInFull": "Vollständig bezahlen",
+    "paidSoFar": "Bisher {amount} bezahlt",
+    "partial": "Teilzahlung — {balance} bleiben offen",
+    "full": "Begleicht die Rechnung vollständig",
+    "receivedFrom": "Erhalten von",
+    "paymentDetails": "Zahlung",
+    "paidOn": "Bezahlt am",
+    "reference": "Referenz",
+    "referencePh": "Transaktions-ID (optional)",
+    "invoiceTotal": "Rechnungsbetrag",
+    "receiving": "Eingang",
+    "received": "Erhalten",
+    "recordPayment": "Zahlung erfassen & Quittung ausstellen",
+    "issueReceipt": "Quittung ausstellen"
+  },
+  "validation": {
+    "client": "Gib an, für wen das ist.",
+    "description": "Jede Zeile braucht eine Beschreibung.",
+    "amount": "Der Betrag muss größer als null sein.",
+    "invoice": "Wähle die bezahlte Rechnung."
+  },
+  "toasts": {
+    "invoiceSaved": "Rechnung {number} gespeichert.",
+    "linkCopied": "Rechnung {number} gespeichert — Link kopiert.",
+    "linkFailed": "Rechnung {number} gespeichert. Kopiere den Link auf der Rechnungsseite.",
+    "receiptSaved": "Quittung {number} ausgestellt.",
+    "paidRecorded": "Quittung {number} ausgestellt — {invoice} ist bezahlt.",
+    "partialRecorded": "Quittung {number} ausgestellt — {balance} noch offen.",
+    "clientNotSaved": "Kunde konnte nicht gespeichert werden — es geht trotzdem weiter.",
+    "saveFailed": "Speichern fehlgeschlagen. Bitte erneut versuchen."
+  },
+  "recordPayment": "Zahlung erfassen",
+  "describe": {
+    "label": "Beschreiben",
+    "fill": "Ausfüllen",
+    "invoicePh": "Beschreib es — z. B. „40 Stunden Webentwicklung für Acme à 100 €/h, fällig in 2 Wochen“",
+    "receiptPh": "Beschreib es — z. B. „Jana hat 250 € bar für ein Logo bezahlt“",
+    "filled": "Formular ausgefüllt — bitte vor dem Speichern prüfen.",
+    "nothing": "Kein Kunde und keine Positionen erkannt. Füge Beträge hinzu.",
+    "failed": "Die KI konnte das nicht lesen. Bitte erneut versuchen."
+  }
+}

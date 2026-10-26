@@ -1,0 +1,49 @@
+{
+  "thereFallback": "there",
+  "to": "To",
+  "toPh": "client{'@'}example.com",
+  "subject": "Subject",
+  "message": "Message",
+  "cancel": "Cancel",
+  "failed": "Couldn't send the email. Please try again.",
+  "noClientEmail": "This document has no client email — enter one to send.",
+  "linkNoteInvoice": "A secure link to view and download the invoice is added below your message (plus a Pay now button when online payment is on).",
+  "linkNoteReceipt": "A secure link to view and download the receipt is added below your message.",
+  "validation": {
+    "to": "Enter an email address to send to."
+  },
+  "invoice": {
+    "title": "Email invoice",
+    "action": "Send invoice",
+    "sent": "Invoice emailed to {email}.",
+    "subject": "Invoice {number} from {org}",
+    "body": "Hi {name},\n\nPlease find invoice {number} for {amount}. You can view and download it using the link below.\n\nThank you for your business.\n{org}",
+    "bodyWithDue": "Hi {name},\n\nPlease find invoice {number} for {amount}, due on {due}. You can view and download it using the link below.\n\nThank you for your business.\n{org}"
+  },
+  "reminder": {
+    "title": "Send payment reminder",
+    "action": "Send reminder",
+    "sent": "Reminder emailed to {email}.",
+    "subject": "Payment reminder — invoice {number}",
+    "body": "Hi {name},\n\nThis is a friendly reminder that invoice {number} for {amount} is still outstanding. You can view it using the link below.\n\nIf you've already paid, please ignore this message. Thank you!\n{org}",
+    "bodyWithDue": "Hi {name},\n\nThis is a friendly reminder that invoice {number} for {amount} was due on {due} and is still outstanding. You can view it using the link below.\n\nIf you've already paid, please ignore this message. Thank you!\n{org}"
+  },
+  "receipt": {
+    "title": "Email receipt",
+    "action": "Send receipt",
+    "sent": "Receipt emailed to {email}.",
+    "subject": "Receipt {number} from {org}",
+    "body": "Hi {name},\n\nThank you for your payment of {amount}. Your receipt {number} is available using the link below.\n\n{org}",
+    "bodyWithDue": ""
+  },
+  "actions": {
+    "email": "Email",
+    "remind": "Remind",
+    "duplicate": "Duplicate",
+    "invoiceAgain": "Invoice again",
+    "duplicated": "Created {number} — a copy of {from}.",
+    "duplicateFailed": "Couldn't duplicate the invoice.",
+    "newInvoice": "New invoice",
+    "newReceipt": "New receipt"
+  }
+}

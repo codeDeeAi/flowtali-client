@@ -127,6 +127,17 @@ async function markPaid(inv: IInvoice) {
   }
 }
 
+// "Invoice again": copy as a new draft and open it for edits.
+async function invoiceAgain(inv: IInvoice) {
+  try {
+    const { data } = await InvoiceService.duplicate(orgId.value, inv.id)
+    notify(t('delivery.actions.duplicated', { number: data.data.number, from: inv.number }), 'success')
+    router.push({ name: 'invoices.edit', params: { id: data.data.id } })
+  } catch {
+    notify(t('delivery.actions.duplicateFailed'), 'error')
+  }
+}
+
 const openDelete = (inv: IInvoice) => {
   deleteTarget.value = inv
   showDeleteConfirm.value = true
@@ -291,6 +302,11 @@ async function deleteSelected() {
                     :title="t('invoices.actions.edit')"
                   ><Icon icon="lucide:pencil" class="w-3.5 h-3.5" /></button>
                   <button
+                    @click="invoiceAgain(inv)"
+                    class="w-7 h-7 flex items-center justify-center rounded-md text-gray-700 hover:text-gray-1000 hover:bg-gray-400 transition-colors"
+                    :title="t('delivery.actions.invoiceAgain')"
+                  ><Icon icon="lucide:copy" class="w-3.5 h-3.5" /></button>
+                  <button
                     v-if="inv.status !== 'paid'"
                     @click="markPaid(inv)"
                     class="w-7 h-7 flex items-center justify-center rounded-md text-gray-700 hover:text-green-400 hover:bg-gray-400 transition-colors"
@@ -340,6 +356,14 @@ async function deleteSelected() {
               class="flex items-center gap-1.5 text-xs text-gray-900 hover:text-gray-1000 bg-gray-400/60 hover:bg-gray-400 px-3 py-1.5 rounded-lg transition-colors flex-1 justify-center"
             >
               <Icon icon="lucide:pencil" class="w-3.5 h-3.5" /> {{ t('invoices.actions.edit') }}
+            </button>
+            <button
+              @click="invoiceAgain(inv)"
+              class="flex items-center justify-center text-xs text-gray-900 hover:text-gray-1000 bg-gray-400/60 hover:bg-gray-400 px-3 py-1.5 rounded-lg transition-colors"
+              :title="t('delivery.actions.invoiceAgain')"
+              :aria-label="t('delivery.actions.invoiceAgain')"
+            >
+              <Icon icon="lucide:copy" class="w-3.5 h-3.5" />
             </button>
             <button
               v-if="inv.status !== 'paid'"

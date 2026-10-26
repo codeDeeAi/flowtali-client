@@ -157,5 +157,14 @@
     "itemRequired": "Au moins une ligne est requise.",
     "descriptionRequired": "Toutes les lignes doivent avoir une description.",
     "linkValueRequired": "Tous les liens de paiement doivent avoir une valeur."
+  },
+  "payLink": {
+    "title": "Paiement en ligne",
+    "none": "Ne pas ajouter de lien de paiement",
+    "feeNote": "Votre client paie via un lien sécurisé et l’argent arrive sur ce compte. Flowtali conserve {fee}% de chaque paiement.",
+    "fxNote": "Bachs débite les cartes en USD : {currency} est converti au taux de référence du jour.",
+    "noneForCurrency": "Aucun de vos comptes de versement ne peut accepter de paiements en {currency}.",
+    "empty": "Permettez à vos clients de payer cette facture par carte ou virement, directement sur votre compte.",
+    "setUp": "Configurer un compte de versement"
   }
 }

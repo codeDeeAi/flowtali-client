@@ -9,6 +9,8 @@ import { InvoiceService, InvoiceSharedLinksService, type IInvoice, type IInvoice
 import { ReceiptService, type IReceipt } from '@/services/receipt.service'
 import ShareLinkModal from '@/components/modals/ShareLinkModal.vue'
 import InvoiceDocument from '@/components/invoice/InvoiceDocument.vue'
+import SendDocumentModal, { type SendKind } from '@/components/documents/SendDocumentModal.vue'
+import RepeatInvoiceModal from '@/components/documents/RepeatInvoiceModal.vue'
 
 const router     = useRouter()
 const route      = useRoute()
@@ -34,11 +36,20 @@ const receiptForm = reactive({
   paidAt:          new Date().toISOString().slice(0, 10),
   paymentMethod:   '',
   referenceNumber: '',
-  stamp:           'PAID' as 'PAID' | 'PARTIALLY PAID' | 'UNPAID' | '',
-  balanceDue:      0,
+  amount:          0,
 })
 
-const showsBalanceDue = computed(() => receiptForm.stamp === 'PARTIALLY PAID' || receiptForm.stamp === 'UNPAID')
+// What's still owed: invoice total minus what earlier receipts acknowledged.
+const outstanding = computed(() => {
+  if (!invoice.value) return 0
+  const paid = receipts.value
+    .filter(r => r.status !== 'void')
+    .reduce((s, r) => s + Number(r.amount_paid ?? 0), 0)
+  return Math.max(Math.round((Number(invoice.value.totals?.total ?? 0) - paid) * 100) / 100, 0)
+})
+const balanceAfterPayment = computed(() =>
+  Math.max(Math.round((outstanding.value - (Number(receiptForm.amount) || 0)) * 100) / 100, 0),
+)
 
 onMounted(async () => {
   if (!orgId.value) return
@@ -111,6 +122,43 @@ function copyLink(token: string) {
   navigator.clipboard.writeText(linkUrl(token)).catch(() => {})
   notify(t('invoiceView.toasts.linkCopied'), 'success')
 }
+// ─── Email / remind / duplicate ───────────────────────────────────────────────
+const sendKind      = ref<SendKind>('invoice')
+const showSendModal = ref(false)
+const isDuplicating = ref(false)
+const showRepeatModal = ref(false)
+const canRemind     = computed(() => !!invoice.value && ['sent', 'overdue'].includes(invoice.value.status))
+// What the client still owes — the full total until payments are recorded.
+const amountDisplay = computed(() =>
+  sym.value + outstanding.value.toLocaleString(locale.value, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+)
+
+function openSend(kind: SendKind) {
+  sendKind.value = kind
+  showSendModal.value = true
+}
+
+async function onSent() {
+  // Emailing a draft marks it sent, and may have created a share link.
+  if (!invoice.value) return
+  const [inv] = await Promise.all([InvoiceService.get(orgId.value, invoice.value.id), refreshLinks()])
+  invoice.value = inv.data.data
+}
+
+async function duplicateInvoice() {
+  if (!invoice.value || isDuplicating.value) return
+  isDuplicating.value = true
+  try {
+    const { data } = await InvoiceService.duplicate(orgId.value, invoice.value.id)
+    notify(t('delivery.actions.duplicated', { number: data.data.number, from: invoice.value.number }), 'success')
+    router.push({ name: 'invoices.edit', params: { id: data.data.id } })
+  } catch {
+    notify(t('delivery.actions.duplicateFailed'), 'error')
+  } finally {
+    isDuplicating.value = false
+  }
+}
+
 function fmtDate(iso: string | null) {
   if (!iso) return '—'
   return new Date(iso).toLocaleDateString(locale.value, { month: 'short', day: 'numeric', year: 'numeric' })
@@ -122,87 +170,45 @@ function fmtDateTime(iso: string | null) {
 
 const stampColor: Record<string, string> = { 'PAID': '#22c55e', 'PARTIALLY PAID': '#f97316', 'UNPAID': '#ef4444' }
 
-const receiptStampOpts = computed(() => [
-  { value: 'PAID',           label: t('invoiceView.stamps.paid'),          color: '#22c55e' },
-  { value: 'PARTIALLY PAID', label: t('invoiceView.stamps.partiallyPaid'), color: '#f97316' },
-  { value: 'UNPAID',         label: t('invoiceView.stamps.unpaid'),        color: '#ef4444' },
-  { value: '',               label: t('invoiceView.stamps.none'),          color: '#9ca3af' },
-])
-
 function openGenerateReceiptModal() {
   if (!invoice.value) return
-  const inv = invoice.value
-  receiptForm.number          = inv.number.replace(/^INV-?/i, 'REC-')
+  receiptForm.number          = ''
   receiptForm.paidAt          = new Date().toISOString().slice(0, 10)
   receiptForm.paymentMethod   = ''
   receiptForm.referenceNumber = ''
-  receiptForm.stamp           = 'PAID'
-  receiptForm.balanceDue      = 0
+  receiptForm.amount          = outstanding.value
   showGenerateReceiptModal.value = true
+  // Suggest the org's next receipt number; if this fails the API assigns one.
+  ReceiptService.draftData(orgId.value)
+    .then(res => { if (!receiptForm.number) receiptForm.number = res.data.data.next_number })
+    .catch(() => {})
 }
 
 async function submitGenerateReceipt() {
   if (!invoice.value) return
-  const inv = invoice.value
+  if (!(Number(receiptForm.amount) > 0)) {
+    notify(t('quickCreate.validation.amount'), 'error')
+    return
+  }
   isGeneratingReceipt.value = true
   try {
-    const payload: Record<string, any> = {
-      invoice_id:       inv.id,
-      number:           receiptForm.number,
-      issue_date:       new Date().toISOString().slice(0, 10),
+    // One step: issues the receipt and marks the invoice paid once settled.
+    const res = await ReceiptService.recordInvoicePayment(orgId.value, invoice.value.id, {
+      number:           receiptForm.number || null,
+      amount:           Number(receiptForm.amount),
       paid_at:          receiptForm.paidAt || null,
       payment_method:   receiptForm.paymentMethod || null,
       reference_number: receiptForm.referenceNumber || null,
-      currency:         inv.currency,
-      from_name:                inv.from_name,
-      from_tagline:             inv.from_tagline,
-      from_email:               inv.from_email,
-      from_phone:               inv.from_phone,
-      from_website:             inv.from_website,
-      from_address:             inv.from_address,
-      from_bank_name:           inv.from_bank_name,
-      from_bank_account_name:   inv.from_bank_account_name,
-      from_bank_account_number: inv.from_bank_account_number,
-      from_bank_sort_code:      inv.from_bank_sort_code,
-      from_bank_iban:           inv.from_bank_iban,
-      logo_url:                 inv.logo_url,
-      payment_links:            (inv.payment_links ?? []).map(({ id: _id, ...l }) => l),
-      to_name:                  inv.to_name,
-      to_company:               inv.to_company,
-      to_email:                 inv.to_email,
-      to_phone:                 inv.to_phone,
-      to_address:               inv.to_address,
-      items:                    (inv.items ?? []).map(({ id: _id, ...item }) => item),
-      taxes:                    (inv.taxes ?? []).map(({ id: _id, ...t }) => t),
-      discount_type:            inv.discount_type,
-      discount:                 inv.discount,
-      theme:                    inv.theme,
-      accent_color:             inv.accent_color,
-      font_family:              inv.font_family,
-      signature_url:            inv.signature_url,
-      stamp:                    receiptForm.stamp || null,
-      stamp_custom_text:        (receiptForm.stamp === 'PARTIALLY PAID' || receiptForm.stamp === 'UNPAID') && receiptForm.balanceDue > 0
-                                  ? String(receiptForm.balanceDue)
-                                  : null,
-      show_top_bar:             inv.show_top_bar,
-      show_logo:                inv.show_logo,
-      show_footer_line:         inv.show_footer_line,
-      show_notes:               false,
-      show_bank_details:        inv.show_bank_details,
-      show_flowtali_tag:        inv.show_flowtali_tag,
-      notes:                    '',
-      footer_text:              inv.footer_text,
-      status:                   'draft',
-    }
-
-    const res = await ReceiptService.create(orgId.value, payload)
-    const created = res.data.data
+    })
+    const { receipt: created, invoice_status } = res.data.data
+    invoice.value.status = invoice_status
     showGenerateReceiptModal.value = false
     notify(t('invoiceView.toasts.receiptCreated', { number: created.number }), 'success')
     await refreshReceipts()
-    router.push({ name: 'receipts.edit', params: { id: created.id } })
-  } catch {
-    notify(t('invoiceView.toasts.receiptFailed'), 'error')
+    router.push({ name: 'receipts.view', params: { id: created.id } })
+  } catch (err: unknown) {
+    const e = err as { response?: { data?: { message?: string } } }
+    notify(e.response?.data?.message ?? t('invoiceView.toasts.receiptFailed'), 'error')
   } finally {
     isGeneratingReceipt.value = false
   }
@@ -263,6 +269,21 @@ async function handleDelete() {
             <div class="flex items-center gap-2 flex-wrap">
               <h1 class="page-title font-mono">{{ invoice.number }}</h1>
               <span :class="['status-badge', statusClass[invoice.status] ?? 'status-draft']">{{ statusLabel(invoice.status) }}</span>
+              <button
+                v-if="invoice.recurrence"
+                type="button" @click="showRepeatModal = true"
+                class="flex items-center gap-1 text-[11px] text-green-700 bg-green-700/10 border border-green-700/25 px-2 py-0.5 rounded-full hover:bg-green-700/15 transition-colors"
+              >
+                <Icon icon="lucide:repeat" class="w-3 h-3" />
+                {{ t('recurring.badge', { freq: t(`recurring.freq.${invoice.recurrence.frequency}`), date: formatDate(invoice.recurrence.next_issue_at) }) }}
+              </button>
+              <button
+                v-else-if="invoice.recurrence_parent_id"
+                type="button" @click="router.push({ name: 'invoices.view', params: { id: invoice.recurrence_parent_id } })"
+                class="flex items-center gap-1 text-[11px] text-gray-700 hover:text-gray-1000"
+              >
+                <Icon icon="lucide:repeat" class="w-3 h-3" /> {{ t('recurring.issuedFrom') }}
+              </button>
             </div>
             <p class="page-subtitle">{{ invoice.to_name || '—' }} · {{ t('invoiceView.dueOn', { date: formatDate(invoice.due_date) }) }}</p>
           </div>
@@ -280,11 +301,42 @@ async function handleDelete() {
             <span v-if="activeLinks > 0" class="ml-0.5 px-1.5 py-0.5 bg-green-700/20 text-green-700 text-[9px] font-bold rounded-full">{{ activeLinks }}</span>
           </button>
           <button
+            @click="openSend('invoice')"
+            class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors"
+            :title="t('delivery.invoice.title')"
+          >
+            <Icon icon="lucide:send" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> {{ t('delivery.actions.email') }}</span>
+          </button>
+          <button
+            v-if="canRemind"
+            @click="openSend('reminder')"
+            class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors"
+            :title="t('delivery.reminder.title')"
+          >
+            <Icon icon="lucide:bell-ring" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> {{ t('delivery.actions.remind') }}</span>
+          </button>
+          <button
+            @click="showRepeatModal = true"
+            :class="['flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium border rounded-lg transition-colors',
+              invoice.recurrence ? 'bg-green-700/10 border-green-700/25 text-green-700' : 'bg-gray-400 hover:bg-gray-500 border-gray-500 text-gray-700 hover:text-gray-1000']"
+            :title="t('recurring.title')"
+          >
+            <Icon icon="lucide:repeat" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> {{ t('recurring.action') }}</span>
+          </button>
+          <button
+            @click="duplicateInvoice"
+            :disabled="isDuplicating"
+            class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors disabled:opacity-50"
+            :title="t('delivery.actions.invoiceAgain')"
+          >
+            <Icon :icon="isDuplicating ? 'lucide:loader-2' : 'lucide:copy'" :class="['w-3.5 h-3.5', isDuplicating && 'animate-spin']" /><span class="hidden sm:inline"> {{ t('delivery.actions.duplicate') }}</span>
+          </button>
+          <button
             @click="openGenerateReceiptModal"
             class="flex items-center gap-1.5 px-2 sm:px-3 py-2 text-xs font-medium bg-gray-400 hover:bg-gray-500 border border-gray-500 text-gray-700 hover:text-gray-1000 rounded-lg transition-colors"
-            :title="t('invoiceView.actions.generateReceipt')"
+            :title="t('quickCreate.recordPayment')"
           >
-            <Icon icon="lucide:receipt" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> {{ t('invoiceView.actions.generateReceipt') }}</span>
+            <Icon icon="lucide:receipt" class="w-3.5 h-3.5" /><span class="hidden sm:inline"> {{ t('quickCreate.recordPayment') }}</span>
             <span v-if="receipts.length > 0" class="ml-0.5 px-1.5 py-0.5 bg-green-700/20 text-green-700 text-[9px] font-bold rounded-full">{{ receipts.length }}</span>
           </button>
           <button
@@ -476,6 +528,22 @@ async function handleDelete() {
       @close="showShareModal = false; refreshLinks()"
     />
 
+    <RepeatInvoiceModal
+      v-if="invoice"
+      v-model="showRepeatModal"
+      :invoice="invoice"
+      @updated="(inv) => (invoice = inv)"
+    />
+
+    <SendDocumentModal
+      v-if="invoice"
+      v-model="showSendModal"
+      :kind="sendKind"
+      :doc="invoice"
+      :amount="amountDisplay"
+      @sent="onSent"
+    />
+
     <!-- Generate Receipt Modal -->
     <Teleport to="body">
       <Transition name="modal">
@@ -492,7 +560,7 @@ async function handleDelete() {
                   <Icon icon="lucide:receipt" class="w-4 h-4 text-green-700" />
                 </div>
                 <div>
-                  <h3 class="text-sm font-semibold text-gray-1000">{{ t('invoiceView.generateModal.title') }}</h3>
+                  <h3 class="text-sm font-semibold text-gray-1000">{{ t('quickCreate.recordPayment') }}</h3>
                   <p class="text-[11px] text-gray-700">{{ t('invoiceView.generateModal.from', { number: invoice.number }) }}</p>
                 </div>
               </div>
@@ -510,7 +578,7 @@ async function handleDelete() {
                   v-model="receiptForm.number"
                   type="text"
                   class="w-full bg-gray-100/60 border border-gray-500 rounded-lg px-3 py-2 text-xs text-gray-1000 placeholder-gray-700 focus:outline-none focus:border-green-700/50 transition-colors"
-                  placeholder="REC-001"
+                  :placeholder="t('quickCreate.numberAutoShort')"
                 />
               </div>
 
@@ -546,41 +614,30 @@ async function handleDelete() {
                 </div>
               </div>
 
-              <!-- Stamp -->
+              <!-- Amount received -->
               <div>
-                <label class="block text-[10px] uppercase tracking-wider text-gray-700 mb-1.5">{{ t('invoiceView.generateModal.statusStamp') }}</label>
-                <div class="grid grid-cols-4 gap-1.5">
-                  <button
-                    v-for="opt in receiptStampOpts"
-                    :key="opt.value"
-                    @click="receiptForm.stamp = opt.value as any"
-                    :class="[
-                      'px-2 py-1.5 rounded-lg border text-[10px] font-semibold transition-colors text-center',
-                      receiptForm.stamp === opt.value
-                        ? 'border-green-700/50 bg-green-700/10 text-green-700'
-                        : 'border-gray-500 bg-gray-100/50 text-gray-700 hover:border-gray-500 hover:text-gray-1000'
-                    ]"
-                  >
-                    <span v-if="opt.value" class="block w-1.5 h-1.5 rounded-full mx-auto mb-1" :style="{ backgroundColor: opt.color }"></span>
-                    {{ opt.label }}
-                  </button>
-                </div>
-              </div>
-
-              <!-- Balance due (shown for PARTIALLY PAID / UNPAID) -->
-              <Transition name="slide-down">
-                <div v-if="showsBalanceDue">
-                  <label class="block text-[10px] uppercase tracking-wider text-gray-700 mb-1.5">{{ t('invoiceView.generateModal.balanceDue', { currency: invoice.currency }) }}</label>
+                <label class="block text-[10px] uppercase tracking-wider text-gray-700 mb-1.5">{{ t('quickCreate.receipt.amountReceived') }} ({{ invoice.currency }})</label>
+                <div class="flex items-center gap-2">
                   <input
-                    v-model.number="receiptForm.balanceDue"
+                    v-model.number="receiptForm.amount"
                     type="number"
                     min="0"
                     step="0.01"
-                    class="w-full bg-gray-100/60 border border-gray-500 rounded-lg px-3 py-2 text-xs text-gray-1000 placeholder-gray-700 focus:outline-none focus:border-green-700/50 transition-colors"
-                    placeholder="0.00"
+                    class="w-full bg-gray-100/60 border border-gray-500 rounded-lg px-3 py-2 text-xs text-gray-1000 placeholder-gray-700 focus:outline-none focus:border-green-700/50 transition-colors font-mono"
                   />
+                  <button
+                    v-if="receiptForm.amount !== outstanding"
+                    type="button"
+                    @click="receiptForm.amount = outstanding"
+                    class="text-[11px] text-gray-900 hover:text-gray-1000 underline shrink-0"
+                  >{{ t('quickCreate.receipt.payInFull') }}</button>
                 </div>
-              </Transition>
+                <p class="text-[11px] mt-1.5" :class="balanceAfterPayment > 0 ? 'text-amber-400' : 'text-green-700'">
+                  {{ balanceAfterPayment > 0
+                    ? t('quickCreate.receipt.partial', { balance: `${invoice.currency} ${balanceAfterPayment.toFixed(2)}` })
+                    : t('quickCreate.receipt.full') }}
+                </p>
+              </div>
 
             </div>
 
@@ -593,12 +650,12 @@ async function handleDelete() {
               >{{ t('invoices.deleteModal.cancel') }}</button>
               <button
                 @click="submitGenerateReceipt"
-                :disabled="isGeneratingReceipt || !receiptForm.number"
+                :disabled="isGeneratingReceipt"
                 class="px-4 py-2 text-xs font-semibold bg-green-700 hover:bg-green-800 text-bg-100 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-1.5"
               >
                 <Icon v-if="isGeneratingReceipt" icon="lucide:loader-2" class="w-3 h-3 animate-spin" />
                 <Icon v-else icon="lucide:receipt" class="w-3 h-3" />
-                {{ t('invoiceView.generateModal.generate') }}
+                {{ t('quickCreate.receipt.recordPayment') }}
               </button>
             </div>
 

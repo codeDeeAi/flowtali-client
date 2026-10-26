@@ -1,0 +1,102 @@
+{
+  "mode": {
+    "quick": "Rapide",
+    "full": "Éditeur complet"
+  },
+  "back": "Retour",
+  "switchToQuick": "Passer en mode rapide",
+  "loading": "Chargement…",
+  "currency": "Devise",
+  "notes": "Note au client",
+  "notesPh": "Facultatif — affichée sur le document",
+  "subtotal": "Sous-total",
+  "total": "Total",
+  "saveDraft": "Enregistrer en brouillon",
+  "openFull": "Ouvrir dans l'éditeur complet",
+  "numberAuto": "Sera numéroté {number}",
+  "numberAutoShort": "Numérotation automatique",
+  "from": "De {name}",
+  "defaultsHint": "Logo, coordonnées bancaires et design proviennent de vos",
+  "defaultsLink": "paramètres par défaut",
+  "client": {
+    "searchPh": "Nom du client — rechercher ou saisir un nouveau",
+    "emailPh": "E-mail (facultatif)",
+    "companyPh": "Entreprise (facultatif)",
+    "saveNew": "Enregistrer dans mes clients",
+    "saved": "Client enregistré"
+  },
+  "items": {
+    "title": "Que facturez-vous ?",
+    "forWhat": "Qu'est-ce qui a été payé ?",
+    "description": "Description",
+    "descriptionPh": "Article {n}",
+    "qty": "Qté",
+    "rate": "Prix",
+    "amount": "Montant",
+    "add": "Ajouter une ligne"
+  },
+  "invoice": {
+    "title": "Nouvelle facture",
+    "subtitle": "Client, articles, échéance — le reste vient de vos paramètres par défaut.",
+    "billTo": "Facturer à",
+    "due": "Échéance",
+    "dueOnReceipt": "À réception",
+    "inDays": "Sous {n} jours",
+    "dueOn": "Échéance le {date}",
+    "saveAndCopyLink": "Enregistrer et copier le lien",
+    "repeatNever": "Jamais"
+  },
+  "receipt": {
+    "title": "Nouveau reçu",
+    "subtitle": "Enregistrez un paiement en quelques secondes.",
+    "invoice": "Pour une facture",
+    "invoiceHint": "Marque la facture comme payée",
+    "standalone": "Indépendant",
+    "standaloneHint": "Vente ponctuelle",
+    "whichInvoice": "Quelle facture a été payée ?",
+    "change": "Changer",
+    "searchInvoicePh": "Rechercher par numéro ou client",
+    "noOpenInvoices": "Aucune facture impayée.",
+    "amountReceived": "Montant reçu",
+    "payInFull": "Payer en totalité",
+    "paidSoFar": "{amount} déjà payé",
+    "partial": "Paiement partiel — il restera {balance} à payer",
+    "full": "Solde entièrement la facture",
+    "receivedFrom": "Reçu de",
+    "paymentDetails": "Paiement",
+    "paidOn": "Payé le",
+    "reference": "Référence",
+    "referencePh": "ID de transaction (facultatif)",
+    "invoiceTotal": "Total de la facture",
+    "receiving": "Montant reçu",
+    "received": "Reçu",
+    "recordPayment": "Enregistrer le paiement et émettre le reçu",
+    "issueReceipt": "Émettre le reçu"
+  },
+  "validation": {
+    "client": "Indiquez pour qui c'est.",
+    "description": "Chaque ligne doit avoir une description.",
+    "amount": "Le montant doit être supérieur à zéro.",
+    "invoice": "Choisissez la facture payée."
+  },
+  "toasts": {
+    "invoiceSaved": "Facture {number} enregistrée.",
+    "linkCopied": "Facture {number} enregistrée — lien copié.",
+    "linkFailed": "Facture {number} enregistrée. Copiez le lien depuis la page de la facture.",
+    "receiptSaved": "Reçu {number} émis.",
+    "paidRecorded": "Reçu {number} émis — {invoice} est payée.",
+    "partialRecorded": "Reçu {number} émis — {balance} restant dû.",
+    "clientNotSaved": "Impossible d'enregistrer le client — on continue.",
+    "saveFailed": "Échec de l'enregistrement. Veuillez réessayer."
+  },
+  "recordPayment": "Enregistrer un paiement",
+  "describe": {
+    "label": "Décrivez-le",
+    "fill": "Remplir",
+    "invoicePh": "Décrivez-le — ex. « 40 heures de développement web pour Acme à 100 €/h, à payer sous 2 semaines »",
+    "receiptPh": "Décrivez-le — ex. « Jeanne a payé 250 € en espèces pour un logo »",
+    "filled": "Formulaire rempli — vérifiez-le avant d'enregistrer.",
+    "nothing": "Aucun client ni article trouvé. Ajoutez des montants.",
+    "failed": "L'IA n'a pas pu lire cela. Veuillez réessayer."
+  }
+}

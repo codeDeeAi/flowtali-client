@@ -1,0 +1,49 @@
+{
+  "thereFallback": "",
+  "to": "Komu",
+  "toPh": "klient{'@'}example.com",
+  "subject": "Předmět",
+  "message": "Zpráva",
+  "cancel": "Zrušit",
+  "failed": "E-mail se nepodařilo odeslat. Zkuste to znovu.",
+  "noClientEmail": "Doklad nemá e-mail klienta — zadejte ho.",
+  "linkNoteInvoice": "Pod zprávu přidáme zabezpečený odkaz na fakturu (a tlačítko Zaplatit, pokud je zapnutá online platba).",
+  "linkNoteReceipt": "Pod zprávu přidáme zabezpečený odkaz na účtenku.",
+  "validation": {
+    "to": "Zadejte e-mailovou adresu příjemce."
+  },
+  "invoice": {
+    "title": "Odeslat fakturu e-mailem",
+    "action": "Odeslat fakturu",
+    "sent": "Faktura odeslána na {email}.",
+    "subject": "Faktura {number} od {org}",
+    "body": "Dobrý den {name},\n\nzasíláme fakturu {number} na částku {amount}. Zobrazit a stáhnout ji můžete pomocí odkazu níže.\n\nDěkujeme za spolupráci.\n{org}",
+    "bodyWithDue": "Dobrý den {name},\n\nzasíláme fakturu {number} na částku {amount} se splatností {due}. Zobrazit a stáhnout ji můžete pomocí odkazu níže.\n\nDěkujeme za spolupráci.\n{org}"
+  },
+  "reminder": {
+    "title": "Poslat upomínku",
+    "action": "Odeslat upomínku",
+    "sent": "Upomínka odeslána na {email}.",
+    "subject": "Upomínka platby — faktura {number}",
+    "body": "Dobrý den {name},\n\ndovolujeme si připomenout, že faktura {number} na částku {amount} zatím nebyla uhrazena. Zobrazit ji můžete pomocí odkazu níže.\n\nPokud jste již zaplatili, tuto zprávu prosím ignorujte. Děkujeme!\n{org}",
+    "bodyWithDue": "Dobrý den {name},\n\ndovolujeme si připomenout, že faktura {number} na částku {amount} byla splatná {due} a zatím nebyla uhrazena. Zobrazit ji můžete pomocí odkazu níže.\n\nPokud jste již zaplatili, tuto zprávu prosím ignorujte. Děkujeme!\n{org}"
+  },
+  "receipt": {
+    "title": "Odeslat účtenku e-mailem",
+    "action": "Odeslat účtenku",
+    "sent": "Účtenka odeslána na {email}.",
+    "subject": "Účtenka {number} od {org}",
+    "body": "Dobrý den {name},\n\nděkujeme za platbu {amount}. Účtenku {number} najdete pod odkazem níže.\n\n{org}",
+    "bodyWithDue": ""
+  },
+  "actions": {
+    "email": "E-mail",
+    "remind": "Upomínka",
+    "duplicate": "Duplikovat",
+    "invoiceAgain": "Fakturovat znovu",
+    "duplicated": "Vytvořeno {number} — kopie {from}.",
+    "duplicateFailed": "Fakturu se nepodařilo duplikovat.",
+    "newInvoice": "Nová faktura",
+    "newReceipt": "Nová účtenka"
+  }
+}

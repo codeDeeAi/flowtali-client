@@ -1,3 +1,5 @@
+import type { IDocumentDefaults } from '@/types/org-preferences.types'
+import type { ISendDocumentPayload, ISendDocumentResult } from './invoice.service'
 import http from './utils/http'
 
 export interface IReceiptItem {
@@ -35,6 +37,7 @@ export interface IReceipt {
   issue_date: string | null
   payment_method: string | null
   paid_at: string | null
+  amount_paid: number | null
   reference_number: string | null
   currency: string
   from_name: string | null
@@ -137,6 +140,8 @@ export interface IReceiptDraftData {
   }>
   logos: Array<{ id: string; url: string }>
   signatures: Array<{ id: string; url: string }>
+  defaults: IDocumentDefaults
+  next_number: string
 }
 
 export interface IReceiptSharedLink {
@@ -178,6 +183,23 @@ export const ReceiptService = {
   },
   create(orgId: string, payload: Record<string, any>) {
     return http.post<{ data: IReceipt }>(`/api/v1/orgs/${orgId}/receipts`, payload)
+  },
+  /** Email the receipt to the client with a share link. */
+  send(orgId: string, receiptId: string, payload: ISendDocumentPayload) {
+    return http.post<{ data: ISendDocumentResult }>(`/api/v1/orgs/${orgId}/receipts/${receiptId}/send`, payload)
+  },
+  /** Record a manual payment on an invoice: issues a receipt and marks the invoice paid once settled. */
+  recordInvoicePayment(orgId: string, invoiceId: string, payload: {
+    amount?: number | null
+    paid_at?: string | null
+    payment_method?: string | null
+    reference_number?: string | null
+    number?: string | null
+  }) {
+    return http.post<{ data: { receipt: IReceipt; balance_due: number; invoice_status: string } }>(
+      `/api/v1/orgs/${orgId}/receipts/from-invoice/${invoiceId}`,
+      payload,
+    )
   },
   update(orgId: string, receiptId: string, payload: Record<string, any>) {
     return http.put<{ data: IReceipt }>(`/api/v1/orgs/${orgId}/receipts/${receiptId}`, payload)

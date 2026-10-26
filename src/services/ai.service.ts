@@ -93,10 +93,27 @@ export const AiService = {
   },
 
   /** Rewrite / translate / describe a piece of text. Returns the transformed text. */
+  /** Describe-it: free text → Quick invoice/receipt fields (nothing is saved). */
+  parseDocument(orgId: string, payload: { text: string; kind: 'invoice' | 'receipt'; language?: string }) {
+    return http.post<{ data: { document: IAiParsedDocument } }>(
+      `/api/v1/orgs/${orgId}/ai/document/parse`,
+      payload,
+    )
+  },
+
   transformText(orgId: string, payload: IAiTransformPayload) {
     return http.post<{ data: { text: string } }>(
       `/api/v1/orgs/${orgId}/ai/text/transform`,
       payload,
     )
   },
+}
+
+export interface IAiParsedDocument {
+  client: { id: string | null; name: string; company: string; email: string }
+  items: { description: string; qty: number; rate: number }[]
+  currency: string | null
+  due_days: number | null
+  payment_method: string | null
+  notes: string
 }

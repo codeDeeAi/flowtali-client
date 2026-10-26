@@ -22,9 +22,16 @@
     "apr2026": "April 2026",
     "may2026": "May 2026",
     "jun2026": "June 2026",
-    "jul2026": "July 2026"
+    "jul2026": "July 2026",
+    "oct2026": "October 2026"
   },
   "entries": {
+    "r21_1": "Online invoice payments — add a \"Pay now\" link to any invoice. Your client pays online from the invoice, the shared link or the PDF, and the money settles straight into your own account. Your bank details are never shown to them.",
+    "r21_2": "Payout accounts — add the accounts you get paid into under Organization Preferences → Online payments. Naira accounts are confirmed with your bank instantly; USD, EUR, GBP and more are available after a short identity check.",
+    "r21_3": "Multi-currency invoices — EUR, GBP, CAD, AUD and CHF invoices can be paid online too. They are charged in USD at the day's reference rate, and your client sees both amounts before paying.",
+    "r21_4": "Paid invoices settle themselves — when a client pays online, the invoice is marked paid, a receipt is issued automatically, and your team gets a notification.",
+    "r21_5": "Clear pricing — Flowtali keeps 0.5% of each online payment. The fee is shown and agreed to before you add a payout account, and the rate is locked to that account. Payment processing fees are deducted from your payout.",
+    "r21_6": "New Payouts permissions — choose which roles can view, add, set up, and deactivate payout accounts.",
     "r20_1": "Flowtali AI — a built-in AI assistant, available from the new \"Flowtali AI\" item in the sidebar. Ask questions and get things done in plain language, in any of Flowtali's supported languages.",
     "r20_2": "Bring your own AI key — connect your own Claude (Anthropic), OpenAI, or Google Gemini API key under Settings → AI. Your key is encrypted at rest and used only for your organization; Flowtali never sees or shares it.",
     "r20_3": "Ask about your business — the assistant can look up your invoices, revenue and outstanding balances, receivables aging, clients, projects, receipts, letterheads, team members, recent activity, and your subscription, then answer with the real numbers.",

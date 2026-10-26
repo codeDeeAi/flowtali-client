@@ -22,9 +22,16 @@
     "apr2026": "Duben 2026",
     "may2026": "Květen 2026",
     "jun2026": "Červen 2026",
-    "jul2026": "Červenec 2026"
+    "jul2026": "Červenec 2026",
+    "oct2026": "Říjen 2026"
   },
   "entries": {
+    "r21_1": "Online platby faktur — přidejte ke kterékoli faktuře odkaz „Zaplatit“. Klient zaplatí online z faktury, ze sdíleného odkazu nebo z PDF a peníze dorazí přímo na váš vlastní účet. Vaše bankovní údaje se mu nikdy nezobrazí.",
+    "r21_2": "Výplatní účty — účty, na které chcete dostávat platby, přidáte v Předvolbách organizace → Online platby. Účty v nairách se ověří u banky okamžitě; USD, EUR, GBP a další jsou k dispozici po krátkém ověření totožnosti.",
+    "r21_3": "Faktury ve více měnách — online lze zaplatit i faktury v EUR, GBP, CAD, AUD a CHF. Strhávají se v USD denním referenčním kurzem a klient před platbou vidí obě částky.",
+    "r21_4": "Zaplacené faktury se vyřídí samy — když klient zaplatí online, faktura se označí jako zaplacená, automaticky se vystaví příjmový doklad a váš tým dostane oznámení.",
+    "r21_5": "Jasné ceny — Flowtali si ponechá 0,5 % z každé online platby. Poplatek se zobrazí a odsouhlasí před přidáním výplatního účtu a sazba zůstává pro tento účet pevná. Poplatky za zpracování plateb se strhávají z vaší výplaty.",
+    "r21_6": "Nová oprávnění pro výplaty — určete, které role mohou výplatní účty zobrazit, přidat, nastavit a deaktivovat.",
     "r20_1": "Flowtali AI — vestavěný asistent s umělou inteligencí, dostupný přes novou položku „Flowtali AI“ v postranním panelu. Ptejte se a vyřizujte úkoly přirozeným jazykem v kterémkoli jazyce, který Flowtali podporuje.",
     "r20_2": "Použijte vlastní klíč AI — v Nastavení → AI připojte svůj vlastní API klíč pro Claude (Anthropic), OpenAI nebo Google Gemini. Váš klíč je uložen šifrovaně a používá se pouze pro vaši organizaci; Flowtali jej nikdy nevidí ani nesdílí.",
     "r20_3": "Ptejte se na své podnikání — asistent umí vyhledat vaše faktury, tržby a nezaplacené částky, stáří pohledávek, klienty, projekty, účtenky, hlavičkové papíry, členy týmu, nedávnou aktivitu a vaše předplatné a poté odpovědět skutečnými čísly.",

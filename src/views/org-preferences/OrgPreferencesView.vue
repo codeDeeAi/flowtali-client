@@ -7,11 +7,14 @@ import { usePermissions } from '@/composables/usePermissions'
 import { OrgPreferencesService } from '@/services/org-preferences.service'
 import { MediaService } from '@/services/media.service'
 import { ApiKeyService, type IOrgApiKey } from '@/services/api-key.service'
-import type { IOrgStamp, IOrgBrandColor, IOrgSignature, IOrgLogo, IOrgInvoiceProfile, IOrgBankAccount, IOrgPaymentLink } from '@/types/org-preferences.types'
+import PayoutAccountsSection from '@/components/payouts/PayoutAccountsSection.vue'
+import { useNotification } from '@/composables/notification.ts'
+import type { IDocumentDefaults, IOrgStamp, IOrgBrandColor, IOrgSignature, IOrgLogo, IOrgInvoiceProfile, IOrgBankAccount, IOrgPaymentLink } from '@/types/org-preferences.types'
 
 const authStore = useAuthStore()
 const { t, locale } = useI18n()
 const { isBusinessOrg } = usePermissions()
+const { notify } = useNotification()
 const orgId = computed(() => authStore.currentOrganization?.id ?? '')
 const orgName = computed(() => authStore.currentOrganization?.name ?? 'your organization')
 
@@ -75,6 +78,7 @@ async function loadPreferences() {
     paymentLinks.value    = data.data.payment_links    ?? []
     signatures.value      = data.data.signatures       ?? []
     orgLogos.value        = data.data.logos            ?? []
+    if (data.data.document_defaults) setDefaultsForm(data.data.document_defaults)
   } finally {
     loading.value = false
   }
@@ -513,6 +517,110 @@ async function deletePaymentLink(index: number) {
   }
 }
 
+// ── Document defaults ─────────────────────────────────────────────────────────
+// Applied to every new invoice/receipt so users don't re-pick sender, bank,
+// branding and terms each time.
+const MAX_DEFAULT_BANKS  = 3
+const defaultThemes      = ['classic', 'modern', 'minimal', 'bold', 'executive'] as const
+const defaultTermOptions = ['Net 15', 'Net 30', 'Net 45', 'Net 60', 'Due on Receipt']
+const defaultsSaving     = ref(false)
+const defaultsForm       = ref({
+  profile_id:       '' as string,
+  bank_account_ids: [] as string[],
+  payment_link_ids: [] as string[],
+  logo_url:         '' as string,
+  signature_url:    '' as string,
+  theme:            'classic' as IDocumentDefaults['theme'],
+  accent_color:     '#00c853',
+  payment_terms:    'Net 30',
+  tax_label:        '',
+  tax_rate:         0,
+  tax_type:         'percent' as 'percent' | 'flat',
+  notes:            '',
+  receipt_notes:    '',
+  footer_text:      '',
+  invoice_prefix:   'INV-',
+  receipt_prefix:   'REC-',
+  auto_reminders:   false,
+  reminder_offsets: [-3, 3, 7] as number[],
+})
+
+function setDefaultsForm(d: IDocumentDefaults) {
+  defaultsForm.value = {
+    profile_id:       d.profile_id ?? '',
+    bank_account_ids: [...(d.bank_account_ids ?? [])],
+    payment_link_ids: [...(d.payment_link_ids ?? [])],
+    logo_url:         d.logo_url ?? '',
+    signature_url:    d.signature_url ?? '',
+    theme:            d.theme ?? 'classic',
+    accent_color:     d.accent_color ?? '#00c853',
+    payment_terms:    d.payment_terms ?? 'Net 30',
+    tax_label:        d.tax?.label ?? '',
+    tax_rate:         Number(d.tax?.rate ?? 0),
+    tax_type:         d.tax?.type ?? 'percent',
+    notes:            d.notes ?? '',
+    receipt_notes:    d.receipt_notes ?? '',
+    footer_text:      d.footer_text ?? '',
+    invoice_prefix:   d.invoice_prefix || 'INV-',
+    receipt_prefix:   d.receipt_prefix || 'REC-',
+    auto_reminders:   !!d.auto_reminders,
+    reminder_offsets: [...(d.reminder_offsets ?? [-3, 3, 7])],
+  }
+}
+
+const reminderOffsetOptions = [-3, 0, 3, 7, 14]
+const reminderOffsetLabel = (o: number) =>
+  o === 0 ? t('orgPref.defaults.reminderOnDue')
+    : o < 0 ? t('orgPref.defaults.reminderBefore', { n: -o })
+      : t('orgPref.defaults.reminderAfter', { n: o })
+
+function toggleReminderOffset(o: number) {
+  const list = defaultsForm.value.reminder_offsets
+  const i = list.indexOf(o)
+  if (i >= 0) list.splice(i, 1)
+  else list.push(o)
+  list.sort((a, b) => a - b)
+}
+
+function toggleDefaultId(list: string[], id: string, max?: number) {
+  const i = list.indexOf(id)
+  if (i >= 0) list.splice(i, 1)
+  else if (!max || list.length < max) list.push(id)
+}
+
+async function saveDefaults() {
+  if (!orgId.value) return
+  const f = defaultsForm.value
+  defaultsSaving.value = true
+  try {
+    const { data } = await OrgPreferencesService.updateDocumentDefaults(orgId.value, {
+      profile_id:       f.profile_id || null,
+      bank_account_ids: f.bank_account_ids,
+      payment_link_ids: f.payment_link_ids,
+      logo_url:         f.logo_url || null,
+      signature_url:    f.signature_url || null,
+      theme:            f.theme,
+      accent_color:     f.accent_color || null,
+      font_family:      null,
+      payment_terms:    f.payment_terms || null,
+      tax:              f.tax_label.trim() ? { label: f.tax_label.trim(), rate: Number(f.tax_rate) || 0, type: f.tax_type } : null,
+      notes:            f.notes || null,
+      receipt_notes:    f.receipt_notes || null,
+      footer_text:      f.footer_text || null,
+      invoice_prefix:   f.invoice_prefix.trim() || 'INV-',
+      receipt_prefix:   f.receipt_prefix.trim() || 'REC-',
+      auto_reminders:   f.auto_reminders,
+      reminder_offsets: f.reminder_offsets,
+    })
+    setDefaultsForm(data.data.document_defaults)
+    notify(t('orgPref.defaults.saved'), 'success')
+  } catch {
+    notify(t('orgPref.defaults.saveFailed'), 'error')
+  } finally {
+    defaultsSaving.value = false
+  }
+}
+
 // ── API Keys ──────────────────────────────────────────────────────────────────
 const apiKeys            = ref<IOrgApiKey[]>([])
 const apiKeysLoading     = ref(false)
@@ -617,6 +725,189 @@ onMounted(loadApiKeys)
     </div>
 
     <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+      <!-- ── Document Defaults ───────────────────────────────────────────── -->
+      <div class="bg-gray-200 border border-gray-400 rounded-xl p-5 lg:col-span-2">
+        <div class="flex items-start justify-between gap-3 mb-4">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-1000">{{ t('orgPref.defaults.title') }}</h3>
+            <p class="text-[11px] text-gray-700 mt-0.5">{{ t('orgPref.defaults.subtitle') }}</p>
+          </div>
+          <button
+            class="flex items-center gap-1.5 text-xs bg-green-700 hover:bg-green-800 text-bg-100 font-semibold px-3 py-1.5 rounded-md transition-colors disabled:opacity-50 shrink-0"
+            :disabled="defaultsSaving"
+            @click="saveDefaults"
+          >
+            <Icon v-if="defaultsSaving" icon="lucide:loader-circle" class="w-3 h-3 animate-spin" />
+            {{ defaultsSaving ? t('orgPref.common.saving') : t('orgPref.common.save') }}
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+          <!-- Sender -->
+          <div class="space-y-4">
+            <p class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('orgPref.defaults.senderSection') }}</p>
+
+            <div>
+              <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.defaults.profile') }}</label>
+              <select v-model="defaultsForm.profile_id" class="app-select w-full text-sm">
+                <option value="">{{ t('orgPref.defaults.profileNone', { org: orgName }) }}</option>
+                <option v-for="p in invoiceProfiles" :key="p.id" :value="p.id">{{ p.name }}</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-xs text-gray-700 mb-1 block">
+                {{ t('orgPref.defaults.banks') }}
+                <span class="text-gray-700/60">{{ t('orgPref.defaults.banksMax', { n: MAX_DEFAULT_BANKS }) }}</span>
+              </label>
+              <div v-if="bankAccounts.length" class="flex flex-wrap gap-1.5">
+                <button
+                  v-for="b in bankAccounts" :key="b.id" type="button"
+                  @click="toggleDefaultId(defaultsForm.bank_account_ids, b.id, MAX_DEFAULT_BANKS)"
+                  :class="['flex items-center gap-1 text-xs px-2.5 py-1 rounded-md border transition-colors',
+                    defaultsForm.bank_account_ids.includes(b.id) ? 'border-green-700 bg-green-700/10 text-gray-1000' : 'border-gray-500 text-gray-900 hover:border-gray-600']"
+                >
+                  <Icon v-if="defaultsForm.bank_account_ids.includes(b.id)" icon="lucide:check" class="w-3 h-3" />
+                  {{ b.label }}
+                </button>
+              </div>
+              <p v-else class="text-[11px] text-gray-700/70">{{ t('orgPref.defaults.noBanks') }}</p>
+            </div>
+
+            <div>
+              <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.defaults.links') }}</label>
+              <div v-if="paymentLinks.length" class="flex flex-wrap gap-1.5">
+                <button
+                  v-for="l in paymentLinks" :key="l.id" type="button"
+                  @click="toggleDefaultId(defaultsForm.payment_link_ids, l.id)"
+                  :class="['flex items-center gap-1 text-xs px-2.5 py-1 rounded-md border transition-colors',
+                    defaultsForm.payment_link_ids.includes(l.id) ? 'border-green-700 bg-green-700/10 text-gray-1000' : 'border-gray-500 text-gray-900 hover:border-gray-600']"
+                >
+                  <Icon v-if="defaultsForm.payment_link_ids.includes(l.id)" icon="lucide:check" class="w-3 h-3" />
+                  {{ l.label || l.type }}
+                </button>
+              </div>
+              <p v-else class="text-[11px] text-gray-700/70">{{ t('orgPref.defaults.noLinks') }}</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.defaults.logo') }}</label>
+                <select v-model="defaultsForm.logo_url" class="app-select w-full text-sm">
+                  <option value="">{{ t('orgPref.defaults.none') }}</option>
+                  <option v-for="l in orgLogos" :key="l.id" :value="l.url">{{ l.extras?.label || t('orgPref.defaults.logo') }}</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.defaults.signature') }}</label>
+                <select v-model="defaultsForm.signature_url" class="app-select w-full text-sm">
+                  <option value="">{{ t('orgPref.defaults.none') }}</option>
+                  <option v-for="s in signatures" :key="s.id" :value="s.url">{{ s.extras?.name || t('orgPref.defaults.signature') }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Look & terms -->
+          <div class="space-y-4">
+            <p class="text-[10px] uppercase tracking-wider text-gray-700">{{ t('orgPref.defaults.lookSection') }}</p>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.defaults.theme') }}</label>
+                <select v-model="defaultsForm.theme" class="app-select w-full text-sm">
+                  <option v-for="th in defaultThemes" :key="th" :value="th">{{ t(`invoiceEditor.themes.${th}`) }}</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.defaults.accent') }}</label>
+                <div class="flex items-center gap-2">
+                  <input v-model="defaultsForm.accent_color" type="color" class="w-9 h-9 rounded border border-gray-500 bg-transparent cursor-pointer shrink-0" />
+                  <div class="flex flex-wrap gap-1">
+                    <button
+                      v-for="c in brandColors" :key="c.hex" type="button" :title="c.name"
+                      class="w-5 h-5 rounded-full border border-gray-500"
+                      :style="{ backgroundColor: c.hex }"
+                      @click="defaultsForm.accent_color = c.hex"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.defaults.terms') }}</label>
+                <select v-model="defaultsForm.payment_terms" class="app-select w-full text-sm">
+                  <option v-for="term in defaultTermOptions" :key="term" :value="term">{{ term }}</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.defaults.tax') }}</label>
+                <div class="flex gap-1.5">
+                  <input v-model="defaultsForm.tax_label" type="text" :placeholder="t('orgPref.defaults.taxLabelPh')" class="app-inp w-full text-sm min-w-0" />
+                  <input v-model.number="defaultsForm.tax_rate" type="number" min="0" step="0.01" class="app-inp w-16 text-sm" />
+                  <select v-model="defaultsForm.tax_type" class="app-select text-sm w-14">
+                    <option value="percent">%</option>
+                    <option value="flat">#</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.defaults.invoicePrefix') }}</label>
+                <input v-model="defaultsForm.invoice_prefix" type="text" maxlength="20" class="app-inp w-full text-sm font-mono" />
+              </div>
+              <div>
+                <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.defaults.receiptPrefix') }}</label>
+                <input v-model="defaultsForm.receipt_prefix" type="text" maxlength="20" class="app-inp w-full text-sm font-mono" />
+              </div>
+            </div>
+            <p class="text-[11px] text-gray-700/70 -mt-2">{{ t('orgPref.defaults.prefixHint', { example: `${defaultsForm.invoice_prefix || 'INV-'}0001` }) }}</p>
+          </div>
+
+          <!-- Text -->
+          <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+              <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.defaults.notes') }}</label>
+              <textarea v-model="defaultsForm.notes" rows="3" :placeholder="t('orgPref.defaults.notesPh')" class="app-inp w-full text-sm resize-none"></textarea>
+            </div>
+            <div>
+              <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.defaults.receiptNotes') }}</label>
+              <textarea v-model="defaultsForm.receipt_notes" rows="3" :placeholder="t('orgPref.defaults.receiptNotesPh')" class="app-inp w-full text-sm resize-none"></textarea>
+            </div>
+            <div>
+              <label class="text-xs text-gray-700 mb-1 block">{{ t('orgPref.defaults.footer') }}</label>
+              <textarea v-model="defaultsForm.footer_text" rows="3" maxlength="500" class="app-inp w-full text-sm resize-none"></textarea>
+            </div>
+          </div>
+
+          <!-- Automatic reminders -->
+          <div class="md:col-span-2 p-3.5 rounded-lg border border-gray-400 space-y-3">
+            <label class="flex items-start gap-3 cursor-pointer select-none">
+              <input v-model="defaultsForm.auto_reminders" type="checkbox" class="accent-green-700 mt-0.5" />
+              <span>
+                <span class="block text-sm text-gray-1000">{{ t('orgPref.defaults.autoReminders') }}</span>
+                <span class="block text-[11px] text-gray-700">{{ t('orgPref.defaults.autoRemindersHint') }}</span>
+              </span>
+            </label>
+            <div v-if="defaultsForm.auto_reminders" class="flex flex-wrap gap-1.5 pl-7">
+              <button
+                v-for="o in reminderOffsetOptions" :key="o" type="button"
+                @click="toggleReminderOffset(o)"
+                :class="['flex items-center gap-1 text-xs px-2.5 py-1 rounded-md border transition-colors',
+                  defaultsForm.reminder_offsets.includes(o) ? 'border-green-700 bg-green-700/10 text-gray-1000' : 'border-gray-500 text-gray-900 hover:border-gray-600']"
+              >
+                <Icon v-if="defaultsForm.reminder_offsets.includes(o)" icon="lucide:check" class="w-3 h-3" />
+                {{ reminderOffsetLabel(o) }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- ── Saved Stamps ────────────────────────────────────────────────── -->
       <div class="bg-gray-200 border border-gray-400 rounded-xl p-5">
@@ -1266,6 +1557,9 @@ onMounted(loadApiKeys)
           </div>
         </Transition>
       </div>
+
+      <!-- ── Online payments (pay links) ──────────────────────────────────── -->
+      <PayoutAccountsSection :org-id="orgId" />
 
       <!-- ── API Keys ──────────────────────────────────────────────────────── -->
       <div v-if="isBusinessOrg" class="bg-gray-200 border border-gray-400 rounded-xl p-5 lg:col-span-2">

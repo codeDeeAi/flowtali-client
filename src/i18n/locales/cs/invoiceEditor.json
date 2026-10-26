@@ -157,5 +157,14 @@
     "itemRequired": "Je vyžadována alespoň jedna položka.",
     "descriptionRequired": "Všechny položky musí mít popis.",
     "linkValueRequired": "Všechny platební odkazy musí mít hodnotu."
+  },
+  "payLink": {
+    "title": "Platba online",
+    "none": "Nepřidávat platební odkaz",
+    "feeNote": "Klient zaplatí přes zabezpečený odkaz a peníze dorazí na tento účet. Flowtali si ponechá {fee}% z každé platby.",
+    "fxNote": "Bachs strhává platby kartou v USD, proto se {currency} přepočítá denním referenčním kurzem.",
+    "noneForCurrency": "Žádný z vašich výplatních účtů nepřijímá platby v {currency}.",
+    "empty": "Umožněte klientům zaplatit tuto fakturu kartou nebo převodem přímo na váš účet.",
+    "setUp": "Nastavit výplatní účet"
   }
 }

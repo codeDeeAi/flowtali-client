@@ -48,5 +48,7 @@
   "paymentMethod": "Zahlungsmethode",
   "refInvoice": "Ref. Rechnung Nr.",
   "receiptTo": "Beleg an",
-  "amountReceived": "Erhaltener Betrag"
+  "amountReceived": "Erhaltener Betrag",
+  "payOnline": "Diese Rechnung online bezahlen",
+  "payNow": "Jetzt bezahlen"
 }

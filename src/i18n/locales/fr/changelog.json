@@ -22,9 +22,16 @@
     "apr2026": "Avril 2026",
     "may2026": "Mai 2026",
     "jun2026": "Juin 2026",
-    "jul2026": "Juillet 2026"
+    "jul2026": "Juillet 2026",
+    "oct2026": "Octobre 2026"
   },
   "entries": {
+    "r21_1": "Paiement des factures en ligne — ajoutez un lien « Payer » à n'importe quelle facture. Votre client paie en ligne depuis la facture, le lien partagé ou le PDF, et l'argent arrive directement sur votre propre compte. Vos coordonnées bancaires ne lui sont jamais montrées.",
+    "r21_2": "Comptes de versement — ajoutez les comptes sur lesquels vous êtes payé dans Préférences de l'organisation → Paiements en ligne. Les comptes en naira sont confirmés instantanément auprès de votre banque ; USD, EUR, GBP et plus sont disponibles après une courte vérification d'identité.",
+    "r21_3": "Factures multidevises — les factures en EUR, GBP, CAD, AUD et CHF peuvent aussi être payées en ligne. Elles sont débitées en USD au taux de référence du jour, et votre client voit les deux montants avant de payer.",
+    "r21_4": "Les factures payées se règlent toutes seules — lorsqu'un client paie en ligne, la facture est marquée comme payée, un reçu est émis automatiquement et votre équipe est notifiée.",
+    "r21_5": "Tarification claire — Flowtali conserve 0,5 % de chaque paiement en ligne. Les frais sont affichés et acceptés avant l'ajout d'un compte de versement, et le taux reste fixé pour ce compte. Les frais de traitement des paiements sont déduits de votre versement.",
+    "r21_6": "Nouvelles autorisations Versements — choisissez quels rôles peuvent consulter, ajouter, configurer et désactiver les comptes de versement.",
     "r20_1": "Flowtali AI — un assistant IA intégré, accessible depuis le nouvel élément « Flowtali AI » de la barre latérale. Posez des questions et réalisez des tâches en langage naturel, dans n'importe quelle langue prise en charge par Flowtali.",
     "r20_2": "Utilisez votre propre clé IA — connectez votre propre clé API Claude (Anthropic), OpenAI ou Google Gemini dans Paramètres → AI. Votre clé est chiffrée au repos et utilisée uniquement pour votre organisation ; Flowtali ne la voit jamais et ne la partage jamais.",
     "r20_3": "Interrogez votre activité — l'assistant peut consulter vos factures, vos revenus et soldes impayés, l'ancienneté des créances, vos clients, projets, reçus, en-têtes de lettre, membres de l'équipe, activité récente et votre abonnement, puis répondre avec les chiffres réels.",
