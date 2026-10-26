@@ -13,9 +13,6 @@
     "ctaSecondary": "Sehen, was drinsteckt",
     "letterheadExported": "Briefkopf exportiert"
   },
-  "socialProof": {
-    "trustedBy": "Vertraut von Freelancern bei"
-  },
   "products": {
     "badge": "Vier Werkzeuge, eine Plattform",
     "titleLine1": "Alles, was Sie brauchen, um",
@@ -151,7 +148,7 @@
       { "q": "Wie funktioniert die Quittungsverfolgung?", "a": "Nach dem Erstellen einer Rechnung können Sie für jeden erhaltenen Betrag eine Zahlungsquittung erstellen. Quittungen lassen sich direkt mit einem Projekt verknüpfen, als PDF exportieren und stempeln (z. B. BEZAHLT). Sie erscheinen sowohl in der Projektübersicht als auch im eigenen Quittungsbereich." },
       { "q": "Wie funktionieren Teamrollen & Berechtigungen?", "a": "Business-Pläne können Teammitglieder einladen und granulare Berechtigungen zuweisen – ein Mitglied kann z. B. Rechnungen erstellen, aber keine Projekte löschen, oder Quittungen ansehen, ohne Kunden zu bearbeiten. Rollen werden pro Organisation auf der Seite „Mitglieder“ verwaltet." },
       { "q": "Was ist der Briefkopf-Generator?", "a": "Mit dem Briefkopf-Generator erstellen Sie professionelle gebrandete Briefköpfe für formelle Briefe, Angebote und Engagement-Schreiben. Wählen Sie aus 8 Vorlagen, laden Sie Logo und Signatur hoch, legen Sie Farben und Schrift fest, fügen Sie ein Wasserzeichen hinzu und exportieren Sie ein pixelgenaues PDF." },
-      { "q": "Ist Flowtali wirklich kostenlos zum Start?", "a": "Ja – der Starter-Plan ist für immer kostenlos. Sie erhalten Rechnungen, Quittungen, 1 aktives Projekt und 3 Briefköpfe pro Monat, PDF-Exporte und Kernvorlagen ohne Kosten." },
+      { "q": "Ist Flowtali wirklich kostenlos zum Start?", "a": "Ja – jedes neue Konto startet mit einer kostenlosen 2-monatigen Testphase des Starter-Plans. Sie erhalten Rechnungen, Quittungen, 1 aktives Projekt und 3 Briefköpfe pro Monat, PDF-Exporte und Kernvorlagen ohne Kosten. Nach Ablauf der Testphase wählen Sie einen kostenpflichtigen Plan, um Flowtali weiter zu nutzen – Ihre Daten werden nie gelöscht." },
       { "q": "Kann ich mein eigenes Logo und meine Signatur verwenden?", "a": "Absolut. Pro- und Business-Pläne unterstützen vollständiges Branding: Laden Sie Ihr Logo und Signaturbild hoch, wählen Sie eine beliebige Akzentfarbe und Ihren Schriftstil für alle Dokumente." },
       { "q": "Welche Währungen werden unterstützt?", "a": "USD, EUR, GBP, NGN, CAD, AUD, JPY, INR, ZAR, CHF und AED – mit korrekten Symbolen und Formatierung für jede Rechnung und Quittung." },
       { "q": "Kann ich mein Abonnement jederzeit kündigen?", "a": "Ja. Kündigen Sie jederzeit in den Kontoeinstellungen. Sie behalten den Zugriff bis zum Ende Ihres Abrechnungszeitraums." }
@@ -160,7 +157,7 @@
   "cta": {
     "titlePre": "Bereit, Ihr",
     "titleEm": " Business besser zu führen?",
-    "subtitle": "Schließen Sie sich über 4.200 Freelancern an, die Flowtali für Rechnungen, Quittungen, Projekte und Briefköpfe vertrauen.",
+    "subtitle": "Rechnungen, Quittungen, Projekte und Briefköpfe — alles an einem Ort. Kostenlos starten, ohne Kreditkarte.",
     "primary": "Kostenlos starten – keine Kreditkarte",
     "secondary": "Alle Funktionen entdecken →"
   }

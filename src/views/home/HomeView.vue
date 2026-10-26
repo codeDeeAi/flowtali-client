@@ -69,7 +69,6 @@ const mockItems = [
   { name: 'Web Dev (40h)', qty: 40, amount: '4,000' },
   { name: 'Hosting Setup', qty: 1, amount: '1,050' },
 ];
-const brands = ['Notion', 'Figma', 'Stripe', 'Linear', 'Vercel', 'Loom'];
 
 // Icons + flags stay in code (non-translatable); titles/descriptions come from i18n.
 const FEATURE_META = [
@@ -325,18 +324,6 @@ const scrollTo = (id: string) => {
         class="w-full h-16">
         <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="#1a1a1a" opacity="0.5" />
       </svg>
-    </div>
-  </section>
-
-  <!-- SOCIAL PROOF BAR -->
-  <section class="py-14 bg-gray-200/40 border-y border-gray-400/30">
-    <div class="max-w-6xl mx-auto px-6">
-      <p class="text-center text-gray-700 text-sm mb-8 tracking-widest uppercase font-mono">{{ t('home.socialProof.trustedBy') }}
-      </p>
-      <div class="flex flex-wrap justify-center items-center gap-8 md:gap-14 opacity-40">
-        <div v-for="brand in brands" :key="brand"
-          class="font-sans text-xl text-gray-900 tracking-widest font-light">{{ brand }}</div>
-      </div>
     </div>
   </section>
 

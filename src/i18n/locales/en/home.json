@@ -13,9 +13,6 @@
     "ctaSecondary": "See what's inside",
     "letterheadExported": "Letterhead exported"
   },
-  "socialProof": {
-    "trustedBy": "Trusted by freelancers at"
-  },
   "products": {
     "badge": "Four tools, one platform",
     "titleLine1": "Everything you need to",
@@ -151,7 +148,7 @@
       { "q": "How does Receipt Tracking work?", "a": "After creating an invoice, you can generate a payment receipt for any amount received. Receipts can be linked directly to a project, exported as a PDF, and stamped (e.g. PAID). They appear on both the project overview and the dedicated Receipts section." },
       { "q": "How do Team Roles & Permissions work?", "a": "Business plans can invite team members and assign granular permissions — for example, a member can create invoices but not delete projects, or view receipts without editing clients. Roles are managed per organisation from the Members settings page." },
       { "q": "What is the Letterhead Generator?", "a": "The Letterhead Generator lets you create professional branded letterheads for formal letters, proposals, and engagement letters. Choose from 8 templates, upload your logo and signature, set your colors and font, add a watermark, and export a pixel-perfect PDF." },
-      { "q": "Is Flowtali really free to start?", "a": "Yes — the Starter plan is free forever. You get invoices, receipts, 1 active project, and 3 letterheads per month, PDF exports, and core templates at no cost." },
+      { "q": "Is Flowtali really free to start?", "a": "Yes — every new account starts with a free 2-month trial of the Starter plan. You get invoices, receipts, 1 active project, and 3 letterheads per month, PDF exports, and core templates at no cost. When the trial ends, choose a paid plan to keep using Flowtali — your data is never deleted." },
       { "q": "Can I use my own logo and signature?", "a": "Absolutely. Pro and Business plans support full branding: upload your logo, signature image, set any accent color, and choose your font style across all documents." },
       { "q": "What currencies are supported?", "a": "USD, EUR, GBP, NGN, CAD, AUD, JPY, INR, ZAR, CHF, and AED — with correct symbols and formatting for every invoice and receipt." },
       { "q": "Can I cancel my subscription anytime?", "a": "Yes. Cancel at any time from account settings. You keep access until the end of your billing period." }
@@ -160,7 +157,7 @@
   "cta": {
     "titlePre": "Ready to run your",
     "titleEm": " business better?",
-    "subtitle": "Join 4,200+ freelancers who trust Flowtali for invoices, receipts, projects, and letterheads.",
+    "subtitle": "Invoices, receipts, projects, and letterheads — all in one place. Start free, no credit card needed.",
     "primary": "Start free — no credit card",
     "secondary": "Explore all features →"
   }

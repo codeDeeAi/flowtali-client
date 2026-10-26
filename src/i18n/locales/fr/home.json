@@ -13,9 +13,6 @@
     "ctaSecondary": "Voir ce qu'il y a dedans",
     "letterheadExported": "En-tête exporté"
   },
-  "socialProof": {
-    "trustedBy": "Adopté par des freelances chez"
-  },
   "products": {
     "badge": "Quatre outils, une plateforme",
     "titleLine1": "Tout ce dont vous avez besoin pour",
@@ -151,7 +148,7 @@
       { "q": "Comment fonctionne le suivi des reçus ?", "a": "Après avoir créé une facture, vous pouvez générer un reçu de paiement pour tout montant reçu. Les reçus peuvent être liés directement à un projet, exportés en PDF et tamponnés (par ex. PAYÉ). Ils apparaissent à la fois dans l'aperçu du projet et dans la section Reçus dédiée." },
       { "q": "Comment fonctionnent les rôles et permissions d'équipe ?", "a": "Les forfaits Business permettent d'inviter des membres d'équipe et d'attribuer des permissions granulaires — par exemple, un membre peut créer des factures mais pas supprimer des projets, ou consulter des reçus sans modifier les clients. Les rôles sont gérés par organisation depuis la page des paramètres Membres." },
       { "q": "Qu'est-ce que le générateur d'en-têtes ?", "a": "Le générateur d'en-têtes vous permet de créer des en-têtes de marque professionnels pour lettres formelles, propositions et lettres de mission. Choisissez parmi 8 modèles, téléversez votre logo et votre signature, définissez vos couleurs et votre police, ajoutez un filigrane et exportez un PDF au pixel près." },
-      { "q": "Flowtali est-il vraiment gratuit pour commencer ?", "a": "Oui — le forfait Starter est gratuit pour toujours. Vous obtenez des factures, des reçus, 1 projet actif et 3 en-têtes par mois, les exports PDF et les modèles de base sans frais." },
+      { "q": "Flowtali est-il vraiment gratuit pour commencer ?", "a": "Oui — chaque nouveau compte commence par un essai gratuit de 2 mois du forfait Starter. Vous obtenez des factures, des reçus, 1 projet actif et 3 en-têtes par mois, les exports PDF et les modèles de base sans frais. À la fin de l'essai, choisissez un forfait payant pour continuer à utiliser Flowtali — vos données ne sont jamais supprimées." },
       { "q": "Puis-je utiliser mon propre logo et ma signature ?", "a": "Absolument. Les forfaits Pro et Business prennent en charge une image de marque complète : téléversez votre logo, votre image de signature, définissez n'importe quelle couleur d'accent et choisissez votre style de police sur tous les documents." },
       { "q": "Quelles devises sont prises en charge ?", "a": "USD, EUR, GBP, NGN, CAD, AUD, JPY, INR, ZAR, CHF et AED — avec les symboles et la mise en forme corrects pour chaque facture et reçu." },
       { "q": "Puis-je annuler mon abonnement à tout moment ?", "a": "Oui. Annulez à tout moment depuis les paramètres du compte. Vous conservez l'accès jusqu'à la fin de votre période de facturation." }
@@ -160,7 +157,7 @@
   "cta": {
     "titlePre": "Prêt à mieux gérer",
     "titleEm": " votre activité ?",
-    "subtitle": "Rejoignez plus de 4 200 freelances qui font confiance à Flowtali pour leurs factures, reçus, projets et en-têtes.",
+    "subtitle": "Factures, reçus, projets et en-têtes — tout au même endroit. Commencez gratuitement, sans carte bancaire.",
     "primary": "Commencer gratuitement — sans carte bancaire",
     "secondary": "Explorer toutes les fonctionnalités →"
   }

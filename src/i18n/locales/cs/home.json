@@ -13,9 +13,6 @@
     "ctaSecondary": "Podívejte se, co je uvnitř",
     "letterheadExported": "Hlavičkový papír exportován"
   },
-  "socialProof": {
-    "trustedBy": "Důvěřují freelanceři ve firmách"
-  },
   "products": {
     "badge": "Čtyři nástroje, jedna platforma",
     "titleLine1": "Vše, co potřebujete k",
@@ -151,7 +148,7 @@
       { "q": "Jak funguje sledování účtenek?", "a": "Po vytvoření faktury můžete vygenerovat potvrzení o platbě pro jakoukoli přijatou částku. Účtenky lze propojit přímo s projektem, exportovat jako PDF a orazítkovat (např. ZAPLACENO). Objevují se jak v přehledu projektu, tak ve vyhrazené sekci Účtenky." },
       { "q": "Jak fungují týmové role a oprávnění?", "a": "Plány Business mohou pozvat členy týmu a přidělit podrobná oprávnění — například člen může vytvářet faktury, ale nemazat projekty, nebo prohlížet účtenky bez úprav klientů. Role se spravují za organizaci na stránce nastavení Členové." },
       { "q": "Co je generátor hlavičkových papírů?", "a": "Generátor hlavičkových papírů vám umožní vytvářet profesionální značkové hlavičkové papíry pro formální dopisy, nabídky a zakázkové dopisy. Vyberte z 8 šablon, nahrajte logo a podpis, nastavte barvy a písmo, přidejte vodoznak a exportujte pixelově přesné PDF." },
-      { "q": "Je Flowtali opravdu zdarma na začátek?", "a": "Ano — plán Starter je zdarma navždy. Získáte faktury, účtenky, 1 aktivní projekt a 3 hlavičkové papíry měsíčně, exporty do PDF a základní šablony zdarma." },
+      { "q": "Je Flowtali opravdu zdarma na začátek?", "a": "Ano — každý nový účet začíná 2měsíční zkušební verzí plánu Starter zdarma. Získáte faktury, účtenky, 1 aktivní projekt a 3 hlavičkové papíry měsíčně, exporty do PDF a základní šablony zdarma. Po skončení zkušební doby si pro další používání Flowtali zvolte placený plán — vaše data se nikdy nemažou." },
       { "q": "Mohu použít vlastní logo a podpis?", "a": "Rozhodně. Plány Pro a Business podporují plný branding: nahrajte své logo, obrázek podpisu, nastavte libovolnou akcentovou barvu a vyberte styl písma napříč všemi dokumenty." },
       { "q": "Jaké měny jsou podporovány?", "a": "USD, EUR, GBP, NGN, CAD, AUD, JPY, INR, ZAR, CHF a AED — se správnými symboly a formátováním pro každou fakturu a účtenku." },
       { "q": "Mohu své předplatné kdykoli zrušit?", "a": "Ano. Zrušte kdykoli v nastavení účtu. Přístup si ponecháte do konce svého zúčtovacího období." }
@@ -160,7 +157,7 @@
   "cta": {
     "titlePre": "Připraveni řídit své",
     "titleEm": " podnikání lépe?",
-    "subtitle": "Připojte se k více než 4 200 freelancerům, kteří důvěřují Flowtali pro faktury, účtenky, projekty a hlavičkové papíry.",
+    "subtitle": "Faktury, účtenky, projekty a hlavičkové papíry — vše na jednom místě. Začněte zdarma, bez platební karty.",
     "primary": "Začít zdarma — bez platební karty",
     "secondary": "Prozkoumat všechny funkce →"
   }
